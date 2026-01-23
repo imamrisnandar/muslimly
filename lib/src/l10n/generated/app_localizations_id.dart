@@ -399,4 +399,25 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get showcaseCompletion =>
       'Halaman otomatis tertanda selesai setelah 20 detik.\nKetuk untuk tandai manual.';
+
+  @override
+  String get showcaseDailyGoal => 'Pantau progres bacaan harianmu di sini.';
+
+  @override
+  String get showcaseSettingsGoal =>
+      'Atur target bacaan harian di menu Pengaturan.';
+
+  @override
+  String get showcasePrayerCard =>
+      'Lihat jadwal sholat dan hitung mundur adzan.';
+
+  @override
+  String get showcaseQuickAccess => 'Akses cepat ke Bookmark dan Riwayat.';
+
+  @override
+  String get showcaseDzikir =>
+      'Baca Dzikir pagi/petang dan kumpulan Doa di sini.';
+
+  @override
+  String get showcaseQuranTab => 'Ketuk di sini untuk mulai membaca Al-Quran.';
 }

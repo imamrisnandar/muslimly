@@ -118,5 +118,11 @@
     "tryAgain": "Coba Lagi",
     "showcaseNavigation": "Geser kanan/kiri untuk pindah halaman.\nTekan lama ayat untuk opsi.",
     "showcaseBookmark": "Simpan halaman ini ke bookmark.",
-    "showcaseCompletion": "Halaman otomatis tertanda selesai setelah 20 detik.\nKetuk untuk tandai manual."
+    "showcaseCompletion": "Halaman otomatis tertanda selesai setelah 20 detik.\nKetuk untuk tandai manual.",
+    "showcaseDailyGoal": "Pantau progres bacaan harianmu di sini.",
+    "showcaseSettingsGoal": "Atur target bacaan harian di menu Pengaturan.",
+    "showcasePrayerCard": "Lihat jadwal sholat dan hitung mundur adzan.",
+    "showcaseQuickAccess": "Akses cepat ke Bookmark dan Riwayat.",
+    "showcaseDzikir": "Baca Dzikir pagi/petang dan kumpulan Doa di sini.",
+    "showcaseQuranTab": "Ketuk di sini untuk mulai membaca Al-Quran."
 }

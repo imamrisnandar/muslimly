@@ -811,6 +811,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Page is marked as read automatically after 20 sec.\nTap to mark manually.'**
   String get showcaseCompletion;
+
+  /// No description provided for @showcaseDailyGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your daily reading progress here.'**
+  String get showcaseDailyGoal;
+
+  /// No description provided for @showcaseSettingsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your daily reading target in Settings.'**
+  String get showcaseSettingsGoal;
+
+  /// No description provided for @showcasePrayerCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Check prayer times and countdown.'**
+  String get showcasePrayerCard;
+
+  /// No description provided for @showcaseQuickAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick access to Bookmarks and History.'**
+  String get showcaseQuickAccess;
+
+  /// No description provided for @showcaseDzikir.
+  ///
+  /// In en, this message translates to:
+  /// **'Read daily Dzikir and specific Duas here.'**
+  String get showcaseDzikir;
+
+  /// No description provided for @showcaseQuranTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to open the Quran.'**
+  String get showcaseQuranTab;
 }
 
 class _AppLocalizationsDelegate

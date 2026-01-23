@@ -400,4 +400,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get showcaseCompletion =>
       'Page is marked as read automatically after 20 sec.\nTap to mark manually.';
+
+  @override
+  String get showcaseDailyGoal => 'Track your daily reading progress here.';
+
+  @override
+  String get showcaseSettingsGoal =>
+      'Set your daily reading target in Settings.';
+
+  @override
+  String get showcasePrayerCard => 'Check prayer times and countdown.';
+
+  @override
+  String get showcaseQuickAccess => 'Quick access to Bookmarks and History.';
+
+  @override
+  String get showcaseDzikir => 'Read daily Dzikir and specific Duas here.';
+
+  @override
+  String get showcaseQuranTab => 'Tap here to open the Quran.';
 }

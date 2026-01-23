@@ -27,6 +27,9 @@ import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
 import '../../../../core/di/di_container.dart';
 import '../../../../core/services/notification_service.dart';
 
+import 'package:showcaseview/showcaseview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class DashboardPage extends StatefulWidget {
   final int initialIndex;
   const DashboardPage({super.key, this.initialIndex = 0});
@@ -38,11 +41,40 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   late int _currentIndex;
 
+  // Showcase Keys
+  final GlobalKey _dailyGoalKey = GlobalKey();
+  final GlobalKey _settingsTabKey = GlobalKey();
+  final GlobalKey _prayerCardKey = GlobalKey();
+  final GlobalKey _quickAccessKey = GlobalKey();
+  final GlobalKey _dzikirTabKey = GlobalKey();
+  final GlobalKey _quranTabKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    // Force reload settings (e.g. name update from Intro)
+    context.read<SettingsCubit>().loadSettings();
     _requestAllPermissions();
+    // Check for showcase
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkShowcase());
+  }
+
+  Future<void> _checkShowcase() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool('hasShownDashboardShowcase') ?? false;
+
+    if (!hasShown && mounted) {
+      ShowCaseWidget.of(context).startShowCase([
+        _dailyGoalKey,
+        _settingsTabKey,
+        _prayerCardKey,
+        _quickAccessKey,
+        _dzikirTabKey,
+        _quranTabKey,
+      ]);
+      prefs.setBool('hasShownDashboardShowcase', true);
+    }
   }
 
   @override
@@ -117,15 +149,34 @@ class _DashboardPageState extends State<DashboardPage> {
                     label: AppLocalizations.of(context)!.bottomNavPrayer,
                   ),
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.book),
+                    icon: Showcase(
+                      key: _quranTabKey,
+                      description: AppLocalizations.of(
+                        context,
+                      )!.showcaseQuranTab,
+                      targetShapeBorder: const CircleBorder(),
+                      child: const Icon(Icons.book),
+                    ),
                     label: AppLocalizations.of(context)!.bottomNavQuran,
                   ),
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.spa), // Dzikir Icon
+                    icon: Showcase(
+                      key: _dzikirTabKey,
+                      description: AppLocalizations.of(context)!.showcaseDzikir,
+                      targetShapeBorder: const CircleBorder(),
+                      child: const Icon(Icons.spa),
+                    ), // Dzikir Icon
                     label: AppLocalizations.of(context)!.bottomNavDzikir,
                   ),
                   BottomNavigationBarItem(
-                    icon: const Icon(Icons.settings), // Settings Icon
+                    icon: Showcase(
+                      key: _settingsTabKey,
+                      description: AppLocalizations.of(
+                        context,
+                      )!.showcaseSettingsGoal,
+                      targetShapeBorder: const CircleBorder(),
+                      child: const Icon(Icons.settings),
+                    ), // Settings Icon
                     label: AppLocalizations.of(context)!.bottomNavSettings,
                   ),
                 ],
@@ -279,11 +330,17 @@ class _DashboardPageState extends State<DashboardPage> {
                       final target = state.dailyTarget;
                       final l10n = AppLocalizations.of(context)!;
 
-                      return _buildDailyGoalCard(
-                        context,
-                        progress,
-                        target,
-                        l10n,
+                      return Showcase(
+                        key: _dailyGoalKey,
+                        description: AppLocalizations.of(
+                          context,
+                        )!.showcaseDailyGoal,
+                        child: _buildDailyGoalCard(
+                          context,
+                          progress,
+                          target,
+                          l10n,
+                        ),
                       );
                     },
                   ),
@@ -310,291 +367,304 @@ class _DashboardPageState extends State<DashboardPage> {
                           MediaQuery.of(context).orientation ==
                           Orientation.landscape;
 
-                      return GestureDetector(
-                        onTap: () => context.go('/dashboard?index=1'),
-                        child: Container(
-                          height: isLandscape ? null : 150.h,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.r),
-                            gradient: gradient,
-                            boxShadow: [
-                              BoxShadow(
-                                color: gradient.colors.last.withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              // Background Pattern
-                              Positioned(
-                                right: -20,
-                                bottom: -20,
-                                child: Icon(
-                                  Icons.mosque,
-                                  size: isLandscape ? 80.sp : 120.sp,
-                                  color: Colors.white.withOpacity(0.1),
+                      return Showcase(
+                        key: _prayerCardKey,
+                        description: AppLocalizations.of(
+                          context,
+                        )!.showcasePrayerCard,
+                        child: GestureDetector(
+                          onTap: () => context.go('/dashboard?index=1'),
+                          child: Container(
+                            height: isLandscape ? null : 150.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.r),
+                              gradient: gradient,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: gradient.colors.last.withOpacity(0.3),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(
-                                  isLandscape ? 8.w : 20.w,
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                // Background Pattern
+                                Positioned(
+                                  right: -20,
+                                  bottom: -20,
+                                  child: Icon(
+                                    Icons.mosque,
+                                    size: isLandscape ? 80.sp : 120.sp,
+                                    color: Colors.white.withOpacity(0.1),
+                                  ),
                                 ),
-                                child: isLandscape
-                                    ? Row(
-                                        children: [
-                                          // Left: Label & City
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 8.w,
-                                                  vertical: 4.h,
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                    isLandscape ? 8.w : 20.w,
+                                  ),
+                                  child: isLandscape
+                                      ? Row(
+                                          children: [
+                                            // Left: Label & City
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.w,
+                                                    vertical: 4.h,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black12,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20.r,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.cardNextPrayer,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10.sp,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
                                                 ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black12,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        20.r,
+                                                SizedBox(height: 4.h),
+                                                Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.location_on,
+                                                      color: Colors.white70,
+                                                      size: 12.sp,
+                                                    ),
+                                                    SizedBox(width: 4.w),
+                                                    Text(
+                                                      state.currentCity.name,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                child: Text(
-                                                  AppLocalizations.of(
-                                                    context,
-                                                  )!.cardNextPrayer,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                              ],
+                                            ),
+                                            const Spacer(),
+                                            // Middle: Prayer Name & Time
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.baseline,
+                                              textBaseline:
+                                                  TextBaseline.alphabetic,
+                                              children: [
+                                                Text(
+                                                  nextPrayer['name'],
                                                   style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 10.sp,
+                                                    fontSize: 20.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 8.w),
+                                                Text(
+                                                  nextPrayer['time'],
+                                                  style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 16.sp,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
+                                              ],
+                                            ),
+                                            const Spacer(),
+                                            // Right: Countdown
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 8.w,
+                                                vertical: 4.h,
                                               ),
-                                              SizedBox(height: 4.h),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.location_on,
-                                                    color: Colors.white70,
-                                                    size: 12.sp,
+                                              decoration: BoxDecoration(
+                                                color: Colors.black26,
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                              ),
+                                              child: PrayerCountdownWidget(
+                                                targetTime:
+                                                    nextPrayer['nextPrayerTime']
+                                                        as DateTime,
+                                                baseColor: const Color(
+                                                  0xFF00E676,
+                                                ),
+                                                onFinished: () {
+                                                  context
+                                                      .read<PrayerBloc>()
+                                                      .add(
+                                                        FetchPrayerTime(
+                                                          cityId: state
+                                                              .currentCity
+                                                              .id,
+                                                          date: DateTime.now(),
+                                                        ),
+                                                      );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            // TOP ROW: Label & City
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 10.w,
+                                                    vertical: 4.h,
                                                   ),
-                                                  SizedBox(width: 4.w),
-                                                  Text(
-                                                    state.currentCity.name,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black12,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20.r,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.cardNextPrayer,
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 12.sp,
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w500,
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          const Spacer(),
-                                          // Middle: Prayer Name & Time
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.baseline,
-                                            textBaseline:
-                                                TextBaseline.alphabetic,
-                                            children: [
-                                              Text(
-                                                nextPrayer['name'],
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20.sp,
-                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                              ),
-                                              SizedBox(width: 8.w),
-                                              Text(
-                                                nextPrayer['time'],
-                                                style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const Spacer(),
-                                          // Right: Countdown
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 8.w,
-                                              vertical: 4.h,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.black26,
-                                              borderRadius:
-                                                  BorderRadius.circular(12.r),
-                                            ),
-                                            child: PrayerCountdownWidget(
-                                              targetTime:
-                                                  nextPrayer['nextPrayerTime']
-                                                      as DateTime,
-                                              baseColor: const Color(
-                                                0xFF00E676,
-                                              ),
-                                              onFinished: () {
-                                                context.read<PrayerBloc>().add(
-                                                  FetchPrayerTime(
-                                                    cityId:
-                                                        state.currentCity.id,
-                                                    date: DateTime.now(),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    : Column(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          // TOP ROW: Label & City
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 10.w,
-                                                  vertical: 4.h,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black12,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        20.r,
+                                                Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.location_on,
+                                                      color: Colors.white70,
+                                                      size: 14.sp,
+                                                    ),
+                                                    SizedBox(width: 4.w),
+                                                    Text(
+                                                      state.currentCity.name,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                       ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                child: Text(
-                                                  AppLocalizations.of(
-                                                    context,
-                                                  )!.cardNextPrayer,
+                                              ],
+                                            ),
+                                            // MIDDLE ROW: Prayer Name & Time
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  nextPrayer['name'],
                                                   style: TextStyle(
                                                     color: Colors.white,
-                                                    fontSize: 12.sp,
+                                                    fontSize: 28.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                    height: 1.0,
+                                                  ),
+                                                ),
+                                                SizedBox(width: 12.w),
+                                                Text(
+                                                  nextPrayer['time'],
+                                                  style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 20.sp,
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.location_on,
-                                                    color: Colors.white70,
-                                                    size: 14.sp,
+                                              ],
+                                            ),
+                                            // BOTTOM ROW: Countdown & Hijri Date
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.w,
+                                                    vertical: 6.h,
                                                   ),
-                                                  SizedBox(width: 4.w),
-                                                  Text(
-                                                    state.currentCity.name,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14.sp,
-                                                      fontWeight:
-                                                          FontWeight.w600,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black26,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12.r,
+                                                        ),
+                                                  ),
+                                                  child: PrayerCountdownWidget(
+                                                    targetTime:
+                                                        nextPrayer['nextPrayerTime']
+                                                            as DateTime,
+                                                    baseColor: const Color(
+                                                      0xFF00E676,
                                                     ),
+                                                    onFinished: () {
+                                                      // Refresh Prayer Times when countdown finishes
+                                                      context
+                                                          .read<PrayerBloc>()
+                                                          .add(
+                                                            FetchPrayerTime(
+                                                              cityId: state
+                                                                  .currentCity
+                                                                  .id,
+                                                              date:
+                                                                  DateTime.now(),
+                                                            ),
+                                                          );
+                                                    },
                                                   ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          // MIDDLE ROW: Prayer Name & Time
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                nextPrayer['name'],
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 28.sp,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 1.0,
                                                 ),
-                                              ),
-                                              SizedBox(width: 12.w),
-                                              Text(
-                                                nextPrayer['time'],
-                                                style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 20.sp,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          // BOTTOM ROW: Countdown & Hijri Date
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal: 12.w,
-                                                  vertical: 6.h,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black26,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        12.r,
-                                                      ),
-                                                ),
-                                                child: PrayerCountdownWidget(
-                                                  targetTime:
-                                                      nextPrayer['nextPrayerTime']
-                                                          as DateTime,
-                                                  baseColor: const Color(
-                                                    0xFF00E676,
+                                                Text(
+                                                  state.prayerTime!
+                                                      .getHijriDate(),
+                                                  style: TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 12.sp,
+                                                    fontWeight: FontWeight.w400,
                                                   ),
-                                                  onFinished: () {
-                                                    // Refresh Prayer Times when countdown finishes
-                                                    context
-                                                        .read<PrayerBloc>()
-                                                        .add(
-                                                          FetchPrayerTime(
-                                                            cityId: state
-                                                                .currentCity
-                                                                .id,
-                                                            date:
-                                                                DateTime.now(),
-                                                          ),
-                                                        );
-                                                  },
                                                 ),
-                                              ),
-                                              Text(
-                                                state.prayerTime!
-                                                    .getHijriDate(),
-                                                style: TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 12.sp,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                              ),
-                            ],
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -613,47 +683,52 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   SizedBox(height: 16.h),
                   // QUICK ACCESS GRID
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: _buildQuickAccessGridItem(
-                            context,
-                            title: AppLocalizations.of(
+                  Showcase(
+                    key: _quickAccessKey,
+                    description: AppLocalizations.of(
+                      context,
+                    )!.showcaseQuickAccess,
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: _buildQuickAccessGridItem(
                               context,
-                            )!.cardContinueReading,
-                            icon: Icons.menu_book,
-                            color: const Color(0xFF1B5E20),
-                            onTap: () => context.push('/quran/bookmarks'),
+                              title: AppLocalizations.of(
+                                context,
+                              )!.cardContinueReading,
+                              icon: Icons.menu_book,
+                              color: const Color(0xFF1B5E20),
+                              onTap: () => context.push('/quran/bookmarks'),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: _buildQuickAccessGridItem(
-                            context,
-                            title: AppLocalizations.of(
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: _buildQuickAccessGridItem(
                               context,
-                            )!.cardReadingHistory,
-                            icon: Icons.history,
-                            color: const Color(0xFF0288D1),
-                            onTap: () => context.push('/quran/history'),
+                              title: AppLocalizations.of(
+                                context,
+                              )!.cardReadingHistory,
+                              icon: Icons.history,
+                              color: const Color(0xFF0288D1),
+                              onTap: () => context.push('/quran/history'),
+                            ),
                           ),
-                        ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: _buildQuickAccessGridItem(
-                            context,
-                            title: "Inspiration", // Shortened title for grid
-                            icon: Icons.lightbulb_outline,
-                            color: const Color(0xFFE65100),
-                            onTap: () => context.push('/daily-inspiration'),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: _buildQuickAccessGridItem(
+                              context,
+                              title: "Inspiration", // Shortened title for grid
+                              icon: Icons.lightbulb_outline,
+                              color: const Color(0xFFE65100),
+                              onTap: () => context.push('/daily-inspiration'),
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-
                   SizedBox(height: 80.h), // Bottom padding for Nav Bar
                 ],
               ),
@@ -672,6 +747,143 @@ class _DashboardPageState extends State<DashboardPage> {
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  // --- Target Setting Methods (Copied from SettingsPage) ---
+
+  void _showTargetBottomSheet(BuildContext context, int currentTarget) {
+    final l10n = AppLocalizations.of(context)!;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E1E),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.targetSelectTitle,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              _buildTargetOption(
+                context,
+                2,
+                l10n.targetBeginner,
+                currentTarget,
+              ),
+              _buildTargetOption(context, 4, l10n.targetRoutine, currentTarget),
+              _buildTargetOption(
+                context,
+                10,
+                l10n.targetHalfJuz,
+                currentTarget,
+              ),
+              _buildTargetOption(context, 20, l10n.targetOneJuz, currentTarget),
+              ListTile(
+                leading: const Icon(Icons.edit, color: Colors.white54),
+                title: Text(
+                  l10n.targetCustom,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showCustomTargetDialog(context, currentTarget);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showCustomTargetDialog(BuildContext context, int currentTarget) {
+    final l10n = AppLocalizations.of(context)!;
+    final TextEditingController controller = TextEditingController(
+      text: currentTarget.toString(),
+    );
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1E1E1E),
+          title: Text(
+            l10n.targetCustomTitle,
+            style: const TextStyle(color: Colors.white),
+          ),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            style: const TextStyle(color: Colors.white),
+            decoration: InputDecoration(
+              hintText: l10n.targetCustomHint,
+              hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+              enabledBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white54),
+              ),
+              focusedBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFF00E676)),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                final value = int.tryParse(controller.text);
+                if (value != null && value > 0) {
+                  context.read<SettingsCubit>().updateDailyTarget(value);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(
+                l10n.settingsSave,
+                style: const TextStyle(color: Color(0xFF00E676)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTargetOption(
+    BuildContext context,
+    int value,
+    String label,
+    int currentValue,
+  ) {
+    final isSelected = value == currentValue;
+    return ListTile(
+      leading: Icon(
+        isSelected ? Icons.check_circle : Icons.circle_outlined,
+        color: isSelected ? const Color(0xFF00E676) : Colors.white54,
+      ),
+      title: Text(
+        label,
+        style: TextStyle(
+          color: isSelected ? const Color(0xFF00E676) : Colors.white,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      onTap: () {
+        context.read<SettingsCubit>().updateDailyTarget(value);
+        Navigator.pop(context);
+      },
     );
   }
 
@@ -729,6 +941,7 @@ class _DashboardPageState extends State<DashboardPage> {
               color: Colors.white.withOpacity(0.08),
             ),
           ),
+
           Padding(
             padding: EdgeInsets.all(isLandscape ? 8.w : 24.w),
             child: isLandscape
@@ -757,6 +970,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+
                       const Spacer(),
                       // Progress Text
                       Text(
@@ -767,12 +981,31 @@ class _DashboardPageState extends State<DashboardPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        " / $target",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12.sp,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            " / $target",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          InkWell(
+                            onTap: () =>
+                                _showTargetBottomSheet(context, target),
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: Padding(
+                              padding: EdgeInsets.all(4.w),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.white54,
+                                size: 14.sp,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(width: 12.w),
                       // Circular Progress
@@ -847,12 +1080,30 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                             ),
                             SizedBox(height: 4.h),
-                            Text(
-                              "/ $target Pages", // Hardcoded for now
-                              style: TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14.sp,
-                              ),
+                            Row(
+                              children: [
+                                Text(
+                                  "/ $target Pages",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 14.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                InkWell(
+                                  onTap: () =>
+                                      _showTargetBottomSheet(context, target),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(4.w),
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.white54,
+                                      size: 16.sp,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             if (isCompleted) ...[
                               SizedBox(height: 8.h),
