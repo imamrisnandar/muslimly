@@ -283,33 +283,33 @@ class SettingsPage extends StatelessWidget {
                 subtitle: l10n.settingsTargetPages(state.dailyTarget),
                 onTap: () => _showTargetBottomSheet(context, state.dailyTarget),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 8.h),
-                child: _buildListTile(
-                  icon: Icons.history,
-                  title: l10n.settingsReadingHistory,
-                  subtitle: l10n.settingsHistorySubtitle,
-                  onTap: () => context.push('/quran/history'),
-                ),
-              ),
-              SizedBox(height: 24.h),
-              _buildSectionHeader(context, l10n.settingsDeveloper),
-              _buildListTile(
-                icon: Icons.notifications_active,
-                title: l10n.settingsTestAdhan,
-                subtitle: l10n.settingsTestAdhanSubtitle,
-                onTap: () async {
-                  await context.read<SettingsCubit>().testNotification();
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(l10n.settingsTestAdhanTriggered),
-                        backgroundColor: const Color(0xFF00E676),
-                      ),
-                    );
-                  }
-                },
-              ),
+              // Padding(
+              //   padding: EdgeInsets.only(top: 8.h),
+              //   child: _buildListTile(
+              //     icon: Icons.history,
+              //     title: l10n.settingsReadingHistory,
+              //     subtitle: l10n.settingsHistorySubtitle,
+              //     onTap: () => context.push('/quran/history'),
+              //   ),
+              // ),
+              // SizedBox(height: 24.h),
+              // _buildSectionHeader(context, l10n.settingsDeveloper),
+              // _buildListTile(
+              //   icon: Icons.notifications_active,
+              //   title: l10n.settingsTestAdhan,
+              //   subtitle: l10n.settingsTestAdhanSubtitle,
+              //   onTap: () async {
+              //     await context.read<SettingsCubit>().testNotification();
+              //     if (context.mounted) {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //         SnackBar(
+              //           content: Text(l10n.settingsTestAdhanTriggered),
+              //           backgroundColor: const Color(0xFF00E676),
+              //         ),
+              //       );
+              //     }
+              //   },
+              // ),
               SizedBox(height: 24.h),
               _buildSectionHeader(context, l10n.aboutTitle),
               Container(

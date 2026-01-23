@@ -56,6 +56,9 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -66,62 +69,98 @@ class _SplashPageState extends State<SplashPage>
           ),
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Pulsing Logo
-              ScaleTransition(
-                scale: _animation,
-                child: Container(
-                  padding: EdgeInsets.all(2.w), // Minimal padding for border
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: const Color(0xFF101820), // Match icon bg
-                    border: Border.all(
-                      color: const Color(0xFFD4AF37), // Gold border
-                      width: 2,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: isLandscape
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildLogo(isLandscape),
+                        SizedBox(width: 24.w),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildTitle(isLandscape),
+                              SizedBox(height: 8.h),
+                              _buildSubtitle(isLandscape, TextAlign.left),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildLogo(isLandscape),
+                        SizedBox(height: 24.h),
+                        _buildTitle(isLandscape),
+                        SizedBox(height: 8.h),
+                        _buildSubtitle(isLandscape, TextAlign.center),
+                      ],
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF00E676).withOpacity(0.3),
-                        blurRadius: 40,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/icon/app_icon.png',
-                      width: 100.sp,
-                      height: 100.sp,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 24.h),
-              Text(
-                'Muslimly',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 32.sp,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'Your Daily Muslim Companion',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 14.sp,
-                  letterSpacing: 1,
-                ),
-              ),
-              // Removed CircularProgressIndicator for cleaner look
-            ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLogo(bool isLandscape) {
+    return ScaleTransition(
+      scale: _animation,
+      child: Container(
+        padding: EdgeInsets.all(2.w),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color(0xFF101820),
+          border: Border.all(color: const Color(0xFFD4AF37), width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF00E676).withOpacity(0.3),
+              blurRadius: 40,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: ClipOval(
+          child: Image.asset(
+            'assets/icon/app_icon.png',
+            width: isLandscape ? 80.sp : 100.sp,
+            height: isLandscape ? 80.sp : 100.sp,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(bool isLandscape) {
+    return Text(
+      'Muslimly',
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: isLandscape ? 28.sp : 32.sp,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 2,
+      ),
+    );
+  }
+
+  Widget _buildSubtitle(bool isLandscape, TextAlign align) {
+    return Text(
+      'Your Daily Muslim Companion',
+      textAlign: align,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        color: Colors.white70,
+        fontSize: 14.sp,
+        letterSpacing: 1,
       ),
     );
   }

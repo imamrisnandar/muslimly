@@ -13,6 +13,9 @@ abstract class SettingsRepository {
 
   Future<int> getDailyReadingTarget();
   Future<void> saveDailyReadingTarget(int pages);
+
+  Future<String?> getUserName();
+  Future<void> saveUserName(String name);
 }
 
 @LazySingleton(as: SettingsRepository)
@@ -20,6 +23,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyLanguage = 'app_language';
   static const String _keyPrayerPrefix = 'prayer_notify_';
   static const String _keyDailyTarget = 'quran_daily_target';
+  static const String _keyUserName = 'user_name';
 
   final DatabaseService _databaseService;
 
@@ -76,5 +80,15 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> saveDailyReadingTarget(int pages) async {
     await _databaseService.saveSetting(_keyDailyTarget, pages.toString());
+  }
+
+  @override
+  Future<String?> getUserName() async {
+    return await _databaseService.getSetting(_keyUserName);
+  }
+
+  @override
+  Future<void> saveUserName(String name) async {
+    await _databaseService.saveSetting(_keyUserName, name);
   }
 }

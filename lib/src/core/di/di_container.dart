@@ -36,6 +36,9 @@ import '../../features/quran/domain/usecases/get_surahs.dart';
 import '../../features/quran/presentation/bloc/quran_bloc.dart';
 import '../../features/quran/presentation/bloc/reading/reading_bloc.dart';
 import '../../features/quran/presentation/bloc/bookmark/bookmark_bloc.dart';
+import '../../features/quran/data/repositories/audio_repository.dart';
+import '../../features/quran/presentation/bloc/audio_bloc.dart';
+import '../../features/zikir/data/repositories/zikir_local_repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -95,6 +98,7 @@ void configureDependencies() {
       getIt<LocationService>(),
       getIt<NotificationService>(),
       getIt<SettingsRepository>(),
+      getIt<LastReadRepository>(), // Added
     ),
   );
 
@@ -120,6 +124,17 @@ void configureDependencies() {
   );
   getIt.registerFactory<BookmarkBloc>(
     () => BookmarkBloc(getIt<DatabaseService>(), getIt<LastReadRepository>()),
+  );
+
+  // --- Murottal / Audio ---
+  getIt.registerLazySingleton<AudioRepository>(
+    () => AudioRepositoryImpl(getIt<Dio>(), getIt<DatabaseService>()),
+  );
+  getIt.registerFactory<AudioBloc>(() => AudioBloc(getIt<AudioRepository>()));
+
+  // --- Zikir Feature ---
+  getIt.registerLazySingleton<ZikirLocalRepository>(
+    () => ZikirLocalRepository(),
   );
 }
 

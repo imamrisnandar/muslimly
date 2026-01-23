@@ -1,6 +1,6 @@
+import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:intl/intl.dart';
 import '../../../../core/utils/location_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../domain/entities/city.dart';
@@ -8,6 +8,8 @@ import '../../domain/entities/prayer_time.dart';
 import '../../domain/usecases/get_prayer_time.dart';
 import '../../domain/usecases/search_city.dart';
 import '../../../settings/data/repositories/settings_repository.dart';
+import '../../../quran/data/repositories/last_read_repository.dart';
+import '../../../../l10n/generated/app_localizations.dart'; // Import generated l10n
 import 'prayer_event.dart';
 import 'prayer_state.dart';
 
@@ -18,6 +20,7 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
   final LocationService _locationService;
   final NotificationService _notificationService;
   final SettingsRepository _settingsRepository;
+  final LastReadRepository _lastReadRepository;
 
   PrayerBloc(
     this._getPrayerTime,
@@ -25,11 +28,12 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
     this._locationService,
     this._notificationService,
     this._settingsRepository,
+    this._lastReadRepository,
   ) : super(const PrayerState()) {
     on<FetchPrayerTime>((event, emit) async {
       emit(state.copyWith(status: PrayerStatus.loading));
 
-      // Request permissions once on first fetch (or handle better in a dedicated Init event)
+      // Request permissions once on first fetch
       await _notificationService.requestPermissions();
       // Load Notification Settings
       final settings = await _settingsRepository
@@ -46,15 +50,18 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
           state.copyWith(status: PrayerStatus.failure, errorMessage: failure),
         ),
         (prayerTime) {
+          // DEBUG: 1 minute for faster testing
+          final testTime = DateTime.now().add(const Duration(minutes: 1));
           emit(
             state.copyWith(
               status: PrayerStatus.success,
               prayerTime: prayerTime,
+              testAdzanTargetTime: testTime,
             ),
           );
 
           // Schedule Notifications
-          _scheduleNotifications(prayerTime);
+          _scheduleNotifications(prayerTime, testTime);
         },
       );
     });
@@ -76,7 +83,10 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
 
       // Reschedule if we have prayer time
       if (state.prayerTime != null) {
-        _scheduleNotifications(state.prayerTime!);
+        final testTime =
+            state.testAdzanTargetTime ??
+            DateTime.now().add(const Duration(minutes: 1));
+        _scheduleNotifications(state.prayerTime!, testTime);
       }
     });
 
@@ -84,27 +94,21 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
       emit(state.copyWith(isSearching: true));
       final result = await _searchCity(event.keyword);
       result.fold(
-        (failure) => emit(
-          state.copyWith(
-            isSearching: false,
-            errorMessage: failure, // Or separate searchError
-          ),
-        ),
+        (failure) =>
+            emit(state.copyWith(isSearching: false, errorMessage: failure)),
         (cities) =>
             emit(state.copyWith(isSearching: false, searchResults: cities)),
       );
     });
 
     on<SelectCity>((event, emit) {
-      // Update city and reset search results/flag if needed
       emit(
         state.copyWith(
           currentCity: event.city,
-          searchResults: [], // Clear results after selection?
+          searchResults: [],
           isSearching: false,
         ),
       );
-      // Trigger fetch
       add(FetchPrayerTime(cityId: event.city.id, date: DateTime.now()));
     });
 
@@ -126,7 +130,6 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
         return;
       }
 
-      // Search for the city ID
       final searchResult = await _searchCity(cityName);
       searchResult.fold(
         (failure) => add(
@@ -134,7 +137,7 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
         ), // Fallback
         (cities) {
           if (cities.isNotEmpty) {
-            final city = cities.first; // Naive approach
+            final city = cities.first;
             emit(state.copyWith(currentCity: city));
             add(FetchPrayerTime(cityId: city.id, date: DateTime.now()));
           } else {
@@ -145,7 +148,15 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
     });
   }
 
-  void _scheduleNotifications(PrayerTime prayerTime) {
+  void _scheduleNotifications(
+    PrayerTime prayerTime,
+    DateTime testAdzanTime,
+  ) async {
+    // 1. Get Locale
+    final langCode = await _settingsRepository.getLanguage();
+    final locale = Locale(langCode ?? 'id'); // Default to ID if null
+    final l10n = lookupAppLocalizations(locale);
+
     // Helper to parse time string "HH:mm" to today's DateTime
     DateTime parseTime(String timeStr) {
       final now = DateTime.now();
@@ -167,51 +178,91 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
       'Ashar': prayerTime.ashar,
       'Maghrib': prayerTime.maghrib,
       'Isya': prayerTime.isya,
-      // TEST ADZAN START: 1 Minute from now
-      'Test Adzan': DateFormat(
-        'HH:mm',
-      ).format(DateTime.now().add(const Duration(minutes: 1))),
+      // TEST ADZAN DISABLED
+      // 'Test Adzan': DateFormat('HH:mm').format(testAdzanTime),
     };
 
     int id = 0;
-    prayers.forEach((name, timeStr) async {
-      final time = parseTime(timeStr);
+    for (final entry in prayers.entries) {
+      final name = entry.key;
+      final timeStr = entry.value;
+
       final isTest = name == 'Test Adzan';
+      final time = isTest ? testAdzanTime : parseTime(timeStr);
 
-      // Get setting for this prayer (default to 'adhan')
-      final soundType = state.notificationSettings[name] ?? 'adhan';
+      // Override sound type for Imsak and Terbit to always use 'beep'
+      String soundType = state.notificationSettings[name] ?? 'adhan';
+      if (name == 'Imsak' || name == 'Terbit') {
+        soundType = 'beep';
+      }
 
-      // 1. Exact Time
-      await _notificationService.schedulePrayerNotification(
-        id: id++,
-        title: 'Waktu $name Telah Tiba',
-        body: 'Mari laksanakan sholat $name sekarang.',
-        scheduledTime: time,
-        soundType: soundType,
-        isRepeating: !isTest, // Test is one-off, others repeat
-      );
+      String notificationTitle = l10n.notificationPrayerTitle(name);
+      String notificationBody = l10n.notificationPrayerBody(name);
 
-      // 2. 15 Minutes Before (Skip for Test Adzan)
-      // Pre-warning always uses default sound or silent, usually not Adhan
-      // But user might want Adhan? Let's assume beep for pre-warning or same as main?
-      // For now, let's use 'beep' for pre-warning to distinguish, or same setting?
-      // Let's use 'beep' for pre-warning unless user chose silent.
-      // 2. 15 Minutes Before (Skip for Test Adzan)
-      if (!isTest) {
+      // SMART REMINDER LOGIC for 'Test Adzan'
+      if (isTest) {
+        // 1. Fetch Real Data
+        final userName = await _settingsRepository.getUserName();
+        final lastRead = await _lastReadRepository.getLastRead();
+        final targetPages = await _settingsRepository.getDailyReadingTarget();
+
+        // Calculate Remaining
+        int remainingPages = targetPages;
+        if (lastRead != null) {
+          remainingPages = (targetPages - 1).clamp(0, targetPages);
+        }
+
+        // Option A Selection (Using Localized Strings)
+        if (userName != null && lastRead != null) {
+          // PERSONALIZED (Name + Progress)
+          notificationTitle = l10n.notificationSmartTitle(userName);
+          notificationBody = l10n.notificationSmartBodyProgress(remainingPages);
+        } else if (userName != null) {
+          // PERSONALIZED (Name Only)
+          notificationTitle = l10n.notificationSmartTitle(userName);
+          notificationBody = l10n.notificationSmartBodyStart(remainingPages);
+        } else {
+          // FALLBACK
+          notificationTitle = l10n.notificationFallbackTitle;
+          notificationBody = l10n.notificationFallbackBody;
+        }
+
+        // Schedule with FORCED BEEP
+        await _notificationService.schedulePrayerNotification(
+          id: id++,
+          title: notificationTitle,
+          body: notificationBody,
+          scheduledTime: time,
+          soundType: 'beep', // Forced Beep
+          isRepeating: !isTest,
+        );
+      } else {
+        // STANDARD ADZAN for other times
+        await _notificationService.schedulePrayerNotification(
+          id: id++,
+          title: notificationTitle,
+          body: notificationBody,
+          scheduledTime: time,
+          soundType: soundType,
+          isRepeating: !isTest,
+        );
+      }
+
+      // 2. 15 Minutes Before (Skip for Test Adzan, Imsak, and Terbit)
+      if (!isTest && name != 'Imsak' && name != 'Terbit') {
         String preSound = 'beep';
         if (soundType == 'silent') preSound = 'silent';
 
         await _notificationService.schedulePrayerNotification(
           id: id++,
-          title: 'Menuju Waktu $name',
-          body: '15 menit lagi waktu $name akan tiba.',
+          title: l10n.notificationPrePrayerTitle(name),
+          body: l10n.notificationPrePrayerBody(name),
           scheduledTime: time.subtract(const Duration(minutes: 15)),
           soundType: preSound,
         );
       } else {
-        // Increment ID to keep sequence aligned if needed, or just skip
         id++;
       }
-    });
+    }
   }
 }

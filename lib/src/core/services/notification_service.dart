@@ -32,9 +32,9 @@ class NotificationService {
           iOS: initializationSettingsDarwin,
         );
 
-    // 1. Adhan (Custom Sound) - v6 (Bumped to force update & fix sound)
+    // 1. Adhan (Custom Sound) - v7 (Bumped to force update & fix sound)
     const AndroidNotificationDetails channelAdhan = AndroidNotificationDetails(
-      'prayer_channel_v6',
+      'prayer_channel_v7',
       'Prayer Notifications (Adhan)',
       channelDescription: 'Notifications with Adhan sound',
       importance: Importance.max,
@@ -184,7 +184,7 @@ class NotificationService {
       case 'adhan':
       default:
         androidDetails = const AndroidNotificationDetails(
-          'prayer_channel_v5',
+          'prayer_channel_v7',
           'Prayer Notifications (Adhan)',
           channelDescription: 'Notifications with Adhan sound',
           importance: Importance.max,
@@ -197,7 +197,11 @@ class NotificationService {
     }
 
     final tzDateTime = tz.TZDateTime.from(scheduledTime, tz.local);
-    print('DEBUG: Converted to TZDateTime: $tzDateTime');
+
+    // Safety check: Don't schedule if already passed
+    if (tzDateTime.isBefore(tz.TZDateTime.now(tz.local))) {
+      return;
+    }
 
     try {
       await _flutterLocalNotificationsPlugin.zonedSchedule(
@@ -209,14 +213,12 @@ class NotificationService {
           android: androidDetails,
           iOS: const DarwinNotificationDetails(),
         ),
-        // Use alarmClock for strongest guarantee (shows an alarm icon usually)
-        androidScheduleMode: AndroidScheduleMode.alarmClock,
+        // Use exactAllowWhileIdle as alarmClock might be restricted on some devices
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: isRepeating ? DateTimeComponents.time : null,
       );
-      print('DEBUG: Scheduled successfully ID:$id');
-    } catch (e, stack) {
-      print('DEBUG: Error scheduling notification ID:$id -> $e');
-      print(stack);
+    } catch (e) {
+      // Handle error gracefully
     }
   }
 
@@ -226,7 +228,7 @@ class NotificationService {
   }) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-          'prayer_channel_v6',
+          'prayer_channel_v7',
           'Prayer Notifications (Adhan)',
           channelDescription: 'Notifications with Adhan sound',
           importance: Importance.max,

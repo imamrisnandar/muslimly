@@ -13,6 +13,7 @@ class PrayerState extends Equatable {
   final bool isSearching;
   final List<City> searchResults;
   final Map<String, String> notificationSettings;
+  final DateTime? testAdzanTargetTime;
 
   const PrayerState({
     this.status = PrayerStatus.initial,
@@ -22,6 +23,7 @@ class PrayerState extends Equatable {
     this.isSearching = false,
     this.searchResults = const [],
     this.notificationSettings = const {},
+    this.testAdzanTargetTime,
   });
 
   PrayerState copyWith({
@@ -32,6 +34,7 @@ class PrayerState extends Equatable {
     bool? isSearching,
     List<City>? searchResults,
     Map<String, String>? notificationSettings,
+    DateTime? testAdzanTargetTime,
   }) {
     return PrayerState(
       status: status ?? this.status,
@@ -41,6 +44,7 @@ class PrayerState extends Equatable {
       isSearching: isSearching ?? this.isSearching,
       searchResults: searchResults ?? this.searchResults,
       notificationSettings: notificationSettings ?? this.notificationSettings,
+      testAdzanTargetTime: testAdzanTargetTime ?? this.testAdzanTargetTime,
     );
   }
 
@@ -53,5 +57,6 @@ class PrayerState extends Equatable {
     isSearching,
     searchResults,
     notificationSettings,
+    testAdzanTargetTime,
   ];
 }

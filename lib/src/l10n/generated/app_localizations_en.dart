@@ -74,10 +74,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bottomNavQuran => 'Quran';
 
   @override
-  String get bottomNavMurottal => 'Murottal';
+  String get bottomNavDzikir => 'Dzikir & Dua';
 
   @override
-  String get bottomNavArticles => 'Articles';
+  String get bottomNavSettings => 'Settings';
 
   @override
   String get cardNextPrayer => 'Next Prayer';
@@ -287,4 +287,117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markAsRead => 'Mark as Read';
+
+  @override
+  String notificationPrayerTitle(Object prayerName) {
+    return 'Time for $prayerName';
+  }
+
+  @override
+  String notificationPrayerBody(Object prayerName) {
+    return 'Let\'s perform $prayerName prayer now.';
+  }
+
+  @override
+  String notificationPrePrayerTitle(Object prayerName) {
+    return 'Approaching $prayerName';
+  }
+
+  @override
+  String notificationPrePrayerBody(Object prayerName) {
+    return '15 minutes left until $prayerName time.';
+  }
+
+  @override
+  String notificationSmartTitle(Object userName) {
+    return 'Assalamualaikum, $userName.';
+  }
+
+  @override
+  String notificationSmartBodyProgress(Object remaining) {
+    return 'Let\'s read $remaining more pages today! ✨';
+  }
+
+  @override
+  String notificationSmartBodyStart(Object target) {
+    return 'Let\'s start your $target pages goal today! ✨';
+  }
+
+  @override
+  String get notificationFallbackTitle => 'Time to Read Quran 📖';
+
+  @override
+  String get notificationFallbackBody =>
+      'Reading even one verse is meaningful.';
+
+  @override
+  String get nameInputError => 'Please enter your name';
+
+  @override
+  String dzikirReadCount(Object count) {
+    return 'Read ${count}x';
+  }
+
+  @override
+  String get dzikirTapToCount => 'Tap to count';
+
+  @override
+  String get dzikirFinish => 'Done';
+
+  @override
+  String get dzikirAlhamdulillah => 'Alhamdulillah';
+
+  @override
+  String get dzikirDoneMessage => 'You have completed this Dzikir session.';
+
+  @override
+  String get dzikirSelectCategory => 'Select Category';
+
+  @override
+  String get dzikirMorningTitle => 'Morning Dzikir';
+
+  @override
+  String get dzikirMorningSubtitle => 'Start your day with remembrance';
+
+  @override
+  String get dzikirEveningTitle => 'Evening Dzikir';
+
+  @override
+  String get dzikirEveningSubtitle => 'Close your day with peace';
+
+  @override
+  String get dzikirPrayerTitle => 'After Prayer';
+
+  @override
+  String get dzikirPrayerSubtitle => 'Dzikir after Fardhu prayer';
+
+  @override
+  String get dzikirDailyTitle => 'Daily Dua';
+
+  @override
+  String get dzikirDailySubtitle => 'Collection of daily prayers';
+
+  @override
+  String get comingSoon => 'Coming Soon';
+
+  @override
+  String get fontDownloadError => 'Failed to download font';
+
+  @override
+  String get checkInternetConnection =>
+      'Please check your internet connection.';
+
+  @override
+  String get tryAgain => 'Try Again';
+
+  @override
+  String get showcaseNavigation =>
+      'Swipe left/right to move pages.\nLong press verse for options.';
+
+  @override
+  String get showcaseBookmark => 'Save this page to bookmarks.';
+
+  @override
+  String get showcaseCompletion =>
+      'Page is marked as read automatically after 20 sec.\nTap to mark manually.';
 }

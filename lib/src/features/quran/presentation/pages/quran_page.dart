@@ -9,6 +9,10 @@ import '../../domain/entities/surah.dart';
 import '../bloc/quran_bloc.dart';
 import '../bloc/quran_event.dart';
 import '../bloc/quran_state.dart';
+import '../bloc/audio_bloc.dart';
+import '../bloc/audio_event.dart';
+import '../bloc/audio_state.dart';
+import '../widgets/reciter_selector_bottom_sheet.dart';
 
 class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
@@ -82,8 +86,11 @@ class _QuranPageState extends State<QuranPage> {
                           Icons.search,
                           color: Colors.white54,
                         ),
-                        suffixIcon: _searchQuery.isNotEmpty
-                            ? IconButton(
+                        suffixIcon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (_searchQuery.isNotEmpty)
+                              IconButton(
                                 icon: const Icon(
                                   Icons.clear,
                                   color: Colors.white54,
@@ -94,8 +101,30 @@ class _QuranPageState extends State<QuranPage> {
                                     _searchQuery = '';
                                   });
                                 },
-                              )
-                            : null,
+                              ),
+                            IconButton(
+                              onPressed: () {
+                                final audioBloc = context.read<AudioBloc>();
+                                showModalBottomSheet(
+                                  context: context,
+                                  backgroundColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                  builder: (_) => BlocProvider.value(
+                                    value: audioBloc,
+                                    child: const ReciterSelectorBottomSheet(),
+                                  ),
+                                );
+                              },
+                              icon: Icon(
+                                Icons.headphones,
+                                color: const Color(0xFF00E676),
+                                size: 24.sp,
+                              ),
+                              tooltip: 'Pilih Qori',
+                            ),
+                            SizedBox(width: 8.w),
+                          ],
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.r),
                           borderSide: BorderSide.none,
@@ -264,6 +293,23 @@ class _QuranPageState extends State<QuranPage> {
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Amiri', // Assuming Font
                                     ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  IconButton(
+                                    onPressed: () {
+                                      context.read<AudioBloc>().add(
+                                        PlaySurah(
+                                          surahId: surah.number,
+                                          surahName: surah.englishName,
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.play_circle_outline,
+                                      color: Color(0xFF00E676),
+                                    ),
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
                                   ),
                                 ],
                               ),

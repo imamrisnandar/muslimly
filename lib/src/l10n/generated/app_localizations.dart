@@ -224,17 +224,17 @@ abstract class AppLocalizations {
   /// **'Quran'**
   String get bottomNavQuran;
 
-  /// No description provided for @bottomNavMurottal.
+  /// No description provided for @bottomNavDzikir.
   ///
   /// In en, this message translates to:
-  /// **'Murottal'**
-  String get bottomNavMurottal;
+  /// **'Dzikir & Dua'**
+  String get bottomNavDzikir;
 
-  /// No description provided for @bottomNavArticles.
+  /// No description provided for @bottomNavSettings.
   ///
   /// In en, this message translates to:
-  /// **'Articles'**
-  String get bottomNavArticles;
+  /// **'Settings'**
+  String get bottomNavSettings;
 
   /// No description provided for @cardNextPrayer.
   ///
@@ -625,6 +625,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark as Read'**
   String get markAsRead;
+
+  /// No description provided for @notificationPrayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for {prayerName}'**
+  String notificationPrayerTitle(Object prayerName);
+
+  /// No description provided for @notificationPrayerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s perform {prayerName} prayer now.'**
+  String notificationPrayerBody(Object prayerName);
+
+  /// No description provided for @notificationPrePrayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Approaching {prayerName}'**
+  String notificationPrePrayerTitle(Object prayerName);
+
+  /// No description provided for @notificationPrePrayerBody.
+  ///
+  /// In en, this message translates to:
+  /// **'15 minutes left until {prayerName} time.'**
+  String notificationPrePrayerBody(Object prayerName);
+
+  /// No description provided for @notificationSmartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assalamualaikum, {userName}.'**
+  String notificationSmartTitle(Object userName);
+
+  /// No description provided for @notificationSmartBodyProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s read {remaining} more pages today! ✨'**
+  String notificationSmartBodyProgress(Object remaining);
+
+  /// No description provided for @notificationSmartBodyStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s start your {target} pages goal today! ✨'**
+  String notificationSmartBodyStart(Object target);
+
+  /// No description provided for @notificationFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to Read Quran 📖'**
+  String get notificationFallbackTitle;
+
+  /// No description provided for @notificationFallbackBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading even one verse is meaningful.'**
+  String get notificationFallbackBody;
+
+  /// No description provided for @nameInputError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get nameInputError;
+
+  /// No description provided for @dzikirReadCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Read {count}x'**
+  String dzikirReadCount(Object count);
+
+  /// No description provided for @dzikirTapToCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to count'**
+  String get dzikirTapToCount;
+
+  /// No description provided for @dzikirFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get dzikirFinish;
+
+  /// No description provided for @dzikirAlhamdulillah.
+  ///
+  /// In en, this message translates to:
+  /// **'Alhamdulillah'**
+  String get dzikirAlhamdulillah;
+
+  /// No description provided for @dzikirDoneMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have completed this Dzikir session.'**
+  String get dzikirDoneMessage;
+
+  /// No description provided for @dzikirSelectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Category'**
+  String get dzikirSelectCategory;
+
+  /// No description provided for @dzikirMorningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning Dzikir'**
+  String get dzikirMorningTitle;
+
+  /// No description provided for @dzikirMorningSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your day with remembrance'**
+  String get dzikirMorningSubtitle;
+
+  /// No description provided for @dzikirEveningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening Dzikir'**
+  String get dzikirEveningTitle;
+
+  /// No description provided for @dzikirEveningSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close your day with peace'**
+  String get dzikirEveningSubtitle;
+
+  /// No description provided for @dzikirPrayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'After Prayer'**
+  String get dzikirPrayerTitle;
+
+  /// No description provided for @dzikirPrayerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dzikir after Fardhu prayer'**
+  String get dzikirPrayerSubtitle;
+
+  /// No description provided for @dzikirDailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Dua'**
+  String get dzikirDailyTitle;
+
+  /// No description provided for @dzikirDailySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection of daily prayers'**
+  String get dzikirDailySubtitle;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming Soon'**
+  String get comingSoon;
+
+  /// No description provided for @fontDownloadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to download font'**
+  String get fontDownloadError;
+
+  /// No description provided for @checkInternetConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection.'**
+  String get checkInternetConnection;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get tryAgain;
+
+  /// No description provided for @showcaseNavigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe left/right to move pages.\nLong press verse for options.'**
+  String get showcaseNavigation;
+
+  /// No description provided for @showcaseBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this page to bookmarks.'**
+  String get showcaseBookmark;
+
+  /// No description provided for @showcaseCompletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Page is marked as read automatically after 20 sec.\nTap to mark manually.'**
+  String get showcaseCompletion;
 }
 
 class _AppLocalizationsDelegate

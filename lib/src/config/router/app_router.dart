@@ -10,6 +10,7 @@ import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/quran/presentation/pages/bookmarks_page.dart';
 
 import '../../features/quran/presentation/pages/reading_history_page.dart';
+import '../../features/dashboard/presentation/pages/daily_inspiration_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -73,6 +74,10 @@ final appRouter = GoRouter(
         final surah = state.extra as Surah;
         return SurahDetailPage(surah: surah);
       },
+    ),
+    GoRoute(
+      path: '/daily-inspiration',
+      builder: (context, state) => const DailyInspirationPage(),
     ),
   ],
 );

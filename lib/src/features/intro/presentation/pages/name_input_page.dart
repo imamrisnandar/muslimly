@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../l10n/generated/app_localizations.dart'; // Import L10n
 import '../../../../core/di/di_container.dart';
 import '../../data/repositories/name_repository.dart';
 
@@ -46,6 +47,7 @@ class _NameInputPageState extends State<NameInputPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFF0F2027),
       body: SafeArea(
@@ -67,7 +69,7 @@ class _NameInputPageState extends State<NameInputPage> {
                 ),
                 SizedBox(height: 12.h),
                 Text(
-                  "Before we start, what should we call you?",
+                  l10n.nameInputTitle, // Localized
                   style: TextStyle(color: Colors.white70, fontSize: 16.sp),
                 ),
                 SizedBox(height: 32.h),
@@ -75,7 +77,7 @@ class _NameInputPageState extends State<NameInputPage> {
                   controller: _nameController,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: "Your Name",
+                    hintText: l10n.nameInputHint, // Localized
                     hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.1),
@@ -91,7 +93,7 @@ class _NameInputPageState extends State<NameInputPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your name';
+                      return l10n.nameInputError; // Localized
                     }
                     return null;
                   },
@@ -120,7 +122,7 @@ class _NameInputPageState extends State<NameInputPage> {
                             ),
                           )
                         : Text(
-                            "Get Started",
+                            l10n.nameInputButton, // Localized
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.bold,

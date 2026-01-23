@@ -53,6 +53,7 @@ extension PrayerTimeX on PrayerTime {
               p['name'], // Name logic might need update if we want localized prayer names here too
           'time': p['time'],
           'timeLeft': timeLeft,
+          'nextPrayerTime': dt,
           'isTomorrow': false,
         };
       }
@@ -60,10 +61,14 @@ extension PrayerTimeX on PrayerTime {
 
     // If none found (after Isha), show Fajr for next day
     final fajr = prayers[0];
+    final fajrTime = fajr['dt'] as DateTime;
+    final nextFajr = fajrTime.add(const Duration(days: 1));
+
     return {
       'name': fajr['name'],
       'time': fajr['time'],
       'timeLeft': l10n.untilTomorrow,
+      'nextPrayerTime': nextFajr,
       'isTomorrow': true,
     };
   }

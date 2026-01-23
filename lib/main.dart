@@ -10,9 +10,20 @@ import 'src/core/di/di_container.dart';
 
 import 'src/core/services/notification_service.dart';
 
+import 'package:just_audio_background/just_audio_background.dart';
+
+import 'package:showcaseview/showcaseview.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
+  await JustAudioBackground.init(
+    androidNotificationChannelId:
+        'com.muslimly.app.channel.audio', // Use app specific ID
+    androidNotificationChannelName: 'Audio Playback',
+    androidNotificationOngoing: true,
+    androidNotificationIcon: 'mipmap/ic_launcher',
+  );
   await getIt<NotificationService>().initialize();
   runApp(const MyApp());
 }
@@ -34,19 +45,22 @@ class MyApp extends StatelessWidget {
           ],
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (context, state) {
-              return MaterialApp.router(
-                title: 'Muslimly',
-                locale: state.locale, // Uses state from SettingsCubit
-                localizationsDelegates: AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
-                theme: ThemeData(
-                  useMaterial3: true,
-                  colorScheme: ColorScheme.fromSeed(
-                    seedColor: const Color(0xFF00E676),
-                    primary: const Color(0xFF00E676),
+              return ShowCaseWidget(
+                builder: (context) => MaterialApp.router(
+                  title: 'Muslimly',
+                  locale: state.locale,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  theme: ThemeData(
+                    useMaterial3: true,
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: const Color(0xFF00E676),
+                      primary: const Color(0xFF00E676),
+                    ),
                   ),
+                  routerConfig: appRouter,
                 ),
-                routerConfig: appRouter,
               );
             },
           ),

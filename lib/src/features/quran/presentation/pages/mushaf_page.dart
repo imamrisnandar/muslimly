@@ -25,6 +25,10 @@ import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_
 import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_state.dart';
 import 'package:muslimly/src/features/quran/domain/entities/quran_bookmark.dart';
 import 'package:muslimly/src/features/quran/domain/entities/last_read.dart';
+import 'package:muslimly/src/features/quran/data/datasources/font_cache_service.dart';
+import 'package:dio/dio.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MushafPage extends StatefulWidget {
   final Surah surah;
@@ -50,11 +54,31 @@ class _MushafPageState extends State<MushafPage> {
   final Stopwatch _readStopwatch = Stopwatch();
   int _lastPageNumber = -1; // Track the page being read
 
+  // Showcase Keys
+  final GlobalKey _swipeKey = GlobalKey();
+  final GlobalKey _bookmarkKey = GlobalKey();
+  final GlobalKey _completionKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
     // Start stopwatch when entering the view
     _readStopwatch.start();
+
+    // Check for showcase
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkShowcase());
+  }
+
+  Future<void> _checkShowcase() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool('hasShownMushafShowcase') ?? false;
+
+    if (!hasShown && mounted) {
+      ShowCaseWidget.of(
+        context,
+      ).startShowCase([_swipeKey, _bookmarkKey, _completionKey]);
+      prefs.setBool('hasShownMushafShowcase', true);
+    }
   }
 
   @override
@@ -290,49 +314,55 @@ class _MushafPageState extends State<MushafPage> {
                             }
                             return false;
                           },
-                          child: PageView.builder(
-                            controller: _pageController!,
-                            reverse: true, // Right-to-Left swipe for Quran
-                            physics: const AlwaysScrollableScrollPhysics(
-                              parent: BouncingScrollPhysics(),
+                          child: Showcase(
+                            key: _swipeKey,
+                            description: AppLocalizations.of(
+                              context,
+                            )!.showcaseNavigation, // Localized
+                            child: PageView.builder(
+                              controller: _pageController!,
+                              reverse: true, // Right-to-Left swipe for Quran
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              onPageChanged: (index) {
+                                // Log previous page
+                                if (_lastPageNumber != -1) {
+                                  _logReading(context, _lastPageNumber);
+                                }
+                                // Update tracking
+                                final newPage = sortedDid[index];
+
+                                // Save Last Read
+                                final lastRead = LastRead(
+                                  pageNumber: newPage,
+                                  surahName: widget.surah.englishName,
+                                  surahNumber: widget.surah.number,
+                                  // Note: We don't have exact Ayah here easily without finding first ayah of newPage
+                                  // But pageNumber is enough for navigation.
+                                );
+                                context.read<BookmarkBloc>().add(
+                                  SaveLastRead(lastRead),
+                                );
+
+                                setState(() {
+                                  _lastPageNumber = newPage;
+                                });
+                              },
+                              itemCount: sortedDid.length,
+                              itemBuilder: (context, index) {
+                                final pageNumber = sortedDid[index];
+                                final ayahsOnPage = pages[pageNumber]!;
+
+                                return MushafSinglePage(
+                                  pageNumber: pageNumber,
+                                  ayahs: ayahsOnPage,
+                                  surahName: widget.surah.englishName,
+                                  surahNumber: widget.surah.number,
+                                  panEnabled: true,
+                                );
+                              },
                             ),
-                            onPageChanged: (index) {
-                              // Log previous page
-                              if (_lastPageNumber != -1) {
-                                _logReading(context, _lastPageNumber);
-                              }
-                              // Update tracking
-                              final newPage = sortedDid[index];
-
-                              // Save Last Read
-                              final lastRead = LastRead(
-                                pageNumber: newPage,
-                                surahName: widget.surah.englishName,
-                                surahNumber: widget.surah.number,
-                                // Note: We don't have exact Ayah here easily without finding first ayah of newPage
-                                // But pageNumber is enough for navigation.
-                              );
-                              context.read<BookmarkBloc>().add(
-                                SaveLastRead(lastRead),
-                              );
-
-                              setState(() {
-                                _lastPageNumber = newPage;
-                              });
-                            },
-                            itemCount: sortedDid.length,
-                            itemBuilder: (context, index) {
-                              final pageNumber = sortedDid[index];
-                              final ayahsOnPage = pages[pageNumber]!;
-
-                              return MushafSinglePage(
-                                pageNumber: pageNumber,
-                                ayahs: ayahsOnPage,
-                                surahName: widget.surah.englishName,
-                                surahNumber: widget.surah.number,
-                                panEnabled: true,
-                              );
-                            },
                           ),
                         );
                       }
@@ -375,35 +405,42 @@ class _MushafPageState extends State<MushafPage> {
                           backgroundColor: Colors.black.withOpacity(
                             0.0,
                           ), // Transparent
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.bookmark_border,
-                              color: Colors.black,
-                            ),
-                            onPressed: () {
-                              // Get current page info
-                              if (_lastPageNumber != -1) {
-                                final bookmark = QuranBookmark(
-                                  surahNumber: widget.surah.number,
-                                  surahName: widget.surah.englishName,
-                                  pageNumber: _lastPageNumber,
-                                  createdAt:
-                                      DateTime.now().millisecondsSinceEpoch,
-                                );
+                          child: Showcase(
+                            key: _bookmarkKey,
+                            description: AppLocalizations.of(
+                              context,
+                            )!.showcaseBookmark,
+                            targetShapeBorder: const CircleBorder(),
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.bookmark_border,
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                // Get current page info
+                                if (_lastPageNumber != -1) {
+                                  final bookmark = QuranBookmark(
+                                    surahNumber: widget.surah.number,
+                                    surahName: widget.surah.englishName,
+                                    pageNumber: _lastPageNumber,
+                                    createdAt:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                  );
 
-                                context.read<BookmarkBloc>().add(
-                                  AddBookmark(bookmark),
-                                );
+                                  context.read<BookmarkBloc>().add(
+                                    AddBookmark(bookmark),
+                                  );
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Bookmarked Page $_lastPageNumber',
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Bookmarked Page $_lastPageNumber',
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }
-                            },
+                                  );
+                                }
+                              },
+                            ),
                           ),
                         );
                       },
@@ -424,10 +461,17 @@ class _MushafPageState extends State<MushafPage> {
                           elevation: 0,
                           heroTag: 'finish_reading_btn',
                           backgroundColor: const Color(0xFF00E676),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 20,
+                          child: Showcase(
+                            key: _completionKey,
+                            description: AppLocalizations.of(
+                              context,
+                            )!.showcaseCompletion,
+                            targetShapeBorder: const CircleBorder(),
+                            child: const Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                           onPressed: () {
                             if (_lastPageNumber != -1) {
@@ -480,10 +524,18 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
   int? _selectedSurah;
   int? _selectedAyah;
 
+  Future<void>? _fontFuture;
+
   @override
   void initState() {
     super.initState();
     _transformationController.value = Matrix4.identity()..scale(1.0);
+    _fontFuture = _loadFont();
+  }
+
+  Future<void> _loadFont() async {
+    final fontService = FontCacheService(Dio());
+    await fontService.loadPageFont(widget.pageNumber);
   }
 
   @override
@@ -567,37 +619,114 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                 width: double.infinity,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    return InteractiveViewer(
-                      panEnabled: widget.panEnabled,
-                      transformationController: _transformationController,
-                      minScale: 1.0,
-                      maxScale: 5.0,
-                      constrained:
-                          false, // Allow content to exceed viewport height
-                      child: Container(
-                        // Constrain width to viewport width to force text wrapping
-                        width: constraints.maxWidth,
-                        // Allow height to be intrinsic (grow as needed)
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        alignment: Alignment.center,
-                        child: RichText(
-                          textDirection: TextDirection.rtl,
-                          textAlign: isFatihahOrBaqarahStart
-                              ? TextAlign.center
-                              : TextAlign.justify,
-                          text: TextSpan(
-                            style: TextStyle(
-                              fontFamily: fontFamily,
-                              fontSize: fontSize,
-                              color: Colors.black,
-                              height: lineHeight,
-                              letterSpacing: 0,
-                              wordSpacing: 0,
+                    return FutureBuilder<void>(
+                      future: _fontFuture,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (snapshot.hasError) {
+                          return Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.w),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 40,
+                                  ),
+                                  SizedBox(height: 10.h),
+                                  Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.fontDownloadError,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.sp,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5.h),
+                                  Text(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.checkInternetConnection,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                  SizedBox(height: 15.h),
+                                  FilledButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _fontFuture = _loadFont();
+                                      });
+                                    },
+                                    child: Text(
+                                      AppLocalizations.of(context)!.tryAgain,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20.h),
+                                  Container(
+                                    padding: EdgeInsets.all(8.w),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[200],
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: SelectableText(
+                                      "Debug Info: ${snapshot.error}",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 10.sp,
+                                        fontFamily: 'Courier',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            children: _buildPageSpans(context, glyphs),
+                          );
+                        }
+                        return InteractiveViewer(
+                          panEnabled: widget.panEnabled,
+                          transformationController: _transformationController,
+                          minScale: 1.0,
+                          maxScale: 5.0,
+                          constrained:
+                              false, // Allow content to exceed viewport height
+                          child: Container(
+                            // Constrain width to viewport width to force text wrapping
+                            width: constraints.maxWidth,
+                            // Allow height to be intrinsic (grow as needed)
+                            padding: EdgeInsets.symmetric(horizontal: 12.w),
+                            alignment: Alignment.center,
+                            child: RichText(
+                              textDirection: TextDirection.rtl,
+                              textAlign: isFatihahOrBaqarahStart
+                                  ? TextAlign.center
+                                  : TextAlign.justify,
+                              text: TextSpan(
+                                style: TextStyle(
+                                  fontFamily: fontFamily,
+                                  fontSize: fontSize,
+                                  color: Colors.black,
+                                  height: lineHeight,
+                                  letterSpacing: 0,
+                                  wordSpacing: 0,
+                                ),
+                                children: _buildPageSpans(context, glyphs),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     );
                   },
                 ),

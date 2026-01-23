@@ -74,10 +74,10 @@ class AppLocalizationsId extends AppLocalizations {
   String get bottomNavQuran => 'Al-Quran';
 
   @override
-  String get bottomNavMurottal => 'Murottal';
+  String get bottomNavDzikir => 'Dzikir & Doa';
 
   @override
-  String get bottomNavArticles => 'Artikel';
+  String get bottomNavSettings => 'Pengaturan';
 
   @override
   String get cardNextPrayer => 'Sholat Berikutnya';
@@ -287,4 +287,116 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get markAsRead => 'Tandai Selesai';
+
+  @override
+  String notificationPrayerTitle(Object prayerName) {
+    return 'Waktu $prayerName Telah Tiba';
+  }
+
+  @override
+  String notificationPrayerBody(Object prayerName) {
+    return 'Mari laksanakan sholat $prayerName sekarang.';
+  }
+
+  @override
+  String notificationPrePrayerTitle(Object prayerName) {
+    return 'Menuju Waktu $prayerName';
+  }
+
+  @override
+  String notificationPrePrayerBody(Object prayerName) {
+    return '15 menit lagi waktu $prayerName akan tiba.';
+  }
+
+  @override
+  String notificationSmartTitle(Object userName) {
+    return 'Assalamualaikum, $userName.';
+  }
+
+  @override
+  String notificationSmartBodyProgress(Object remaining) {
+    return 'Yuk, baca $remaining halaman lagi hari ini! ✨';
+  }
+
+  @override
+  String notificationSmartBodyStart(Object target) {
+    return 'Yuk, baca $target halaman targetmu hari ini! ✨';
+  }
+
+  @override
+  String get notificationFallbackTitle => 'Waktunya Mengaji 📖';
+
+  @override
+  String get notificationFallbackBody => 'Sempatkan baca satu ayat pun baik.';
+
+  @override
+  String get nameInputError => 'Mohon masukkan nama Anda';
+
+  @override
+  String dzikirReadCount(Object count) {
+    return 'Baca ${count}x';
+  }
+
+  @override
+  String get dzikirTapToCount => 'Tap untuk hitung';
+
+  @override
+  String get dzikirFinish => 'Selesai';
+
+  @override
+  String get dzikirAlhamdulillah => 'Alhamdulillah';
+
+  @override
+  String get dzikirDoneMessage =>
+      'Anda telah menyelesaikan rangkaian dzikir ini.';
+
+  @override
+  String get dzikirSelectCategory => 'Pilih Kategori';
+
+  @override
+  String get dzikirMorningTitle => 'Dzikir Pagi';
+
+  @override
+  String get dzikirMorningSubtitle => 'Pembuka hari dengan dzikir';
+
+  @override
+  String get dzikirEveningTitle => 'Dzikir Petang';
+
+  @override
+  String get dzikirEveningSubtitle => 'Penutup hari dengan ketenangan';
+
+  @override
+  String get dzikirPrayerTitle => 'Dzikir Sholat';
+
+  @override
+  String get dzikirPrayerSubtitle => 'Wirid setelah sholat fardhu';
+
+  @override
+  String get dzikirDailyTitle => 'Doa Harian';
+
+  @override
+  String get dzikirDailySubtitle => 'Kumpulan doa sehari-hari';
+
+  @override
+  String get comingSoon => 'Segera Hadir';
+
+  @override
+  String get fontDownloadError => 'Gagal mengunduh font';
+
+  @override
+  String get checkInternetConnection => 'Mohon periksa koneksi internet Anda.';
+
+  @override
+  String get tryAgain => 'Coba Lagi';
+
+  @override
+  String get showcaseNavigation =>
+      'Geser kanan/kiri untuk pindah halaman.\nTekan lama ayat untuk opsi.';
+
+  @override
+  String get showcaseBookmark => 'Simpan halaman ini ke bookmark.';
+
+  @override
+  String get showcaseCompletion =>
+      'Halaman otomatis tertanda selesai setelah 20 detik.\nKetuk untuk tandai manual.';
 }
