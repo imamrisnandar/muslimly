@@ -750,143 +750,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  // --- Target Setting Methods (Copied from SettingsPage) ---
-
-  void _showTargetBottomSheet(BuildContext context, int currentTarget) {
-    final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF1E1E1E),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.targetSelectTitle,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 16.h),
-              _buildTargetOption(
-                context,
-                2,
-                l10n.targetBeginner,
-                currentTarget,
-              ),
-              _buildTargetOption(context, 4, l10n.targetRoutine, currentTarget),
-              _buildTargetOption(
-                context,
-                10,
-                l10n.targetHalfJuz,
-                currentTarget,
-              ),
-              _buildTargetOption(context, 20, l10n.targetOneJuz, currentTarget),
-              ListTile(
-                leading: const Icon(Icons.edit, color: Colors.white54),
-                title: Text(
-                  l10n.targetCustom,
-                  style: const TextStyle(color: Colors.white),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showCustomTargetDialog(context, currentTarget);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showCustomTargetDialog(BuildContext context, int currentTarget) {
-    final l10n = AppLocalizations.of(context)!;
-    final TextEditingController controller = TextEditingController(
-      text: currentTarget.toString(),
-    );
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF1E1E1E),
-          title: Text(
-            l10n.targetCustomTitle,
-            style: const TextStyle(color: Colors.white),
-          ),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: l10n.targetCustomHint,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white54),
-              ),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF00E676)),
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () {
-                final value = int.tryParse(controller.text);
-                if (value != null && value > 0) {
-                  context.read<SettingsCubit>().updateDailyTarget(value);
-                  Navigator.pop(context);
-                }
-              },
-              child: Text(
-                l10n.settingsSave,
-                style: const TextStyle(color: Color(0xFF00E676)),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildTargetOption(
-    BuildContext context,
-    int value,
-    String label,
-    int currentValue,
-  ) {
-    final isSelected = value == currentValue;
-    return ListTile(
-      leading: Icon(
-        isSelected ? Icons.check_circle : Icons.circle_outlined,
-        color: isSelected ? const Color(0xFF00E676) : Colors.white54,
-      ),
-      title: Text(
-        label,
-        style: TextStyle(
-          color: isSelected ? const Color(0xFF00E676) : Colors.white,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      onTap: () {
-        context.read<SettingsCubit>().updateDailyTarget(value);
-        Navigator.pop(context);
-      },
-    );
-  }
-
   Widget _buildErrorHero(String msg) {
     return Container(
       height: 220.h,
@@ -993,8 +856,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           SizedBox(width: 4.w),
                           InkWell(
-                            onTap: () =>
-                                _showTargetBottomSheet(context, target),
+                            onTap: () => context.push('/settings'),
                             borderRadius: BorderRadius.circular(12.r),
                             child: Padding(
                               padding: EdgeInsets.all(4.w),
@@ -1091,8 +953,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                                 SizedBox(width: 8.w),
                                 InkWell(
-                                  onTap: () =>
-                                      _showTargetBottomSheet(context, target),
+                                  onTap: () => context.push('/settings'),
                                   borderRadius: BorderRadius.circular(12.r),
                                   child: Padding(
                                     padding: EdgeInsets.all(4.w),

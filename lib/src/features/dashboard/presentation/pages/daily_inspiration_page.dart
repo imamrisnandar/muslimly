@@ -56,67 +56,72 @@ class _DailyInspirationPageState extends State<DailyInspirationPage> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.format_quote_rounded,
-                size: 64.sp,
-                color: Colors.white70,
-              ),
-              SizedBox(height: 24.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32.w),
-                child: Text(
-                  _currentQuote.arabic,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.amiriQuran(
-                    fontSize: 28.sp,
-                    color: Colors.white,
-                    height: 2.2,
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.format_quote_rounded,
+                    size: 64.sp,
+                    color: Colors.white70,
                   ),
-                ),
-              ),
-              SizedBox(height: 32.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32.w),
-                child: Text(
-                  "\"${_currentQuote.translation}\"",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                _currentQuote.source,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.white70,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 64.h),
-
-              // Actions
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 48.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildActionButton(
-                      icon: Icons.refresh,
-                      label: "New Quote",
-                      onTap: _randomizeQuote,
+                  SizedBox(height: 24.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 32.w),
+                    child: Text(
+                      _currentQuote.arabic,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.amiriQuran(
+                        fontSize: 28.sp,
+                        color: Colors.white,
+                        height: 2.2,
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 32.h),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 32.w),
+                    child: Text(
+                      "\"${_currentQuote.translation}\"",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    _currentQuote.source,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 64.h),
+
+                  // Actions
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 48.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildActionButton(
+                          icon: Icons.refresh,
+                          label: "New Quote",
+                          onTap: _randomizeQuote,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
