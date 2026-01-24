@@ -16,9 +16,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
   StreamSubscription? _durationSubscription;
   StreamSubscription? _playerStateSubscription;
 
-  AudioBloc(this._audioRepository)
-    : _player = AudioPlayer(),
-      super(const AudioState()) {
+  AudioBloc(this._audioRepository, this._player) : super(const AudioState()) {
     on<InitAudio>(_onInitAudio);
     on<FetchReciters>(_onFetchReciters);
     on<SelectReciter>(_onSelectReciter);
@@ -33,6 +31,14 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
       (event, emit) => emit(state.copyWith(duration: event.duration)),
     );
     on<AudioComplete>(_onAudioComplete);
+    on<UpdateCurrentAyah>(
+      (event, emit) => emit(
+        state.copyWith(
+          currentAyahNumber: event.ayahNumber,
+          clearCurrentAyah: event.ayahNumber == null,
+        ),
+      ),
+    );
 
     // Subscribe to streams
     _positionSubscription = _player.positionStream.listen((pos) {
@@ -46,6 +52,27 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
         add(AudioComplete());
       }
     });
+
+    // Listen to Sequence State for Ayah tracking
+    _player.sequenceStateStream.listen((sequenceState) {
+      if (sequenceState?.currentSource?.tag != null) {
+        final tag = sequenceState!.currentSource!.tag as MediaItem;
+        // Tag ID format: "SurahID" or "SurahID_AyahNumber"
+        final parts = tag.id.split('_');
+        if (parts.length == 2) {
+          final ayahNum = int.tryParse(parts[1]);
+          if (ayahNum != null) {
+            add(UpdateCurrentAyah(ayahNum));
+          }
+        } else {
+          // Tag is likely just SurahID (Gapless Playback).
+          // We must clear the Ayah number to switch UI to Surah Mode.
+          if (state.currentAyahNumber != null) {
+            add(UpdateCurrentAyah(null));
+          }
+        }
+      }
+    });
   }
 
   @override
@@ -53,7 +80,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
     _positionSubscription?.cancel();
     _durationSubscription?.cancel();
     _playerStateSubscription?.cancel();
-    _player.dispose();
+    // Do not dispose _player as it is a singleton managed by DI
     return super.close();
   }
 
@@ -87,21 +114,21 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
     emit(state.copyWith(status: AudioStatus.loading));
     try {
       final reciters = await _audioRepository.fetchReciters();
-      Reciter? selected;
+      // Preserve existing selection if already set (e.g. by concurrent PlaySurah)
+      Reciter? selected = state.selectedReciter;
 
-      // Auto-select stored reciter if any
-      final last = await _audioRepository.getLastPlayback();
-      if (last != null && last['reciterId'] != null) {
-        selected = reciters.firstWhere(
-          (r) => r.id == last['reciterId'],
-          orElse: () => reciters.first,
-        );
-      } else if (reciters.isNotEmpty) {
-        // Default to Mishary (id 7) if exists, else first
-        selected = reciters.firstWhere(
-          (r) => r.id == 7,
-          orElse: () => reciters.first,
-        );
+      if (selected == null) {
+        // Auto-select stored reciter if any
+        final last = await _audioRepository.getLastPlayback();
+        if (last != null && last['reciterId'] != null) {
+          selected = reciters.firstWhere(
+            (r) => r.id == last['reciterId'],
+            orElse: () => reciters.first,
+          );
+        } else if (reciters.isNotEmpty) {
+          // User Request: Default to first data (Full Surah) for Play Surah
+          selected = reciters.first;
+        }
       }
 
       emit(
@@ -123,60 +150,144 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
 
   void _onSelectReciter(SelectReciter event, Emitter<AudioState> emit) {
     emit(state.copyWith(selectedReciter: event.reciter));
-    // If playing, maybe stop? Or just keep playing until next PlaySurah.
-    // Usually user expects change immediately if playing?
-    // Let's just update selection for NEXT play for now.
+
+    // Auto Replay with new Qori if context is active
+    if (state.currentSurahId != null) {
+      final isChapterSource =
+          event.reciter.source == AudioSourceType.quranComChapter;
+      add(
+        PlaySurah(
+          surahId: state.currentSurahId!,
+          surahName: state.currentSurahName ?? '',
+          startAyah: isChapterSource ? null : state.currentAyahNumber,
+        ),
+      );
+    }
   }
 
   Future<void> _onPlaySurah(PlaySurah event, Emitter<AudioState> emit) async {
-    if (state.reciters.isEmpty) {
-      add(FetchReciters());
-      // Wait or fail?
-      // For simplicity, we proceed only if we have reciter.
-      // If empty, hopefully FetchReciters will trigger reload and UI can retry.
-      return;
+    var currentReciters = state.reciters;
+    if (currentReciters.isEmpty) {
+      // Try fetching immediately
+      emit(state.copyWith(status: AudioStatus.loading));
+      try {
+        currentReciters = await _audioRepository.fetchReciters();
+        emit(state.copyWith(reciters: currentReciters));
+      } catch (e) {
+        // Ignore error here, check emptiness below
+      }
+
+      if (currentReciters.isEmpty) {
+        emit(
+          state.copyWith(
+            status: AudioStatus.error,
+            errorMessage: 'Gagal memuat data Qori. Periksa internet Anda.',
+          ),
+        );
+        add(FetchReciters()); // Retry in background
+        return;
+      }
     }
 
-    final reciter = state.selectedReciter ?? state.reciters.first;
+    var reciter = state.selectedReciter ?? currentReciters.first;
+
+    // Enforce Compatibility
+    if (event.startAyah != null && event.startAyah! > 0) {
+      // Verse Mode: Require Verse-by-Verse
+      if (reciter.source == AudioSourceType.quranComChapter) {
+        final verseReciter = currentReciters.firstWhere(
+          (r) =>
+              r.source == AudioSourceType.alQuranCloudVerse &&
+              r.id == 'ar.alafasy',
+          orElse: () => currentReciters.firstWhere(
+            (r) => r.source == AudioSourceType.alQuranCloudVerse,
+            orElse: () => reciter,
+          ),
+        );
+        reciter = verseReciter;
+      }
+    } else {
+      // Surah Mode: Prefer Gapless (Full Surah)
+      if (reciter.source == AudioSourceType.alQuranCloudVerse) {
+        final chapterReciter = currentReciters.firstWhere(
+          (r) => r.source == AudioSourceType.quranComChapter,
+          orElse: () => reciter,
+        );
+        reciter = chapterReciter;
+      }
+    }
 
     emit(
       state.copyWith(
         status: AudioStatus.loading,
         currentSurahId: event.surahId,
         currentSurahName: event.surahName,
-        selectedReciter: reciter, // Ensure selected
+        currentAyahNumber: event.startAyah, // Reset or Set Ayah Number
+        clearCurrentAyah: event.startAyah == null, // Explicitly Clear if null
+        selectedReciter: reciter, // Update global selection
         isMiniPlayerVisible: true,
       ),
     );
 
     try {
-      final url = await _audioRepository.getAudioUrl(reciter.id, event.surahId);
-
-      // Use AudioSource with tag for Notification Metadata (Lock Screen)
-      final source = AudioSource.uri(
-        Uri.parse(url),
-        tag: MediaItem(
-          id: '${event.surahId}', // Use ID as key
-          album: "Quran Murottal",
-          title: event.surahName,
-          artist: reciter.name,
-          artUri: Uri.parse(
-            "https://static.quran.com/images/quran/surah/${event.surahId}.png",
-          ), // Optional cover art
-        ),
+      // 1. Fetch URLs for all Ayahs in Surah
+      final urls = await _audioRepository.getSurahAudioUrls(
+        reciter.id,
+        event.surahId,
       );
 
-      await _player.setAudioSource(source);
+      if (urls.isEmpty) throw Exception('No audio URLs found');
 
-      // Check if we have a saved position for THIS surah/reciter combination?
-      // Logic: if resuming same track, seek.
-      // But _onPlaySurah implies "Start" or "Play New".
-      // If user wants to Resume, they click "Play" on mini player (ResumeAudio).
-      // Clicking "Play" on list usually means "Start Over" or "Play this".
-      // Let's Start Over by default (position 0), UNLESS it's the SAME surah/reciter and we want smart resume?
-      // User said "quit, bs lanjut dari terakhir". This implies globally.
-      // But if I explicitly click specific Surah, I expect it to play.
-      // Let's just play from 0 for new PlaySurah. Resume is separate path.
+      // 2. Determine Mode (Full Surah vs Playlist)
+      if (urls.length == 1) {
+        // Full Surah Mode
+        final url = urls.first;
+        final source = AudioSource.uri(
+          Uri.parse(url),
+          tag: MediaItem(
+            id: '${event.surahId}',
+            album: "Quran Recitation",
+            title: event.surahName,
+            artist: reciter.name,
+            artUri: Uri.parse(
+              "https://static.quran.com/images/quran/surah/${event.surahId}.png",
+            ),
+          ),
+        );
+        await _player.setAudioSource(source);
+      } else {
+        // Verse-by-Verse Mode
+        final playlist = ConcatenatingAudioSource(
+          children: urls.asMap().entries.map((entry) {
+            final index = entry.key;
+            final url = entry.value;
+            final ayahNumber = index + 1;
+
+            return AudioSource.uri(
+              Uri.parse(url),
+              tag: MediaItem(
+                id: '${event.surahId}_$ayahNumber',
+                album: "Quran Murottal",
+                title: "${event.surahName} : Ayah $ayahNumber",
+                artist: reciter.name,
+                artUri: Uri.parse(
+                  "https://static.quran.com/images/quran/surah/${event.surahId}.png",
+                ),
+              ),
+            );
+          }).toList(),
+        );
+
+        final initialIndex = (event.startAyah != null && event.startAyah! > 0)
+            ? event.startAyah! - 1
+            : 0;
+
+        await _player.setAudioSource(
+          playlist,
+          initialIndex: initialIndex < urls.length ? initialIndex : 0,
+          initialPosition: Duration.zero,
+        );
+      }
 
       _player.play();
       emit(state.copyWith(status: AudioStatus.playing));

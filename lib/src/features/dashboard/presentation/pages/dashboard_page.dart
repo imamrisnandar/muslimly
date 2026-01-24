@@ -21,7 +21,7 @@ import '../../../quran/presentation/bloc/reading/reading_state.dart';
 import '../widgets/prayer_countdown_widget.dart';
 import '../../../quran/presentation/bloc/audio_bloc.dart';
 import '../../../quran/presentation/bloc/audio_event.dart';
-import '../../../quran/presentation/widgets/audio_player_widget.dart';
+import '../../../quran/presentation/widgets/draggable_audio_player.dart';
 
 import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
 import '../../../../core/di/di_container.dart';
@@ -209,12 +209,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         const SettingsPage(),
                       ],
                     ),
-                    const Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: AudioPlayerWidget(),
-                    ),
+                    const DraggableAudioPlayer(),
                   ],
                 ),
               ),
@@ -719,7 +714,9 @@ class _DashboardPageState extends State<DashboardPage> {
                           Expanded(
                             child: _buildQuickAccessGridItem(
                               context,
-                              title: "Inspiration", // Shortened title for grid
+                              title: AppLocalizations.of(
+                                context,
+                              )!.lblInspiration, // Localized
                               icon: Icons.lightbulb_outline,
                               color: const Color(0xFFE65100),
                               onTap: () => context.push('/daily-inspiration'),
@@ -921,14 +918,39 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ),
                                 ),
                                 SizedBox(width: 8.w),
-                                Text(
-                                  l10n.cardDailyGoal,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w600,
+                                Expanded(
+                                  child: Text(
+                                    l10n.cardDailyGoal,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
+                                if (isCompleted) ...[
+                                  SizedBox(width: 4.w),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w,
+                                      vertical: 4.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFF00E676),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Text(
+                                      l10n.lblCompleted,
+                                      style: TextStyle(
+                                        color: Colors.black87,
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                             SizedBox(height: 16.h),
@@ -945,7 +967,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Row(
                               children: [
                                 Text(
-                                  "/ $target Pages",
+                                  "/ $target ${l10n.lblPages}",
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 14.sp,
@@ -966,27 +988,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               ],
                             ),
-                            if (isCompleted) ...[
-                              SizedBox(height: 8.h),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w,
-                                  vertical: 4.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF00E676),
-                                  borderRadius: BorderRadius.circular(8.r),
-                                ),
-                                child: Text(
-                                  "Completed! 🎉",
-                                  style: TextStyle(
-                                    color: Colors.black87,
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ],
                         ),
                       ),
@@ -1037,7 +1038,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             GestureDetector(
                               onTap: () => context.push('/quran/bookmarks'),
                               child: Text(
-                                "Read More",
+                                l10n.lblReadMore,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,

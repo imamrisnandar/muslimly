@@ -6,6 +6,7 @@ import '../../../../core/utils/surah_names.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/di/di_container.dart';
 import '../../domain/entities/surah.dart';
+import '../../domain/entities/reciter.dart';
 import '../bloc/quran_bloc.dart';
 import '../bloc/quran_event.dart';
 import '../bloc/quran_state.dart';
@@ -111,7 +112,10 @@ class _QuranPageState extends State<QuranPage> {
                                   isScrollControlled: true,
                                   builder: (_) => BlocProvider.value(
                                     value: audioBloc,
-                                    child: const ReciterSelectorBottomSheet(),
+                                    child: const ReciterSelectorBottomSheet(
+                                      filterSource:
+                                          AudioSourceType.quranComChapter,
+                                    ),
                                   ),
                                 );
                               },
@@ -272,7 +276,7 @@ class _QuranPageState extends State<QuranPage> {
                                         ),
                                         SizedBox(height: 4.h),
                                         Text(
-                                          '${surah.englishNameTranslation} • ${AppLocalizations.of(context)!.versesCount(surah.numberOfAyahs)}',
+                                          '${Localizations.localeOf(context).languageCode == 'id' ? surah.indonesianNameTranslation : surah.englishNameTranslation} • ${AppLocalizations.of(context)!.versesCount(surah.numberOfAyahs)}',
                                           style: TextStyle(
                                             color: Colors.white54,
                                             fontSize: 12.sp,

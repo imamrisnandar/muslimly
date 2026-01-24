@@ -847,6 +847,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap here to open the Quran.'**
   String get showcaseQuranTab;
+
+  /// No description provided for @lblPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Pages'**
+  String get lblPages;
+
+  /// No description provided for @lblReadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read More'**
+  String get lblReadMore;
+
+  /// No description provided for @lblInspiration.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspiration'**
+  String get lblInspiration;
+
+  /// No description provided for @lblCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed! 🎉'**
+  String get lblCompleted;
+
+  /// No description provided for @menuPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get menuPlay;
+
+  /// No description provided for @menuTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation'**
+  String get menuTranslation;
+
+  /// No description provided for @menuTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir'**
+  String get menuTafsir;
+
+  /// No description provided for @menuBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get menuBookmark;
 }
 
 class _AppLocalizationsDelegate

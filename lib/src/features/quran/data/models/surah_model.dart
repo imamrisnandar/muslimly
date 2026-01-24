@@ -6,6 +6,7 @@ class SurahModel extends Surah {
     required super.name,
     required super.englishName,
     required super.englishNameTranslation,
+    required super.indonesianNameTranslation,
     required super.numberOfAyahs,
     required super.revelationType,
   });
@@ -16,6 +17,7 @@ class SurahModel extends Surah {
       name: json['name'] as String,
       englishName: json['englishName'] as String,
       englishNameTranslation: json['englishNameTranslation'] as String,
+      indonesianNameTranslation: json['indonesianNameTranslation'] as String,
       numberOfAyahs: json['numberOfAyahs'] as int,
       revelationType: json['revelationType'] as String,
     );

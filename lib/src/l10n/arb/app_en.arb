@@ -124,5 +124,13 @@
     "showcasePrayerCard": "Check prayer times and countdown.",
     "showcaseQuickAccess": "Quick access to Bookmarks and History.",
     "showcaseDzikir": "Read daily Dzikir and specific Duas here.",
-    "showcaseQuranTab": "Tap here to open the Quran."
+    "showcaseQuranTab": "Tap here to open the Quran.",
+    "lblPages": "Pages",
+    "lblReadMore": "Read More",
+    "lblInspiration": "Inspiration",
+    "lblCompleted": "Completed! 🎉",
+    "menuPlay": "Play",
+    "menuTranslation": "Translation",
+    "menuTafsir": "Tafsir",
+    "menuBookmark": "Bookmark"
 }

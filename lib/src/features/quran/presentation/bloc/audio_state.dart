@@ -9,6 +9,7 @@ class AudioState extends Equatable {
   final Reciter? selectedReciter;
   final int? currentSurahId;
   final String? currentSurahName;
+  final int? currentAyahNumber;
   final Duration position;
   final Duration duration;
   final String? errorMessage;
@@ -20,6 +21,7 @@ class AudioState extends Equatable {
     this.selectedReciter,
     this.currentSurahId,
     this.currentSurahName,
+    this.currentAyahNumber,
     this.position = Duration.zero,
     this.duration = Duration.zero,
     this.errorMessage,
@@ -32,6 +34,8 @@ class AudioState extends Equatable {
     Reciter? selectedReciter,
     int? currentSurahId,
     String? currentSurahName,
+    int? currentAyahNumber,
+    bool clearCurrentAyah = false,
     Duration? position,
     Duration? duration,
     String? errorMessage,
@@ -43,6 +47,9 @@ class AudioState extends Equatable {
       selectedReciter: selectedReciter ?? this.selectedReciter,
       currentSurahId: currentSurahId ?? this.currentSurahId,
       currentSurahName: currentSurahName ?? this.currentSurahName,
+      currentAyahNumber: clearCurrentAyah
+          ? null
+          : (currentAyahNumber ?? this.currentAyahNumber),
       position: position ?? this.position,
       duration: duration ?? this.duration,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -57,6 +64,7 @@ class AudioState extends Equatable {
     selectedReciter,
     currentSurahId,
     currentSurahName,
+    currentAyahNumber,
     position,
     duration,
     errorMessage,

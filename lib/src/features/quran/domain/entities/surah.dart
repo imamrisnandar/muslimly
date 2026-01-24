@@ -8,11 +8,14 @@ class Surah extends Equatable {
   final int numberOfAyahs;
   final String revelationType;
 
+  final String indonesianNameTranslation;
+
   const Surah({
     required this.number,
     required this.name,
     required this.englishName,
     required this.englishNameTranslation,
+    required this.indonesianNameTranslation,
     required this.numberOfAyahs,
     required this.revelationType,
   });
@@ -22,7 +25,9 @@ class Surah extends Equatable {
     number,
     name,
     englishName,
+    englishName,
     englishNameTranslation,
+    indonesianNameTranslation,
     numberOfAyahs,
     revelationType,
   ];

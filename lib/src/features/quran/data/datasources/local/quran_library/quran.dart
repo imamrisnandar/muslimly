@@ -140,6 +140,14 @@ String getSurahNameEnglish(int surahNumber) {
   return surah[surahNumber - 1]['english'].toString();
 }
 
+///Takes [surahNumber] returns the Surah name in Indonesian
+String getSurahNameIndonesian(int surahNumber) {
+  if (surahNumber > 114 || surahNumber <= 0) {
+    throw "No Surah found with given surahNumber";
+  }
+  return surah[surahNumber - 1]['indonesian'].toString();
+}
+
 ///Takes [surahNumber] returns the Surah name in Turkish
 String getSurahNameTurkish(int surahNumber) {
   if (surahNumber > 114 || surahNumber <= 0) {

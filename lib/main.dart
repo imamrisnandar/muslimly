@@ -10,6 +10,9 @@ import 'src/core/di/di_container.dart';
 
 import 'src/core/services/notification_service.dart';
 
+import 'src/features/quran/presentation/bloc/audio_bloc.dart';
+import 'src/features/quran/presentation/bloc/audio_event.dart'; // Init audio if needed
+
 import 'package:just_audio_background/just_audio_background.dart';
 
 import 'package:showcaseview/showcaseview.dart';
@@ -42,6 +45,7 @@ class MyApp extends StatelessWidget {
           providers: [
             BlocProvider(create: (_) => getIt<AuthBloc>()),
             BlocProvider(create: (_) => getIt<SettingsCubit>()),
+            BlocProvider(create: (_) => getIt<AudioBloc>()..add(InitAudio())),
           ],
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (context, state) {

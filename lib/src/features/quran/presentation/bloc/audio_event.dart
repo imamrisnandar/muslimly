@@ -22,9 +22,14 @@ class SelectReciter extends AudioEvent {
 class PlaySurah extends AudioEvent {
   final int surahId;
   final String surahName;
-  const PlaySurah({required this.surahId, required this.surahName});
+  final int? startAyah;
+  const PlaySurah({
+    required this.surahId,
+    required this.surahName,
+    this.startAyah,
+  });
   @override
-  List<Object?> get props => [surahId, surahName];
+  List<Object?> get props => [surahId, surahName, startAyah];
 }
 
 class PauseAudio extends AudioEvent {}
@@ -49,3 +54,10 @@ class UpdateDuration extends AudioEvent {
 }
 
 class AudioComplete extends AudioEvent {}
+
+class UpdateCurrentAyah extends AudioEvent {
+  final int? ayahNumber;
+  const UpdateCurrentAyah(this.ayahNumber);
+  @override
+  List<Object?> get props => [ayahNumber];
+}

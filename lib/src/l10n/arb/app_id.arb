@@ -124,5 +124,13 @@
     "showcasePrayerCard": "Lihat jadwal sholat dan hitung mundur adzan.",
     "showcaseQuickAccess": "Akses cepat ke Bookmark dan Riwayat.",
     "showcaseDzikir": "Baca Dzikir pagi/petang dan kumpulan Doa di sini.",
-    "showcaseQuranTab": "Ketuk di sini untuk mulai membaca Al-Quran."
+    "showcaseQuranTab": "Ketuk di sini untuk mulai membaca Al-Quran.",
+    "lblPages": "Halaman",
+    "lblReadMore": "Baca Lagi",
+    "lblInspiration": "Inspirasi",
+    "lblCompleted": "Selesai! 🎉",
+    "menuPlay": "Putar",
+    "menuTranslation": "Terjemahan",
+    "menuTafsir": "Tafsir",
+    "menuBookmark": "Tandai"
 }

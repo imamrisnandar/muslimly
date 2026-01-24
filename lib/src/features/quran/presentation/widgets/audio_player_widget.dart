@@ -4,13 +4,25 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_event.dart';
 import '../bloc/audio_state.dart';
+import '../../domain/entities/reciter.dart';
+import 'reciter_selector_bottom_sheet.dart';
 
 class AudioPlayerWidget extends StatelessWidget {
   const AudioPlayerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AudioBloc, AudioState>(
+    return BlocConsumer<AudioBloc, AudioState>(
+      listener: (context, state) {
+        if (state.status == AudioStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage ?? 'Audio Error'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
       builder: (context, state) {
         if (!state.isMiniPlayerVisible) return const SizedBox.shrink();
 
@@ -57,30 +69,59 @@ class AudioPlayerWidget extends StatelessWidget {
 
                   // Text Info
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          state.currentSurahName ?? 'Surah',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Filter Qori based on Context (Ayah vs Surah)
+                        final filter = state.currentAyahNumber != null
+                            ? AudioSourceType.alQuranCloudVerse
+                            : AudioSourceType.quranComChapter;
+
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) =>
+                              ReciterSelectorBottomSheet(filterSource: filter),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            state.currentAyahNumber != null
+                                ? '${state.currentSurahName} : Ayah ${state.currentAyahNumber}'
+                                : state.currentSurahName ?? 'Surah',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          state.selectedReciter?.name ?? 'Unknown Qori',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12.sp,
+                          SizedBox(height: 2.h),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  state.selectedReciter?.name ?? 'Unknown Qori',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12.sp,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.white70,
+                                size: 16.sp,
+                              ),
+                            ],
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
 

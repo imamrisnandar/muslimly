@@ -420,4 +420,28 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get showcaseQuranTab => 'Ketuk di sini untuk mulai membaca Al-Quran.';
+
+  @override
+  String get lblPages => 'Halaman';
+
+  @override
+  String get lblReadMore => 'Baca Lagi';
+
+  @override
+  String get lblInspiration => 'Inspirasi';
+
+  @override
+  String get lblCompleted => 'Selesai! 🎉';
+
+  @override
+  String get menuPlay => 'Putar';
+
+  @override
+  String get menuTranslation => 'Terjemahan';
+
+  @override
+  String get menuTafsir => 'Tafsir';
+
+  @override
+  String get menuBookmark => 'Tandai';
 }

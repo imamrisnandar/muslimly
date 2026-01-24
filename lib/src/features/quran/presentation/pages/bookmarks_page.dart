@@ -73,6 +73,8 @@ class BookmarksPage extends StatelessWidget {
                                   name: surahData['name'],
                                   englishName: surahData['englishName'],
                                   englishNameTranslation: '',
+                                  indonesianNameTranslation:
+                                      '', // TODO: Update surahDetails
                                   numberOfAyahs: surahData['numberOfAyahs'],
                                   revelationType: surahData['revelationType'],
                                 );
@@ -331,6 +333,8 @@ class BookmarksPage extends StatelessWidget {
                                           name: surahData['name'],
                                           englishName: surahData['englishName'],
                                           englishNameTranslation: '',
+                                          indonesianNameTranslation:
+                                              '', // TODO: Update surahDetails
                                           numberOfAyahs:
                                               surahData['numberOfAyahs'],
                                           revelationType:

@@ -21,6 +21,7 @@ class QuranLocalDataSourceImpl implements QuranLocalDataSource {
           name: quran.getSurahNameArabic(i),
           englishName: quran.getSurahName(i), // "Al-Fatihah"
           englishNameTranslation: quran.getSurahNameEnglish(i), // "The Opening"
+          indonesianNameTranslation: quran.getSurahNameIndonesian(i),
           numberOfAyahs: quran.getVerseCount(i),
           revelationType: quran.getPlaceOfRevelation(i),
         ),

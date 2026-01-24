@@ -1,3 +1,4 @@
+import 'package:just_audio/just_audio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import '../utils/location_service.dart';
@@ -127,10 +128,13 @@ void configureDependencies() {
   );
 
   // --- Murottal / Audio ---
+  getIt.registerLazySingleton<AudioPlayer>(() => AudioPlayer());
   getIt.registerLazySingleton<AudioRepository>(
     () => AudioRepositoryImpl(getIt<Dio>(), getIt<DatabaseService>()),
   );
-  getIt.registerFactory<AudioBloc>(() => AudioBloc(getIt<AudioRepository>()));
+  getIt.registerLazySingleton<AudioBloc>(
+    () => AudioBloc(getIt<AudioRepository>(), getIt<AudioPlayer>()),
+  );
 
   // --- Zikir Feature ---
   getIt.registerLazySingleton<ZikirLocalRepository>(

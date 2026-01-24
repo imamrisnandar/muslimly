@@ -419,4 +419,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showcaseQuranTab => 'Tap here to open the Quran.';
+
+  @override
+  String get lblPages => 'Pages';
+
+  @override
+  String get lblReadMore => 'Read More';
+
+  @override
+  String get lblInspiration => 'Inspiration';
+
+  @override
+  String get lblCompleted => 'Completed! 🎉';
+
+  @override
+  String get menuPlay => 'Play';
+
+  @override
+  String get menuTranslation => 'Translation';
+
+  @override
+  String get menuTafsir => 'Tafsir';
+
+  @override
+  String get menuBookmark => 'Bookmark';
 }
