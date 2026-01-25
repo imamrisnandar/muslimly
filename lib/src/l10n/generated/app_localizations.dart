@@ -353,7 +353,7 @@ abstract class AppLocalizations {
   /// No description provided for @modeMushafSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Page view (Arabic only)'**
+  /// **'Page view'**
   String get modeMushafSubtitle;
 
   /// No description provided for @searchSurahHint.
@@ -895,6 +895,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bookmark'**
   String get menuBookmark;
+
+  /// No description provided for @tajwidLegendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tajweed Guide'**
+  String get tajwidLegendTitle;
+
+  /// No description provided for @tajwidGhunnah.
+  ///
+  /// In en, this message translates to:
+  /// **'Ghunnah / Idgham Bighunnah'**
+  String get tajwidGhunnah;
+
+  /// No description provided for @tajwidGhunnahDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Nasal sound (2 beats)'**
+  String get tajwidGhunnahDesc;
+
+  /// No description provided for @tajwidIkhfa.
+  ///
+  /// In en, this message translates to:
+  /// **'Ikhfa'**
+  String get tajwidIkhfa;
+
+  /// No description provided for @tajwidIkhfaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden / Faint (2 beats)'**
+  String get tajwidIkhfaDesc;
+
+  /// No description provided for @tajwidMadJaiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Mad Jaiz Munfasil'**
+  String get tajwidMadJaiz;
+
+  /// No description provided for @tajwidMadJaizDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Long (2/4/5 beats)'**
+  String get tajwidMadJaizDesc;
+
+  /// No description provided for @tajwidQalqalah.
+  ///
+  /// In en, this message translates to:
+  /// **'Qalqalah'**
+  String get tajwidQalqalah;
+
+  /// No description provided for @tajwidQalqalahDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bouncing sound'**
+  String get tajwidQalqalahDesc;
+
+  /// No description provided for @tajwidIqlab.
+  ///
+  /// In en, this message translates to:
+  /// **'Iqlab'**
+  String get tajwidIqlab;
+
+  /// No description provided for @tajwidIqlabDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'N turns into M sound'**
+  String get tajwidIqlabDesc;
+
+  /// No description provided for @tajwidMadWajib.
+  ///
+  /// In en, this message translates to:
+  /// **'Mad Wajib / Lazim'**
+  String get tajwidMadWajib;
+
+  /// No description provided for @tajwidMadWajibDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Long (4-6 beats)'**
+  String get tajwidMadWajibDesc;
+
+  /// No description provided for @tajwidIdghamBilaghunnah.
+  ///
+  /// In en, this message translates to:
+  /// **'Idgham Bilaghunnah / Waqf'**
+  String get tajwidIdghamBilaghunnah;
+
+  /// No description provided for @tajwidIdghamBilaghunnahDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Merged / Not pronounced'**
+  String get tajwidIdghamBilaghunnahDesc;
+
+  /// No description provided for @showcaseDraggableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible Player'**
+  String get showcaseDraggableTitle;
+
+  /// No description provided for @showcaseDraggableDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press & drag to move position.'**
+  String get showcaseDraggableDesc;
+
+  /// No description provided for @showcaseReciterDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to change Reciter.'**
+  String get showcaseReciterDesc;
 }
 
 class _AppLocalizationsDelegate

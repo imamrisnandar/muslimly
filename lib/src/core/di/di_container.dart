@@ -40,6 +40,9 @@ import '../../features/quran/presentation/bloc/bookmark/bookmark_bloc.dart';
 import '../../features/quran/data/repositories/audio_repository.dart';
 import '../../features/quran/presentation/bloc/audio_bloc.dart';
 import '../../features/zikir/data/repositories/zikir_local_repository.dart';
+import '../../features/quran/data/repositories/translation_repository_impl.dart';
+import '../../features/quran/domain/repositories/translation_repository.dart';
+import '../../features/quran/presentation/bloc/translation/translation_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -111,7 +114,11 @@ void configureDependencies() {
     () => QuranLocalDataSourceImpl(),
   );
   getIt.registerLazySingleton<QuranRepository>(
-    () => QuranRepositoryImpl(getIt<QuranLocalDataSource>()),
+    () => QuranRepositoryImpl(
+      getIt<QuranLocalDataSource>(),
+      getIt<DatabaseService>(),
+      getIt<Dio>(),
+    ),
   );
   getIt.registerLazySingleton<LastReadRepository>(() => LastReadRepository());
 
@@ -125,6 +132,14 @@ void configureDependencies() {
   );
   getIt.registerFactory<BookmarkBloc>(
     () => BookmarkBloc(getIt<DatabaseService>(), getIt<LastReadRepository>()),
+  );
+
+  // --- Translation & Tafsir ---
+  getIt.registerLazySingleton<TranslationRepository>(
+    () => TranslationRepositoryImpl(getIt<Dio>(), getIt<DatabaseService>()),
+  );
+  getIt.registerFactory<TranslationBloc>(
+    () => TranslationBloc(getIt<TranslationRepository>()),
   );
 
   // --- Murottal / Audio ---

@@ -83,6 +83,7 @@ dependencies:
   audio_session: ^0.2.2
   just_audio_background: ^0.0.1-beta.17
   showcaseview: ^5.0.1
+  share_plus: ^12.0.1
 
 dev_dependencies:
   flutter_test:

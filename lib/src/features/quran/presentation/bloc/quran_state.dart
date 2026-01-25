@@ -24,10 +24,16 @@ class QuranSurahsLoaded extends QuranState {
 class QuranAyahsLoaded extends QuranState {
   final List<Ayah> ayahs;
   final int surahId;
-  const QuranAyahsLoaded(this.ayahs, this.surahId);
+  final Map<int, String> translationMap;
+
+  const QuranAyahsLoaded(
+    this.ayahs,
+    this.surahId, {
+    this.translationMap = const {},
+  });
 
   @override
-  List<Object?> get props => [ayahs, surahId];
+  List<Object?> get props => [ayahs, surahId, translationMap];
 }
 
 class QuranError extends QuranState {

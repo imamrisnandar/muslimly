@@ -11,8 +11,10 @@ class QuranFetchSurahs extends QuranEvent {}
 
 class QuranFetchAyahs extends QuranEvent {
   final int surahId;
-  const QuranFetchAyahs(this.surahId);
+  final String languageCode;
+
+  const QuranFetchAyahs(this.surahId, {this.languageCode = 'id'});
 
   @override
-  List<Object?> get props => [surahId];
+  List<Object> get props => [surahId, languageCode];
 }

@@ -7,6 +7,7 @@ class AyahModel extends Ayah {
     required super.numberInSurah,
     required super.juz,
     required super.page,
+    super.textTajweed,
   });
 
   factory AyahModel.fromJson(Map<String, dynamic> json) {
@@ -19,6 +20,23 @@ class AyahModel extends Ayah {
       numberInSurah: (json['numberInSurah'] ?? json['verseId'] ?? 0) as int,
       juz: (json['juz'] ?? 0) as int,
       page: (json['page'] ?? 0) as int,
+      textTajweed:
+          (json['text_uthmani_tajweed'] ??
+                  json['textTajweed'] ??
+                  json['tajweed'])
+              as String?,
+    );
+  }
+
+  // Helper to copy with new data
+  AyahModel copyWith({String? textTajweed}) {
+    return AyahModel(
+      number: number,
+      text: text,
+      numberInSurah: numberInSurah,
+      juz: juz,
+      page: page,
+      textTajweed: textTajweed ?? this.textTajweed,
     );
   }
 }

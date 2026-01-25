@@ -141,7 +141,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modeMushafTitle => 'Mushaf Madinah';
 
   @override
-  String get modeMushafSubtitle => 'Page view (Arabic only)';
+  String get modeMushafSubtitle => 'Page view';
 
   @override
   String get searchSurahHint => 'Search Surah (e.g. Al-Kahf)';
@@ -443,4 +443,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get menuBookmark => 'Bookmark';
+
+  @override
+  String get tajwidLegendTitle => 'Tajweed Guide';
+
+  @override
+  String get tajwidGhunnah => 'Ghunnah / Idgham Bighunnah';
+
+  @override
+  String get tajwidGhunnahDesc => 'Nasal sound (2 beats)';
+
+  @override
+  String get tajwidIkhfa => 'Ikhfa';
+
+  @override
+  String get tajwidIkhfaDesc => 'Hidden / Faint (2 beats)';
+
+  @override
+  String get tajwidMadJaiz => 'Mad Jaiz Munfasil';
+
+  @override
+  String get tajwidMadJaizDesc => 'Long (2/4/5 beats)';
+
+  @override
+  String get tajwidQalqalah => 'Qalqalah';
+
+  @override
+  String get tajwidQalqalahDesc => 'Bouncing sound';
+
+  @override
+  String get tajwidIqlab => 'Iqlab';
+
+  @override
+  String get tajwidIqlabDesc => 'N turns into M sound';
+
+  @override
+  String get tajwidMadWajib => 'Mad Wajib / Lazim';
+
+  @override
+  String get tajwidMadWajibDesc => 'Very Long (4-6 beats)';
+
+  @override
+  String get tajwidIdghamBilaghunnah => 'Idgham Bilaghunnah / Waqf';
+
+  @override
+  String get tajwidIdghamBilaghunnahDesc => 'Merged / Not pronounced';
+
+  @override
+  String get showcaseDraggableTitle => 'Flexible Player';
+
+  @override
+  String get showcaseDraggableDesc => 'Long press & drag to move position.';
+
+  @override
+  String get showcaseReciterDesc => 'Tap here to change Reciter.';
 }

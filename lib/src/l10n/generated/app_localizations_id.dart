@@ -141,7 +141,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get modeMushafTitle => 'Mushaf Madinah';
 
   @override
-  String get modeMushafSubtitle => 'Tampilan halaman (Arab saja)';
+  String get modeMushafSubtitle => 'Tampilan halaman';
 
   @override
   String get searchSurahHint => 'Cari Surah (cth. Al-Kahf)';
@@ -444,4 +444,59 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get menuBookmark => 'Tandai';
+
+  @override
+  String get tajwidLegendTitle => 'Panduan Tajwid';
+
+  @override
+  String get tajwidGhunnah => 'Ghunnah / Idgham Bighunnah';
+
+  @override
+  String get tajwidGhunnahDesc => 'Dengung (2 harakat)';
+
+  @override
+  String get tajwidIkhfa => 'Ikhfa';
+
+  @override
+  String get tajwidIkhfaDesc => 'Samar-samar (2 harakat)';
+
+  @override
+  String get tajwidMadJaiz => 'Mad Jaiz Munfasil';
+
+  @override
+  String get tajwidMadJaizDesc => 'Panjang (2/4/5 harakat)';
+
+  @override
+  String get tajwidQalqalah => 'Qalqalah';
+
+  @override
+  String get tajwidQalqalahDesc => 'Pantulan';
+
+  @override
+  String get tajwidIqlab => 'Iqlab';
+
+  @override
+  String get tajwidIqlabDesc => 'Membalikkan (Bunyi \'N\' jadi \'M\')';
+
+  @override
+  String get tajwidMadWajib => 'Mad Wajib / Lazim';
+
+  @override
+  String get tajwidMadWajibDesc => 'Panjang (4-6 harakat)';
+
+  @override
+  String get tajwidIdghamBilaghunnah => 'Idgham Bilaghunnah / Tanda Wakaf';
+
+  @override
+  String get tajwidIdghamBilaghunnahDesc => 'Dilebur / Tidak dibaca';
+
+  @override
+  String get showcaseDraggableTitle => 'Player Fleksibel';
+
+  @override
+  String get showcaseDraggableDesc =>
+      'Tekan lama & geser player ini untuk memindahkan posisinya';
+
+  @override
+  String get showcaseReciterDesc => 'Ganti Qari pilihan Anda di sini';
 }

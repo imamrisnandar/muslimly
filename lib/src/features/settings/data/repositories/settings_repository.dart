@@ -16,6 +16,9 @@ abstract class SettingsRepository {
 
   Future<String?> getUserName();
   Future<void> saveUserName(String name);
+
+  Future<bool> hasShownPlayerShowcase();
+  Future<void> setPlayerShowcaseShown(bool shown);
 }
 
 @LazySingleton(as: SettingsRepository)
@@ -24,6 +27,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyPrayerPrefix = 'prayer_notify_';
   static const String _keyDailyTarget = 'quran_daily_target';
   static const String _keyUserName = 'user_name';
+  static const String _keyPlayerShowcase = 'player_showcase_shown_v3';
 
   final DatabaseService _databaseService;
 
@@ -90,5 +94,16 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> saveUserName(String name) async {
     await _databaseService.saveSetting(_keyUserName, name);
+  }
+
+  @override
+  Future<bool> hasShownPlayerShowcase() async {
+    final val = await _databaseService.getSetting(_keyPlayerShowcase);
+    return val == 'true';
+  }
+
+  @override
+  Future<void> setPlayerShowcaseShown(bool shown) async {
+    await _databaseService.saveSetting(_keyPlayerShowcase, shown.toString());
   }
 }

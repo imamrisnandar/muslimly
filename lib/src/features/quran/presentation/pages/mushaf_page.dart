@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:muslimly/src/features/quran/presentation/utils/glyph_helper.dart';
 import 'package:muslimly/src/features/quran/presentation/widgets/mushaf_header_widget.dart';
 import 'package:muslimly/src/features/quran/presentation/widgets/mushaf_basmalah_widget.dart';
+import 'package:muslimly/src/features/quran/presentation/widgets/tafsir_bottom_sheet.dart';
 import 'package:muslimly/src/features/quran/data/surah_details.dart';
 import 'package:muslimly/src/features/quran/presentation/utils/arabic_utils.dart'; // Added utility
 
@@ -36,6 +37,7 @@ import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_state.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../features/settings/data/repositories/settings_repository.dart';
 
 class MushafPage extends StatefulWidget {
   final Surah surah;
@@ -65,6 +67,8 @@ class _MushafPageState extends State<MushafPage> {
   final GlobalKey _swipeKey = GlobalKey();
   final GlobalKey _bookmarkKey = GlobalKey();
   final GlobalKey _completionKey = GlobalKey();
+  final GlobalKey _dragKey = GlobalKey();
+  final GlobalKey _qoriKey = GlobalKey();
 
   @override
   void initState() {
@@ -85,6 +89,21 @@ class _MushafPageState extends State<MushafPage> {
         context,
       ).startShowCase([_swipeKey, _bookmarkKey, _completionKey]);
       prefs.setBool('hasShownMushafShowcase', true);
+    }
+  }
+
+  Future<void> _checkPlayerShowcase() async {
+    final settings = getIt<SettingsRepository>();
+    if (!await settings.hasShownPlayerShowcase()) {
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          await Future.delayed(const Duration(milliseconds: 500));
+          if (mounted) {
+            ShowCaseWidget.of(context).startShowCase([_dragKey, _qoriKey]);
+            await settings.setPlayerShowcaseShown(true);
+          }
+        });
+      }
     }
   }
 
@@ -259,6 +278,9 @@ class _MushafPageState extends State<MushafPage> {
           builder: (context) {
             return BlocListener<AudioBloc, AudioState>(
               listener: (context, audioState) {
+                if (audioState.status == AudioStatus.playing) {
+                  _checkPlayerShowcase();
+                }
                 if (audioState.currentSurahId == widget.surah.number &&
                     audioState.currentAyahNumber != null) {
                   final quranState = context.read<QuranBloc>().state;
@@ -530,7 +552,10 @@ class _MushafPageState extends State<MushafPage> {
                       ),
                     ),
                     // Audio Player
-                    const DraggableAudioPlayer(),
+                    DraggableAudioPlayer(
+                      dragShowcaseKey: _dragKey,
+                      qoriShowcaseKey: _qoriKey,
+                    ),
                   ],
                 ),
               ),
@@ -1147,8 +1172,28 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                     icon: Icons.translate,
                     label: l10n.menuTranslation,
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Opening Translation...')),
+                      // Hide bubble first
+                      setState(() {
+                        _tapPosition = null;
+                      });
+
+                      // Find Ayah Text
+                      // Find Ayah Text
+                      final ayah = widget.ayahs.firstWhere(
+                        (a) => a.numberInSurah == (_selectedAyah ?? 1),
+                        orElse: () => widget.ayahs.first,
+                      );
+
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => TafsirBottomSheet(
+                          surahId: _selectedSurah ?? widget.surahNumber,
+                          surahName: surahName, // from scope
+                          ayahNumber: _selectedAyah ?? 1,
+                          arabicText: ayah.text,
+                        ),
                       );
                     },
                   ),
@@ -1157,8 +1202,29 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                     icon: Icons.library_books,
                     label: l10n.menuTafsir,
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Opening Tafsir...')),
+                      // Hide bubble first
+                      setState(() {
+                        _tapPosition = null;
+                      });
+
+                      // Find Ayah Text
+                      // Find Ayah Text
+                      final ayah = widget.ayahs.firstWhere(
+                        (a) => a.numberInSurah == (_selectedAyah ?? 1),
+                        orElse: () => widget.ayahs.first,
+                      );
+
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => TafsirBottomSheet(
+                          surahId: _selectedSurah ?? widget.surahNumber,
+                          surahName: surahName,
+                          ayahNumber: _selectedAyah ?? 1,
+                          initialTabIndex: 1, // Open directly to Tafsir
+                          arabicText: ayah.text,
+                        ),
                       );
                     },
                   ),

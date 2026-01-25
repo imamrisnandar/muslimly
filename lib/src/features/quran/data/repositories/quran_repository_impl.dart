@@ -5,11 +5,17 @@ import '../../domain/entities/surah.dart';
 import '../../domain/repositories/quran_repository.dart';
 import '../datasources/quran_local_data_source.dart';
 
+import 'package:dio/dio.dart';
+import '../../../../core/database/database_service.dart';
+import '../models/ayah_model.dart'; // Needed for copyWith/casting if used, or just Ayah
+
 @LazySingleton(as: QuranRepository)
 class QuranRepositoryImpl implements QuranRepository {
   final QuranLocalDataSource _localDataSource;
+  final DatabaseService _databaseService;
+  final Dio _dio;
 
-  QuranRepositoryImpl(this._localDataSource);
+  QuranRepositoryImpl(this._localDataSource, this._databaseService, this._dio);
 
   @override
   Future<Either<String, List<Surah>>> getSurahs() async {
@@ -24,10 +30,74 @@ class QuranRepositoryImpl implements QuranRepository {
   @override
   Future<Either<String, List<Ayah>>> getAyahs(int surahId) async {
     try {
-      final ayahs = await _localDataSource.getAyahs(surahId);
-      return Right(ayahs);
+      // 1. Get Local Ayahs (Base Data)
+      final List<Ayah> localAyahs = await _localDataSource.getAyahs(surahId);
+
+      // 2. Check Tajweed Cache
+      final tajweedMap = await _databaseService.getTajweedBatch(surahId);
+
+      // Validate Cache Completeness
+      if (tajweedMap.isNotEmpty && tajweedMap.length >= localAyahs.length) {
+        return Right(_mergeTajweed(localAyahs, tajweedMap));
+      }
+
+      // 3. Fetch Online if Cache Incomplete
+      try {
+        final url =
+            'https://api.quran.com/api/v4/quran/verses/uthmani_tajweed?chapter_number=$surahId';
+        final response = await _dio.get(url);
+
+        if (response.statusCode == 200) {
+          final verses = response.data['verses'] as List;
+          final List<Map<String, dynamic>> cacheData = [];
+          final Map<int, String> newMap = {};
+
+          for (var i = 0; i < verses.length; i++) {
+            final v = verses[i];
+            // API returns sequential verses for the chapter
+            // verse_key: "1:1", "1:2"...
+            // Verify verse ID or just use index + 1
+            final ayahNum = i + 1;
+            final text = v['text_uthmani_tajweed'] as String;
+
+            newMap[ayahNum] = text;
+            cacheData.add({
+              'surah_number': surahId,
+              'ayah_number': ayahNum,
+              'text': text,
+            });
+          }
+
+          // Save to Cache
+          await _databaseService.cacheTajweedBatch(cacheData);
+
+          return Right(_mergeTajweed(localAyahs, newMap));
+        }
+      } catch (e) {
+        print('Tajweed fetch failed: $e. Returning offline text.');
+        // Don't fail the whole request, return offline data
+        return Right(localAyahs);
+      }
+
+      return Right(localAyahs);
     } catch (e) {
       return Left(e.toString());
     }
+  }
+
+  List<Ayah> _mergeTajweed(List<Ayah> ayahs, Map<int, String> tajweedMap) {
+    return ayahs.map((ayah) {
+      if (tajweedMap.containsKey(ayah.numberInSurah)) {
+        return Ayah(
+          number: ayah.number,
+          text: ayah.text,
+          numberInSurah: ayah.numberInSurah,
+          juz: ayah.juz,
+          page: ayah.page,
+          textTajweed: tajweedMap[ayah.numberInSurah],
+        );
+      }
+      return ayah;
+    }).toList();
   }
 }

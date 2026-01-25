@@ -23,7 +23,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 3, // Upgraded version
+      version: 5, // Upgraded version for Tajweed
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -56,6 +56,15 @@ class DatabaseService {
 
     // Bookmarks Table
     await _createBookmarksTable(db);
+
+    // Translation Cache
+    await _createTranslationTable(db);
+
+    // Tafsir Cache
+    await _createTafsirTable(db);
+
+    // Tajweed Cache
+    await _createTajweedTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -71,6 +80,13 @@ class DatabaseService {
         )
       ''');
     }
+    if (oldVersion < 4) {
+      await _createTranslationTable(db);
+      await _createTafsirTable(db);
+    }
+    if (oldVersion < 5) {
+      await _createTajweedTable(db);
+    }
   }
 
   Future<void> _createBookmarksTable(Database db) async {
@@ -81,6 +97,44 @@ class DatabaseService {
         surah_name TEXT NOT NULL,
         page_number INTEGER NOT NULL,
         created_at INTEGER NOT NULL
+      )
+    ''');
+  }
+
+  Future<void> _createTranslationTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE translations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        surah_number INTEGER NOT NULL,
+        ayah_number INTEGER NOT NULL,
+        language_code TEXT NOT NULL, 
+        text TEXT NOT NULL,
+        UNIQUE(surah_number, ayah_number, language_code)
+      )
+    ''');
+  }
+
+  Future<void> _createTafsirTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE tafsirs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        surah_number INTEGER NOT NULL,
+        ayah_number INTEGER NOT NULL,
+        tafsir_id TEXT NOT NULL,
+        text TEXT NOT NULL,
+        UNIQUE(surah_number, ayah_number, tafsir_id)
+      )
+    ''');
+  }
+
+  Future<void> _createTajweedTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE tajweeds (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        surah_number INTEGER NOT NULL,
+        ayah_number INTEGER NOT NULL,
+        text TEXT NOT NULL,
+        UNIQUE(surah_number, ayah_number)
       )
     ''');
   }
@@ -201,5 +255,140 @@ class DatabaseService {
   Future<int> deleteBookmark(int id) async {
     final db = await database;
     return await db.delete('bookmarks', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // --- CRUD for Translations & Tafsir ---
+
+  Future<void> cacheTranslation(
+    int surahId,
+    int ayahId,
+    String lang,
+    String text,
+  ) async {
+    final db = await database;
+    await db.insert('translations', {
+      'surah_number': surahId,
+      'ayah_number': ayahId,
+      'language_code': lang,
+      'text': text,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<String?> getCachedTranslation(
+    int surahId,
+    int ayahId,
+    String lang,
+  ) async {
+    final db = await database;
+    final maps = await db.query(
+      'translations',
+      where: 'surah_number = ? AND ayah_number = ? AND language_code = ?',
+      whereArgs: [surahId, ayahId, lang],
+    );
+    if (maps.isNotEmpty) return maps.first['text'] as String;
+    return null;
+  }
+
+  Future<void> cacheTafsir(
+    int surahId,
+    int ayahId,
+    String tafsirId,
+    String text,
+  ) async {
+    final db = await database;
+    await db.insert('tafsirs', {
+      'surah_number': surahId,
+      'ayah_number': ayahId,
+      'tafsir_id': tafsirId,
+      'text': text,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<String?> getCachedTafsir(
+    int surahId,
+    int ayahId,
+    String tafsirId,
+  ) async {
+    final db = await database;
+    final maps = await db.query(
+      'tafsirs',
+      where: 'surah_number = ? AND ayah_number = ? AND tafsir_id = ?',
+      whereArgs: [surahId, ayahId, tafsirId],
+    );
+    if (maps.isNotEmpty) return maps.first['text'] as String;
+    return null;
+  }
+
+  Future<Map<int, String>> getSurahTranslations(
+    int surahId,
+    String lang,
+  ) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'translations',
+      columns: ['ayah_number', 'text'],
+      where: 'surah_number = ? AND language_code = ?',
+      whereArgs: [surahId, lang],
+    );
+
+    final Map<int, String> result = {};
+    for (var map in maps) {
+      result[map['ayah_number'] as int] = map['text'] as String;
+    }
+    return result;
+  }
+
+  Future<void> cacheTranslationsBatch(
+    List<Map<String, dynamic>> translations,
+  ) async {
+    final db = await database;
+    final batch = db.batch();
+
+    for (var t in translations) {
+      batch.insert(
+        'translations',
+        t,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    await batch.commit(noResult: true);
+  }
+
+  // --- CRUD for Tajweed ---
+
+  Future<void> cacheTajweedBatch(List<Map<String, dynamic>> data) async {
+    final db = await database;
+    final batch = db.batch();
+    for (var item in data) {
+      batch.insert('tajweeds', {
+        'surah_number': item['surah_number'],
+        'ayah_number': item['ayah_number'],
+        'text': item['text'],
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<Map<int, String>> getTajweedBatch(int surahId) async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(
+        'tajweeds',
+        where: 'surah_number = ?',
+        whereArgs: [surahId],
+      );
+
+      final Map<int, String> result = {};
+      for (var map in maps) {
+        final ayahNum = map['ayah_number'] as int;
+        final text = map['text'] as String;
+        result[ayahNum] = text;
+      }
+      return result;
+    } catch (e) {
+      print('DEBUG: Error querying tajweed: $e');
+      return {};
+    }
   }
 }

@@ -155,7 +155,12 @@ class _DashboardPageState extends State<DashboardPage> {
                         context,
                       )!.showcaseQuranTab,
                       targetShapeBorder: const CircleBorder(),
-                      child: const Icon(Icons.book),
+                      child: const Icon(
+                        Icons.menu_book_rounded,
+                        color: Color(
+                          0xFFFFC107,
+                        ), // Amber/Gold Highlight (Diff from Focus)
+                      ),
                     ),
                     label: AppLocalizations.of(context)!.bottomNavQuran,
                   ),

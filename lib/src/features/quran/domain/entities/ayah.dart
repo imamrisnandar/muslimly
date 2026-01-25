@@ -6,6 +6,7 @@ class Ayah extends Equatable {
   final int numberInSurah;
   final int juz;
   final int page;
+  final String? textTajweed;
 
   const Ayah({
     required this.number,
@@ -13,8 +14,16 @@ class Ayah extends Equatable {
     required this.numberInSurah,
     required this.juz,
     required this.page,
+    this.textTajweed,
   });
 
   @override
-  List<Object?> get props => [number, text, numberInSurah, juz, page];
+  List<Object?> get props => [
+    number,
+    text,
+    numberInSurah,
+    juz,
+    page,
+    textTajweed,
+  ];
 }

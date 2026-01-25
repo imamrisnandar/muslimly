@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart'; // Import L10n
 import '../../../../core/di/di_container.dart';
 import '../../data/repositories/name_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../settings/presentation/bloc/settings_cubit.dart'; // Import SettingsCubit
 
 class NameInputPage extends StatefulWidget {
   const NameInputPage({super.key});
@@ -45,6 +47,36 @@ class _NameInputPageState extends State<NameInputPage> {
     }
   }
 
+  Widget _buildLanguageOption(BuildContext context, String label, String code) {
+    final currentLocale = context.watch<SettingsCubit>().state.locale;
+    final selectedCode = currentLocale?.languageCode ?? 'id';
+    final isActive = selectedCode == code;
+
+    return GestureDetector(
+      onTap: () {
+        context.read<SettingsCubit>().updateLanguage(Locale(code));
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF00E676) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20.r),
+          border: isActive
+              ? null
+              : Border.all(color: Colors.white.withOpacity(0.3)),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isActive ? Colors.black : Colors.white70,
+            fontWeight: FontWeight.bold,
+            fontSize: 14.sp,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -59,6 +91,16 @@ class _NameInputPageState extends State<NameInputPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Language Selector (Top Right)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildLanguageOption(context, 'ID', 'id'),
+                    SizedBox(width: 8.w),
+                    _buildLanguageOption(context, 'EN', 'en'),
+                  ],
+                ),
+                SizedBox(height: 24.h),
                 Text(
                   "Assalamu'alaikum! 👋",
                   style: TextStyle(

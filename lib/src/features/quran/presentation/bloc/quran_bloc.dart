@@ -1,5 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:dartz/dartz.dart';
+import '../../../../core/di/di_container.dart';
+import '../../domain/repositories/translation_repository.dart';
 import '../../domain/usecases/get_ayahs.dart';
 import '../../domain/usecases/get_surahs.dart';
 import 'quran_event.dart';
@@ -22,11 +25,33 @@ class QuranBloc extends Bloc<QuranEvent, QuranState> {
 
     on<QuranFetchAyahs>((event, emit) async {
       emit(QuranLoading());
-      final result = await _getAyahs(event.surahId);
-      result.fold(
-        (failure) => emit(QuranError(failure)),
-        (ayahs) => emit(QuranAyahsLoaded(ayahs, event.surahId)),
-      );
+
+      // Fetch Ayahs first to get the count
+      final ayahsResult = await _getAyahs(event.surahId);
+
+      if (ayahsResult is Left) {
+        emit(QuranError((ayahsResult as Left).value));
+        return;
+      }
+
+      // Get ayahs list
+      final ayahs = (ayahsResult as Right).value;
+      final expectedCount = ayahs.length;
+
+      // Fetch Translations with expected count for validation
+      final translationResult = await getIt<TranslationRepository>()
+          .getSurahTranslations(
+            event.surahId,
+            languageCode: event.languageCode,
+            expectedAyahCount: expectedCount,
+          );
+
+      Map<int, String> transMap = {};
+      if (translationResult is Right) {
+        transMap = (translationResult as Right<String, Map<int, String>>).value;
+      }
+
+      emit(QuranAyahsLoaded(ayahs, event.surahId, translationMap: transMap));
     });
   }
 }
