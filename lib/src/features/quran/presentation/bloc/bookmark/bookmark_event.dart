@@ -33,9 +33,10 @@ class LoadLastRead extends BookmarkEvent {}
 
 class SaveLastRead extends BookmarkEvent {
   final LastRead lastRead;
+  final String mode; // 'mushaf' or 'list'
 
-  const SaveLastRead(this.lastRead);
+  const SaveLastRead(this.lastRead, {this.mode = 'mushaf'});
 
   @override
-  List<Object?> get props => [lastRead];
+  List<Object?> get props => [lastRead, mode];
 }

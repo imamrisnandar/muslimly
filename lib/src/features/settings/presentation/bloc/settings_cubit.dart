@@ -24,10 +24,20 @@ class SettingsCubit extends Cubit<SettingsState> {
     final langCode = await _settingsRepository.getLanguage();
     final name = await _nameRepository.getName();
     final target = await _settingsRepository.getDailyReadingTarget();
+    final ayahTarget = await _settingsRepository.getDailyAyahTarget();
+    final unit = await _settingsRepository.getReadingTargetUnit();
 
     final locale = langCode != null ? Locale(langCode) : null;
 
-    emit(state.copyWith(locale: locale, userName: name, dailyTarget: target));
+    emit(
+      state.copyWith(
+        locale: locale,
+        userName: name,
+        dailyTarget: target,
+        dailyAyahTarget: ayahTarget,
+        targetUnit: unit,
+      ),
+    );
   }
 
   Future<void> updateLanguage(Locale locale) async {
@@ -43,6 +53,16 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> updateDailyTarget(int pages) async {
     await _settingsRepository.saveDailyReadingTarget(pages);
     emit(state.copyWith(dailyTarget: pages));
+  }
+
+  Future<void> updateDailyAyahTarget(int ayahs) async {
+    await _settingsRepository.saveDailyAyahTarget(ayahs);
+    emit(state.copyWith(dailyAyahTarget: ayahs));
+  }
+
+  Future<void> updateTargetUnit(String unit) async {
+    await _settingsRepository.saveReadingTargetUnit(unit);
+    emit(state.copyWith(targetUnit: unit));
   }
 
   Future<void> testNotification() async {

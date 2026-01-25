@@ -84,6 +84,7 @@ dependencies:
   just_audio_background: ^0.0.1-beta.17
   showcaseview: ^5.0.1
   share_plus: ^12.0.1
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:

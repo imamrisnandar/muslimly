@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart'; // Fixed import
 import 'package:intl/intl.dart';
+import '../../../quran/domain/entities/last_read.dart';
 import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart';
@@ -18,9 +19,14 @@ import '../../../prayer/presentation/bloc/prayer_state.dart';
 import '../../../quran/presentation/bloc/reading/reading_bloc.dart';
 import '../../../quran/presentation/bloc/reading/reading_event.dart';
 import '../../../quran/presentation/bloc/reading/reading_state.dart';
+import '../../../quran/presentation/bloc/bookmark/bookmark_bloc.dart';
+import '../../../quran/presentation/bloc/bookmark/bookmark_event.dart';
+import '../../../quran/presentation/bloc/bookmark/bookmark_state.dart';
+import '../../../quran/domain/entities/surah.dart';
 import '../widgets/prayer_countdown_widget.dart';
 import '../../../quran/presentation/bloc/audio_bloc.dart';
 import '../../../quran/presentation/bloc/audio_event.dart';
+import '../../../quran/presentation/bloc/audio_state.dart';
 import '../../../quran/presentation/widgets/draggable_audio_player.dart';
 
 import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
@@ -42,12 +48,17 @@ class _DashboardPageState extends State<DashboardPage> {
   late int _currentIndex;
 
   // Showcase Keys
+  // Showcase Keys
   final GlobalKey _dailyGoalKey = GlobalKey();
   final GlobalKey _settingsTabKey = GlobalKey();
   final GlobalKey _prayerCardKey = GlobalKey();
   final GlobalKey _quickAccessKey = GlobalKey();
   final GlobalKey _dzikirTabKey = GlobalKey();
   final GlobalKey _quranTabKey = GlobalKey();
+
+  // Audio Player Showcase Keys
+  final GlobalKey _dragAudioKey = GlobalKey();
+  final GlobalKey _qoriAudioKey = GlobalKey();
 
   @override
   void initState() {
@@ -74,6 +85,23 @@ class _DashboardPageState extends State<DashboardPage> {
         _quranTabKey,
       ]);
       prefs.setBool('hasShownDashboardShowcase', true);
+    }
+  }
+
+  // Check Audio Showcase
+  Future<void> _checkAudioShowcase() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool('hasShownAudioPlayerShowcase') ?? false;
+
+    if (!hasShown && mounted) {
+      // Delay slightly to ensure widget is rendered
+      await Future.delayed(const Duration(milliseconds: 500));
+      if (mounted) {
+        ShowCaseWidget.of(
+          context,
+        ).startShowCase([_dragAudioKey, _qoriAudioKey]);
+        prefs.setBool('hasShownAudioPlayerShowcase', true);
+      }
     }
   }
 
@@ -111,6 +139,9 @@ class _DashboardPageState extends State<DashboardPage> {
           create: (context) => getIt<ReadingBloc>()..add(LoadReadingOverview()),
         ),
         BlocProvider(create: (context) => getIt<AudioBloc>()..add(InitAudio())),
+        BlocProvider(
+          create: (context) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
+        ),
       ],
       child: Builder(
         builder: (context) {
@@ -214,7 +245,18 @@ class _DashboardPageState extends State<DashboardPage> {
                         const SettingsPage(),
                       ],
                     ),
-                    const DraggableAudioPlayer(),
+                    // Listen to Audio Bloc for Showcase Trigger
+                    BlocListener<AudioBloc, AudioState>(
+                      listener: (context, state) {
+                        if (state.isMiniPlayerVisible) {
+                          _checkAudioShowcase();
+                        }
+                      },
+                      child: DraggableAudioPlayer(
+                        dragShowcaseKey: _dragAudioKey,
+                        qoriShowcaseKey: _qoriAudioKey,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -326,9 +368,20 @@ class _DashboardPageState extends State<DashboardPage> {
                   // PROGRESS SECTION (Moved Up)
                   BlocBuilder<ReadingBloc, ReadingState>(
                     builder: (context, state) {
-                      final progress = state.dailyProgress;
-                      final target = state.dailyTarget;
                       final l10n = AppLocalizations.of(context)!;
+                      // Determine target and progress based on unit
+                      // Bloc already handles logic:
+                      // dailyProgress is the count for the current unit
+                      // dailyTarget is (pageTarget) but we need to select correct target field
+
+                      final unit = state.targetUnit;
+                      final progress = state.dailyProgress;
+                      final target = (unit == 'ayah')
+                          ? state.dailyAyahTarget
+                          : state.dailyTarget;
+                      final label = (unit == 'ayah')
+                          ? "Ayahs"
+                          : l10n.lblPages; // Todo: Add localized "Ayahs"
 
                       return Showcase(
                         key: _dailyGoalKey,
@@ -339,6 +392,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           context,
                           progress,
                           target,
+                          label,
                           l10n,
                         ),
                       );
@@ -693,14 +747,20 @@ class _DashboardPageState extends State<DashboardPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Expanded(
-                            child: _buildQuickAccessGridItem(
-                              context,
-                              title: AppLocalizations.of(
-                                context,
-                              )!.cardContinueReading,
-                              icon: Icons.menu_book,
-                              color: const Color(0xFF1B5E20),
-                              onTap: () => context.push('/quran/bookmarks'),
+                            child: BlocBuilder<BookmarkBloc, BookmarkState>(
+                              builder: (context, bookmarkState) {
+                                return _buildQuickAccessGridItem(
+                                  context,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.cardContinueReading,
+                                  icon: Icons.menu_book,
+                                  color: const Color(0xFF1B5E20),
+                                  onTap: () {
+                                    context.push('/quran/bookmarks');
+                                  },
+                                );
+                              },
                             ),
                           ),
                           SizedBox(width: 12.w),
@@ -766,10 +826,17 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
+  // existing _buildQuickAccessGridItem is already defined below but was removed in thought process due to lack of space?
+  // No, the previous tool confirmed checking until line 1254.
+  // Wait, I replaced _buildErrorHero but I need to make sure I don't break the file structure.
+  // Viewing showed `_buildErrorHero` around line 840.
+  // I will append _showLastReadSelection AFTER _buildErrorHero.
+
   Widget _buildDailyGoalCard(
     BuildContext context,
     int progress,
     int target,
+    String unitLabel,
     AppLocalizations l10n,
   ) {
     final percentage = (target > 0) ? (progress / target).clamp(0.0, 1.0) : 0.0;
@@ -972,7 +1039,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             Row(
                               children: [
                                 Text(
-                                  "/ $target ${l10n.lblPages}",
+                                  "/ $target $unitLabel",
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 14.sp,

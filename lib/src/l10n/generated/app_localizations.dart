@@ -1003,6 +1003,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap here to change Reciter.'**
   String get showcaseReciterDesc;
+
+  /// No description provided for @lblBookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks'**
+  String get lblBookmarks;
+
+  /// No description provided for @tabAyahList.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah (List)'**
+  String get tabAyahList;
+
+  /// No description provided for @tabPageMushaf.
+  ///
+  /// In en, this message translates to:
+  /// **'Mushaf (Page)'**
+  String get tabPageMushaf;
+
+  /// No description provided for @emptyBookmarkAyahTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Ayah Bookmarks'**
+  String get emptyBookmarkAyahTitle;
+
+  /// No description provided for @emptyBookmarkAyahSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your marked ayahs will appear here'**
+  String get emptyBookmarkAyahSubtitle;
+
+  /// No description provided for @emptyBookmarkPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Page Bookmarks'**
+  String get emptyBookmarkPageTitle;
+
+  /// No description provided for @emptyBookmarkPageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your marked pages will appear here'**
+  String get emptyBookmarkPageSubtitle;
+
+  /// No description provided for @lblSavedBookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVED BOOKMARKS'**
+  String get lblSavedBookmarks;
+
+  /// No description provided for @lblListType.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah'**
+  String get lblListType;
+
+  /// No description provided for @lblMushafType.
+  ///
+  /// In en, this message translates to:
+  /// **'Mushaf'**
+  String get lblMushafType;
+
+  /// No description provided for @lblAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah'**
+  String get lblAyah;
+
+  /// No description provided for @lblPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Page'**
+  String get lblPage;
+
+  /// No description provided for @lblWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get lblWeek;
+
+  /// No description provided for @targetPageExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Page target is tracked when reading in Mushaf tab.'**
+  String get targetPageExplanation;
+
+  /// No description provided for @targetAyahExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah target is tracked when reading in List/Surah Detail mode.'**
+  String get targetAyahExplanation;
 }
 
 class _AppLocalizationsDelegate

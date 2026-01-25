@@ -5,6 +5,10 @@ class ReadingActivity {
   final int? surahNumber;
   final int durationSeconds;
   final int timestamp;
+  final int? startAyah;
+  final int? endAyah;
+  final int? totalAyahs;
+  final String mode; // 'page' or 'ayah'
 
   ReadingActivity({
     this.id,
@@ -13,6 +17,10 @@ class ReadingActivity {
     this.surahNumber,
     required this.durationSeconds,
     required this.timestamp,
+    this.startAyah,
+    this.endAyah,
+    this.totalAyahs,
+    this.mode = 'page',
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +31,10 @@ class ReadingActivity {
       'surah_number': surahNumber,
       'duration_seconds': durationSeconds,
       'timestamp': timestamp,
+      'start_ayah': startAyah,
+      'end_ayah': endAyah,
+      'total_ayahs': totalAyahs,
+      'mode': mode,
     };
   }
 
@@ -34,6 +46,10 @@ class ReadingActivity {
       surahNumber: map['surah_number'],
       durationSeconds: map['duration_seconds'],
       timestamp: map['timestamp'],
+      startAyah: map['start_ayah'],
+      endAyah: map['end_ayah'],
+      totalAyahs: map['total_ayahs'],
+      mode: map['mode'] ?? 'page',
     );
   }
 }

@@ -15,12 +15,21 @@ class BookmarkLoading extends BookmarkState {}
 
 class BookmarkLoaded extends BookmarkState {
   final List<QuranBookmark> bookmarks;
-  final LastRead? lastRead;
+  final LastRead? lastReadMushaf;
+  final LastRead? lastReadList;
 
-  const BookmarkLoaded(this.bookmarks, {this.lastRead});
+  // Temporary getter for backward compatibility or simple usage
+  // Prefer using specific fields
+  LastRead? get lastRead => lastReadMushaf;
+
+  const BookmarkLoaded(
+    this.bookmarks, {
+    this.lastReadMushaf,
+    this.lastReadList,
+  });
 
   @override
-  List<Object?> get props => [bookmarks, lastRead];
+  List<Object?> get props => [bookmarks, lastReadMushaf, lastReadList];
 }
 
 class BookmarkError extends BookmarkState {

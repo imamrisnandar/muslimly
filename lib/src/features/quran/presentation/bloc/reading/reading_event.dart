@@ -26,6 +26,23 @@ class LogPageRead extends ReadingEvent {
   List<Object?> get props => [pageNumber, durationSeconds, surahNumber];
 }
 
+class LogAyahRead extends ReadingEvent {
+  final int surahNumber;
+  final int startAyah;
+  final int endAyah;
+  final int totalAyahs;
+
+  const LogAyahRead({
+    required this.surahNumber,
+    required this.startAyah,
+    required this.endAyah,
+    required this.totalAyahs,
+  });
+
+  @override
+  List<Object?> get props => [surahNumber, startAyah, endAyah, totalAyahs];
+}
+
 class UpdateDailyTarget extends ReadingEvent {
   final int newTarget;
 

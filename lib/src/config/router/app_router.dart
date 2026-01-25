@@ -71,8 +71,20 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/quran/:number',
       builder: (context, state) {
-        final surah = state.extra as Surah;
-        return SurahDetailPage(surah: surah);
+        final extra = state.extra;
+        Surah surah;
+        int? initialAyah;
+
+        if (extra is Surah) {
+          surah = extra;
+        } else if (extra is Map) {
+          surah = extra['surah'] as Surah;
+          initialAyah = extra['initialAyah'] as int?;
+        } else {
+          throw Exception("Invalid Extra for SurahDetailPage");
+        }
+
+        return SurahDetailPage(surah: surah, initialAyah: initialAyah);
       },
     ),
     GoRoute(

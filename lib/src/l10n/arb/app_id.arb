@@ -150,5 +150,20 @@
     "tajwidIdghamBilaghunnahDesc": "Dilebur / Tidak dibaca",
     "showcaseDraggableTitle": "Player Fleksibel",
     "showcaseDraggableDesc": "Tekan lama & geser player ini untuk memindahkan posisinya",
-    "showcaseReciterDesc": "Ganti Qari pilihan Anda di sini"
+    "showcaseReciterDesc": "Ganti Qari pilihan Anda di sini",
+    "lblBookmarks": "Daftar Penanda",
+    "tabAyahList": "Ayat (List)",
+    "tabPageMushaf": "Mushaf (Halaman)",
+    "emptyBookmarkAyahTitle": "Belum ada bookmark ayat",
+    "emptyBookmarkAyahSubtitle": "Ayat yang Anda tandai akan muncul di sini",
+    "emptyBookmarkPageTitle": "Belum ada bookmark halaman",
+    "emptyBookmarkPageSubtitle": "Halaman yang Anda tandai akan muncul di sini",
+    "lblSavedBookmarks": "BOOKMARK TERSIMPAN",
+    "lblListType": "Ayat",
+    "lblMushafType": "Mushaf",
+    "lblAyah": "Ayat",
+    "lblPage": "Hal",
+    "lblWeek": "Minggu",
+    "targetPageExplanation": "Target Halaman dihitung saat membaca di tab Mushaf.",
+    "targetAyahExplanation": "Target Ayat dihitung saat membaca di mode List/Detail Surah."
 }

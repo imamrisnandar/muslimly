@@ -5,8 +5,11 @@ class ReadingState extends Equatable {
   final bool isLoading;
   final int dailyProgress; // Pages read today (unique)
   final int dailyTarget; // Target (e.g., 4)
+  final int dailyAyahTarget; // e.g. 50
+  final String targetUnit; // 'page' or 'ayah'
   final List<ReadingActivity> readingHistory;
-  final Map<String, int> weeklyProgress;
+  final Map<String, int> weeklyPageProgress;
+  final Map<String, int> weeklyAyahProgress;
   final DateTime? chartReferenceDate; // The end date of the visible chart week
   final String? errorMessage;
 
@@ -14,8 +17,11 @@ class ReadingState extends Equatable {
     this.isLoading = false,
     this.dailyProgress = 0,
     this.dailyTarget = 4,
+    this.dailyAyahTarget = 50,
+    this.targetUnit = 'page',
     this.readingHistory = const [],
-    this.weeklyProgress = const {},
+    this.weeklyPageProgress = const {},
+    this.weeklyAyahProgress = const {},
     this.chartReferenceDate,
     this.errorMessage,
   });
@@ -24,8 +30,11 @@ class ReadingState extends Equatable {
     bool? isLoading,
     int? dailyProgress,
     int? dailyTarget,
+    int? dailyAyahTarget,
+    String? targetUnit,
     List<ReadingActivity>? readingHistory,
-    Map<String, int>? weeklyProgress,
+    Map<String, int>? weeklyPageProgress,
+    Map<String, int>? weeklyAyahProgress,
     DateTime? chartReferenceDate,
     String? errorMessage,
   }) {
@@ -33,8 +42,11 @@ class ReadingState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       dailyProgress: dailyProgress ?? this.dailyProgress,
       dailyTarget: dailyTarget ?? this.dailyTarget,
+      dailyAyahTarget: dailyAyahTarget ?? this.dailyAyahTarget,
+      targetUnit: targetUnit ?? this.targetUnit,
       readingHistory: readingHistory ?? this.readingHistory,
-      weeklyProgress: weeklyProgress ?? this.weeklyProgress,
+      weeklyPageProgress: weeklyPageProgress ?? this.weeklyPageProgress,
+      weeklyAyahProgress: weeklyAyahProgress ?? this.weeklyAyahProgress,
       chartReferenceDate: chartReferenceDate ?? this.chartReferenceDate,
       errorMessage: errorMessage,
     );
@@ -45,8 +57,11 @@ class ReadingState extends Equatable {
     isLoading,
     dailyProgress,
     dailyTarget,
+    dailyAyahTarget,
+    targetUnit,
     readingHistory,
-    weeklyProgress,
+    weeklyPageProgress,
+    weeklyAyahProgress,
     chartReferenceDate,
     errorMessage,
   ];

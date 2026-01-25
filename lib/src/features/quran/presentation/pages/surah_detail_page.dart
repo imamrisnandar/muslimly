@@ -18,11 +18,23 @@ import '../bloc/audio_state.dart';
 import '../widgets/draggable_audio_player.dart';
 import 'package:showcaseview/showcaseview.dart';
 import '../../../../features/settings/data/repositories/settings_repository.dart';
+import '../bloc/reading/reading_bloc.dart';
+import '../bloc/reading/reading_event.dart';
+import '../bloc/bookmark/bookmark_bloc.dart';
+import '../bloc/bookmark/bookmark_event.dart';
+import '../bloc/bookmark/bookmark_state.dart';
+import '../../domain/entities/quran_bookmark.dart';
+import '../../domain/entities/ayah.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../domain/entities/last_read.dart';
+
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class SurahDetailPage extends StatefulWidget {
   final Surah surah;
+  final int? initialAyah;
 
-  const SurahDetailPage({super.key, required this.surah});
+  const SurahDetailPage({super.key, required this.surah, this.initialAyah});
 
   @override
   State<SurahDetailPage> createState() => _SurahDetailPageState();
@@ -32,32 +44,38 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   final GlobalKey _dragKey = GlobalKey();
   final GlobalKey _qoriKey = GlobalKey();
   bool _showcaseChecked = false;
+  bool _hasScrolledToInitialAyah = false;
 
   int? _currentPlayingAyah;
-  final ScrollController _scrollController = ScrollController();
-  final Map<int, GlobalKey> _ayahKeys = {};
+  // Deprecated/Unused ScrollController is removed or commented out if causing issues
+  // final ScrollController _scrollController = ScrollController();
+
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
+
+  // final Map<int, GlobalKey> _ayahKeys = {};
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    // _scrollController.dispose();
     super.dispose();
   }
 
   void _scrollToAyah(int ayahNumber) {
-    final key = _ayahKeys[ayahNumber];
-    if (key != null && key.currentContext != null) {
-      // Use a slight delay to ensure the widget is fully rendered
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) {
-          Scrollable.ensureVisible(
-            key.currentContext!,
-            duration: const Duration(milliseconds: 500),
-            curve: Curves.easeInOut,
-            alignment: 0.03, // Position near top (3%)
-          );
-        }
-      });
-    }
+    if (ayahNumber < 1) return;
+    // ayahs are 0-indexed in list
+    final index = ayahNumber - 1;
+
+    // Use a slight delay to ensure the widget is fully rendered
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        _itemScrollController.jumpTo(
+          index: index,
+          alignment: 0.1, // Near top
+        );
+      }
+    });
   }
 
   int _getJuzNumber(int surahNumber) {
@@ -215,16 +233,114 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     }
   }
 
+  void _handleBookmarkTap(BuildContext context, Ayah ayah) {
+    // Only add Bookmark
+    final newBookmark = QuranBookmark(
+      surahNumber: widget.surah.number,
+      surahName: widget.surah.englishName,
+      pageNumber: ayah.page,
+      ayahNumber: ayah.numberInSurah,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    context.read<BookmarkBloc>().add(AddBookmark(newBookmark));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Bookmark Saved"),
+        backgroundColor: Color(0xFF00E676),
+      ),
+    );
+  }
+
+  void _handleMarkAsRead(BuildContext context, Ayah ayah) {
+    // Determine the 'start' point of this reading session.
+    // 1. If we have an initialAyah passed (from Last Read card), use that.
+    // 2. Otherwise try to see if we have a stored last read for this surah.
+    // 3. Fallback to 0.
+
+    int previousAyah = widget.initialAyah ?? 0;
+
+    final bookmarkState = context.read<BookmarkBloc>().state;
+    if (bookmarkState is BookmarkLoaded && bookmarkState.lastReadList != null) {
+      if (bookmarkState.lastReadList!.surahNumber == widget.surah.number) {
+        // If stored last read is greater than initialAyah (e.g. user read further in another session), use that.
+        // But for this specific session, initialAyah is the safe 'start' point.
+        // Actually, logic:
+        // We want to record 'newly read' ayahs during this session.
+        // If I opened the app at Ayah 5. I scroll to Ayah 8. I mark Ayah 8.
+        // Progress = 8 - 5 = 3.
+
+        // However, we should be careful. If I opened at Ayah 5, but the Last Read in DB says Ayah 7
+        // (maybe I read 2 ayahs on another device? unlikely, local only).
+        // Let's stick to using the DB Last Read as truth if available and higher?
+        // No, user says "misal last read ayah 5... tampil ayah 5... read sampai ayah 8".
+        // This implies initialAyah was 5.
+
+        // If bookmarkState is loaded, and matches surah, and ayahNumber > previousAyah
+        if (bookmarkState.lastReadList!.ayahNumber > previousAyah) {
+          previousAyah = bookmarkState.lastReadList!.ayahNumber;
+        }
+      }
+    }
+
+    // Special case: If previousAyah is 0, it means we started from beginning.
+    // But if we navigated from "Last Read Card", widget.initialAyah is set.
+
+    // Logic from user request: "Last read ayah 5... tampil ayah 5... read sampai ayah 8... progress tambah 3 ayah".
+    // So start point is 5. End point is 8.
+
+    // We update global Last Read to 8.
+    final lastRead = LastRead(
+      pageNumber: ayah.page,
+      surahName: widget.surah.englishName,
+      surahNumber: widget.surah.number,
+      ayahNumber: ayah.numberInSurah,
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+    );
+    context.read<BookmarkBloc>().add(SaveLastRead(lastRead, mode: 'list'));
+
+    // Calculate Delta
+    // If ayah.numberInSurah (8) <= previousAyah (5), means we are backtracking or same spot.
+    int delta = ayah.numberInSurah - previousAyah;
+
+    if (delta > 0) {
+      context.read<ReadingBloc>().add(
+        LogAyahRead(
+          surahNumber: widget.surah.number,
+          startAyah: previousAyah + 1,
+          endAyah: ayah.numberInSurah,
+          totalAyahs: delta,
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Recorded $delta Ayahs read!"),
+          backgroundColor: const Color(0xFF00E676),
+        ),
+      );
+    } else {
+      // Just updating position, no progress?
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Last Read Position Updated"),
+          backgroundColor: Color(0xFF00E676),
+        ),
+      );
+    }
+  }
+
   Widget _buildActionButton({
     required IconData icon,
     required VoidCallback onTap,
+    Color? color,
   }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: EdgeInsets.all(6.w),
-        child: Icon(icon, color: Colors.grey[600], size: 20.sp),
+        child: Icon(icon, color: color ?? Colors.grey[600], size: 20.sp),
       ),
     );
   }
@@ -238,35 +354,64 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       widget.surah.englishName,
     );
 
-    return BlocProvider(
-      create: (context) =>
-          getIt<QuranBloc>()
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<QuranBloc>()
             ..add(QuranFetchAyahs(widget.surah.number, languageCode: locale)),
+        ),
+        BlocProvider(create: (context) => getIt<ReadingBloc>()),
+        BlocProvider(
+          create: (context) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
+        ),
+      ],
       child: ShowCaseWidget(
         builder: (context) {
-          return BlocListener<AudioBloc, AudioState>(
-            listener: (context, state) {
-              // Showcase Logic
-              if (state.status == AudioStatus.playing) {
-                _checkAndStartShowcase(context);
-              }
+          return MultiBlocListener(
+            listeners: [
+              BlocListener<AudioBloc, AudioState>(
+                listener: (context, state) {
+                  // Showcase Logic
+                  if (state.status == AudioStatus.playing) {
+                    _checkAndStartShowcase(context);
+                  }
 
-              if (state.currentSurahId == widget.surah.number &&
-                  state.currentAyahNumber != null) {
-                if (_currentPlayingAyah != state.currentAyahNumber) {
-                  setState(() {
-                    _currentPlayingAyah = state.currentAyahNumber;
-                  });
-                  _scrollToAyah(state.currentAyahNumber!);
-                }
-              } else {
-                if (_currentPlayingAyah != null) {
-                  setState(() {
-                    _currentPlayingAyah = null;
-                  });
-                }
-              }
-            },
+                  if (state.currentSurahId == widget.surah.number &&
+                      state.currentAyahNumber != null) {
+                    if (_currentPlayingAyah != state.currentAyahNumber) {
+                      setState(() {
+                        _currentPlayingAyah = state.currentAyahNumber;
+                      });
+                      _scrollToAyah(state.currentAyahNumber!);
+                    }
+                  } else {
+                    if (_currentPlayingAyah != null) {
+                      setState(() {
+                        _currentPlayingAyah = null;
+                      });
+                    }
+                  }
+                },
+              ),
+              BlocListener<QuranBloc, QuranState>(
+                listener: (context, state) {
+                  if (state is QuranAyahsLoaded &&
+                      widget.initialAyah != null &&
+                      !_hasScrolledToInitialAyah) {
+                    // Wait for list to build keys
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      // Small extra delay to ensure keys are registered in ListView
+                      Future.delayed(const Duration(milliseconds: 300), () {
+                        if (mounted) {
+                          _scrollToAyah(widget.initialAyah!);
+                          _hasScrolledToInitialAyah = true;
+                        }
+                      });
+                    });
+                  }
+                },
+              ),
+            ],
             child: Stack(
               children: [
                 Scaffold(
@@ -418,8 +563,9 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                 ),
                               );
                             } else if (state is QuranAyahsLoaded) {
-                              return ListView.separated(
-                                controller: _scrollController,
+                              return ScrollablePositionedList.separated(
+                                itemScrollController: _itemScrollController,
+                                itemPositionsListener: _itemPositionsListener,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 16.w,
                                   vertical: 16.h,
@@ -465,10 +611,10 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                   }
 
                                   // Ensure Key
-                                  _ayahKeys.putIfAbsent(
-                                    ayah.numberInSurah,
-                                    () => GlobalKey(),
-                                  );
+                                  // _ayahKeys.putIfAbsent(
+                                  //   ayah.numberInSurah,
+                                  //   () => GlobalKey(),
+                                  // );
 
                                   final isPlaying =
                                       _currentPlayingAyah == ayah.numberInSurah;
@@ -595,7 +741,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                           ),
                                         ),
                                       Container(
-                                        key: _ayahKeys[ayah.numberInSurah],
+                                        // key: _ayahKeys[ayah.numberInSurah],
                                         decoration: BoxDecoration(
                                           color: isPlaying
                                               ? const Color(
@@ -715,6 +861,20 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                     ),
                                                   ),
                                                 ),
+                                                SizedBox(width: 8.w),
+                                                _buildActionButton(
+                                                  icon: Icons
+                                                      .check_circle_outline,
+                                                  color: const Color(
+                                                    0xFF00E676,
+                                                  ),
+                                                  onTap: () {
+                                                    _handleMarkAsRead(
+                                                      context,
+                                                      ayah,
+                                                    );
+                                                  },
+                                                ),
                                                 const Spacer(),
 
                                                 // Actions
@@ -754,10 +914,14 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                   },
                                                 ),
                                                 SizedBox(width: 8.w),
-                                                const Icon(
-                                                  Icons.bookmark_border,
-                                                  color: Colors.grey,
-                                                  size: 20,
+                                                _buildActionButton(
+                                                  icon: Icons.bookmark_border,
+                                                  onTap: () {
+                                                    _handleBookmarkTap(
+                                                      context,
+                                                      ayah,
+                                                    );
+                                                  },
                                                 ),
                                               ],
                                             ),

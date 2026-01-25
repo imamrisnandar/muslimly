@@ -499,4 +499,53 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get showcaseReciterDesc => 'Ganti Qari pilihan Anda di sini';
+
+  @override
+  String get lblBookmarks => 'Daftar Penanda';
+
+  @override
+  String get tabAyahList => 'Ayat (List)';
+
+  @override
+  String get tabPageMushaf => 'Mushaf (Halaman)';
+
+  @override
+  String get emptyBookmarkAyahTitle => 'Belum ada bookmark ayat';
+
+  @override
+  String get emptyBookmarkAyahSubtitle =>
+      'Ayat yang Anda tandai akan muncul di sini';
+
+  @override
+  String get emptyBookmarkPageTitle => 'Belum ada bookmark halaman';
+
+  @override
+  String get emptyBookmarkPageSubtitle =>
+      'Halaman yang Anda tandai akan muncul di sini';
+
+  @override
+  String get lblSavedBookmarks => 'BOOKMARK TERSIMPAN';
+
+  @override
+  String get lblListType => 'Ayat';
+
+  @override
+  String get lblMushafType => 'Mushaf';
+
+  @override
+  String get lblAyah => 'Ayat';
+
+  @override
+  String get lblPage => 'Hal';
+
+  @override
+  String get lblWeek => 'Minggu';
+
+  @override
+  String get targetPageExplanation =>
+      'Target Halaman dihitung saat membaca di tab Mushaf.';
+
+  @override
+  String get targetAyahExplanation =>
+      'Target Ayat dihitung saat membaca di mode List/Detail Surah.';
 }

@@ -22,15 +22,25 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     LoadBookmarks event,
     Emitter<BookmarkState> emit,
   ) async {
-    // If we're already loaded, we want to keep current data while fetching?
-    // For now simple reload
     if (state is! BookmarkLoaded) {
       emit(BookmarkLoading());
     }
     try {
       final bookmarks = await _databaseService.getBookmarks();
-      final lastRead = await _lastReadRepository.getLastRead();
-      emit(BookmarkLoaded(bookmarks, lastRead: lastRead));
+      final lastReadMushaf = await _lastReadRepository.getLastRead(
+        mode: 'mushaf',
+      );
+      final lastReadList = await _lastReadRepository.getLastRead(mode: 'list');
+
+      // We pass both to state.
+      // Need to update State first.
+      emit(
+        BookmarkLoaded(
+          bookmarks,
+          lastReadMushaf: lastReadMushaf,
+          lastReadList: lastReadList,
+        ),
+      );
     } catch (e) {
       emit(BookmarkError("Failed to load data: $e"));
     }
@@ -67,18 +77,12 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     Emitter<BookmarkState> emit,
   ) async {
     try {
-      await _lastReadRepository.saveLastRead(event.lastRead);
-      // After saving, we should update the state if it's currently loaded
-      if (state is BookmarkLoaded) {
-        final currentState = state as BookmarkLoaded;
-        emit(BookmarkLoaded(currentState.bookmarks, lastRead: event.lastRead));
-      } else {
-        // If not loaded, reload everything
-        add(LoadBookmarks());
-      }
+      await _lastReadRepository.saveLastRead(event.lastRead, mode: event.mode);
+      // After saving, we should update the state
+      // For now, simpler to reload everything to sync both LastReads if we decide to store both in state
+      add(LoadBookmarks());
     } catch (e) {
       // Create a specific error or just log
-      // emit(BookmarkError("Failed to save last read: $e"));
     }
   }
 

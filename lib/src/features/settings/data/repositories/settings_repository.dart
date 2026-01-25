@@ -14,6 +14,12 @@ abstract class SettingsRepository {
   Future<int> getDailyReadingTarget();
   Future<void> saveDailyReadingTarget(int pages);
 
+  Future<String> getReadingTargetUnit(); // 'page' or 'ayah'
+  Future<void> saveReadingTargetUnit(String unit);
+
+  Future<int> getDailyAyahTarget();
+  Future<void> saveDailyAyahTarget(int ayahs);
+
   Future<String?> getUserName();
   Future<void> saveUserName(String name);
 
@@ -26,6 +32,8 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyLanguage = 'app_language';
   static const String _keyPrayerPrefix = 'prayer_notify_';
   static const String _keyDailyTarget = 'quran_daily_target';
+  static const String _keyDailyAyahTarget = 'quran_daily_ayah_target';
+  static const String _keyTargetUnit = 'quran_target_unit';
   static const String _keyUserName = 'user_name';
   static const String _keyPlayerShowcase = 'player_showcase_shown_v3';
 
@@ -84,6 +92,29 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> saveDailyReadingTarget(int pages) async {
     await _databaseService.saveSetting(_keyDailyTarget, pages.toString());
+  }
+
+  @override
+  Future<String> getReadingTargetUnit() async {
+    final val = await _databaseService.getSetting(_keyTargetUnit);
+    return val ?? 'page';
+  }
+
+  @override
+  Future<void> saveReadingTargetUnit(String unit) async {
+    await _databaseService.saveSetting(_keyTargetUnit, unit);
+  }
+
+  @override
+  Future<int> getDailyAyahTarget() async {
+    final val = await _databaseService.getSetting(_keyDailyAyahTarget);
+    if (val == null) return 20; // Default Ayah Target
+    return int.tryParse(val) ?? 20;
+  }
+
+  @override
+  Future<void> saveDailyAyahTarget(int ayahs) async {
+    await _databaseService.saveSetting(_keyDailyAyahTarget, ayahs.toString());
   }
 
   @override

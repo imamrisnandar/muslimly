@@ -497,4 +497,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showcaseReciterDesc => 'Tap here to change Reciter.';
+
+  @override
+  String get lblBookmarks => 'Bookmarks';
+
+  @override
+  String get tabAyahList => 'Ayah (List)';
+
+  @override
+  String get tabPageMushaf => 'Mushaf (Page)';
+
+  @override
+  String get emptyBookmarkAyahTitle => 'No Ayah Bookmarks';
+
+  @override
+  String get emptyBookmarkAyahSubtitle => 'Your marked ayahs will appear here';
+
+  @override
+  String get emptyBookmarkPageTitle => 'No Page Bookmarks';
+
+  @override
+  String get emptyBookmarkPageSubtitle => 'Your marked pages will appear here';
+
+  @override
+  String get lblSavedBookmarks => 'SAVED BOOKMARKS';
+
+  @override
+  String get lblListType => 'Ayah';
+
+  @override
+  String get lblMushafType => 'Mushaf';
+
+  @override
+  String get lblAyah => 'Ayah';
+
+  @override
+  String get lblPage => 'Page';
+
+  @override
+  String get lblWeek => 'Week';
+
+  @override
+  String get targetPageExplanation =>
+      'Page target is tracked when reading in Mushaf tab.';
+
+  @override
+  String get targetAyahExplanation =>
+      'Ayah target is tracked when reading in List/Surah Detail mode.';
 }

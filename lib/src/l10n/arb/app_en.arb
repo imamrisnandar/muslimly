@@ -150,5 +150,20 @@
     "tajwidIdghamBilaghunnahDesc": "Merged / Not pronounced",
     "showcaseDraggableTitle": "Flexible Player",
     "showcaseDraggableDesc": "Long press & drag to move position.",
-    "showcaseReciterDesc": "Tap here to change Reciter."
+    "showcaseReciterDesc": "Tap here to change Reciter.",
+    "lblBookmarks": "Bookmarks",
+    "tabAyahList": "Ayah (List)",
+    "tabPageMushaf": "Mushaf (Page)",
+    "emptyBookmarkAyahTitle": "No Ayah Bookmarks",
+    "emptyBookmarkAyahSubtitle": "Your marked ayahs will appear here",
+    "emptyBookmarkPageTitle": "No Page Bookmarks",
+    "emptyBookmarkPageSubtitle": "Your marked pages will appear here",
+    "lblSavedBookmarks": "SAVED BOOKMARKS",
+    "lblListType": "Ayah",
+    "lblMushafType": "Mushaf",
+    "lblAyah": "Ayah",
+    "lblPage": "Page",
+    "lblWeek": "Week",
+    "targetPageExplanation": "Page target is tracked when reading in Mushaf tab.",
+    "targetAyahExplanation": "Ayah target is tracked when reading in List/Surah Detail mode."
 }

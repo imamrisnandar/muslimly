@@ -15,6 +15,7 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     on<LoadReadingOverview>(_onLoadOverview);
     on<LoadReadingHistory>(_onLoadReadingHistory);
     on<LogPageRead>(_onLogPageRead);
+    on<LogAyahRead>(_onLogAyahRead);
     on<UpdateDailyTarget>(_onUpdateDailyTarget);
     on<NavigateWeeklyChart>(_onNavigateWeeklyChart);
   }
@@ -27,15 +28,27 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     try {
       final history = await _databaseService.getReadingHistory();
       final now = DateTime.now();
-      final weekly = await _databaseService.getWeeklyProgress(endDate: now);
+      final weeklyPage = await _databaseService.getWeeklyProgress(
+        endDate: now,
+        mode: 'page',
+      );
+      final weeklyAyah = await _databaseService.getWeeklyProgress(
+        endDate: now,
+        mode: 'ayah',
+      );
       final target = await _settingsRepository.getDailyReadingTarget();
+      final ayahTarget = await _settingsRepository.getDailyAyahTarget();
+      final unit = await _settingsRepository.getReadingTargetUnit();
       emit(
         state.copyWith(
           isLoading: false,
           readingHistory: history,
-          weeklyProgress: weekly,
+          weeklyPageProgress: weeklyPage,
+          weeklyAyahProgress: weeklyAyah,
           chartReferenceDate: now,
           dailyTarget: target,
+          dailyAyahTarget: ayahTarget,
+          targetUnit: unit,
         ),
       );
     } catch (e) {
@@ -51,18 +64,27 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     // Move by 7 days
     final newRef = currentRef.add(Duration(days: event.direction * 7));
 
-    // Prevent navigating to future weeks beyond 'today's week' if desired,
-    // but maybe user wants to see empty future? Assuming NO data there so fine.
-    // However, usually we don't want to go beyond 'now'.
     if (event.direction > 0 &&
         newRef.isAfter(DateTime.now().add(const Duration(days: 1)))) {
       // Allow going back to 'current week' but not further future
-      // Actually let's just allow it, data will be 0.
     }
 
     try {
-      final weekly = await _databaseService.getWeeklyProgress(endDate: newRef);
-      emit(state.copyWith(weeklyProgress: weekly, chartReferenceDate: newRef));
+      final weeklyPage = await _databaseService.getWeeklyProgress(
+        endDate: newRef,
+        mode: 'page',
+      );
+      final weeklyAyah = await _databaseService.getWeeklyProgress(
+        endDate: newRef,
+        mode: 'ayah',
+      );
+      emit(
+        state.copyWith(
+          weeklyPageProgress: weeklyPage,
+          weeklyAyahProgress: weeklyAyah,
+          chartReferenceDate: newRef,
+        ),
+      );
     } catch (e) {
       // ignore
     }
@@ -77,16 +99,39 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyy-MM-dd').format(now);
 
-      // 1. Get Target from Settings
-      final target = await _settingsRepository.getDailyReadingTarget();
+      // 1. Get Settings
+      final pageTarget = await _settingsRepository.getDailyReadingTarget();
+      final ayahTarget = await _settingsRepository.getDailyAyahTarget();
+      final unit = await _settingsRepository.getReadingTargetUnit();
 
       // 2. Get Progress from DB
-      final progress = await _databaseService.getDailyPageCount(dateStr);
+      // We need a smart progress fetcher
+      // For now, let's keep dailyProgress as "Int representing current unit progress" behavior
+      // OR we add logic to fetch BOTH page and ayah counts.
+      // Ideally ReadingState should have pagesRead AND ayahsRead fields.
+      // But to save time refactoring state excessively:
+      // If unit == 'page', dailyProgress = pageCount
+      // If unit == 'ayah', dailyProgress = ayahCount
+
+      int progress = 0;
+      if (unit == 'ayah') {
+        // Need a new DB method: getDailyAyahCount
+        // Or simple raw query here for now
+        // For now let's assume raw query or add method to DB service later
+        // Quick fix: Add getDailyAyahCount to DB Service.
+        // Wait, I can't add to DB Service without file edit.
+        // I'll stick to logic:
+        progress = await _databaseService.getDailyAyahCount(dateStr);
+      } else {
+        progress = await _databaseService.getDailyPageCount(dateStr);
+      }
 
       emit(
         state.copyWith(
           isLoading: false,
-          dailyTarget: target,
+          dailyTarget: pageTarget,
+          dailyAyahTarget: ayahTarget,
+          targetUnit: unit,
           dailyProgress: progress,
         ),
       );
@@ -120,6 +165,36 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     } catch (e) {
       // Fail silently or log error, but don't disrupt user too much
       print("Error logging reading: $e");
+    }
+  }
+
+  Future<void> _onLogAyahRead(
+    LogAyahRead event,
+    Emitter<ReadingState> emit,
+  ) async {
+    try {
+      final now = DateTime.now();
+      final dateStr = DateFormat('yyyy-MM-dd').format(now);
+
+      final activity = ReadingActivity(
+        date: dateStr,
+        pageNumber: 0, // 0 for Ayah Mode
+        surahNumber: event.surahNumber,
+        durationSeconds: 0, // Not tracked for now
+        timestamp: now.millisecondsSinceEpoch,
+        startAyah: event.startAyah,
+        endAyah: event.endAyah,
+        totalAyahs: event.totalAyahs,
+        mode: 'ayah',
+      );
+
+      await _databaseService.insertActivity(activity);
+
+      // Reload Progress (Logic needs update to count ayahs too)
+      // For now we just trigger reload
+      add(LoadReadingOverview());
+    } catch (e) {
+      print("Error logging ayah: $e");
     }
   }
 

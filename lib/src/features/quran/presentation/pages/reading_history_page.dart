@@ -1,399 +1,606 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/di/di_container.dart';
-import '../../../../core/utils/surah_names.dart';
+import 'package:muslimly/src/core/utils/surah_names.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/di/di_container.dart';
 import '../bloc/reading/reading_bloc.dart';
 import '../bloc/reading/reading_event.dart';
 import '../bloc/reading/reading_state.dart';
+import '../../domain/entities/reading_activity.dart';
 
-class ReadingHistoryPage extends StatelessWidget {
+class ReadingHistoryPage extends StatefulWidget {
   const ReadingHistoryPage({super.key});
+
+  @override
+  State<ReadingHistoryPage> createState() => _ReadingHistoryPageState();
+}
+
+class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
+  // We use a key to force rebuild of TabController when initialIndex changes if needed,
+  // but typically we just need to set it once or listen to changes.
+  // Actually, BlocBuilder inside Scaffold body allows us to read state,
+  // but DefaultTabController wraps Scaffold.
+  // We need to access Bloc BEFORE DefaultTabController.
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt<ReadingBloc>()..add(LoadReadingHistory()),
-      child: Scaffold(
-        backgroundColor: const Color(0xFF0F2027),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: const BackButton(color: Colors.white),
-          title: Text(
-            AppLocalizations.of(context)!.historyTitle,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        body: BlocBuilder<ReadingBloc, ReadingState>(
-          builder: (context, state) {
-            if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (state.errorMessage != null) {
-              return Center(
-                child: Text(
-                  state.errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              );
-            }
-            if (state.readingHistory.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.history_toggle_off,
-                      size: 64.sp,
-                      color: Colors.white24,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      AppLocalizations.of(context)!.chartLegendNoActivity,
-                      style: TextStyle(color: Colors.white54, fontSize: 16.sp),
-                    ),
-                    SizedBox(height: 24.h),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Switch tab to Quran (Index 2)
-                        context.go('/dashboard?index=2');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00E676),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 24.w,
-                          vertical: 12.h,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        elevation: 4,
-                        shadowColor: const Color(0xFF00E676).withOpacity(0.4),
-                      ),
-                      child: Text(
-                        AppLocalizations.of(context)!.btnGoToQuran,
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
+      child: BlocBuilder<ReadingBloc, ReadingState>(
+        builder: (context, state) {
+          if (state.isLoading) {
+            return const Material(
+              child: Center(
+                child: CircularProgressIndicator(color: Color(0xFF00E676)),
+              ),
+            );
+          }
+
+          // Determine initial index based on targetUnit
+          // 'ayah' -> Tab 0, 'page' -> Tab 1
+          final initialIndex = state.targetUnit == 'ayah' ? 0 : 1;
+
+          return DefaultTabController(
+            key: ValueKey(
+              'history_tab_$initialIndex',
+            ), // Force rebuild if index changes
+            length: 2,
+            initialIndex: initialIndex,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0F2027),
+                    Color(0xFF203A43),
+                    Color(0xFF2C5364),
                   ],
                 ),
-              );
-            }
-
-            // Group by Date
-            final groupedHistory = <String, List<dynamic>>{};
-            for (var activity in state.readingHistory) {
-              if (!groupedHistory.containsKey(activity.date)) {
-                groupedHistory[activity.date] = [];
-              }
-              groupedHistory[activity.date]!.add(activity);
-            }
-
-            return ListView.builder(
-              padding: EdgeInsets.all(16.w),
-              itemCount: groupedHistory.length + 1, // +1 for Chart
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return _buildWeeklyChart(context, state);
-                }
-
-                final realIndex = index - 1;
-                final dateKey = groupedHistory.keys.elementAt(realIndex);
-                final activities = groupedHistory[dateKey]!;
-
-                // Format Date Header
-                final date = DateTime.parse(dateKey);
-                final dateHeader = DateFormat('EEEE, d MMMM yyyy').format(date);
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Text(
-                        dateHeader,
-                        style: TextStyle(
-                          color: const Color(0xFF00E676),
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
+              ),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  centerTitle: true,
+                  leading: const BackButton(color: Colors.white),
+                  title: Text(
+                    AppLocalizations.of(context)!.historyTitle ??
+                        "Reading History",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Outfit',
+                    ),
+                  ),
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(60.h),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 8.h,
+                      ),
+                      padding: EdgeInsets.all(4.w),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(50.r),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
                         ),
                       ),
-                    ),
-                    ...activities.map((activity) {
-                      final startTime = DateTime.fromMillisecondsSinceEpoch(
-                        activity.timestamp,
-                      );
-                      final timeStr = DateFormat('HH:mm').format(startTime);
-                      final durationStr = _formatDuration(
-                        activity.durationSeconds,
-                      );
-
-                      // Surah Name Logic
-                      String surahDisplay = "Unknown Surah";
-                      if (activity.surahNumber != null &&
-                          activity.surahNumber! >= 1 &&
-                          activity.surahNumber! <= 114) {
-                        surahDisplay = SurahNames
-                            .indonesianNames[activity.surahNumber! - 1];
-                      }
-
-                      return Container(
-                        margin: EdgeInsets.only(bottom: 12.h),
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Colors.white10),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(10.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.05),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.menu_book,
-                                color: Colors.white,
-                                size: 20.sp,
-                              ),
-                            ),
-                            SizedBox(width: 16.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    surahDisplay,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 4.h),
-                                  Text(
-                                    "Page ${activity.pageNumber} • $timeStr",
-                                    style: TextStyle(
-                                      color: Colors.white54,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF00E676).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              child: Text(
-                                durationStr,
-                                style: TextStyle(
-                                  color: const Color(0xFF00E676),
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      child: TabBar(
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.circular(40.r),
+                          color: const Color(0xFF00E676),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF00E676).withOpacity(0.3),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                      );
-                    }),
-                  ],
-                );
-              },
-            );
-          },
-        ),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        dividerColor: Colors.transparent,
+                        labelColor: const Color(0xFF052025),
+                        unselectedLabelColor: Colors.white70,
+                        labelStyle: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15.sp,
+                          fontFamily: 'Outfit',
+                          letterSpacing: 0.5,
+                        ),
+                        unselectedLabelStyle: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15.sp,
+                          fontFamily: 'Outfit',
+                          letterSpacing: 0.5,
+                        ),
+                        splashBorderRadius: BorderRadius.circular(40.r),
+                        tabs: [
+                          Tab(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.format_list_bulleted_rounded,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 6.w),
+                                Flexible(
+                                  child: Text(
+                                    AppLocalizations.of(context)!.lblListType ??
+                                        "Ayah",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Tab(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.menu_book_rounded, size: 18),
+                                SizedBox(width: 6.w),
+                                Flexible(
+                                  child: Text(
+                                    AppLocalizations.of(
+                                          context,
+                                        )!.lblMushafType ??
+                                        "Mushaf",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                body: Builder(
+                  builder: (context) {
+                    // Filter History
+                    final ayahHistory = state.readingHistory
+                        .where((a) => a.mode == 'ayah')
+                        .toList();
+                    final pageHistory = state.readingHistory
+                        .where((a) => a.mode == 'page')
+                        .toList();
+
+                    // Sort descending by timestamp
+                    ayahHistory.sort(
+                      (a, b) => b.timestamp.compareTo(a.timestamp),
+                    );
+                    pageHistory.sort(
+                      (a, b) => b.timestamp.compareTo(a.timestamp),
+                    );
+
+                    return TabBarView(
+                      children: [
+                        _buildHistoryList(
+                          context,
+                          ayahHistory,
+                          true,
+                          state.weeklyAyahProgress,
+                          state.chartReferenceDate,
+                          state.dailyAyahTarget, // Pass Ayah Target
+                        ),
+                        _buildHistoryList(
+                          context,
+                          pageHistory,
+                          false,
+                          state.weeklyPageProgress,
+                          state.chartReferenceDate,
+                          state.dailyTarget, // Pass Page Target
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildWeeklyChart(BuildContext context, ReadingState state) {
-    if (state.weeklyProgress.isEmpty && state.readingHistory.isEmpty) {
-      // If truly empty (brand new app), still show chart framework maybe?
-      // But preserving existing logic for now.
+  Widget _buildHistoryList(
+    BuildContext context,
+    List<ReadingActivity> history,
+    bool isListMode, // Ayah Mode
+    Map<String, int> weeklyProgress,
+    DateTime? chartRefDate,
+    int target, // Daily Target for chart
+  ) {
+    // 1. Group History by Week
+    final groupedHistory = _groupHistoryByWeek(history, context);
+
+    return ListView(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      children: [
+        // --- Weekly Graph ---
+        _buildWeeklySummary(context, weeklyProgress, chartRefDate, target),
+
+        // --- History List Title ---
+        Padding(
+          padding: EdgeInsets.only(bottom: 12.h),
+          child: Text(
+            AppLocalizations.of(context)!.historyTitle ?? "Reading History",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Outfit',
+            ),
+          ),
+        ),
+
+        // --- Empty State ---
+        if (history.isEmpty) ...[
+          SizedBox(height: 40.h),
+          Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.history_toggle_off,
+                  size: 64.sp,
+                  color: Colors.white12,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  AppLocalizations.of(context)!.emptyBookmarkTitle ??
+                      "No History Yet",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ] else ...[
+          // --- Grouped List View ---
+          ...groupedHistory.entries.map((entry) {
+            return Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+                expansionTileTheme: ExpansionTileThemeData(
+                  iconColor: const Color(0xFF00E676),
+                  collapsedIconColor: Colors.white54,
+                  textColor: Colors.white,
+                  collapsedTextColor: Colors.white,
+                ),
+              ),
+              child: ExpansionTile(
+                initiallyExpanded: true, // Auto open new items
+                tilePadding: EdgeInsets.zero,
+                title: Text(
+                  "${AppLocalizations.of(context)!.lblWeek ?? 'Week'}: ${entry.key}",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                children: entry.value.map((activity) {
+                  return _buildHistoryItem(context, activity, isListMode);
+                }).toList(),
+              ),
+            );
+          }),
+        ],
+      ],
+    );
+  }
+
+  // Helper to group history
+  Map<String, List<ReadingActivity>> _groupHistoryByWeek(
+    List<ReadingActivity> history,
+    BuildContext context,
+  ) {
+    final Map<String, List<ReadingActivity>> groups = {};
+
+    for (var activity in history) {
+      // Parse date: 2023-01-01
+      final date = DateTime.fromMillisecondsSinceEpoch(activity.timestamp);
+      // Determine week range (Mon - Sun)
+      // Find Monday
+      final monday = date.subtract(Duration(days: date.weekday - 1));
+      final sunday = monday.add(const Duration(days: 6));
+
+      final rangeKey =
+          "${DateFormat('d MMM').format(monday)} - ${DateFormat('d MMM').format(sunday)}";
+
+      if (groups.containsKey(rangeKey)) {
+        groups[rangeKey]!.add(activity);
+      } else {
+        groups[rangeKey] = [activity];
+      }
     }
+    return groups;
+  }
 
-    final refDate = state.chartReferenceDate ?? DateTime.now();
-    final startDate = refDate.subtract(const Duration(days: 6));
+  Widget _buildHistoryItem(
+    BuildContext context,
+    ReadingActivity activity,
+    bool isListMode,
+  ) {
+    final surahName =
+        (activity.surahNumber != null &&
+            activity.surahNumber! >= 1 &&
+            activity.surahNumber! <= 114)
+        ? SurahNames.indonesianNames[activity.surahNumber! - 1]
+        : "Surah ${activity.surahNumber}";
 
-    // Check if we can go forward (is refDate < today?)
-    final now = DateTime.now();
-    final canGoNext =
-        refDate.year < now.year ||
-        (refDate.year == now.year && refDate.month < now.month) ||
-        (refDate.year == now.year &&
-            refDate.month == now.month &&
-            refDate.day < now.day);
+    return Container(
+      margin: EdgeInsets.only(bottom: 8.h, left: 16.w, right: 16.w),
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isListMode ? Icons.format_list_bulleted : Icons.menu_book,
+            color: const Color(0xFF00E676),
+            size: 16.sp,
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  surahName,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  isListMode
+                      ? "${activity.totalAyahs} Ayahs (Ayah ${activity.startAyah}-${activity.endAyah})"
+                      : "Page ${activity.pageNumber}",
+                  style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            DateFormat(
+              "EEE, HH:mm",
+            ).format(DateTime.fromMillisecondsSinceEpoch(activity.timestamp)),
+            style: TextStyle(color: Colors.white30, fontSize: 11.sp),
+          ),
+        ],
+      ),
+    );
+  }
 
-    final List<Map<String, dynamic>> chartData = [];
-    int maxPages = 4; // Default min max
+  Widget _buildWeeklySummary(
+    BuildContext context,
+    Map<String, int> weeklyProgress,
+    DateTime? chartRefDate,
+    int target, // Daily Target
+  ) {
+    // Determine Last 7 Days based on chartRefDate
+    final refDate = chartRefDate ?? DateTime.now();
+    final bool isCurrentWeek = refDate.isAfter(
+      DateTime.now().subtract(const Duration(days: 1)),
+    );
+    final List<String> last7Days = [];
+    final List<int> values = [];
+    int maxVal = target > 0 ? target : 1; // Base max on target
 
-    // Generate last 7 days from refDate
     for (int i = 6; i >= 0; i--) {
       final d = refDate.subtract(Duration(days: i));
-      final dateStr = DateFormat('yyyy-MM-dd').format(d);
-      final dayName = DateFormat('E').format(d); // Mon, Tue
-      final count = state.weeklyProgress[dateStr] ?? 0;
-
-      if (count > maxPages) maxPages = count;
-
-      chartData.add({'day': dayName, 'count': count, 'date': dateStr});
+      final key = DateFormat('yyyy-MM-dd').format(d);
+      final val = weeklyProgress[key] ?? 0;
+      last7Days.add(DateFormat('E').format(d)); // Mon, Tue...
+      values.add(val);
+      if (val > maxVal) maxVal = val;
     }
 
-    final dateRangeStr =
-        "${DateFormat('d MMM').format(startDate)} - ${DateFormat('d MMM yyyy').format(refDate)}";
+    // Add buffer to maxVal for visuals
+    if (maxVal == target) maxVal = (target * 1.5).ceil();
+
+    // Date Range Label
+    final startDate = refDate.subtract(const Duration(days: 6));
+    final dateRange =
+        "${DateFormat('d MMM').format(startDate)} - ${DateFormat('d MMM').format(refDate)}";
 
     return Container(
       margin: EdgeInsets.only(bottom: 24.h),
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C2A30),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF00E676).withOpacity(0.15),
+            Colors.white.withOpacity(0.05),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with Navigation
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left, color: Colors.white),
-                onPressed: () {
-                  context.read<ReadingBloc>().add(
-                    const NavigateWeeklyChart(-1),
-                  );
-                },
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.chartWeeklyTitle ??
+                          "Weekly Progress",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Outfit',
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      dateRange,
+                      style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                    ),
+                  ],
+                ),
               ),
-              Column(
+              Row(
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.chartWeeklyTitle,
-                    style: TextStyle(
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_left,
                       color: Colors.white,
-                      fontSize: 14.sp,
+                      size: 24.sp,
+                    ),
+                    onPressed: () {
+                      context.read<ReadingBloc>().add(
+                        const NavigateWeeklyChart(-1),
+                      );
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                  SizedBox(width: 8.w),
+                  IconButton(
+                    icon: Icon(
+                      Icons.chevron_right,
+                      color: isCurrentWeek ? Colors.white24 : Colors.white,
+                      size: 24.sp,
+                    ),
+                    onPressed: isCurrentWeek
+                        ? null
+                        : () {
+                            context.read<ReadingBloc>().add(
+                              const NavigateWeeklyChart(1),
+                            );
+                          },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 20.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: List.generate(7, (index) {
+              final val = values[index];
+              final day = last7Days[index];
+
+              // Calculate Heights
+              final double maxH = 120.h;
+              double valHeight = (val / maxVal) * maxH;
+              double targetHeight = (target / maxVal) * maxH;
+
+              // Cap heights
+              if (valHeight > maxH) valHeight = maxH;
+              if (targetHeight > maxH) targetHeight = maxH;
+
+              return Column(
+                children: [
+                  // Value/Target Text
+                  Text(
+                    target > 0 ? "$val/$target" : "$val",
+                    style: TextStyle(
+                      color: val >= target
+                          ? const Color(0xFF00E676) // Green text if reached
+                          : Colors.white70,
+                      fontSize: 9.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: 4.h),
-                  Text(
-                    dateRangeStr,
-                    style: TextStyle(color: Colors.white70, fontSize: 12.sp),
-                  ),
-                ],
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.chevron_right,
-                  color: canGoNext ? Colors.white : Colors.white24,
-                ),
-                onPressed: canGoNext
-                    ? () {
-                        context.read<ReadingBloc>().add(
-                          const NavigateWeeklyChart(1),
-                        );
-                      }
-                    : null,
-              ),
-            ],
-          ),
-
-          SizedBox(height: 16.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: chartData.map((data) {
-              final count = data['count'] as int;
-              final day = data['day'] as String;
-              final isToday =
-                  data['date'] == DateFormat('yyyy-MM-dd').format(now);
-
-              // Height calc
-              final double heightRatio = maxPages > 0 ? (count / maxPages) : 0;
-              final double barHeight = 100.h * heightRatio;
-
-              final isTargetReached = count >= state.dailyTarget;
-
-              return Column(
-                children: [
-                  Text(
-                    "$count/${state.dailyTarget}",
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 9.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Container(
-                    width: 12.w,
-                    height: barHeight > 0 ? barHeight : 4.h, // Min height
-                    decoration: BoxDecoration(
-                      color: isTargetReached
-                          ? const Color(0xFF00E676)
-                          : (count > 0
-                                ? const Color(0xFF2196F3)
-                                : Colors.white10),
-                      borderRadius: BorderRadius.circular(4.r),
+                  // Stack for Bar
+                  SizedBox(
+                    height: maxH,
+                    width: 12.w, // Slightly wider for overlay
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        // Target Bar (Background)
+                        Container(
+                          width: 12.w,
+                          height: targetHeight,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.1),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(4.r),
+                              topRight: Radius.circular(4.r),
+                            ),
+                          ),
+                        ),
+                        // Realization Bar (Foreground)
+                        Container(
+                          width: 12.w,
+                          height: valHeight,
+                          decoration: BoxDecoration(
+                            color: val >= target
+                                ? const Color(
+                                    0xFF00E676,
+                                  ) // Green if target reached
+                                : const Color(0xFFFFB74D), // Orange if below
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 8.h),
                   Text(
                     day,
-                    style: TextStyle(
-                      color: isToday ? const Color(0xFF00E676) : Colors.white54,
-                      fontSize: 12.sp,
-                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                    ),
+                    style: TextStyle(color: Colors.white54, fontSize: 10.sp),
                   ),
                 ],
               );
-            }).toList(),
+            }),
           ),
           SizedBox(height: 16.h),
-          Text(
-            AppLocalizations.of(context)!.targetLabel(state.dailyTarget),
-            style: TextStyle(color: Colors.white54, fontSize: 12.sp),
-          ),
-          SizedBox(height: 16.h),
-          // LEGEND
+          // Legend
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildLegendItem(
                 color: const Color(0xFF00E676),
-                label: AppLocalizations.of(context)!.chartLegendTargetReached,
+                label:
+                    AppLocalizations.of(context)!.chartLegendTargetReached ??
+                    "Reached",
               ),
               SizedBox(width: 16.w),
               _buildLegendItem(
-                color: const Color(0xFF2196F3),
-                label: AppLocalizations.of(context)!.chartLegendInProgress,
+                color: const Color(0xFFFFB74D),
+                label:
+                    AppLocalizations.of(context)!.chartLegendInProgress ??
+                    "In Progress",
               ),
               SizedBox(width: 16.w),
               _buildLegendItem(
-                color: Colors.white12,
-                label: AppLocalizations.of(context)!.chartLegendNoActivity,
+                color: Colors.white.withOpacity(0.2),
+                label: "Target ($target)",
               ),
             ],
           ),
@@ -410,20 +617,16 @@ class ReadingHistoryPage extends StatelessWidget {
           height: 8.w,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        SizedBox(width: 6.w),
+        SizedBox(width: 4.w),
         Text(
           label,
-          style: TextStyle(color: Colors.white70, fontSize: 10.sp),
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 10.sp,
+            fontFamily: 'Outfit',
+          ),
         ),
       ],
     );
-  }
-
-  String _formatDuration(int seconds) {
-    if (seconds < 60) {
-      return "${seconds}s";
-    }
-    final minutes = (seconds / 60).floor();
-    return "${minutes}m";
   }
 }

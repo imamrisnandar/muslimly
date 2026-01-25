@@ -23,7 +23,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 5, // Upgraded version for Tajweed
+      version: 7, // Upgraded for Ayah Bookmark
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -46,7 +46,11 @@ class DatabaseService {
         page_number INTEGER NOT NULL,
         surah_number INTEGER,
         duration_seconds INTEGER DEFAULT 0,
-        timestamp INTEGER NOT NULL
+        timestamp INTEGER NOT NULL,
+        start_ayah INTEGER,
+        end_ayah INTEGER,
+        total_ayahs INTEGER,
+        mode TEXT DEFAULT 'page'
       )
     ''');
 
@@ -55,7 +59,16 @@ class DatabaseService {
     );
 
     // Bookmarks Table
-    await _createBookmarksTable(db);
+    await db.execute('''
+      CREATE TABLE bookmarks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        surah_number INTEGER NOT NULL,
+        surah_name TEXT NOT NULL,
+        page_number INTEGER NOT NULL,
+        created_at INTEGER NOT NULL,
+        ayah_number INTEGER
+      )
+    ''');
 
     // Translation Cache
     await _createTranslationTable(db);
@@ -86,6 +99,25 @@ class DatabaseService {
     }
     if (oldVersion < 5) {
       await _createTajweedTable(db);
+    }
+    if (oldVersion < 6) {
+      // Add columns for Ayah Tracking
+      await db.execute(
+        'ALTER TABLE reading_activity ADD COLUMN start_ayah INTEGER',
+      );
+      await db.execute(
+        'ALTER TABLE reading_activity ADD COLUMN end_ayah INTEGER',
+      );
+      await db.execute(
+        'ALTER TABLE reading_activity ADD COLUMN total_ayahs INTEGER',
+      );
+      await db.execute(
+        "ALTER TABLE reading_activity ADD COLUMN mode TEXT DEFAULT 'page'",
+      );
+    }
+    if (oldVersion < 7) {
+      // Add ayah_number to bookmarks
+      await db.execute('ALTER TABLE bookmarks ADD COLUMN ayah_number INTEGER');
     }
   }
 
@@ -184,6 +216,16 @@ class DatabaseService {
     return Sqflite.firstIntValue(result) ?? 0;
   }
 
+  Future<int> getDailyAyahCount(String date) async {
+    final db = await database;
+    // We sum the total_ayahs column for a specific date
+    final result = await db.rawQuery(
+      'SELECT SUM(total_ayahs) as count FROM reading_activity WHERE date = ?',
+      [date],
+    );
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
   /// Get all activities for a date (for history detail)
   Future<List<ReadingActivity>> getActivitiesByDate(String date) async {
     final db = await database;
@@ -212,8 +254,12 @@ class DatabaseService {
   }
 
   /// Get progress for the 7 days ending on [endDate] (inclusive)
-  /// Returns Map { '2023-01-01': 4, ... }
-  Future<Map<String, int>> getWeeklyProgress({DateTime? endDate}) async {
+  /// If [mode] is 'page', counts distinct pages.
+  /// If [mode] is 'ayah', sums total_ayahs.
+  Future<Map<String, int>> getWeeklyProgress({
+    DateTime? endDate,
+    String mode = 'page',
+  }) async {
     final db = await database;
     final end = endDate ?? DateTime.now();
     final start = end.subtract(const Duration(days: 6));
@@ -221,20 +267,28 @@ class DatabaseService {
     final startStr = start.toIso8601String().substring(0, 10);
     final endStr = end.toIso8601String().substring(0, 10);
 
-    // We filter by range
-    final result = await db.rawQuery(
-      '''
-      SELECT date, COUNT(DISTINCT page_number) as count 
-      FROM reading_activity 
-      WHERE date >= ? AND date <= ?
-      GROUP BY date
-    ''',
-      [startStr, endStr],
-    );
+    String query;
+    if (mode == 'ayah') {
+      query = '''
+        SELECT date, SUM(total_ayahs) as count 
+        FROM reading_activity 
+        WHERE date >= ? AND date <= ?
+        GROUP BY date
+      ''';
+    } else {
+      query = '''
+        SELECT date, COUNT(DISTINCT page_number) as count 
+        FROM reading_activity 
+        WHERE date >= ? AND date <= ? AND mode = 'page'
+        GROUP BY date
+      ''';
+    }
+
+    final result = await db.rawQuery(query, [startStr, endStr]);
 
     final Map<String, int> progressMap = {};
     for (var row in result) {
-      progressMap[row['date'] as String] = row['count'] as int;
+      progressMap[row['date'] as String] = (row['count'] as int?) ?? 0;
     }
     return progressMap;
   }
