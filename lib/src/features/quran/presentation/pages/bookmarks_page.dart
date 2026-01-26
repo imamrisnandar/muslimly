@@ -174,15 +174,15 @@ class BookmarksPage extends StatelessWidget {
                         ),
                       );
                     } else if (state is BookmarkLoaded) {
-                      // Filter Bookmarks
+                      // Filter Bookmarks based on MODE
                       final listBookmarks = state.bookmarks
-                          .where(
-                            (b) => b.ayahNumber != null && b.ayahNumber! > 0,
-                          )
+                          .where((b) => b.mode == 'list')
                           .toList();
                       final mushafBookmarks = state.bookmarks
                           .where(
-                            (b) => b.ayahNumber == null || b.ayahNumber == 0,
+                            (b) =>
+                                b.mode ==
+                                'mushaf', // Includes both page and ayah bookmarks in mushaf mode
                           )
                           .toList();
 
@@ -357,6 +357,10 @@ class BookmarksPage extends StatelessWidget {
               ? SurahNames.indonesianNames[bookmark.surahNumber - 1]
               : bookmark.surahName;
 
+          // Format Date
+          final date = DateTime.fromMillisecondsSinceEpoch(bookmark.createdAt);
+          final formattedDate = DateFormat('d MMM, HH:mm').format(date);
+
           return Container(
             margin: EdgeInsets.only(bottom: 12.h),
             decoration: BoxDecoration(
@@ -395,11 +399,15 @@ class BookmarksPage extends StatelessWidget {
                         },
                       );
                     } else {
+                      // Navigate Mushaf
+                      // Handles both Page bookmarks (ayahNumber is null) and Ayah bookmarks (ayahNumber set)
                       context.push(
                         '/quran/mushaf/${surah.number}',
                         extra: {
                           'surah': surah,
                           'initialPage': bookmark.pageNumber,
+                          // NEW: Pass initialAyah if available (for highlighting)
+                          'initialAyah': bookmark.ayahNumber,
                         },
                       );
                     }
@@ -420,7 +428,8 @@ class BookmarksPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Icon(
-                          isListMode
+                          (bookmark.ayahNumber != null &&
+                                  bookmark.ayahNumber! > 0)
                               ? Icons.format_list_bulleted
                               : Icons.menu_book,
                           color: Colors.white60,
@@ -442,15 +451,37 @@ class BookmarksPage extends StatelessWidget {
                                 fontFamily: 'Outfit',
                               ),
                             ),
-                            SizedBox(height: 4.h),
-                            Text(
-                              isListMode
-                                  ? "${AppLocalizations.of(context)!.lblAyah ?? 'Ayah'} ${bookmark.ayahNumber}"
-                                  : "${AppLocalizations.of(context)!.lblPage ?? 'Page'} ${bookmark.pageNumber}",
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: Colors.white54,
-                              ),
+                            SizedBox(height: 2.h),
+                            Row(
+                              children: [
+                                Text(
+                                  (bookmark.ayahNumber != null &&
+                                          bookmark.ayahNumber! > 0)
+                                      ? "${AppLocalizations.of(context)!.lblAyah ?? 'Ayah'} ${bookmark.ayahNumber}"
+                                      : "${AppLocalizations.of(context)!.lblPage ?? 'Page'} ${bookmark.pageNumber}",
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    color: Colors.white54,
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 6.w),
+                                  width: 3.w,
+                                  height: 3.w,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white30,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                Text(
+                                  formattedDate,
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    color: Colors.white38,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

@@ -310,6 +310,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     BuildContext context,
   ) {
     final Map<String, List<ReadingActivity>> groups = {};
+    final String locale = Localizations.localeOf(context).languageCode;
 
     for (var activity in history) {
       // Parse date: 2023-01-01
@@ -320,7 +321,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
       final sunday = monday.add(const Duration(days: 6));
 
       final rangeKey =
-          "${DateFormat('d MMM').format(monday)} - ${DateFormat('d MMM').format(sunday)}";
+          "${DateFormat('d MMM', locale).format(monday)} - ${DateFormat('d MMM', locale).format(sunday)}";
 
       if (groups.containsKey(rangeKey)) {
         groups[rangeKey]!.add(activity);
@@ -336,6 +337,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     ReadingActivity activity,
     bool isListMode,
   ) {
+    final String locale = Localizations.localeOf(context).languageCode;
     final surahName =
         (activity.surahNumber != null &&
             activity.surahNumber! >= 1 &&
@@ -384,6 +386,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
           Text(
             DateFormat(
               "EEE, HH:mm",
+              locale,
             ).format(DateTime.fromMillisecondsSinceEpoch(activity.timestamp)),
             style: TextStyle(color: Colors.white30, fontSize: 11.sp),
           ),
@@ -407,11 +410,15 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     final List<int> values = [];
     int maxVal = target > 0 ? target : 1; // Base max on target
 
+    final String locale = Localizations.localeOf(context).languageCode;
+
     for (int i = 6; i >= 0; i--) {
       final d = refDate.subtract(Duration(days: i));
-      final key = DateFormat('yyyy-MM-dd').format(d);
+      final key = DateFormat(
+        'yyyy-MM-dd',
+      ).format(d); // Key format doesn't depend on locale
       final val = weeklyProgress[key] ?? 0;
-      last7Days.add(DateFormat('E').format(d)); // Mon, Tue...
+      last7Days.add(DateFormat('E', locale).format(d)); // Mon, Tue... LOCALIZED
       values.add(val);
       if (val > maxVal) maxVal = val;
     }
@@ -422,7 +429,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     // Date Range Label
     final startDate = refDate.subtract(const Duration(days: 6));
     final dateRange =
-        "${DateFormat('d MMM').format(startDate)} - ${DateFormat('d MMM').format(refDate)}";
+        "${DateFormat('d MMM', locale).format(startDate)} - ${DateFormat('d MMM', locale).format(refDate)}";
 
     return Container(
       margin: EdgeInsets.only(bottom: 24.h),

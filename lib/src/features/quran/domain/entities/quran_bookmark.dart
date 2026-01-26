@@ -5,6 +5,7 @@ class QuranBookmark {
   final int pageNumber;
   final int createdAt;
   final int? ayahNumber;
+  final String mode; // 'list' or 'mushaf'
 
   QuranBookmark({
     this.id,
@@ -13,6 +14,7 @@ class QuranBookmark {
     required this.pageNumber,
     required this.createdAt,
     this.ayahNumber,
+    this.mode = 'list',
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class QuranBookmark {
       'page_number': pageNumber,
       'created_at': createdAt,
       'ayah_number': ayahNumber,
+      'mode': mode,
     };
   }
 
@@ -34,6 +37,7 @@ class QuranBookmark {
       pageNumber: map['page_number'],
       createdAt: map['created_at'],
       ayahNumber: map['ayah_number'],
+      mode: map['mode'] ?? 'list', // Default for legacy data
     );
   }
 }

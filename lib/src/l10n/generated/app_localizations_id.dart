@@ -548,4 +548,28 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get targetAyahExplanation =>
       'Target Ayat dihitung saat membaca di mode List/Detail Surah.';
+
+  @override
+  String get backgroundRefreshTitle => 'Progres Bacaan Kemarin';
+
+  @override
+  String backgroundProgressEncourage(Object progress, Object unit) {
+    return 'Kemarin kamu membaca $progress $unit. Yuk, semangat capai target hari ini!';
+  }
+
+  @override
+  String backgroundProgressFinished(Object target, Object unit) {
+    return 'Alhamdulillah, kemarin target $target $unit tercapai! Pertahankan semangatmu.';
+  }
+
+  @override
+  String get backgroundProgressZero =>
+      'Kemarin kamu belum sempat baca Quran. Mulai hari ini dengan bismillah yuk!';
+
+  @override
+  String get settingsTestBackground => 'Test Background Fetch';
+
+  @override
+  String get settingsTestBackgroundSubtitle =>
+      'Jalankan task update harian sekarang';
 }

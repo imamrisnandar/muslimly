@@ -48,12 +48,14 @@ final appRouter = GoRouter(
         final extra = state.extra;
         Surah surah;
         int? initialPage;
+        int? initialAyah;
 
         if (extra is Surah) {
           surah = extra;
         } else if (extra is Map) {
           surah = extra['surah'] as Surah;
           initialPage = extra['initialPage'] as int?;
+          initialAyah = extra['initialAyah'] as int?;
         } else {
           // Fallback or Error
           throw Exception("Invalid Extra for MushafPage");
@@ -65,6 +67,7 @@ final appRouter = GoRouter(
           surah: surah,
           startAtEnd: startAtEnd,
           initialPage: initialPage,
+          initialAyah: initialAyah,
         );
       },
     ),

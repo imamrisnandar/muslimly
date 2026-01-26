@@ -544,4 +544,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get targetAyahExplanation =>
       'Ayah target is tracked when reading in List/Surah Detail mode.';
+
+  @override
+  String get backgroundRefreshTitle => 'Yesterday\'s Progress';
+
+  @override
+  String backgroundProgressEncourage(Object progress, Object unit) {
+    return 'Yesterday you read $progress ${unit}s. Let\'s try to hit the target today!';
+  }
+
+  @override
+  String backgroundProgressFinished(Object target, Object unit) {
+    return 'Alhamdulillah, you hit the $target $unit target yesterday! Keep it up.';
+  }
+
+  @override
+  String get backgroundProgressZero =>
+      'You didn\'t read Quran yesterday. Let\'s start fresh today with Bismillah!';
+
+  @override
+  String get settingsTestBackground => 'Test Background Fetch';
+
+  @override
+  String get settingsTestBackgroundSubtitle => 'Run daily update task now';
 }

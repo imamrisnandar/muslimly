@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../bloc/settings_cubit.dart';
 import '../bloc/settings_state.dart';
+import '../../../../core/services/background_service.dart';
+import '../../../../core/di/di_container.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -724,6 +726,26 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              SizedBox(height: 24.h),
+              _buildSectionHeader(
+                context,
+                l10n.settingsDeveloper,
+              ), // "Developer Options"
+              _buildListTile(
+                icon: Icons.sync,
+                title: l10n.settingsTestBackground,
+                subtitle: l10n.settingsTestBackgroundSubtitle,
+                onTap: () {
+                  // Trigger Background Sync
+                  getIt<BackgroundService>().triggerImmediateSync();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Background Sync Triggered!'),
+                      backgroundColor: const Color(0xFF00E676),
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 100.h),
             ],

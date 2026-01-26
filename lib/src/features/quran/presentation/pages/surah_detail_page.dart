@@ -9,6 +9,8 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../core/utils/tajweed_parser.dart';
 import '../../domain/entities/surah.dart';
 import '../widgets/tajwid_legend_bottom_sheet.dart';
+import '../widgets/tafsir_bottom_sheet.dart';
+import '../../../../core/utils/custom_snackbar.dart'; // Import Custom SnackBar
 import '../bloc/quran_bloc.dart';
 import '../bloc/quran_event.dart';
 import '../bloc/quran_state.dart';
@@ -241,14 +243,14 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       pageNumber: ayah.page,
       ayahNumber: ayah.numberInSurah,
       createdAt: DateTime.now().millisecondsSinceEpoch,
+      mode: 'list',
     );
     context.read<BookmarkBloc>().add(AddBookmark(newBookmark));
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Bookmark Saved"),
-        backgroundColor: Color(0xFF00E676),
-      ),
+    showCustomSnackBar(
+      context,
+      message: 'Ayah Saved',
+      type: SnackBarType.success,
     );
   }
 
@@ -890,6 +892,33 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                       translation,
                                                       surahName,
                                                       ayah.numberInSurah,
+                                                    );
+                                                  },
+                                                ),
+                                                SizedBox(width: 8.w),
+                                                _buildActionButton(
+                                                  icon: Icons
+                                                      .library_books, // Tafsir Icon
+                                                  onTap: () {
+                                                    showModalBottomSheet(
+                                                      context: context,
+                                                      isScrollControlled: true,
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      builder: (context) =>
+                                                          TafsirBottomSheet(
+                                                            surahId: widget
+                                                                .surah
+                                                                .number,
+                                                            surahName:
+                                                                surahName,
+                                                            ayahNumber: ayah
+                                                                .numberInSurah,
+                                                            initialTabIndex:
+                                                                1, // Open directly to Tafsir
+                                                            arabicText:
+                                                                ayah.text,
+                                                          ),
                                                     );
                                                   },
                                                 ),

@@ -85,6 +85,7 @@ dependencies:
   showcaseview: ^5.0.1
   share_plus: ^12.0.1
   scrollable_positioned_list: ^0.3.8
+  workmanager: ^0.9.0+3
 
 dev_dependencies:
   flutter_test:
@@ -139,6 +140,3 @@ flutter:
     - family: UthmanicHafs13
       fonts:
         - asset: assets/quran/fonts/UthmanicHafs13.otf
-    - family: arsura
-      fonts:
-        - asset: assets/quran/fonts/arsura.ttf

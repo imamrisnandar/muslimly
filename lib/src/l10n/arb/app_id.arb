@@ -165,5 +165,11 @@
     "lblPage": "Hal",
     "lblWeek": "Minggu",
     "targetPageExplanation": "Target Halaman dihitung saat membaca di tab Mushaf.",
-    "targetAyahExplanation": "Target Ayat dihitung saat membaca di mode List/Detail Surah."
+    "targetAyahExplanation": "Target Ayat dihitung saat membaca di mode List/Detail Surah.",
+    "backgroundRefreshTitle": "Progres Bacaan Kemarin",
+    "backgroundProgressEncourage": "Kemarin kamu membaca {progress} {unit}. Yuk, semangat capai target hari ini!",
+    "backgroundProgressFinished": "Alhamdulillah, kemarin target {target} {unit} tercapai! Pertahankan semangatmu.",
+    "backgroundProgressZero": "Kemarin kamu belum sempat baca Quran. Mulai hari ini dengan bismillah yuk!",
+    "settingsTestBackground": "Test Background Fetch",
+    "settingsTestBackgroundSubtitle": "Jalankan task update harian sekarang"
 }

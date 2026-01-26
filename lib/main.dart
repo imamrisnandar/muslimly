@@ -9,6 +9,7 @@ import 'src/config/router/app_router.dart';
 import 'src/core/di/di_container.dart';
 
 import 'src/core/services/notification_service.dart';
+import 'src/core/services/background_service.dart';
 
 import 'src/features/quran/presentation/bloc/audio_bloc.dart';
 import 'src/features/quran/presentation/bloc/audio_event.dart'; // Init audio if needed
@@ -28,6 +29,10 @@ void main() async {
     androidNotificationIcon: 'mipmap/ic_launcher',
   );
   await getIt<NotificationService>().initialize();
+  // Initialize Background Service (Workmanager)
+  getIt.registerLazySingleton<BackgroundService>(() => BackgroundService());
+  getIt<BackgroundService>().initialize();
+
   runApp(const MyApp());
 }
 

@@ -27,7 +27,9 @@ import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_
 import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_state.dart';
 import 'package:muslimly/src/features/quran/domain/entities/quran_bookmark.dart';
 import 'package:muslimly/src/features/quran/domain/entities/last_read.dart';
-import 'package:muslimly/src/features/quran/data/datasources/font_cache_service.dart';
+// import 'package:wakelock_plus/wakelock_plus.dart'; // Temporarily disabled if package missing
+import '../../data/datasources/font_cache_service.dart';
+import '../../../../core/utils/custom_snackbar.dart'; // Import Custom SnackBar
 import 'package:dio/dio.dart';
 import 'dart:ui' as ui;
 import 'package:muslimly/src/features/quran/presentation/widgets/audio_bottom_sheet.dart';
@@ -43,12 +45,14 @@ class MushafPage extends StatefulWidget {
   final Surah surah;
   final bool startAtEnd;
   final int? initialPage;
+  final int? initialAyah;
 
   const MushafPage({
     super.key,
     required this.surah,
     this.startAtEnd = false,
     this.initialPage,
+    this.initialAyah,
   });
 
   @override
@@ -422,6 +426,7 @@ class _MushafPageState extends State<MushafPage> {
                                     surahName: widget.surah.englishName,
                                     surahNumber: widget.surah.number,
                                     panEnabled: true,
+                                    initialSelectedAyah: widget.initialAyah,
                                   );
                                 },
                               ),
@@ -456,14 +461,8 @@ class _MushafPageState extends State<MushafPage> {
                       right: 16.w,
                       child: BlocConsumer<BookmarkBloc, BookmarkState>(
                         listener: (context, state) {
-                          if (state is BookmarkOperationSuccess) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Bookmark Added!'),
-                                backgroundColor: Color(0xFF00E676),
-                              ),
-                            );
-                          }
+                          // SnackBar is handled manually on button press for custom UI
+                          // if (state is BookmarkOperationSuccess) { ... }
                         },
                         builder: (context, state) {
                           return CircleAvatar(
@@ -490,18 +489,18 @@ class _MushafPageState extends State<MushafPage> {
                                       pageNumber: _lastPageNumber,
                                       createdAt:
                                           DateTime.now().millisecondsSinceEpoch,
+                                      mode: 'mushaf',
                                     );
 
                                     context.read<BookmarkBloc>().add(
                                       AddBookmark(bookmark),
                                     );
 
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
+                                    showCustomSnackBar(
+                                      context,
+                                      message:
                                           'Bookmarked Page $_lastPageNumber',
-                                        ),
-                                      ),
+                                      type: SnackBarType.success,
                                     );
                                   }
                                 },
@@ -573,6 +572,7 @@ class MushafSinglePage extends StatefulWidget {
   final String surahName;
   final int surahNumber;
   final bool panEnabled;
+  final int? initialSelectedAyah;
 
   const MushafSinglePage({
     super.key,
@@ -581,6 +581,7 @@ class MushafSinglePage extends StatefulWidget {
     required this.surahName,
     required this.surahNumber,
     this.panEnabled = true,
+    this.initialSelectedAyah,
   });
 
   @override
@@ -603,6 +604,17 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
     super.initState();
     _transformationController.value = Matrix4.identity()..scale(1.0);
     _fontFuture = _loadFont();
+
+    // Initialize selection if initialAyah is provided and exists on this page
+    if (widget.initialSelectedAyah != null) {
+      final exists = widget.ayahs.any(
+        (a) => a.numberInSurah == widget.initialSelectedAyah,
+      );
+      if (exists) {
+        _selectedSurah = widget.surahNumber;
+        _selectedAyah = widget.initialSelectedAyah;
+      }
+    }
   }
 
   Future<void> _loadFont() async {
@@ -1233,9 +1245,39 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                     icon: Icons.bookmark_border,
                     label: l10n.menuBookmark,
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Bookmarked!')),
-                      );
+                      if (_selectedSurah != null && _selectedAyah != null) {
+                        // Find page of current ayah
+                        // We need the page number to store.
+                        // But _selectedAyah doesn't give us page easily unless we look it up.
+                        // Efficient way: use `widget.ayahs` if it contains the ayah?
+                        // Problem: `widget.ayahs` is not available in THIS inner widget scope effectively (Wait, it is available if passed, but _buildFloatingBubble is in MushafState, MushafState creates MushafSinglePage)
+                        // Wait, `_buildFloatingBubble` is in `MushafSinglePage`. So we access `widget.ayahs`.
+                        final ayah = widget.ayahs.firstWhere(
+                          (element) => element.numberInSurah == _selectedAyah,
+                          orElse: () => widget.ayahs.first,
+                        );
+
+                        final bookmark = QuranBookmark(
+                          surahNumber: _selectedSurah!,
+                          surahName: widget.surahName,
+                          pageNumber: ayah.page,
+                          ayahNumber: _selectedAyah,
+                          createdAt: DateTime.now().millisecondsSinceEpoch,
+                          mode: 'mushaf',
+                        );
+
+                        context.read<BookmarkBloc>().add(AddBookmark(bookmark));
+
+                        showCustomSnackBar(
+                          context,
+                          message: 'Ayah Bookmarked!',
+                          type: SnackBarType.success,
+                        );
+
+                        setState(() {
+                          _tapPosition = null;
+                        });
+                      }
                     },
                   ),
                   // Close Button (Small at bottom or rely on outside tap)

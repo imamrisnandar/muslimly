@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
@@ -9,95 +9,123 @@ class TajwidLegendBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxHeight: 0.8.sh), // Limit height
+      constraints: BoxConstraints(maxHeight: 0.85.sh),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E1), // Cream Background (Mushaf Theme)
+        color: const Color(0xFFF8F9FA), // Clean White/Grey Background
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.r),
-          topRight: Radius.circular(24.r),
+          topLeft: Radius.circular(28.r),
+          topRight: Radius.circular(28.r),
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, -2),
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(height: 12.h),
+          // Drag Handle
           Center(
             child: Container(
-              width: 48.w,
+              width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: Colors.grey[400], // Visible Handle on Light Bg
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
           SizedBox(height: 24.h),
+
+          // Header
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Text(
-              AppLocalizations.of(context)!.tajwidLegendTitle,
-              style: GoogleFonts.poppins(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87, // Dark Text
-              ),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(10.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00E676).withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.auto_stories_rounded,
+                    color: const Color(0xFF00E676),
+                    size: 24.sp,
+                  ),
+                ),
+                SizedBox(width: 16.w),
+                Text(
+                  AppLocalizations.of(context)!.tajwidLegendTitle,
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit',
+                    color: const Color(0xFF2D3436),
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 20.h),
+
+          SizedBox(height: 24.h),
+
+          // Content
           Flexible(
             child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
+              padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 40.h),
               child: Column(
                 children: [
-                  _buildCard(
+                  _buildPremiumCard(
                     context,
-                    const Color(0xFF169278),
-                    AppLocalizations.of(context)!.tajwidGhunnah,
-                    AppLocalizations.of(context)!.tajwidGhunnahDesc,
+                    color: const Color(0xFF169278),
+                    title: AppLocalizations.of(context)!.tajwidGhunnah,
+                    subtitle: AppLocalizations.of(context)!.tajwidGhunnahDesc,
                   ),
-                  _buildCard(
+                  _buildPremiumCard(
                     context,
-                    const Color(0xFFFFD54F),
-                    AppLocalizations.of(context)!.tajwidIkhfa,
-                    AppLocalizations.of(context)!.tajwidIkhfaDesc,
+                    color: const Color(0xFFFFD54F),
+                    title: AppLocalizations.of(context)!.tajwidIkhfa,
+                    subtitle: AppLocalizations.of(context)!.tajwidIkhfaDesc,
                   ),
-                  _buildCard(
+                  _buildPremiumCard(
                     context,
-                    const Color(0xFFD8572A),
-                    AppLocalizations.of(context)!.tajwidMadJaiz,
-                    AppLocalizations.of(context)!.tajwidMadJaizDesc,
+                    color: const Color(0xFFD8572A),
+                    title: AppLocalizations.of(context)!.tajwidMadJaiz,
+                    subtitle: AppLocalizations.of(context)!.tajwidMadJaizDesc,
                   ),
-                  _buildCard(
+                  _buildPremiumCard(
                     context,
-                    const Color(0xFF3B83BD),
-                    AppLocalizations.of(context)!.tajwidQalqalah,
-                    AppLocalizations.of(context)!.tajwidQalqalahDesc,
+                    color: const Color(0xFF3B83BD),
+                    title: AppLocalizations.of(context)!.tajwidQalqalah,
+                    subtitle: AppLocalizations.of(context)!.tajwidQalqalahDesc,
                   ),
-                  _buildCard(
+                  _buildPremiumCard(
                     context,
-                    const Color(0xFF26BFFD),
-                    AppLocalizations.of(context)!.tajwidIqlab,
-                    AppLocalizations.of(context)!.tajwidIqlabDesc,
+                    color: const Color(0xFF26BFFD),
+                    title: AppLocalizations.of(context)!.tajwidIqlab,
+                    subtitle: AppLocalizations.of(context)!.tajwidIqlabDesc,
                   ),
-                  _buildCard(
+                  _buildPremiumCard(
                     context,
-                    const Color(0xFFE52C2C),
-                    AppLocalizations.of(context)!.tajwidMadWajib,
-                    AppLocalizations.of(context)!.tajwidMadWajibDesc,
+                    color: const Color(0xFFE52C2C),
+                    title: AppLocalizations.of(context)!.tajwidMadWajib,
+                    subtitle: AppLocalizations.of(context)!.tajwidMadWajibDesc,
                   ),
-                  _buildCard(
+                  _buildPremiumCard(
                     context,
-                    const Color(0xFFA1A1A1),
-                    AppLocalizations.of(context)!.tajwidIdghamBilaghunnah,
-                    AppLocalizations.of(context)!.tajwidIdghamBilaghunnahDesc,
+                    color: const Color(0xFFA1A1A1),
+                    title: AppLocalizations.of(
+                      context,
+                    )!.tajwidIdghamBilaghunnah,
+                    subtitle: AppLocalizations.of(
+                      context,
+                    )!.tajwidIdghamBilaghunnahDesc,
                   ),
                 ],
               ),
@@ -108,69 +136,92 @@ class TajwidLegendBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(
-    BuildContext context,
-    Color color,
-    String title,
-    String subtitle,
-  ) {
+  Widget _buildPremiumCard(
+    BuildContext context, {
+    required Color color,
+    required String title,
+    required String subtitle,
+  }) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFFCF2), // Soft Cream Card
-            borderRadius: BorderRadius.circular(16.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-              ),
-            ],
-            border: Border.all(
-              color: color.withOpacity(0.2), // Subtle colored border hint
-              width: 1,
-            ),
+      margin: EdgeInsets.only(bottom: 14.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Colored Indicator Bar
-                Container(width: 6.w, color: color),
-                // Content
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: GoogleFonts.poppins(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                            height: 1.3,
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          subtitle,
-                          style: GoogleFonts.poppins(
-                            fontSize: 13.sp,
-                            color: Colors.black54, // Greier text
-                            height: 1.4,
-                          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20.r),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Visual Indicator
+              Container(
+                width: 48.w,
+                height: 48.w,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(14.r),
+                ),
+                child: Center(
+                  child: Container(
+                    width: 14.w,
+                    height: 14.w,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withOpacity(0.4),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              SizedBox(width: 16.w),
+
+              // Text Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 2.h),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF2D3436),
+                        height: 1.2,
+                      ),
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 13.sp,
+                        color: const Color(0xFF636E72), // Softer grey
+                        height: 1.5,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

@@ -165,5 +165,11 @@
     "lblPage": "Page",
     "lblWeek": "Week",
     "targetPageExplanation": "Page target is tracked when reading in Mushaf tab.",
-    "targetAyahExplanation": "Ayah target is tracked when reading in List/Surah Detail mode."
+    "targetAyahExplanation": "Ayah target is tracked when reading in List/Surah Detail mode.",
+    "backgroundRefreshTitle": "Yesterday's Progress",
+    "backgroundProgressEncourage": "Yesterday you read {progress} {unit}s. Let's try to hit the target today!",
+    "backgroundProgressFinished": "Alhamdulillah, you hit the {target} {unit} target yesterday! Keep it up.",
+    "backgroundProgressZero": "You didn't read Quran yesterday. Let's start fresh today with Bismillah!",
+    "settingsTestBackground": "Test Background Fetch",
+    "settingsTestBackgroundSubtitle": "Run daily update task now"
 }

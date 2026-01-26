@@ -188,7 +188,12 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
       final timeStr = entry.value;
 
       final isTest = name == 'Test Adzan';
-      final time = isTest ? testAdzanTime : parseTime(timeStr);
+      var time = isTest ? testAdzanTime : parseTime(timeStr);
+
+      // --- LOGIC UPDATE: Sunrise Offset (+15 Mins) ---
+      if (name == 'Terbit') {
+        time = time.add(const Duration(minutes: 15));
+      }
 
       // Override sound type for Imsak and Terbit to always use 'beep'
       String soundType = state.notificationSettings[name] ?? 'adhan';
@@ -198,6 +203,11 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
 
       String notificationTitle = l10n.notificationPrayerTitle(name);
       String notificationBody = l10n.notificationPrayerBody(name);
+
+      // --- LOGIC UPDATE: Empty Body for Imsak & Terbit ---
+      if (name == 'Imsak' || name == 'Terbit') {
+        notificationBody = ""; // Empty body
+      }
 
       // SMART REMINDER LOGIC for 'Test Adzan'
       if (isTest) {

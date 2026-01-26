@@ -1093,6 +1093,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ayah target is tracked when reading in List/Surah Detail mode.'**
   String get targetAyahExplanation;
+
+  /// No description provided for @backgroundRefreshTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday\'s Progress'**
+  String get backgroundRefreshTitle;
+
+  /// No description provided for @backgroundProgressEncourage.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday you read {progress} {unit}s. Let\'s try to hit the target today!'**
+  String backgroundProgressEncourage(Object progress, Object unit);
+
+  /// No description provided for @backgroundProgressFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Alhamdulillah, you hit the {target} {unit} target yesterday! Keep it up.'**
+  String backgroundProgressFinished(Object target, Object unit);
+
+  /// No description provided for @backgroundProgressZero.
+  ///
+  /// In en, this message translates to:
+  /// **'You didn\'t read Quran yesterday. Let\'s start fresh today with Bismillah!'**
+  String get backgroundProgressZero;
+
+  /// No description provided for @settingsTestBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Background Fetch'**
+  String get settingsTestBackground;
+
+  /// No description provided for @settingsTestBackgroundSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run daily update task now'**
+  String get settingsTestBackgroundSubtitle;
 }
 
 class _AppLocalizationsDelegate

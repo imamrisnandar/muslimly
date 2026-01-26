@@ -23,7 +23,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 7, // Upgraded for Ayah Bookmark
+      version: 8, // Upgraded for Bookmark Mode
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -66,7 +66,8 @@ class DatabaseService {
         surah_name TEXT NOT NULL,
         page_number INTEGER NOT NULL,
         created_at INTEGER NOT NULL,
-        ayah_number INTEGER
+        ayah_number INTEGER,
+        mode TEXT DEFAULT 'list'
       )
     ''');
 
@@ -119,6 +120,16 @@ class DatabaseService {
       // Add ayah_number to bookmarks
       await db.execute('ALTER TABLE bookmarks ADD COLUMN ayah_number INTEGER');
     }
+    if (oldVersion < 8) {
+      // Add mode to bookmarks
+      await db.execute(
+        "ALTER TABLE bookmarks ADD COLUMN mode TEXT DEFAULT 'list'",
+      );
+      // Logic: If ayah_number is NULL, it's a page bookmark (Mushaf Mode)
+      await db.execute(
+        "UPDATE bookmarks SET mode = 'mushaf' WHERE ayah_number IS NULL",
+      );
+    }
   }
 
   Future<void> _createBookmarksTable(Database db) async {
@@ -128,7 +139,8 @@ class DatabaseService {
         surah_number INTEGER NOT NULL,
         surah_name TEXT NOT NULL,
         page_number INTEGER NOT NULL,
-        created_at INTEGER NOT NULL
+        created_at INTEGER NOT NULL,
+        mode TEXT DEFAULT 'list'
       )
     ''');
   }

@@ -225,9 +225,34 @@ class NotificationService {
   Future<void> showImmediateNotification({
     required String title,
     required String body,
+    String soundType = 'adhan',
   }) async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
+    AndroidNotificationDetails androidDetails;
+
+    switch (soundType) {
+      case 'beep':
+        androidDetails = const AndroidNotificationDetails(
+          'prayer_channel_beep',
+          'Prayer Notifications (Beep)',
+          channelDescription: 'Notifications with default system sound',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
+        break;
+      case 'silent':
+        androidDetails = const AndroidNotificationDetails(
+          'prayer_channel_silent',
+          'Prayer Notifications (Silent)',
+          channelDescription: 'Silent notifications',
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+          playSound: false,
+          enableVibration: true,
+        );
+        break;
+      case 'adhan':
+      default:
+        androidDetails = const AndroidNotificationDetails(
           'prayer_channel_v7',
           'Prayer Notifications (Adhan)',
           channelDescription: 'Notifications with Adhan sound',
@@ -237,9 +262,12 @@ class NotificationService {
           playSound: true,
           audioAttributesUsage: AudioAttributesUsage.alarm,
         );
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: DarwinNotificationDetails(),
+        break;
+    }
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: const DarwinNotificationDetails(),
     );
     await _flutterLocalNotificationsPlugin.show(
       999,
