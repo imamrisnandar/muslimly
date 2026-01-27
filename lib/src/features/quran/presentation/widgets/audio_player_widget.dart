@@ -1,29 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:showcaseview/showcaseview.dart';
-import '../../../../l10n/generated/app_localizations.dart';
+
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_event.dart';
 import '../bloc/audio_state.dart';
 import '../../domain/entities/reciter.dart';
+import '../../../../core/utils/custom_snackbar.dart';
 import 'reciter_selector_bottom_sheet.dart';
 
 class AudioPlayerWidget extends StatelessWidget {
   final GlobalKey? qoriShowcaseKey;
+  final GlobalKey? dragShowcaseKey;
 
-  const AudioPlayerWidget({super.key, this.qoriShowcaseKey});
+  const AudioPlayerWidget({
+    super.key,
+    this.qoriShowcaseKey,
+    this.dragShowcaseKey,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AudioBloc, AudioState>(
       listener: (context, state) {
         if (state.status == AudioStatus.error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'Audio Error'),
-              backgroundColor: Colors.red,
-            ),
+          showCustomSnackBar(
+            context,
+            message: state.errorMessage ?? 'Audio Error',
+            type: SnackBarType.error,
           );
         }
       },
@@ -59,32 +63,11 @@ class AudioPlayerWidget extends StatelessWidget {
                 Row(
                   children: [
                     // Icon or Album Art Placeholder
-                    Container(
-                      width: 40.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF00E676).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: const Icon(
-                        Icons.music_note,
-                        color: Color(0xFF00E676),
-                      ),
-                    ),
+                    _buildIcon(),
                     SizedBox(width: 12.w),
 
-                    // Text Info (Showcased)
-                    Expanded(
-                      child: qoriShowcaseKey != null
-                          ? Showcase(
-                              key: qoriShowcaseKey!,
-                              description: AppLocalizations.of(
-                                context,
-                              )!.showcaseReciterDesc,
-                              child: _buildQoriInfo(context, state),
-                            )
-                          : _buildQoriInfo(context, state),
-                    ),
+                    // Text Info
+                    Expanded(child: _buildQoriInfo(context, state)),
 
                     // Controls
                     if (state.status == AudioStatus.loading)
@@ -188,6 +171,18 @@ class AudioPlayerWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIcon() {
+    return Container(
+      width: 40.w,
+      height: 40.w,
+      decoration: BoxDecoration(
+        color: const Color(0xFF00E676).withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: const Icon(Icons.music_note, color: Color(0xFF00E676)),
     );
   }
 }

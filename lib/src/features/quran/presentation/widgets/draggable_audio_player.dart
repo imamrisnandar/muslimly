@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:showcaseview/showcaseview.dart';
-import '../../../../l10n/generated/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/audio_bloc.dart';
+import '../bloc/audio_state.dart';
 import 'audio_player_widget.dart';
 
 class DraggableAudioPlayer extends StatefulWidget {
-  final GlobalKey? dragShowcaseKey;
-  final GlobalKey? qoriShowcaseKey;
+  // Keys are no longer needed, but if parent widgets still pass them during transition,
+  // we can keep optional params or just remove them.
+  // To be safe and compatible with current calls (even if clean), we can leave them out
+  // since I cleaned the parents. But if I missed one, keeping them as unused optionals is safer
+  // to avoid build errors, OR I can just remove them since I am confident I cleaned parents.
+  // I cleaned parents in previous steps. I will remove them.
 
-  const DraggableAudioPlayer({
-    super.key,
-    this.dragShowcaseKey,
-    this.qoriShowcaseKey,
-  });
+  const DraggableAudioPlayer({super.key});
 
   @override
   State<DraggableAudioPlayer> createState() => _DraggableAudioPlayerState();
@@ -20,7 +21,6 @@ class DraggableAudioPlayer extends StatefulWidget {
 class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
   // Position state (null means default/docked)
   double? _top;
-
   bool _isDragging = false;
 
   @override
@@ -28,47 +28,44 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
     // Media Query for bounds
     final size = MediaQuery.of(context).size;
 
-    return Positioned(
-      top: _top,
-      left: 0,
-      bottom: (_top == null) ? 0 : null, // Dock bottom if not moved
-      right: 0, // Always dock full width
-      child: GestureDetector(
-        onLongPressStart: (details) {
-          setState(() {
-            _isDragging = true;
-            // Initialization on first drag: Snap to current position
-            if (_top == null) {
-              final validTop = details.globalPosition.dy - 50;
-              _top = validTop;
-            }
-          });
-        },
-        onLongPressMoveUpdate: (details) {
-          final screenH = size.height;
+    return BlocListener<AudioBloc, AudioState>(
+      listener: (context, state) {
+        // No showcase logic anymore
+      },
+      child: Positioned(
+        top: _top,
+        left: 0,
+        bottom: (_top == null) ? 0 : null, // Dock bottom if not moved
+        right: 0, // Always dock full width
+        child: GestureDetector(
+          onLongPressStart: (details) {
+            setState(() {
+              _isDragging = true;
+              // Initialization on first drag: Snap to current position
+              if (_top == null) {
+                final validTop = details.globalPosition.dy - 50;
+                _top = validTop;
+              }
+            });
+          },
+          onLongPressMoveUpdate: (details) {
+            final screenH = size.height;
 
-          setState(() {
-            // Update Top with clamping
-            _top = (details.globalPosition.dy - 50).clamp(
-              50.0,
-              screenH - 100.0,
-            );
-          });
-        },
-        onLongPressEnd: (details) {
-          setState(() {
-            _isDragging = false;
-          });
-        },
-        child: widget.dragShowcaseKey != null
-            ? Showcase(
-                key: widget.dragShowcaseKey!,
-                description: AppLocalizations.of(
-                  context,
-                )!.showcaseDraggableDesc,
-                child: _buildBody(),
-              )
-            : _buildBody(),
+            setState(() {
+              // Update Top with clamping
+              _top = (details.globalPosition.dy - 50).clamp(
+                50.0,
+                screenH - 100.0,
+              );
+            });
+          },
+          onLongPressEnd: (details) {
+            setState(() {
+              _isDragging = false;
+            });
+          },
+          child: _buildBody(),
+        ),
       ),
     );
   }
@@ -79,7 +76,7 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
       transform: _isDragging
           ? Matrix4.diagonal3Values(1.05, 1.05, 1.0)
           : Matrix4.identity(),
-      child: AudioPlayerWidget(qoriShowcaseKey: widget.qoriShowcaseKey),
+      child: const AudioPlayerWidget(),
     );
   }
 }

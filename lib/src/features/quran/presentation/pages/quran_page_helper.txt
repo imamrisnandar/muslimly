@@ -1,0 +1,28 @@
+  Future<void> _checkAndShowShowcase(BuildContext context) async {
+     print('DEBUG: _checkAndShowShowcase triggered');
+     final prefs = await SharedPreferences.getInstance();
+     final hasShown = prefs.getBool('hasShownQuranListShowcase') ?? false;
+
+     if (!hasShown && context.mounted) {
+        // Double check if we are already showing? No API for that.
+        // Wait for potential list rendering
+        await Future.delayed(const Duration(milliseconds: 500));
+        
+        if (context.mounted) {
+          print('DEBUG: Execution ShowCaseWidget.of(context).startShowCase');
+          try {
+            ShowCaseWidget.of(context).startShowCase([
+               _searchKey,
+               _bookmarksKey,
+               _surahItemKey,
+               _playButtonKey,
+            ]);
+            await prefs.setBool('hasShownQuranListShowcase', true);
+          } catch (e) {
+             print('DEBUG: Error starting showcase: $e');
+          }
+        }
+     } else {
+        print('DEBUG: Skipped showcase. hasShown: $hasShown');
+     }
+  }

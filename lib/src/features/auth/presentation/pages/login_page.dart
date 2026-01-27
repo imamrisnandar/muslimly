@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../bloc/auth_bloc.dart';
+import '../../../../core/utils/custom_snackbar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -51,16 +52,17 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Welcome back, ${state.user.name}!')),
+              showCustomSnackBar(
+                context,
+                message: 'Welcome back, ${state.user.name}!',
+                type: SnackBarType.success,
               );
               context.go('/dashboard');
             } else if (state is AuthFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.redAccent,
-                ),
+              showCustomSnackBar(
+                context,
+                message: state.message,
+                type: SnackBarType.error,
               );
             }
           },

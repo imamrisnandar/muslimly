@@ -572,4 +572,34 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get settingsTestBackgroundSubtitle =>
       'Jalankan task update harian sekarang';
+
+  @override
+  String get showcaseQuranSearch => 'Cari Surah berdasarkan nama atau nomor.';
+
+  @override
+  String get showcaseQuranBookmarks => 'Akses bookmark dan ayat favoritmu.';
+
+  @override
+  String get showcaseQuranItem =>
+      'Ketuk untuk membuka. Pilih tampilan Ayat atau Mushaf.';
+
+  @override
+  String get showcaseQuranPlay => 'Ketuk untuk memutar audio Surah.';
+
+  @override
+  String get showcaseMarkRead =>
+      'Ketuk untuk tandai sudah dibaca dan pantau progresmu.';
+
+  @override
+  String get showcaseTafsir => 'Lihat Tafsir dan detail terjemahan.';
+
+  @override
+  String get showcasePlayAyah => 'Dengarkan audio untuk ayat ini.';
+
+  @override
+  String get settingsResetShowcase => 'Reset Tutorial';
+
+  @override
+  String get settingsResetShowcaseSubtitle =>
+      'Tampilkan ulang semua tutorial intro.';
 }

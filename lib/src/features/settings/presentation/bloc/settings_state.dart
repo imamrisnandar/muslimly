@@ -18,7 +18,7 @@ class SettingsState extends Equatable {
 
   factory SettingsState.initial() {
     return const SettingsState(
-      locale: Locale('en'),
+      locale: Locale('id'),
       userName: null,
       dailyTarget: 4,
       dailyAyahTarget: 50,

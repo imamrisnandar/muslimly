@@ -567,4 +567,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsTestBackgroundSubtitle => 'Run daily update task now';
+
+  @override
+  String get showcaseQuranSearch => 'Search for Surah by name or number.';
+
+  @override
+  String get showcaseQuranBookmarks =>
+      'Access your bookmarks and favorite verses.';
+
+  @override
+  String get showcaseQuranItem =>
+      'Tap to open. Choose between Ayah or Mushaf view.';
+
+  @override
+  String get showcaseQuranPlay => 'Tap to play the Surah audio.';
+
+  @override
+  String get showcaseMarkRead =>
+      'Tap to mark this ayah as read and track your progress.';
+
+  @override
+  String get showcaseTafsir => 'View Tafsir and detailed translation.';
+
+  @override
+  String get showcasePlayAyah => 'Listen to the audio of this ayah.';
+
+  @override
+  String get settingsResetShowcase => 'Reset Showcase';
+
+  @override
+  String get settingsResetShowcaseSubtitle =>
+      'Reset all tutorials to see them again.';
 }

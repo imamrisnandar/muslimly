@@ -1129,6 +1129,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Run daily update task now'**
   String get settingsTestBackgroundSubtitle;
+
+  /// No description provided for @showcaseQuranSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for Surah by name or number.'**
+  String get showcaseQuranSearch;
+
+  /// No description provided for @showcaseQuranBookmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Access your bookmarks and favorite verses.'**
+  String get showcaseQuranBookmarks;
+
+  /// No description provided for @showcaseQuranItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to open. Choose between Ayah or Mushaf view.'**
+  String get showcaseQuranItem;
+
+  /// No description provided for @showcaseQuranPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to play the Surah audio.'**
+  String get showcaseQuranPlay;
+
+  /// No description provided for @showcaseMarkRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to mark this ayah as read and track your progress.'**
+  String get showcaseMarkRead;
+
+  /// No description provided for @showcaseTafsir.
+  ///
+  /// In en, this message translates to:
+  /// **'View Tafsir and detailed translation.'**
+  String get showcaseTafsir;
+
+  /// No description provided for @showcasePlayAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to the audio of this ayah.'**
+  String get showcasePlayAyah;
+
+  /// No description provided for @settingsResetShowcase.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Showcase'**
+  String get settingsResetShowcase;
+
+  /// No description provided for @settingsResetShowcaseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset all tutorials to see them again.'**
+  String get settingsResetShowcaseSubtitle;
 }
 
 class _AppLocalizationsDelegate

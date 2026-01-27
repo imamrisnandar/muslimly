@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/utils/surah_names.dart';
+import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import '../../../../core/di/di_container.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/utils/tajweed_parser.dart';
@@ -15,11 +16,10 @@ import '../bloc/quran_bloc.dart';
 import '../bloc/quran_event.dart';
 import '../bloc/quran_state.dart';
 import '../bloc/audio_bloc.dart';
-import '../bloc/audio_event.dart';
 import '../bloc/audio_state.dart';
 import '../widgets/draggable_audio_player.dart';
 import 'package:showcaseview/showcaseview.dart';
-import '../../../../features/settings/data/repositories/settings_repository.dart';
+
 import '../bloc/reading/reading_bloc.dart';
 import '../bloc/reading/reading_event.dart';
 import '../bloc/bookmark/bookmark_bloc.dart';
@@ -29,6 +29,7 @@ import '../../domain/entities/quran_bookmark.dart';
 import '../../domain/entities/ayah.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/last_read.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -43,9 +44,6 @@ class SurahDetailPage extends StatefulWidget {
 }
 
 class _SurahDetailPageState extends State<SurahDetailPage> {
-  final GlobalKey _dragKey = GlobalKey();
-  final GlobalKey _qoriKey = GlobalKey();
-  bool _showcaseChecked = false;
   bool _hasScrolledToInitialAyah = false;
 
   int? _currentPlayingAyah;
@@ -57,6 +55,48 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       ItemPositionsListener.create();
 
   // final Map<int, GlobalKey> _ayahKeys = {};
+
+  final GlobalKey _markReadKey = GlobalKey();
+  final GlobalKey _tafsirKey = GlobalKey();
+  final GlobalKey _playKey = GlobalKey();
+  bool _showcaseChecked = false;
+
+  Future<void> _checkShowcase() async {
+    if (_showcaseChecked) return;
+    _showcaseChecked = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool('hasShownSurahDetailShowcase') ?? false;
+
+    if (!hasShown && mounted) {
+      // Small delay to ensure item is rendered after jump
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) {
+          // Attempt to ensure the specific button is visible
+          if (_markReadKey.currentContext != null) {
+            Scrollable.ensureVisible(
+              _markReadKey.currentContext!,
+              alignment: 0.5, // Center the buttons in view
+              duration: const Duration(milliseconds: 300),
+            ).then((_) {
+              if (mounted) {
+                ShowCaseWidget.of(
+                  context,
+                ).startShowCase([_markReadKey, _tafsirKey, _playKey]);
+                prefs.setBool('hasShownSurahDetailShowcase', true);
+              }
+            });
+          } else {
+            // Fallback if key context not found (e.g. still rendering)
+            ShowCaseWidget.of(
+              context,
+            ).startShowCase([_markReadKey, _tafsirKey, _playKey]);
+            prefs.setBool('hasShownSurahDetailShowcase', true);
+          }
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -217,24 +257,6 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     Share.share(textToShare);
   }
 
-  void _checkAndStartShowcase(BuildContext context) async {
-    if (_showcaseChecked) return;
-    _showcaseChecked = true;
-
-    final settings = getIt<SettingsRepository>();
-    if (!await settings.hasShownPlayerShowcase()) {
-      if (context.mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          await Future.delayed(const Duration(milliseconds: 500));
-          if (context.mounted) {
-            ShowCaseWidget.of(context).startShowCase([_dragKey, _qoriKey]);
-            await settings.setPlayerShowcaseShown(true);
-          }
-        });
-      }
-    }
-  }
-
   void _handleBookmarkTap(BuildContext context, Ayah ayah) {
     // Only add Bookmark
     final newBookmark = QuranBookmark(
@@ -315,29 +337,32 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
         ),
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Recorded $delta Ayahs read!"),
-          backgroundColor: const Color(0xFF00E676),
-        ),
+      showCustomSnackBar(
+        context,
+        message: "Recorded $delta Ayahs read!",
+        type: SnackBarType.success,
       );
     } else {
       // Just updating position, no progress?
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Last Read Position Updated"),
-          backgroundColor: Color(0xFF00E676),
-        ),
+      showCustomSnackBar(
+        context,
+        message: "Last Read Position Updated",
+        type: SnackBarType.success,
       );
     }
   }
 
   Widget _buildActionButton({
+    Key? key,
     required IconData icon,
     required VoidCallback onTap,
     Color? color,
+    GlobalKey? showcaseKey,
+    String? showcaseDesc,
+    bool enableShowcase = false,
   }) {
-    return InkWell(
+    Widget button = InkWell(
+      key: key,
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
@@ -345,6 +370,16 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
         child: Icon(icon, color: color ?? Colors.grey[600], size: 20.sp),
       ),
     );
+
+    if (enableShowcase && showcaseKey != null) {
+      return Showcase(
+        key: showcaseKey,
+        description: showcaseDesc,
+        child: button,
+      );
+    }
+
+    return button;
   }
 
   @override
@@ -373,11 +408,6 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
             listeners: [
               BlocListener<AudioBloc, AudioState>(
                 listener: (context, state) {
-                  // Showcase Logic
-                  if (state.status == AudioStatus.playing) {
-                    _checkAndStartShowcase(context);
-                  }
-
                   if (state.currentSurahId == widget.surah.number &&
                       state.currentAyahNumber != null) {
                     if (_currentPlayingAyah != state.currentAyahNumber) {
@@ -397,19 +427,23 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
               ),
               BlocListener<QuranBloc, QuranState>(
                 listener: (context, state) {
-                  if (state is QuranAyahsLoaded &&
-                      widget.initialAyah != null &&
-                      !_hasScrolledToInitialAyah) {
-                    // Wait for list to build keys
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      // Small extra delay to ensure keys are registered in ListView
-                      Future.delayed(const Duration(milliseconds: 300), () {
-                        if (mounted) {
-                          _scrollToAyah(widget.initialAyah!);
-                          _hasScrolledToInitialAyah = true;
-                        }
+                  if (state is QuranAyahsLoaded) {
+                    // Check showcase when data is loaded
+                    _checkShowcase();
+
+                    if (widget.initialAyah != null &&
+                        !_hasScrolledToInitialAyah) {
+                      // Wait for list to build keys
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        // Small extra delay to ensure keys are registered in ListView
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          if (mounted) {
+                            _scrollToAyah(widget.initialAyah!);
+                            _hasScrolledToInitialAyah = true;
+                          }
+                        });
                       });
-                    });
+                    }
                   }
                 },
               ),
@@ -865,6 +899,13 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                 ),
                                                 SizedBox(width: 8.w),
                                                 _buildActionButton(
+                                                  key:
+                                                      (index ==
+                                                          ((widget.initialAyah ??
+                                                                  1) -
+                                                              1))
+                                                      ? _markReadKey
+                                                      : null,
                                                   icon: Icons
                                                       .check_circle_outline,
                                                   color: const Color(
@@ -876,6 +917,16 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                       ayah,
                                                     );
                                                   },
+                                                  showcaseKey: _markReadKey,
+                                                  showcaseDesc:
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.showcaseMarkRead,
+                                                  enableShowcase:
+                                                      index ==
+                                                      ((widget.initialAyah ??
+                                                              1) -
+                                                          1),
                                                 ),
                                                 const Spacer(),
 
@@ -921,6 +972,16 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                           ),
                                                     );
                                                   },
+                                                  showcaseKey: _tafsirKey,
+                                                  showcaseDesc:
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.showcaseTafsir,
+                                                  enableShowcase:
+                                                      index ==
+                                                      ((widget.initialAyah ??
+                                                              1) -
+                                                          1),
                                                 ),
                                                 SizedBox(width: 8.w),
                                                 _buildActionButton(
@@ -941,6 +1002,16 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                           ),
                                                         );
                                                   },
+                                                  showcaseKey: _playKey,
+                                                  showcaseDesc:
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.showcasePlayAyah,
+                                                  enableShowcase:
+                                                      index ==
+                                                      ((widget.initialAyah ??
+                                                              1) -
+                                                          1),
                                                 ),
                                                 SizedBox(width: 8.w),
                                                 _buildActionButton(
@@ -970,10 +1041,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                   ),
                 ),
                 // Audio Player
-                DraggableAudioPlayer(
-                  dragShowcaseKey: _dragKey,
-                  qoriShowcaseKey: _qoriKey,
-                ),
+                const DraggableAudioPlayer(),
               ],
             ),
           );

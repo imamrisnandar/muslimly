@@ -57,8 +57,6 @@ class _DashboardPageState extends State<DashboardPage> {
   final GlobalKey _quranTabKey = GlobalKey();
 
   // Audio Player Showcase Keys
-  final GlobalKey _dragAudioKey = GlobalKey();
-  final GlobalKey _qoriAudioKey = GlobalKey();
 
   @override
   void initState() {
@@ -76,31 +74,17 @@ class _DashboardPageState extends State<DashboardPage> {
     final hasShown = prefs.getBool('hasShownDashboardShowcase') ?? false;
 
     if (!hasShown && mounted) {
-      ShowCaseWidget.of(context).startShowCase([
-        _dailyGoalKey,
-        _settingsTabKey,
-        _prayerCardKey,
-        _quickAccessKey,
-        _dzikirTabKey,
-        _quranTabKey,
-      ]);
-      prefs.setBool('hasShownDashboardShowcase', true);
-    }
-  }
-
-  // Check Audio Showcase
-  Future<void> _checkAudioShowcase() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasShown = prefs.getBool('hasShownAudioPlayerShowcase') ?? false;
-
-    if (!hasShown && mounted) {
-      // Delay slightly to ensure widget is rendered
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 1000));
       if (mounted) {
-        ShowCaseWidget.of(
-          context,
-        ).startShowCase([_dragAudioKey, _qoriAudioKey]);
-        prefs.setBool('hasShownAudioPlayerShowcase', true);
+        ShowCaseWidget.of(context).startShowCase([
+          _dailyGoalKey,
+          _settingsTabKey,
+          _prayerCardKey,
+          _quickAccessKey,
+          _dzikirTabKey,
+          _quranTabKey,
+        ]);
+        prefs.setBool('hasShownDashboardShowcase', true);
       }
     }
   }
@@ -145,122 +129,121 @@ class _DashboardPageState extends State<DashboardPage> {
       ],
       child: Builder(
         builder: (context) {
-          return Scaffold(
-            extendBody: true,
-            bottomNavigationBar: Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 10,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
-              ),
-              child: BottomNavigationBar(
-                currentIndex: _currentIndex,
-                onTap: (index) => context.go('/dashboard?index=$index'),
-                backgroundColor: const Color(0xFF1C2A30), // Dark background
-                selectedItemColor: const Color(0xFF00E676), // Accent Green
-                unselectedItemColor: Colors.white54,
-                type: BottomNavigationBarType.fixed,
-                showUnselectedLabels: true,
-                selectedLabelStyle: TextStyle(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-                unselectedLabelStyle: TextStyle(fontSize: 10.sp),
-                items: [
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.home_filled),
-                    label: AppLocalizations.of(context)!.bottomNavHome,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: const Icon(Icons.mosque),
-                    label: AppLocalizations.of(context)!.bottomNavPrayer,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Showcase(
-                      key: _quranTabKey,
-                      description: AppLocalizations.of(
-                        context,
-                      )!.showcaseQuranTab,
-                      targetShapeBorder: const CircleBorder(),
-                      child: const Icon(
-                        Icons.menu_book_rounded,
-                        color: Color(
-                          0xFFFFC107,
-                        ), // Amber/Gold Highlight (Diff from Focus)
+          return ShowCaseWidget(
+            builder: (context) {
+              return Scaffold(
+                extendBody: true,
+                bottomNavigationBar: Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 10,
+                        offset: const Offset(0, -5),
                       ),
+                    ],
+                  ),
+                  child: BottomNavigationBar(
+                    currentIndex: _currentIndex,
+                    onTap: (index) => context.go('/dashboard?index=$index'),
+                    backgroundColor: const Color(0xFF1C2A30), // Dark background
+                    selectedItemColor: const Color(0xFF00E676), // Accent Green
+                    unselectedItemColor: Colors.white54,
+                    type: BottomNavigationBarType.fixed,
+                    showUnselectedLabels: true,
+                    selectedLabelStyle: TextStyle(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.bold,
                     ),
-                    label: AppLocalizations.of(context)!.bottomNavQuran,
+                    unselectedLabelStyle: TextStyle(fontSize: 10.sp),
+                    items: [
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.home_filled),
+                        label: AppLocalizations.of(context)!.bottomNavHome,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.mosque),
+                        label: AppLocalizations.of(context)!.bottomNavPrayer,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Showcase(
+                          key: _quranTabKey,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.showcaseQuranTab,
+                          targetShapeBorder: const CircleBorder(),
+                          child: const Icon(
+                            Icons.menu_book_rounded,
+                            color: Color(
+                              0xFFFFC107,
+                            ), // Amber/Gold Highlight (Diff from Focus)
+                          ),
+                        ),
+                        label: AppLocalizations.of(context)!.bottomNavQuran,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Showcase(
+                          key: _dzikirTabKey,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.showcaseDzikir,
+                          targetShapeBorder: const CircleBorder(),
+                          child: const Icon(Icons.spa),
+                        ), // Dzikir Icon
+                        label: AppLocalizations.of(context)!.bottomNavDzikir,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Showcase(
+                          key: _settingsTabKey,
+                          description: AppLocalizations.of(
+                            context,
+                          )!.showcaseSettingsGoal,
+                          targetShapeBorder: const CircleBorder(),
+                          child: const Icon(Icons.settings),
+                        ), // Settings Icon
+                        label: AppLocalizations.of(context)!.bottomNavSettings,
+                      ),
+                    ],
                   ),
-                  BottomNavigationBarItem(
-                    icon: Showcase(
-                      key: _dzikirTabKey,
-                      description: AppLocalizations.of(context)!.showcaseDzikir,
-                      targetShapeBorder: const CircleBorder(),
-                      child: const Icon(Icons.spa),
-                    ), // Dzikir Icon
-                    label: AppLocalizations.of(context)!.bottomNavDzikir,
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Showcase(
-                      key: _settingsTabKey,
-                      description: AppLocalizations.of(
-                        context,
-                      )!.showcaseSettingsGoal,
-                      targetShapeBorder: const CircleBorder(),
-                      child: const Icon(Icons.settings),
-                    ), // Settings Icon
-                    label: AppLocalizations.of(context)!.bottomNavSettings,
-                  ),
-                ],
-              ),
-            ),
-            body: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF0F2027),
-                    Color(0xFF203A43),
-                    Color(0xFF2C5364),
-                  ],
                 ),
-              ),
-              child: SafeArea(
-                child: Stack(
-                  children: [
-                    IndexedStack(
-                      index: _currentIndex,
-                      children: [
-                        _buildHomeContent(context), // Uses inner context
-                        const PrayerPage(),
-                        const QuranPage(),
-                        // Dzikir & Doa (Index 3)
-                        const DzikirPage(),
-                        // Settings (Index 4)
-                        const SettingsPage(),
+                body: Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Color(0xFF0F2027),
+                        Color(0xFF203A43),
+                        Color(0xFF2C5364),
                       ],
                     ),
-                    // Listen to Audio Bloc for Showcase Trigger
-                    BlocListener<AudioBloc, AudioState>(
-                      listener: (context, state) {
-                        if (state.isMiniPlayerVisible) {
-                          _checkAudioShowcase();
-                        }
-                      },
-                      child: DraggableAudioPlayer(
-                        dragShowcaseKey: _dragAudioKey,
-                        qoriShowcaseKey: _qoriAudioKey,
-                      ),
+                  ),
+                  child: SafeArea(
+                    child: Stack(
+                      children: [
+                        IndexedStack(
+                          index: _currentIndex,
+                          children: [
+                            _buildHomeContent(context), // Uses inner context
+                            const PrayerPage(),
+                            QuranPage(isVisible: _currentIndex == 2),
+                            // Dzikir & Doa (Index 3)
+                            const DzikirPage(),
+                            // Settings (Index 4)
+                            const SettingsPage(),
+                          ],
+                        ),
+                        // Listen to Audio Bloc for Showcase Trigger
+                        BlocListener<AudioBloc, AudioState>(
+                          listener: (context, state) {},
+                          child: const DraggableAudioPlayer(),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),

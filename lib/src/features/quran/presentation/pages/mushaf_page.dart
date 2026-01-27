@@ -71,8 +71,6 @@ class _MushafPageState extends State<MushafPage> {
   final GlobalKey _swipeKey = GlobalKey();
   final GlobalKey _bookmarkKey = GlobalKey();
   final GlobalKey _completionKey = GlobalKey();
-  final GlobalKey _dragKey = GlobalKey();
-  final GlobalKey _qoriKey = GlobalKey();
 
   @override
   void initState() {
@@ -96,21 +94,6 @@ class _MushafPageState extends State<MushafPage> {
     }
   }
 
-  Future<void> _checkPlayerShowcase() async {
-    final settings = getIt<SettingsRepository>();
-    if (!await settings.hasShownPlayerShowcase()) {
-      if (mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
-          await Future.delayed(const Duration(milliseconds: 500));
-          if (mounted) {
-            ShowCaseWidget.of(context).startShowCase([_dragKey, _qoriKey]);
-            await settings.setPlayerShowcaseShown(true);
-          }
-        });
-      }
-    }
-  }
-
   @override
   void dispose() {
     _pageController?.dispose();
@@ -129,20 +112,6 @@ class _MushafPageState extends State<MushafPage> {
           pageNumber: pageNum,
           durationSeconds: _readStopwatch.elapsed.inSeconds,
           surahNumber: widget.surah.number,
-        ),
-      );
-
-      // Visual Feedback
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            manual
-                ? AppLocalizations.of(context)!.markAsRead
-                : "Page $pageNum recorded!",
-          ),
-          duration: const Duration(milliseconds: 800),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: const Color(0xFF00E676),
         ),
       );
     }
@@ -282,9 +251,6 @@ class _MushafPageState extends State<MushafPage> {
           builder: (context) {
             return BlocListener<AudioBloc, AudioState>(
               listener: (context, audioState) {
-                if (audioState.status == AudioStatus.playing) {
-                  _checkPlayerShowcase();
-                }
                 if (audioState.currentSurahId == widget.surah.number &&
                     audioState.currentAyahNumber != null) {
                   final quranState = context.read<QuranBloc>().state;
@@ -544,6 +510,11 @@ class _MushafPageState extends State<MushafPage> {
                                   _lastPageNumber,
                                   manual: true,
                                 );
+                                showCustomSnackBar(
+                                  context,
+                                  message: 'Reading progress saved!',
+                                  type: SnackBarType.success,
+                                );
                               }
                             },
                           ),
@@ -551,10 +522,7 @@ class _MushafPageState extends State<MushafPage> {
                       ),
                     ),
                     // Audio Player
-                    DraggableAudioPlayer(
-                      dragShowcaseKey: _dragKey,
-                      qoriShowcaseKey: _qoriKey,
-                    ),
+                    const DraggableAudioPlayer(),
                   ],
                 ),
               ),
@@ -716,12 +684,11 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                             widget.surahName, // English Name passed in widget
                       ),
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Playing Surah ${widget.surahName}'),
-                        duration: const Duration(milliseconds: 800),
-                        backgroundColor: const Color(0xFF00E676),
-                      ),
+                    showCustomSnackBar(
+                      context,
+                      message:
+                          "Page ${widget.pageNumber} (${widget.ayahs.length} Ayahs) Copied!",
+                      type: SnackBarType.success,
                     );
                   },
                   icon: Icon(

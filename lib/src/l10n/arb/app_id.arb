@@ -171,5 +171,15 @@
     "backgroundProgressFinished": "Alhamdulillah, kemarin target {target} {unit} tercapai! Pertahankan semangatmu.",
     "backgroundProgressZero": "Kemarin kamu belum sempat baca Quran. Mulai hari ini dengan bismillah yuk!",
     "settingsTestBackground": "Test Background Fetch",
-    "settingsTestBackgroundSubtitle": "Jalankan task update harian sekarang"
+    "settingsTestBackgroundSubtitle": "Jalankan task update harian sekarang",
+    "showcaseQuranSearch": "Cari Surah berdasarkan nama atau nomor.",
+    "showcaseQuranBookmarks": "Akses bookmark dan ayat favoritmu.",
+    "showcaseQuranItem": "Ketuk untuk membuka. Pilih tampilan Ayat atau Mushaf.",
+    "showcaseQuranPlay": "Ketuk untuk memutar audio Surah.",
+    "showcaseMarkRead": "Ketuk untuk tandai sudah dibaca dan pantau progresmu.",
+    "showcaseTafsir": "Lihat Tafsir dan detail terjemahan.",
+    "showcasePlayAyah": "Dengarkan audio untuk ayat ini.",
+    "settingsResetShowcase": "Reset Tutorial",
+    "settingsResetShowcaseSubtitle": "Tampilkan ulang semua tutorial intro."
 }
+

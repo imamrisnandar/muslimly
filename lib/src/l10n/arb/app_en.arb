@@ -171,5 +171,15 @@
     "backgroundProgressFinished": "Alhamdulillah, you hit the {target} {unit} target yesterday! Keep it up.",
     "backgroundProgressZero": "You didn't read Quran yesterday. Let's start fresh today with Bismillah!",
     "settingsTestBackground": "Test Background Fetch",
-    "settingsTestBackgroundSubtitle": "Run daily update task now"
+    "settingsTestBackgroundSubtitle": "Run daily update task now",
+    "showcaseQuranSearch": "Search for Surah by name or number.",
+    "showcaseQuranBookmarks": "Access your bookmarks and favorite verses.",
+    "showcaseQuranItem": "Tap to open. Choose between Ayah or Mushaf view.",
+    "showcaseQuranPlay": "Tap to play the Surah audio.",
+    "showcaseMarkRead": "Tap to mark this ayah as read and track your progress.",
+    "showcaseTafsir": "View Tafsir and detailed translation.",
+    "showcasePlayAyah": "Listen to the audio of this ayah.",
+    "settingsResetShowcase": "Reset Showcase",
+    "settingsResetShowcaseSubtitle": "Reset all tutorials to see them again."
 }
+
