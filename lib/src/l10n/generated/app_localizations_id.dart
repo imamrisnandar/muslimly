@@ -602,4 +602,11 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get settingsResetShowcaseSubtitle =>
       'Tampilkan ulang semua tutorial intro.';
+
+  @override
+  String get jumpToAyah => 'Lompat ke Ayat';
+
+  @override
+  String get showcaseJumpToAyahDesc =>
+      'Ketuk di sini untuk melompat cepat ke ayat tertentu';
 }

@@ -1183,6 +1183,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset all tutorials to see them again.'**
   String get settingsResetShowcaseSubtitle;
+
+  /// No description provided for @jumpToAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to Ayah'**
+  String get jumpToAyah;
+
+  /// No description provided for @showcaseJumpToAyahDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to quickly navigate to a specific Ayah'**
+  String get showcaseJumpToAyahDesc;
 }
 
 class _AppLocalizationsDelegate

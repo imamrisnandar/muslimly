@@ -598,4 +598,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsResetShowcaseSubtitle =>
       'Reset all tutorials to see them again.';
+
+  @override
+  String get jumpToAyah => 'Jump to Ayah';
+
+  @override
+  String get showcaseJumpToAyahDesc =>
+      'Tap here to quickly navigate to a specific Ayah';
 }

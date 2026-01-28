@@ -180,6 +180,8 @@
     "showcaseTafsir": "Lihat Tafsir dan detail terjemahan.",
     "showcasePlayAyah": "Dengarkan audio untuk ayat ini.",
     "settingsResetShowcase": "Reset Tutorial",
-    "settingsResetShowcaseSubtitle": "Tampilkan ulang semua tutorial intro."
+    "settingsResetShowcaseSubtitle": "Tampilkan ulang semua tutorial intro.",
+    "jumpToAyah": "Lompat ke Ayat",
+  "showcaseJumpToAyahDesc": "Ketuk di sini untuk melompat cepat ke ayat tertentu"
 }
 

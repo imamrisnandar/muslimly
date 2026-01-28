@@ -33,6 +33,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+import '../widgets/ayah_selector_bottom_sheet.dart';
+
 class SurahDetailPage extends StatefulWidget {
   final Surah surah;
   final int? initialAyah;
@@ -47,6 +49,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   bool _hasScrolledToInitialAyah = false;
 
   int? _currentPlayingAyah;
+  int? _highlightedAyah; // For jump navigation
   // Deprecated/Unused ScrollController is removed or commented out if causing issues
   // final ScrollController _scrollController = ScrollController();
 
@@ -59,6 +62,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   final GlobalKey _markReadKey = GlobalKey();
   final GlobalKey _tafsirKey = GlobalKey();
   final GlobalKey _playKey = GlobalKey();
+  final GlobalKey _jumpToAyahKey = GlobalKey();
   bool _showcaseChecked = false;
 
   Future<void> _checkShowcase() async {
@@ -80,22 +84,56 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
               duration: const Duration(milliseconds: 300),
             ).then((_) {
               if (mounted) {
-                ShowCaseWidget.of(
-                  context,
-                ).startShowCase([_markReadKey, _tafsirKey, _playKey]);
+                ShowCaseWidget.of(context).startShowCase([
+                  _jumpToAyahKey,
+                  _markReadKey,
+                  _tafsirKey,
+                  _playKey,
+                ]);
                 prefs.setBool('hasShownSurahDetailShowcase', true);
               }
             });
           } else {
             // Fallback if key context not found (e.g. still rendering)
-            ShowCaseWidget.of(
-              context,
-            ).startShowCase([_markReadKey, _tafsirKey, _playKey]);
+            ShowCaseWidget.of(context).startShowCase([
+              _jumpToAyahKey,
+              _markReadKey,
+              _tafsirKey,
+              _playKey,
+            ]);
             prefs.setBool('hasShownSurahDetailShowcase', true);
           }
         }
       });
     }
+  }
+
+  void _showJumpToAyah() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => AyahSelectorBottomSheet(
+        totalAyahs: widget.surah.numberOfAyahs,
+        surahName: widget.surah.englishName,
+        onAyahSelected: (ayahNumber) {
+          // Delay slightly to allow sheet to close
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (mounted) {
+              setState(() {
+                _highlightedAyah = ayahNumber;
+              });
+              _scrollToAyah(ayahNumber);
+              showCustomSnackBar(
+                context,
+                message: 'Jumped to Ayah $ayahNumber',
+                type: SnackBarType.success,
+              );
+            }
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -470,6 +508,20 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                     ),
                     centerTitle: true,
                     actions: [
+                      Showcase(
+                        key: _jumpToAyahKey,
+                        description: AppLocalizations.of(
+                          context,
+                        )!.showcaseJumpToAyahDesc,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.grid_view_rounded,
+                            color: Colors.black87,
+                          ),
+                          tooltip: AppLocalizations.of(context)!.jumpToAyah,
+                          onPressed: _showJumpToAyah,
+                        ),
+                      ),
                       IconButton(
                         icon: const Icon(
                           Icons.info_outline,
@@ -652,8 +704,10 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                   //   () => GlobalKey(),
                                   // );
 
-                                  final isPlaying =
+                                  final bool isPlaying =
                                       _currentPlayingAyah == ayah.numberInSurah;
+                                  final bool isHighlighted =
+                                      _highlightedAyah == ayah.numberInSurah;
 
                                   final bool showBismillah =
                                       index == 0 &&
@@ -779,7 +833,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                       Container(
                                         // key: _ayahKeys[ayah.numberInSurah],
                                         decoration: BoxDecoration(
-                                          color: isPlaying
+                                          color: isPlaying || isHighlighted
                                               ? const Color(
                                                   0xFFE8F5E9,
                                                 ) // Light Green Highlight
@@ -798,7 +852,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                               offset: const Offset(0, 2),
                                             ),
                                           ],
-                                          border: isPlaying
+                                          border: isPlaying || isHighlighted
                                               ? Border.all(
                                                   color: const Color(
                                                     0xFF00E676,

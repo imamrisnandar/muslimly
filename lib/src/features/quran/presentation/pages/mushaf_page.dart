@@ -41,6 +41,8 @@ import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../features/settings/data/repositories/settings_repository.dart';
 
+import 'package:muslimly/src/features/quran/presentation/widgets/ayah_selector_bottom_sheet.dart';
+
 class MushafPage extends StatefulWidget {
   final Surah surah;
   final bool startAtEnd;
@@ -66,11 +68,13 @@ class _MushafPageState extends State<MushafPage> {
   // Reading Tracking
   final Stopwatch _readStopwatch = Stopwatch();
   int _lastPageNumber = -1; // Track the page being read
+  int? _highlightedAyah; // For jump navigation
 
   // Showcase Keys
   final GlobalKey _swipeKey = GlobalKey();
   final GlobalKey _bookmarkKey = GlobalKey();
   final GlobalKey _completionKey = GlobalKey();
+  final GlobalKey _jumpToAyahKey = GlobalKey();
 
   @override
   void initState() {
@@ -87,9 +91,12 @@ class _MushafPageState extends State<MushafPage> {
     final hasShown = prefs.getBool('hasShownMushafShowcase') ?? false;
 
     if (!hasShown && mounted) {
-      ShowCaseWidget.of(
-        context,
-      ).startShowCase([_swipeKey, _bookmarkKey, _completionKey]);
+      ShowCaseWidget.of(context).startShowCase([
+        _swipeKey,
+        _jumpToAyahKey,
+        _bookmarkKey,
+        _completionKey,
+      ]);
       prefs.setBool('hasShownMushafShowcase', true);
     }
   }
@@ -117,6 +124,80 @@ class _MushafPageState extends State<MushafPage> {
     }
     _readStopwatch.reset();
     _readStopwatch.start();
+  }
+
+  void _showJumpToAyah(BuildContext context) {
+    // Capture Bloc using valid context
+    final quranBloc = context.read<QuranBloc>();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => AyahSelectorBottomSheet(
+        totalAyahs: widget.surah.numberOfAyahs,
+        surahName: widget.surah.englishName,
+        onAyahSelected: (ayahNumber) {
+          // Logic to find page number for selected Ayah
+          final state = quranBloc.state; // Use captured bloc
+          if (state is QuranAyahsLoaded) {
+            try {
+              final targetAyah = state.ayahs.firstWhere(
+                (a) => a.numberInSurah == ayahNumber,
+              );
+
+              // Find the index of this page in the controller
+              // Mushaf logic: group by page, sort keys.
+              final uniquePages =
+                  state.ayahs.map((e) => e.page).toSet().toList()..sort();
+              final index = uniquePages.indexOf(targetAyah.page);
+
+              if (index != -1 && _pageController != null) {
+                // Delay slightly to close sheet
+                Future.delayed(const Duration(milliseconds: 300), () {
+                  if (mounted) {
+                    setState(() {
+                      _highlightedAyah = ayahNumber;
+                    });
+                    _pageController!.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+
+                    // Feedback
+                    showCustomSnackBar(
+                      context,
+                      message:
+                          'Jumped to Ayah $ayahNumber (Page ${targetAyah.page})',
+                      type: SnackBarType.success,
+                    );
+                  }
+                });
+              } else {
+                showCustomSnackBar(
+                  context,
+                  message: 'Page not found in loaded data.',
+                  type: SnackBarType.error,
+                );
+              }
+            } catch (e) {
+              showCustomSnackBar(
+                context,
+                message: 'Could not find Ayah $ayahNumber',
+                type: SnackBarType.error,
+              );
+            }
+          } else {
+            showCustomSnackBar(
+              context,
+              message: 'Data not loaded yet.',
+              type: SnackBarType.error,
+            );
+          }
+        },
+      ),
+    );
   }
 
   // ... (Previous methods: _goToPreviousSurah, _goToNextSurah)
@@ -392,7 +473,9 @@ class _MushafPageState extends State<MushafPage> {
                                     surahName: widget.surah.englishName,
                                     surahNumber: widget.surah.number,
                                     panEnabled: true,
-                                    initialSelectedAyah: widget.initialAyah,
+                                    onJumpTap: () => _showJumpToAyah(context),
+                                    jumpKey: _jumpToAyahKey,
+                                    highlightedAyah: _highlightedAyah,
                                   );
                                 },
                               ),
@@ -541,6 +624,9 @@ class MushafSinglePage extends StatefulWidget {
   final int surahNumber;
   final bool panEnabled;
   final int? initialSelectedAyah;
+  final VoidCallback? onJumpTap;
+  final GlobalKey? jumpKey;
+  final int? highlightedAyah;
 
   const MushafSinglePage({
     super.key,
@@ -550,6 +636,9 @@ class MushafSinglePage extends StatefulWidget {
     required this.surahNumber,
     this.panEnabled = true,
     this.initialSelectedAyah,
+    this.onJumpTap,
+    this.jumpKey,
+    this.highlightedAyah,
   });
 
   @override
@@ -568,6 +657,25 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
   Future<void>? _fontFuture;
 
   @override
+  void didUpdateWidget(MushafSinglePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.highlightedAyah != null &&
+        widget.highlightedAyah != oldWidget.highlightedAyah) {
+      final existsOnPage = widget.ayahs.any(
+        (element) => element.numberInSurah == widget.highlightedAyah,
+      );
+      // Only highlight if it belongs to this page (though usually PageView handles this)
+      if (existsOnPage) {
+        setState(() {
+          _selectedAyah = widget.highlightedAyah;
+          _selectedSurah = widget.surahNumber;
+          _tapPosition = null;
+        });
+      }
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     _transformationController.value = Matrix4.identity()..scale(1.0);
@@ -581,6 +689,17 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
       if (exists) {
         _selectedSurah = widget.surahNumber;
         _selectedAyah = widget.initialSelectedAyah;
+      }
+    }
+
+    // Also check for highlightedAyah (e.g. from jump navigation)
+    if (widget.highlightedAyah != null) {
+      final exists = widget.ayahs.any(
+        (a) => a.numberInSurah == widget.highlightedAyah,
+      );
+      if (exists) {
+        _selectedSurah = widget.surahNumber;
+        _selectedAyah = widget.highlightedAyah;
       }
     }
   }
@@ -700,14 +819,37 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                 ),
 
                 // Right Side = Juz Info
-                Text(
-                  'الجزء ${ArabicUtils.toArabicDigits(widget.ayahs.isNotEmpty ? widget.ayahs.first.juz : 1)}',
-                  style: TextStyle(
-                    fontFamily: "UthmanicHafs13",
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                // Right Side = Juz Info
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.onJumpTap != null && widget.jumpKey != null)
+                      Showcase(
+                        key: widget.jumpKey!,
+                        description: AppLocalizations.of(
+                          context,
+                        )!.showcaseJumpToAyahDesc,
+                        child: IconButton(
+                          onPressed: widget.onJumpTap,
+                          icon: Icon(
+                            Icons.grid_view_rounded,
+                            size: 28.sp,
+                            color: Colors.black,
+                          ),
+                          tooltip: AppLocalizations.of(context)!.jumpToAyah,
+                        ),
+                      ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'الجزء ${ArabicUtils.toArabicDigits(widget.ayahs.isNotEmpty ? widget.ayahs.first.juz : 1)}',
+                      style: TextStyle(
+                        fontFamily: "UthmanicHafs13",
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

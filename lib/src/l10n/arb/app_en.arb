@@ -180,6 +180,8 @@
     "showcaseTafsir": "View Tafsir and detailed translation.",
     "showcasePlayAyah": "Listen to the audio of this ayah.",
     "settingsResetShowcase": "Reset Showcase",
-    "settingsResetShowcaseSubtitle": "Reset all tutorials to see them again."
+    "settingsResetShowcaseSubtitle": "Reset all tutorials to see them again.",
+    "jumpToAyah": "Jump to Ayah",
+  "showcaseJumpToAyahDesc": "Tap here to quickly navigate to a specific Ayah"
 }
 
