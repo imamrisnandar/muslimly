@@ -19,7 +19,7 @@ class AyahSelectorBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0F2027),
+        color: const Color(0xFF0F2027), // Dark Background
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         boxShadow: [
           BoxShadow(
@@ -48,7 +48,7 @@ class AyahSelectorBottomSheet extends StatelessWidget {
                         context,
                       )!.jumpToAyah, // Ensure this exists or use fallback
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.white, // White text
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
                       ),

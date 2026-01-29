@@ -41,13 +41,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     result.fold(
       (failure) => emit(SearchError(failure)),
-      (results) => emit(
+      (response) => emit(
         SearchLoaded(
-          results: results,
-          hasReachedMax: results.isEmpty,
-          currentPage: 1,
+          results: response.results,
+          hasReachedMax: response.currentPage >= response.totalPages,
+          currentPage: response.currentPage,
           query: event.query,
-          languageCode: event.languageCode, // Store for pagination
+          languageCode: event.languageCode,
         ),
       ),
     );
@@ -63,12 +63,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       final nextPage = currentState.currentPage + 1;
 
-      // Emit Loading but keep old results?
-      // Actually standard pattern is to keep showing loaded state but maybe show loading indicator at bottom.
-      // But here we need to emit a new state if we want to update UI heavily.
-      // Simplest: Just append results in Loaded state. Or use separate loading status field.
-      // For now, let's just do the fetch and emit new Loaded.
-
       final result = await _searchAyahs(
         currentState.query,
         page: nextPage,
@@ -77,17 +71,16 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       result.fold(
         (failure) {
-          // On error during pagination, maybe show snackbar?
-          // Or emit Error state? Ideally just ignore or show separate error.
-          // For MVP, if error, stop pagination.
+          // Ignore pagination error
         },
-        (newResults) {
+        (response) {
           emit(
             SearchLoaded(
-              results: currentState.results + newResults,
-              hasReachedMax: newResults.isEmpty,
-              currentPage: nextPage,
+              results: currentState.results + response.results,
+              hasReachedMax: response.currentPage >= response.totalPages,
+              currentPage: response.currentPage,
               query: currentState.query,
+              languageCode: currentState.languageCode,
             ),
           );
         },

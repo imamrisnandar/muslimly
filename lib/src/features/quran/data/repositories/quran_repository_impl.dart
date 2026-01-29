@@ -9,6 +9,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/database/database_service.dart';
 import '../models/ayah_model.dart';
 import '../../domain/entities/search_result.dart'; // Import SearchResult entity
+import '../../domain/entities/search_response.dart';
 
 @LazySingleton(as: QuranRepository)
 class QuranRepositoryImpl implements QuranRepository {
@@ -108,7 +109,7 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<Either<String, List<SearchResult>>> searchAyahs(
+  Future<Either<String, SearchResponse>> searchAyahs(
     String query, {
     int page = 1,
     String languageCode = 'id',
@@ -121,9 +122,14 @@ class QuranRepositoryImpl implements QuranRepository {
       if (response.statusCode == 200) {
         final data = response.data;
         // API Structure:
-        // { "search": { "results": [ { "verse_key": "1:1", "text": "...", "translations": [...] } ] } }
+        // { "search": { "query": "...", "total_results": 2, "current_page": 1, "total_pages": 1, "results": [...] } }
 
-        final results = data['search']['results'] as List;
+        final searchData = data['search'];
+        final results = searchData['results'] as List;
+        final totalResults = searchData['total_results'] ?? 0;
+        final totalPages = searchData['total_pages'] ?? 1;
+        final currentPage = searchData['current_page'] ?? page;
+
         final List<SearchResult> searchResults = results.map((item) {
           final verseKey = item['verse_key'] as String;
           final parts = verseKey.split(':');
@@ -147,7 +153,20 @@ class QuranRepositoryImpl implements QuranRepository {
           );
         }).toList();
 
-        return Right(searchResults);
+        return Right(
+          SearchResponse(
+            results: searchResults,
+            totalResults: totalResults is int
+                ? totalResults
+                : int.tryParse(totalResults.toString()) ?? 0,
+            totalPages: totalPages is int
+                ? totalPages
+                : int.tryParse(totalPages.toString()) ?? 1,
+            currentPage: currentPage is int
+                ? currentPage
+                : int.tryParse(currentPage.toString()) ?? page,
+          ),
+        );
       }
       return const Left('Search failed');
     } catch (e) {

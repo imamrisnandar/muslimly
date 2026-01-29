@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/utils/surah_names.dart';
@@ -42,7 +43,7 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
     return Container(
       height: 0.85.sh,
       decoration: BoxDecoration(
-        color: const Color(0xFF121212), // Deep Black/Grey
+        color: const Color(0xFF0F2027), // Dark Background
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         boxShadow: [
           BoxShadow(
@@ -61,7 +62,7 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: Colors.white24, // White handle
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
@@ -72,7 +73,7 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
           Text(
             l10n.quranNavigationTitle, // Localized Title
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.white, // White Text
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
               fontFamily: "Outfit",
@@ -85,13 +86,13 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
             height: 48.h,
             margin: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.white.withOpacity(0.05), // White transparent bg
               borderRadius: BorderRadius.circular(24.r),
             ),
             child: TabBar(
               controller: _tabController,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.white60,
+              labelColor: Colors.black, // Dark text on Green selection
+              unselectedLabelColor: Colors.white60, // Light text for unselected
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                 color: const Color(0xFF00E676), // Brand Green
@@ -185,6 +186,10 @@ class _PageTabState extends State<_PageTab> {
               controller: _controller,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(3),
+              ],
               style: TextStyle(
                 color: const Color(0xFF00E676),
                 fontSize: 72.sp,
@@ -201,11 +206,36 @@ class _PageTabState extends State<_PageTab> {
                 ),
               ),
               onChanged: (val) {
-                final n = double.tryParse(val);
-                if (n != null && n >= 1 && n <= 604) {
-                  setState(() {
-                    _currentPage = n;
-                  });
+                if (val.isEmpty) {
+                  setState(() => _currentPage = 1);
+                  return;
+                }
+
+                final n = int.tryParse(val);
+                if (n != null) {
+                  if (n > 604) {
+                    _controller.text = '604';
+                    _controller.selection = TextSelection.fromPosition(
+                      TextPosition(offset: _controller.text.length),
+                    );
+                    setState(() {
+                      _currentPage = 604;
+                    });
+                  } else if (n < 1) {
+                    // Usually 0 is typed first if they want to type 0... but page 0 doesn't exist.
+                    // Just let it be 1 for state, but allow typing 0 if they want to correct it?
+                    // But 0 is invalid.
+                    // If we strictly enforce 1..604, typing logic is tricky.
+                    // Let's just update state to 1 but keep text if they are editing.
+                    // Actually, if val is "0", maybe default to 1 logic.
+                    setState(() {
+                      _currentPage = 1;
+                    });
+                  } else {
+                    setState(() {
+                      _currentPage = n.toDouble();
+                    });
+                  }
                 }
               },
               onSubmitted: (_) => _navigateToPage(),

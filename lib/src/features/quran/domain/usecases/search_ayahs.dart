@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
-import '../entities/search_result.dart';
+import '../entities/search_response.dart';
 import '../repositories/quran_repository.dart';
 
 @lazySingleton
@@ -9,7 +9,7 @@ class SearchAyahs {
 
   SearchAyahs(this.repository);
 
-  Future<Either<String, List<SearchResult>>> call(
+  Future<Either<String, SearchResponse>> call(
     String query, {
     int page = 1,
     String languageCode = 'id',
