@@ -32,26 +32,27 @@ import '../../data/datasources/font_cache_service.dart';
 import '../../../../core/utils/custom_snackbar.dart'; // Import Custom SnackBar
 import 'package:dio/dio.dart';
 import 'dart:ui' as ui;
-import 'package:muslimly/src/features/quran/presentation/widgets/audio_bottom_sheet.dart';
+
 import 'package:muslimly/src/features/quran/presentation/widgets/draggable_audio_player.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_bloc.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_state.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../features/settings/data/repositories/settings_repository.dart';
 
 import 'package:muslimly/src/features/quran/presentation/widgets/ayah_selector_bottom_sheet.dart';
+import 'package:muslimly/src/core/utils/quran_constants.dart';
+import 'package:muslimly/src/core/utils/surah_names.dart';
 
 class MushafPage extends StatefulWidget {
-  final Surah surah;
+  final Surah? surah;
   final bool startAtEnd;
   final int? initialPage;
   final int? initialAyah;
 
   const MushafPage({
     super.key,
-    required this.surah,
+    this.surah,
     this.startAtEnd = false,
     this.initialPage,
     this.initialAyah,
@@ -64,6 +65,7 @@ class MushafPage extends StatefulWidget {
 class _MushafPageState extends State<MushafPage> {
   PageController? _pageController;
   bool _isNavigating = false; // Debounce flag
+  late Surah _surah; // Local state for Surah
 
   // Reading Tracking
   final Stopwatch _readStopwatch = Stopwatch();
@@ -79,11 +81,65 @@ class _MushafPageState extends State<MushafPage> {
   @override
   void initState() {
     super.initState();
+    // Initialize Surah
+    _initializeSurah();
+
+    // Set highlighted ayah from navigation
+    if (widget.initialAyah != null) {
+      _highlightedAyah = widget.initialAyah;
+    }
+
     // Start stopwatch when entering the view
     _readStopwatch.start();
 
     // Check for showcase
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkShowcase());
+  }
+
+  void _initializeSurah() {
+    if (widget.surah != null) {
+      _surah = widget.surah!;
+    } else if (widget.initialPage != null) {
+      // Find Surah from Page
+      final page = widget.initialPage!;
+      // Iterate map to find range
+      int foundSurahNum = 1;
+      for (var entry in QuranConstants.surahPageStart.entries) {
+        if (entry.value <= page) {
+          foundSurahNum = entry.key;
+        } else {
+          break;
+        }
+      }
+
+      // Construct Surah Object manually from Constants to avoid Provider lookup issue in initState
+      // Use core utils SurahNames and QuranConstants
+      final englishName =
+          SurahNames.englishNames[foundSurahNum - 1]; // indonesianNames aligned
+      final indonesianName = SurahNames.indonesianNames[foundSurahNum - 1];
+      final ayaCount = QuranConstants.surahAyahCounts[foundSurahNum] ?? 7;
+
+      _surah = Surah(
+        number: foundSurahNum,
+        name: "Surah $foundSurahNum",
+        englishName: englishName,
+        englishNameTranslation: "",
+        indonesianNameTranslation: indonesianName,
+        numberOfAyahs: ayaCount,
+        revelationType: "Meccan",
+      );
+    } else {
+      // Should not happen
+      _surah = const Surah(
+        number: 1,
+        name: "Al-Fatihah",
+        englishName: "Al-Fatihah",
+        englishNameTranslation: "The Opening",
+        indonesianNameTranslation: "Pembukaan",
+        numberOfAyahs: 7,
+        revelationType: "Meccan",
+      );
+    }
   }
 
   Future<void> _checkShowcase() async {
@@ -118,7 +174,7 @@ class _MushafPageState extends State<MushafPage> {
         LogPageRead(
           pageNumber: pageNum,
           durationSeconds: _readStopwatch.elapsed.inSeconds,
-          surahNumber: widget.surah.number,
+          surahNumber: _surah.number,
         ),
       );
     }
@@ -135,8 +191,8 @@ class _MushafPageState extends State<MushafPage> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => AyahSelectorBottomSheet(
-        totalAyahs: widget.surah.numberOfAyahs,
-        surahName: widget.surah.englishName,
+        totalAyahs: _surah.numberOfAyahs,
+        surahName: _surah.englishName,
         onAyahSelected: (ayahNumber) {
           // Logic to find page number for selected Ayah
           final state = quranBloc.state; // Use captured bloc
@@ -203,11 +259,11 @@ class _MushafPageState extends State<MushafPage> {
   // ... (Previous methods: _goToPreviousSurah, _goToNextSurah)
 
   void _goToPreviousSurah(BuildContext context) {
-    if (widget.surah.number > 1) {
+    if (_surah.number > 1) {
       // Can go back if > 1 (Al-Fatihah is 1)
       _isNavigating = true;
 
-      final prevSurahNumber = widget.surah.number - 1;
+      final prevSurahNumber = _surah.number - 1;
 
       final prevSurahData = surahDetails.firstWhere(
         (element) => element['number'] == prevSurahNumber,
@@ -261,10 +317,10 @@ class _MushafPageState extends State<MushafPage> {
 
     if (_isNavigating) return; // Prevent multiple calls
 
-    if (widget.surah.number < 114) {
+    if (_surah.number < 114) {
       _isNavigating = true; // Set flag
 
-      final nextSurahNumber = widget.surah.number + 1;
+      final nextSurahNumber = _surah.number + 1;
 
       // print("Looking for Surah $nextSurahNumber");
 
@@ -321,7 +377,7 @@ class _MushafPageState extends State<MushafPage> {
       providers: [
         BlocProvider(
           create: (context) =>
-              getIt<QuranBloc>()..add(QuranFetchAyahs(widget.surah.number)),
+              getIt<QuranBloc>()..add(QuranFetchAyahs(_surah.number)),
         ),
         BlocProvider(create: (context) => getIt<ReadingBloc>()),
         BlocProvider(create: (context) => getIt<BookmarkBloc>()),
@@ -332,7 +388,7 @@ class _MushafPageState extends State<MushafPage> {
           builder: (context) {
             return BlocListener<AudioBloc, AudioState>(
               listener: (context, audioState) {
-                if (audioState.currentSurahId == widget.surah.number &&
+                if (audioState.currentSurahId == _surah.number &&
                     audioState.currentAyahNumber != null) {
                   final quranState = context.read<QuranBloc>().state;
                   if (quranState is QuranAyahsLoaded) {
@@ -449,8 +505,8 @@ class _MushafPageState extends State<MushafPage> {
                                   // Save Last Read
                                   final lastRead = LastRead(
                                     pageNumber: newPage,
-                                    surahName: widget.surah.englishName,
-                                    surahNumber: widget.surah.number,
+                                    surahName: _surah.englishName,
+                                    surahNumber: _surah.number,
                                     // Note: We don't have exact Ayah here easily without finding first ayah of newPage
                                     // But pageNumber is enough for navigation.
                                   );
@@ -470,8 +526,8 @@ class _MushafPageState extends State<MushafPage> {
                                   return MushafSinglePage(
                                     pageNumber: pageNumber,
                                     ayahs: ayahsOnPage,
-                                    surahName: widget.surah.englishName,
-                                    surahNumber: widget.surah.number,
+                                    surahName: _surah.englishName,
+                                    surahNumber: _surah.number,
                                     panEnabled: true,
                                     onJumpTap: () => _showJumpToAyah(context),
                                     jumpKey: _jumpToAyahKey,
@@ -533,8 +589,8 @@ class _MushafPageState extends State<MushafPage> {
                                   // Get current page info
                                   if (_lastPageNumber != -1) {
                                     final bookmark = QuranBookmark(
-                                      surahNumber: widget.surah.number,
-                                      surahName: widget.surah.englishName,
+                                      surahNumber: _surah.number,
+                                      surahName: _surah.englishName,
                                       pageNumber: _lastPageNumber,
                                       createdAt:
                                           DateTime.now().millisecondsSinceEpoch,
@@ -774,7 +830,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
           // Header
           // Header
           Container(
-            height: 60.h,
+            height: 60,
             color: const Color(0xffF1EEE5),
             padding: EdgeInsets.symmetric(horizontal: 64.w),
             alignment: Alignment.center,
@@ -793,31 +849,6 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                   ),
                 ),
 
-                // Play Button (Center)
-                IconButton(
-                  onPressed: () {
-                    context.read<AudioBloc>().add(
-                      PlaySurah(
-                        surahId: widget.surahNumber,
-                        surahName:
-                            widget.surahName, // English Name passed in widget
-                      ),
-                    );
-                    showCustomSnackBar(
-                      context,
-                      message:
-                          "Page ${widget.pageNumber} (${widget.ayahs.length} Ayahs) Copied!",
-                      type: SnackBarType.success,
-                    );
-                  },
-                  icon: Icon(
-                    Icons.play_circle_fill,
-                    color: const Color(0xFF00E676),
-                    size: 32.sp,
-                  ),
-                  tooltip: 'Play Full Surah',
-                ),
-
                 // Right Side = Juz Info
                 // Right Side = Juz Info
                 Row(
@@ -833,17 +864,20 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                           onPressed: widget.onJumpTap,
                           icon: Icon(
                             Icons.grid_view_rounded,
-                            size: 28.sp,
+                            size: 24, // Fixed size
                             color: Colors.black,
                           ),
+                          padding: EdgeInsets.zero, // Reduce padding
+                          constraints:
+                              const BoxConstraints(), // Minify constraints
                           tooltip: AppLocalizations.of(context)!.jumpToAyah,
                         ),
                       ),
                     SizedBox(width: 8.w),
                     Text(
-                      'الجزء ${ArabicUtils.toArabicDigits(widget.ayahs.isNotEmpty ? widget.ayahs.first.juz : 1)}',
+                      '${AppLocalizations.of(context)!.navJuz} ${widget.ayahs.isNotEmpty ? widget.ayahs.first.juz : 1}',
                       style: TextStyle(
-                        fontFamily: "UthmanicHafs13",
+                        fontFamily: "Outfit", // Switch to Outfit for Latin
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,

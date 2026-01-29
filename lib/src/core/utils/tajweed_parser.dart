@@ -37,54 +37,75 @@ class TajweedParser {
     'lam_shamsyiah': const Color(0xFFA1A1A1),
     'laam_shamsiyah': const Color(0xFFA1A1A1),
     'ham_wasl': const Color(0xFFA1A1A1),
+    'slnt': const Color(0xFFA1A1A1), // Added slnt
   };
 
   static TextSpan parse(String text, {TextStyle? style}) {
     if (text.isEmpty) return const TextSpan(text: '');
 
     final List<TextSpan> spans = [];
+    final List<TextStyle> styleStack = [style ?? const TextStyle()];
 
-    // Regex Safe Version (No backslash \w reliance, explicit ranges)
-    final RegExp tagExp = RegExp(
-      r'<(tajweed|span)[^>]*?class=["'
-      ']?([a-zA-Z0-9_]+)["'
-      ']?[^>]*>(.*?)<\/(?:tajweed|span)>',
+    // Regex to find start or end tags
+    // Start tag: <(tajweed|span) class="xyz">
+    // End tag: </(tajweed|span)>
+    // We search for the next tag, append text before it, then handle the tag.
+
+    final RegExp tagPattern = RegExp(
+      r'(<\/?(?:tajweed|span)(?:\s+class\s*=\s*["'
+      ']?([a-zA-Z0-9_\-]+)["'
+      ']?)?[^>]*>)',
       caseSensitive: false,
-      dotAll: true,
     );
 
-    int lastMatchEnd = 0;
+    int currentIndex = 0;
 
-    for (final match in tagExp.allMatches(text)) {
-      if (match.start > lastMatchEnd) {
-        spans.add(
-          TextSpan(
-            text: text.substring(lastMatchEnd, match.start),
-            style: style,
-          ),
-        );
+    for (final match in tagPattern.allMatches(text)) {
+      // 1. Text before this tag
+      if (match.start > currentIndex) {
+        final content = text.substring(currentIndex, match.start);
+        spans.add(TextSpan(text: content, style: styleStack.last));
       }
 
-      final String ruleClass = match.group(2) ?? '';
-      final String content = match.group(3) ?? '';
+      final String tag = match.group(0)!; // Full tag string
+      final String? className = match.group(2); // Capture group for class
 
-      Color? color;
-      if (ruleClass.toLowerCase() == 'end') {
-        color = null;
+      if (tag.startsWith('</')) {
+        // Closing tag: Pop style
+        if (styleStack.length > 1) {
+          styleStack.removeLast();
+        }
       } else {
-        color = _colorMap[ruleClass.toLowerCase()];
+        // Opening tag: Push style
+        if (className != null) {
+          Color? color;
+          final key = className.toLowerCase();
+
+          if (key == 'end') {
+            // 'end' might be special, or just ignore for now if purely visual marker
+            color = null;
+          } else {
+            color = _colorMap[key];
+          }
+
+          // Merge with current parent style
+          final parentStyle = styleStack.last;
+          final newStyle = parentStyle.copyWith(color: color);
+          styleStack.add(newStyle);
+        } else {
+          // Tag without class (unlikely for our API, but treat as neutral)
+          styleStack.add(styleStack.last);
+        }
       }
 
-      final effectiveStyle =
-          style?.copyWith(color: color) ?? TextStyle(color: color);
-
-      spans.add(TextSpan(text: content, style: effectiveStyle));
-
-      lastMatchEnd = match.end;
+      currentIndex = match.end;
     }
 
-    if (lastMatchEnd < text.length) {
-      spans.add(TextSpan(text: text.substring(lastMatchEnd), style: style));
+    // Append remaining text
+    if (currentIndex < text.length) {
+      spans.add(
+        TextSpan(text: text.substring(currentIndex), style: styleStack.last),
+      );
     }
 
     return TextSpan(children: spans);

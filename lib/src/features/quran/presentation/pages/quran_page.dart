@@ -13,6 +13,7 @@ import '../bloc/quran_state.dart';
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_event.dart';
 import '../widgets/reciter_selector_bottom_sheet.dart';
+import '../widgets/quran_navigation_bottom_sheet.dart';
 
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,7 @@ class _QuranPageState extends State<QuranPage> {
   final GlobalKey _bookmarksKey = GlobalKey();
   final GlobalKey _surahItemKey = GlobalKey();
   final GlobalKey _playButtonKey = GlobalKey();
+  final GlobalKey _navigationKey = GlobalKey();
 
   @override
   void initState() {
@@ -101,6 +103,32 @@ class _QuranPageState extends State<QuranPage> {
                                         color: Colors.white,
                                         fontSize: 20.sp,
                                         fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    // Global Navigation Button
+                                    Showcase(
+                                      key: _navigationKey,
+                                      description: AppLocalizations.of(
+                                        context,
+                                      )!.showcaseQuranNavigation,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.grid_view_rounded,
+                                          color: Colors.white,
+                                        ),
+                                        tooltip: 'Smart Jump',
+                                        onPressed: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled: true,
+                                            backgroundColor: Colors.transparent,
+                                            builder: (_) => BlocProvider.value(
+                                              value: context.read<QuranBloc>(),
+                                              child:
+                                                  const QuranNavigationBottomSheet(),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                     Showcase(
@@ -248,14 +276,29 @@ class _QuranPageState extends State<QuranPage> {
                                         number.contains(query);
                                   }).toList();
 
-                                  if (filteredSurahs.isEmpty) {
+                                  // Remove the early exit. We handle empty surahs inside ListView to show the button.
+                                  if (filteredSurahs.isEmpty &&
+                                      _searchQuery.isEmpty) {
+                                    // This case handles empty data from Bloc, usually we show loading or error before this.
+                                    // But if actual surahs are 0, show text.
+                                    // Wait, if _searchQuery is NOT empty, we want to show the button.
+                                    // So if (filteredSurahs.isEmpty && _searchQuery.isEmpty) is actually impossible if data loaded.
+                                    // existing logic: if (filteredSurahs.isEmpty) return "Not found".
+                                    // We change it to: only return "Not found" if _searchQuery is empty (which means filters didn't run, so dataset is empty?)
+                                    // No, filteredSurahs comes from local filtering.
+                                    // if (filteredSurahs.isEmpty && _searchQuery.isNotEmpty) -> show ONLY the search button.
+                                  }
+
+                                  // If empty matches but has query, itemCount is 1 (the button).
+                                  // If no query and loaded, itemCount = surahs.length (114).
+                                  // If no matches and no query? Impossible if loaded.
+
+                                  if (filteredSurahs.isEmpty &&
+                                      _searchQuery.isEmpty) {
                                     return Center(
                                       child: Text(
-                                        "Not found",
-                                        style: TextStyle(
-                                          color: Colors.white54,
-                                          fontSize: 16.sp,
-                                        ),
+                                        "No Surahs found",
+                                        style: TextStyle(color: Colors.white54),
                                       ),
                                     );
                                   }
@@ -267,12 +310,91 @@ class _QuranPageState extends State<QuranPage> {
                                       24.w,
                                       100.h,
                                     ),
-                                    itemCount: filteredSurahs.length,
+                                    itemCount:
+                                        filteredSurahs.length +
+                                        (_searchQuery.isNotEmpty ? 1 : 0),
                                     separatorBuilder: (context, index) =>
                                         Divider(
                                           color: Colors.white.withOpacity(0.05),
                                         ),
                                     itemBuilder: (context, index) {
+                                      if (_searchQuery.isNotEmpty) {
+                                        if (index == 0) {
+                                          return InkWell(
+                                            onTap: () {
+                                              context.push(
+                                                Uri(
+                                                  path: '/search',
+                                                  queryParameters: {
+                                                    'q': _searchQuery,
+                                                  },
+                                                ).toString(),
+                                              );
+                                            },
+                                            borderRadius: BorderRadius.circular(
+                                              12.r,
+                                            ),
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 16.h,
+                                                horizontal: 16.w,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: const Color(
+                                                  0xFF00E676,
+                                                ).withOpacity(0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                                border: Border.all(
+                                                  color: const Color(
+                                                    0xFF00E676,
+                                                  ).withOpacity(0.3),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.search,
+                                                    color: const Color(
+                                                      0xFF00E676,
+                                                    ),
+                                                    size: 24.sp,
+                                                  ),
+                                                  SizedBox(width: 16.w),
+                                                  Expanded(
+                                                    child: Text(
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.searchInAyahs(
+                                                        _searchQuery,
+                                                      ),
+                                                      style: TextStyle(
+                                                        color: const Color(
+                                                          0xFF00E676,
+                                                        ),
+                                                        fontSize: 16.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    color: const Color(
+                                                      0xFF00E676,
+                                                    ),
+                                                    size: 16.sp,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        index =
+                                            index -
+                                            1; // Adjust index for surahs
+                                      }
+
                                       final surah = filteredSurahs[index];
                                       final isFirst = index == 0;
                                       Widget item = InkWell(
@@ -323,16 +445,23 @@ class _QuranPageState extends State<QuranPage> {
                                                   children: [
                                                     Row(
                                                       children: [
-                                                        Text(
-                                                          SurahNames
-                                                              .indonesianNames[surah
-                                                                  .number -
-                                                              1],
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 16.sp,
-                                                            fontWeight:
-                                                                FontWeight.w600,
+                                                        Flexible(
+                                                          child: Text(
+                                                            SurahNames
+                                                                .indonesianNames[surah
+                                                                    .number -
+                                                                1],
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 16.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(width: 8.w),
@@ -488,48 +617,51 @@ class _QuranPageState extends State<QuranPage> {
   void _showReadingModeDialog(BuildContext context, dynamic surah) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // Allow full height for landscape
       backgroundColor: const Color(0xFF0F2027),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
       builder: (context) => Padding(
         padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.readingModeTitle,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.readingModeTitle,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: 24.h),
-            _buildModeTile(
-              context,
-              icon: Icons.list,
-              title: AppLocalizations.of(context)!.modeListTitle,
-              subtitle: AppLocalizations.of(context)!.modeListSubtitle,
-              onTap: () {
-                context.pop(); // Close sheet
-                context.push('/quran/${surah.number}', extra: surah);
-              },
-            ),
-            SizedBox(height: 16.h),
-            _buildModeTile(
-              context,
-              icon: Icons.menu_book,
-              title: AppLocalizations.of(context)!.modeMushafTitle,
-              subtitle: AppLocalizations.of(context)!.modeMushafSubtitle,
-              onTap: () {
-                context.pop(); // Close sheet
-                context.push('/quran/mushaf/${surah.number}', extra: surah);
-              },
-            ),
-            SizedBox(height: 16.h),
-          ],
+              SizedBox(height: 24.h),
+              _buildModeTile(
+                context,
+                icon: Icons.list,
+                title: AppLocalizations.of(context)!.modeListTitle,
+                subtitle: AppLocalizations.of(context)!.modeListSubtitle,
+                onTap: () {
+                  context.pop(); // Close sheet
+                  context.push('/quran/${surah.number}', extra: surah);
+                },
+              ),
+              SizedBox(height: 16.h),
+              _buildModeTile(
+                context,
+                icon: Icons.menu_book,
+                title: AppLocalizations.of(context)!.modeMushafTitle,
+                subtitle: AppLocalizations.of(context)!.modeMushafSubtitle,
+                onTap: () {
+                  context.pop(); // Close sheet
+                  context.push('/quran/mushaf/${surah.number}', extra: surah);
+                },
+              ),
+              SizedBox(height: 16.h),
+            ],
+          ),
         ),
       ),
     );
@@ -605,6 +737,7 @@ class _QuranPageState extends State<QuranPage> {
         try {
           ShowCaseWidget.of(context).startShowCase([
             _searchKey,
+            _navigationKey,
             _bookmarksKey,
             _surahItemKey,
             _playButtonKey,

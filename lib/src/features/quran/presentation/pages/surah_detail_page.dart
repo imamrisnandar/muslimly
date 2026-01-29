@@ -63,6 +63,8 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   final GlobalKey _tafsirKey = GlobalKey();
   final GlobalKey _playKey = GlobalKey();
   final GlobalKey _jumpToAyahKey = GlobalKey();
+  final GlobalKey _shareKey = GlobalKey();
+  final GlobalKey _bookmarkKey = GlobalKey();
   bool _showcaseChecked = false;
 
   Future<void> _checkShowcase() async {
@@ -89,6 +91,8 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                   _markReadKey,
                   _tafsirKey,
                   _playKey,
+                  _shareKey,
+                  _bookmarkKey,
                 ]);
                 prefs.setBool('hasShownSurahDetailShowcase', true);
               }
@@ -100,6 +104,8 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
               _markReadKey,
               _tafsirKey,
               _playKey,
+              _shareKey,
+              _bookmarkKey,
             ]);
             prefs.setBool('hasShownSurahDetailShowcase', true);
           }
@@ -986,6 +992,13 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
 
                                                 // Actions
                                                 _buildActionButton(
+                                                  key:
+                                                      (index ==
+                                                          ((widget.initialAyah ??
+                                                                  1) -
+                                                              1))
+                                                      ? _shareKey
+                                                      : null,
                                                   icon: Icons.share_outlined,
                                                   onTap: () {
                                                     final translation =
@@ -999,6 +1012,16 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                       ayah.numberInSurah,
                                                     );
                                                   },
+                                                  showcaseKey: _shareKey,
+                                                  showcaseDesc:
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.showcaseAyahShare,
+                                                  enableShowcase:
+                                                      index ==
+                                                      ((widget.initialAyah ??
+                                                              1) -
+                                                          1),
                                                 ),
                                                 SizedBox(width: 8.w),
                                                 _buildActionButton(
@@ -1069,6 +1092,13 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                 ),
                                                 SizedBox(width: 8.w),
                                                 _buildActionButton(
+                                                  key:
+                                                      (index ==
+                                                          ((widget.initialAyah ??
+                                                                  1) -
+                                                              1))
+                                                      ? _bookmarkKey
+                                                      : null,
                                                   icon: Icons.bookmark_border,
                                                   onTap: () {
                                                     _handleBookmarkTap(
@@ -1076,6 +1106,16 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                       ayah,
                                                     );
                                                   },
+                                                  showcaseKey: _bookmarkKey,
+                                                  showcaseDesc:
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.showcaseAyahBookmark,
+                                                  enableShowcase:
+                                                      index ==
+                                                      ((widget.initialAyah ??
+                                                              1) -
+                                                          1),
                                                 ),
                                               ],
                                             ),

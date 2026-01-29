@@ -7,7 +7,8 @@ import '../datasources/quran_local_data_source.dart';
 
 import 'package:dio/dio.dart';
 import '../../../../core/database/database_service.dart';
-import '../models/ayah_model.dart'; // Needed for copyWith/casting if used, or just Ayah
+import '../models/ayah_model.dart';
+import '../../domain/entities/search_result.dart'; // Import SearchResult entity
 
 @LazySingleton(as: QuranRepository)
 class QuranRepositoryImpl implements QuranRepository {
@@ -99,5 +100,58 @@ class QuranRepositoryImpl implements QuranRepository {
       }
       return ayah;
     }).toList();
+  }
+
+  @override
+  Future<int> getPageForAyah(int surahId, int ayahNumber) async {
+    return _localDataSource.getPageForAyah(surahId, ayahNumber);
+  }
+
+  @override
+  Future<Either<String, List<SearchResult>>> searchAyahs(
+    String query, {
+    int page = 1,
+    String languageCode = 'id',
+  }) async {
+    try {
+      final url =
+          'https://api.quran.com/api/v4/search?q=$query&size=20&page=$page&language=$languageCode';
+      final response = await _dio.get(url);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        // API Structure:
+        // { "search": { "results": [ { "verse_key": "1:1", "text": "...", "translations": [...] } ] } }
+
+        final results = data['search']['results'] as List;
+        final List<SearchResult> searchResults = results.map((item) {
+          final verseKey = item['verse_key'] as String;
+          final parts = verseKey.split(':');
+          final surahNum = int.parse(parts[0]);
+          final ayahNum = int.parse(parts[1]);
+          final text = item['text'] as String; // Arabic or Text content
+
+          // Get highlighted translation if available
+          String translation = '';
+          if (item['translations'] != null &&
+              (item['translations'] as List).isNotEmpty) {
+            translation = item['translations'][0]['text'];
+          }
+
+          return SearchResult(
+            surahNumber: surahNum,
+            ayahNumber: ayahNum,
+            verseKey: verseKey,
+            text: text,
+            translation: translation,
+          );
+        }).toList();
+
+        return Right(searchResults);
+      }
+      return const Left('Search failed');
+    } catch (e) {
+      return Left('Search error: $e');
+    }
   }
 }

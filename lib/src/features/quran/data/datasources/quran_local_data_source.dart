@@ -7,6 +7,8 @@ import 'local/quran_library/quran.dart' as quran;
 abstract class QuranLocalDataSource {
   Future<List<SurahModel>> getSurahs();
   Future<List<AyahModel>> getAyahs(int surahId);
+
+  Future<int> getPageForAyah(int surahId, int ayahNumber);
 }
 
 @LazySingleton(as: QuranLocalDataSource)
@@ -47,5 +49,10 @@ class QuranLocalDataSourceImpl implements QuranLocalDataSource {
       );
     }
     return ayahs;
+  }
+
+  @override
+  Future<int> getPageForAyah(int surahId, int ayahNumber) async {
+    return quran.getPageNumber(surahId, ayahNumber);
   }
 }

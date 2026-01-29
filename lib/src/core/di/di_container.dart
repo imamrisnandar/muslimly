@@ -43,6 +43,8 @@ import '../../features/zikir/data/repositories/zikir_local_repository.dart';
 import '../../features/quran/data/repositories/translation_repository_impl.dart';
 import '../../features/quran/domain/repositories/translation_repository.dart';
 import '../../features/quran/presentation/bloc/translation/translation_bloc.dart';
+import '../../features/quran/domain/usecases/search_ayahs.dart'; // Added
+import '../../features/quran/presentation/bloc/search/search_bloc.dart'; // Added
 
 final getIt = GetIt.instance;
 
@@ -141,6 +143,12 @@ void configureDependencies() {
   getIt.registerFactory<TranslationBloc>(
     () => TranslationBloc(getIt<TranslationRepository>()),
   );
+
+  // --- Search Feature ---
+  getIt.registerFactory<SearchAyahs>(
+    () => SearchAyahs(getIt<QuranRepository>()),
+  );
+  getIt.registerFactory<SearchBloc>(() => SearchBloc(getIt<SearchAyahs>()));
 
   // --- Murottal / Audio ---
   getIt.registerLazySingleton<AudioPlayer>(() => AudioPlayer());

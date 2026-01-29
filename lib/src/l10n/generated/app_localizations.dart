@@ -359,7 +359,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchSurahHint.
   ///
   /// In en, this message translates to:
-  /// **'Search Surah (e.g. Al-Kahf)'**
+  /// **'Search Surah or Ayah...'**
   String get searchSurahHint;
 
   /// No description provided for @aboutTitle.
@@ -1133,7 +1133,7 @@ abstract class AppLocalizations {
   /// No description provided for @showcaseQuranSearch.
   ///
   /// In en, this message translates to:
-  /// **'Search for Surah by name or number.'**
+  /// **'Search specific Surah or Ayah.'**
   String get showcaseQuranSearch;
 
   /// No description provided for @showcaseQuranBookmarks.
@@ -1195,6 +1195,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap here to quickly navigate to a specific Ayah'**
   String get showcaseJumpToAyahDesc;
+
+  /// No description provided for @navPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Page'**
+  String get navPage;
+
+  /// No description provided for @navJuz.
+  ///
+  /// In en, this message translates to:
+  /// **'Juz'**
+  String get navJuz;
+
+  /// No description provided for @navSurah.
+  ///
+  /// In en, this message translates to:
+  /// **'Surah'**
+  String get navSurah;
+
+  /// No description provided for @hintEnterPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Page (1 - 604)'**
+  String get hintEnterPage;
+
+  /// No description provided for @goButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Page'**
+  String get goButton;
+
+  /// No description provided for @startOfJuz.
+  ///
+  /// In en, this message translates to:
+  /// **'Start of Juz {number}'**
+  String startOfJuz(Object number);
+
+  /// No description provided for @hizb.
+  ///
+  /// In en, this message translates to:
+  /// **'Hizb'**
+  String get hizb;
+
+  /// No description provided for @rub.
+  ///
+  /// In en, this message translates to:
+  /// **'Rub'**
+  String get rub;
+
+  /// No description provided for @selectAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Ayah'**
+  String get selectAyah;
+
+  /// No description provided for @surahAyahs.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Ayahs'**
+  String surahAyahs(Object count);
+
+  /// No description provided for @showcaseAyahShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share this Ayah text or image.'**
+  String get showcaseAyahShare;
+
+  /// No description provided for @showcaseAyahBookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark this Ayah to read later.'**
+  String get showcaseAyahBookmark;
+
+  /// No description provided for @showcaseQuranNavigation.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to specific Page, Juz, or Hizb.'**
+  String get showcaseQuranNavigation;
+
+  /// No description provided for @searchInAyahs.
+  ///
+  /// In en, this message translates to:
+  /// **'Search \'{query}\' in Ayahs'**
+  String searchInAyahs(Object query);
+
+  /// No description provided for @searchResultsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Search results for \'{query}\''**
+  String searchResultsFor(Object query);
+
+  /// No description provided for @quranNavigationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran Navigation'**
+  String get quranNavigationTitle;
 }
 
 class _AppLocalizationsDelegate

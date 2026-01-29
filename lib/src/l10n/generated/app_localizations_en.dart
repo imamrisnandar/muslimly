@@ -144,7 +144,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get modeMushafSubtitle => 'Page view';
 
   @override
-  String get searchSurahHint => 'Search Surah (e.g. Al-Kahf)';
+  String get searchSurahHint => 'Search Surah or Ayah...';
 
   @override
   String get aboutTitle => 'About';
@@ -569,7 +569,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTestBackgroundSubtitle => 'Run daily update task now';
 
   @override
-  String get showcaseQuranSearch => 'Search for Surah by name or number.';
+  String get showcaseQuranSearch => 'Search specific Surah or Ayah.';
 
   @override
   String get showcaseQuranBookmarks =>
@@ -605,4 +605,60 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get showcaseJumpToAyahDesc =>
       'Tap here to quickly navigate to a specific Ayah';
+
+  @override
+  String get navPage => 'Page';
+
+  @override
+  String get navJuz => 'Juz';
+
+  @override
+  String get navSurah => 'Surah';
+
+  @override
+  String get hintEnterPage => 'Enter Page (1 - 604)';
+
+  @override
+  String get goButton => 'Go to Page';
+
+  @override
+  String startOfJuz(Object number) {
+    return 'Start of Juz $number';
+  }
+
+  @override
+  String get hizb => 'Hizb';
+
+  @override
+  String get rub => 'Rub';
+
+  @override
+  String get selectAyah => 'Select Ayah';
+
+  @override
+  String surahAyahs(Object count) {
+    return '$count Ayahs';
+  }
+
+  @override
+  String get showcaseAyahShare => 'Share this Ayah text or image.';
+
+  @override
+  String get showcaseAyahBookmark => 'Bookmark this Ayah to read later.';
+
+  @override
+  String get showcaseQuranNavigation => 'Jump to specific Page, Juz, or Hizb.';
+
+  @override
+  String searchInAyahs(Object query) {
+    return 'Search \'$query\' in Ayahs';
+  }
+
+  @override
+  String searchResultsFor(Object query) {
+    return 'Search results for \'$query\'';
+  }
+
+  @override
+  String get quranNavigationTitle => 'Quran Navigation';
 }

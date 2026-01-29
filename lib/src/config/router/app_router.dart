@@ -11,6 +11,8 @@ import '../../features/quran/presentation/pages/bookmarks_page.dart';
 
 import '../../features/quran/presentation/pages/reading_history_page.dart';
 import '../../features/dashboard/presentation/pages/daily_inspiration_page.dart';
+import '../../core/utils/quran_constants.dart';
+import '../../features/quran/presentation/pages/search_results_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -91,8 +93,31 @@ final appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/mushaf',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        int? pageNumber = extra?['pageNumber'] as int?;
+        final surahNumber = extra?['surahNumber'] as int?;
+        final ayahNumber = extra?['ayahNumber'] as int?;
+
+        // If pageNumber is missing but we have surahNumber, find the start page
+        if (pageNumber == null && surahNumber != null) {
+          pageNumber = QuranConstants.surahPageStart[surahNumber];
+        }
+
+        return MushafPage(initialPage: pageNumber, initialAyah: ayahNumber);
+      },
+    ),
+    GoRoute(
       path: '/daily-inspiration',
       builder: (context, state) => const DailyInspirationPage(),
+    ),
+    GoRoute(
+      path: '/search',
+      builder: (context, state) {
+        final query = state.uri.queryParameters['q'] ?? '';
+        return SearchResultsPage(initialQuery: query);
+      },
     ),
   ],
 );

@@ -144,7 +144,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get modeMushafSubtitle => 'Tampilan halaman';
 
   @override
-  String get searchSurahHint => 'Cari Surah (cth. Al-Kahf)';
+  String get searchSurahHint => 'Cari Surah atau Ayat...';
 
   @override
   String get aboutTitle => 'Tentang Aplikasi';
@@ -574,7 +574,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Jalankan task update harian sekarang';
 
   @override
-  String get showcaseQuranSearch => 'Cari Surah berdasarkan nama atau nomor.';
+  String get showcaseQuranSearch => 'Cari Surah atau Ayat tertentu.';
 
   @override
   String get showcaseQuranBookmarks => 'Akses bookmark dan ayat favoritmu.';
@@ -609,4 +609,61 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get showcaseJumpToAyahDesc =>
       'Ketuk di sini untuk melompat cepat ke ayat tertentu';
+
+  @override
+  String get navPage => 'Halaman';
+
+  @override
+  String get navJuz => 'Juz';
+
+  @override
+  String get navSurah => 'Surah';
+
+  @override
+  String get hintEnterPage => 'Isi Halaman (1 - 604)';
+
+  @override
+  String get goButton => 'Buka Halaman';
+
+  @override
+  String startOfJuz(Object number) {
+    return 'Mulai Juz $number';
+  }
+
+  @override
+  String get hizb => 'Hizb';
+
+  @override
+  String get rub => 'Rub';
+
+  @override
+  String get selectAyah => 'Pilih Ayat';
+
+  @override
+  String surahAyahs(Object count) {
+    return '$count Ayat';
+  }
+
+  @override
+  String get showcaseAyahShare => 'Bagikan ayat ini (Teks/Gambar).';
+
+  @override
+  String get showcaseAyahBookmark => 'Simpan ayat ini ke Bookmark.';
+
+  @override
+  String get showcaseQuranNavigation =>
+      'Lompat ke Halaman, Juz, atau Hizb tertentu.';
+
+  @override
+  String searchInAyahs(Object query) {
+    return 'Cari \'$query\' di dalam Ayat';
+  }
+
+  @override
+  String searchResultsFor(Object query) {
+    return 'Hasil pencarian \'$query\'';
+  }
+
+  @override
+  String get quranNavigationTitle => 'Navigasi Al-Quran';
 }
