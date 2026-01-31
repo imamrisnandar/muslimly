@@ -5,18 +5,19 @@ import 'dart:io';
 
 class FontCacheService {
   final Dio _dio;
-  // S3 Base URL
-  final String _s3BaseUrl = 'https://nos.wjv-1.neo.id/mbi-assets/fonts/quran';
-  // Proxy Endpoint
-  final String _proxyEndpoint =
-      'https://api.muslimbiker.id/v1/mbi-be/files/download';
+  // jsDelivr CDN for qpc-fonts
+  final String _cdnBaseUrl =
+      'https://cdn.jsdelivr.net/gh/nuqayah/qpc-fonts@master/mushaf-v2';
 
   FontCacheService(this._dio);
 
   Future<void> loadPageFont(int pageNumber) async {
     final String pageStr = pageNumber.toString().padLeft(3, '0');
     final String fontName = 'QCF_P$pageStr';
-    final String fileName = 'QCF2$pageStr.ttf'; // e.g. QCF2001.ttf
+    // Repo uses QCF2001.ttf format inside mushaf-v2 (based on research)
+    // or sometimes just P001. We'll stick to what worked or standarize.
+    // Research said QCF2001.ttf is in mushaf-v2.
+    final String fileName = 'QCF2$pageStr.ttf';
 
     try {
       // 1. Check if font is already loaded in Flutter engine
@@ -52,12 +53,8 @@ class FontCacheService {
   }
 
   Future<void> _downloadFont(String fileName, String savePath) async {
-    // Construct the S3 URL
-    final String s3Url = '$_s3BaseUrl/$fileName';
-    // Encode it for the query parameter
-    final String encodedUrl = Uri.encodeComponent(s3Url);
-    // Construct the Proxy URL
-    final String downloadUrl = '$_proxyEndpoint?url=$encodedUrl';
+    // Construct the Direct CDN URL
+    final String downloadUrl = '$_cdnBaseUrl/$fileName';
 
     try {
       print('⬇️ Downloading font from $downloadUrl...');

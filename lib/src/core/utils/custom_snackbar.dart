@@ -7,6 +7,7 @@ void showCustomSnackBar(
   BuildContext context, {
   required String message,
   SnackBarType type = SnackBarType.success,
+  Duration duration = const Duration(seconds: 2),
 }) {
   Color backgroundColor;
   IconData icon;
@@ -65,7 +66,7 @@ void showCustomSnackBar(
         ),
         margin: EdgeInsets.all(16.w),
         elevation: 4,
-        duration: const Duration(seconds: 2),
+        duration: duration,
       ),
     );
 }

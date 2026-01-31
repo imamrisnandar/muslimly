@@ -45,10 +45,8 @@ class TranslationRepositoryImpl implements TranslationRepository {
         final translations = data['verse']['translations'] as List;
         if (translations.isNotEmpty) {
           String text = translations[0]['text'];
-          // Remove HTML footnotes (tags AND content like <sup>1</sup>)
-          text = text
-              .replaceAll(RegExp(r'<sup.*?>.*?</sup>'), '')
-              .replaceAll(RegExp(r'<[^>]*>'), '');
+          // Use smart cleaner
+          text = _cleanText(text);
 
           await _databaseService.cacheTranslation(
             surahId,
@@ -112,19 +110,8 @@ class TranslationRepositoryImpl implements TranslationRepository {
           // Expected: { "tafsir": { "resource_id": 169, "text": "<html>...</html>" } }
           if (data['tafsir'] != null) {
             text = data['tafsir']['text'] ?? '';
-
-            // Clean up: Quran.com Tafsir contains HTML
-            // SelectableText in Flutter renders basic text, so assume we strip tags
-            // OR if user wants rich text we need HtmlWidget.
-            // For now, stripping tags to ensure it displays SOMETHING clean.
-            // Using a simple regex (same as before).
-            text = text.replaceAll(RegExp(r'<[^>]*>'), '');
-
-            // Decode HTML entities (e.g. &quot;) - basic replacers
-            text = text
-                .replaceAll('&quot;', '"')
-                .replaceAll('&apos;', "'")
-                .replaceAll('&amp;', '&');
+            // Use smart cleaner
+            text = _cleanText(text);
           }
         } else {
           // Parse Al Quran Cloud Response
@@ -196,14 +183,9 @@ class TranslationRepositoryImpl implements TranslationRepository {
           (expectedAyahCount == null || cachedMap.length >= expectedAyahCount);
 
       if (isCacheComplete) {
-        // Clean cached text just in case
+        // Use smart cleaner on cached data (just in case cache has raw html)
         final cleanedMap = cachedMap.map((key, value) {
-          return MapEntry(
-            key,
-            value
-                .replaceAll(RegExp(r'<sup.*?>.*?</sup>'), '')
-                .replaceAll(RegExp(r'<[^>]*>'), ''),
-          );
+          return MapEntry(key, _cleanText(value));
         });
         return Right(cleanedMap);
       }
@@ -224,21 +206,13 @@ class TranslationRepositoryImpl implements TranslationRepository {
 
         // API returns a flat list of translations for the chapter.
         // Usually they are in order of Ayah 1..N.
-        // But the API object doesn't strictly guarantee 'verse_number' in this endpoint results?
-        // Let's check api result from my probe in Step 3744.
-        // Result: {"translations":[{"resource_id":33,"text":"..."},...]}
-        // It DOES NOT have verse_key or verse_number inside the translation object!
-        // It is strictly sequential. Index 0 = Ayah 1.
-
         for (var i = 0; i < translationsList.length; i++) {
           final item = translationsList[i];
           String text = item['text'];
           final ayahNumber = i + 1;
 
-          // Clean HTML
-          text = text
-              .replaceAll(RegExp(r'<sup.*?>.*?</sup>'), '')
-              .replaceAll(RegExp(r'<[^>]*>'), '');
+          // Use smart cleaner
+          text = _cleanText(text);
 
           resultMap[ayahNumber] = text;
 
@@ -261,5 +235,54 @@ class TranslationRepositoryImpl implements TranslationRepository {
     } catch (e) {
       return Left('Error: $e');
     }
+  }
+
+  // --- HELPER: Smart Text Cleaner ---
+  String _cleanText(String rawText) {
+    if (rawText.isEmpty) return rawText;
+
+    String text = rawText;
+
+    // 1. Decode HTML Entities FIRST
+    // (Ensure we work with real chars, e.g. &nbsp; -> space)
+    text = text
+        .replaceAll('&quot;', '"')
+        .replaceAll('&apos;', "'")
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&nbsp;', ' ');
+
+    // 2. SAVE STRUCTURE (HTML Blocks -> Newlines)
+    // <br>, <br/> -> \n
+    text = text.replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n');
+    // </p>, </div> -> \n\n (Paragraph breaks)
+    text = text.replaceAll(RegExp(r'</(p|div)>', caseSensitive: false), '\n\n');
+
+    // 3. SAVE CONTEXT (Footnotes)
+    // <sup ...>1</sup> -> [1]
+    // Capture the content inside sup tag
+    text = text.replaceAllMapped(
+      RegExp(r'<sup.*?>(.*?)</sup>', caseSensitive: false),
+      (match) {
+        final content = match.group(1);
+        if (content != null && content.isNotEmpty) {
+          return ' [$content] '; // Add brackets and spacing
+        }
+        return '';
+      },
+    );
+
+    // 4. CLEANUP (Remove remaining tags)
+    // Remove all other tags like <i>, <b>, <p>, <div>, <span>
+    text = text.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // 5. TRIM (Remove extra whitespaces)
+    // Collapse multiple spaces/newlines
+    text = text.trim();
+    // Optional: Collapse 3+ newlines to 2
+    text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+
+    return text;
   }
 }

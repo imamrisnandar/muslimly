@@ -265,16 +265,17 @@ class DatabaseService {
     return maps.map((e) => ReadingActivity.fromMap(e)).toList();
   }
 
-  /// Get progress for the 7 days ending on [endDate] (inclusive)
+  /// Get progress for the [days] days ending on [endDate] (inclusive)
   /// If [mode] is 'page', counts distinct pages.
   /// If [mode] is 'ayah', sums total_ayahs.
   Future<Map<String, int>> getWeeklyProgress({
     DateTime? endDate,
     String mode = 'page',
+    int days = 7,
   }) async {
     final db = await database;
     final end = endDate ?? DateTime.now();
-    final start = end.subtract(const Duration(days: 6));
+    final start = end.subtract(Duration(days: days - 1));
 
     final startStr = start.toIso8601String().substring(0, 10);
     final endStr = end.toIso8601String().substring(0, 10);
@@ -321,6 +322,68 @@ class DatabaseService {
   Future<int> deleteBookmark(int id) async {
     final db = await database;
     return await db.delete('bookmarks', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<bool> isBookmarked({
+    int? surahNumber,
+    int? ayahNumber,
+    int? pageNumber,
+    required String mode,
+  }) async {
+    final db = await database;
+    String whereClause;
+    List<dynamic> whereArgs;
+
+    if (mode == 'list') {
+      whereClause = 'surah_number = ? AND ayah_number = ? AND mode = ?';
+      whereArgs = [surahNumber, ayahNumber, 'list'];
+    } else {
+      // Mushaf mode - check page AND ayah if provided (Granular Mushaf Bookmarks)
+      if (ayahNumber != null) {
+        whereClause = 'page_number = ? AND mode = ? AND ayah_number = ?';
+        whereArgs = [pageNumber, 'mushaf', ayahNumber];
+      } else {
+        whereClause = 'page_number = ? AND mode = ? AND ayah_number IS NULL';
+        whereArgs = [pageNumber, 'mushaf'];
+      }
+    }
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'bookmarks',
+      where: whereClause,
+      whereArgs: whereArgs,
+    );
+    return maps.isNotEmpty;
+  }
+
+  Future<int> deleteBookmarkByDetails({
+    int? surahNumber,
+    int? ayahNumber,
+    int? pageNumber,
+    required String mode,
+  }) async {
+    final db = await database;
+    String whereClause;
+    List<dynamic> whereArgs;
+
+    if (mode == 'list') {
+      whereClause = 'surah_number = ? AND ayah_number = ? AND mode = ?';
+      whereArgs = [surahNumber, ayahNumber, 'list'];
+    } else {
+      if (ayahNumber != null) {
+        whereClause = 'page_number = ? AND mode = ? AND ayah_number = ?';
+        whereArgs = [pageNumber, 'mushaf', ayahNumber];
+      } else {
+        whereClause = 'page_number = ? AND mode = ? AND ayah_number IS NULL';
+        whereArgs = [pageNumber, 'mushaf'];
+      }
+    }
+
+    return await db.delete(
+      'bookmarks',
+      where: whereClause,
+      whereArgs: whereArgs,
+    );
   }
 
   // --- CRUD for Translations & Tafsir ---

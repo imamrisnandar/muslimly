@@ -10,9 +10,10 @@ class GetPrayerTime {
   GetPrayerTime(this._repository);
 
   Future<Either<String, PrayerTime>> call({
-    required String cityId,
+    required double latitude,
+    required double longitude,
     required DateTime date,
   }) {
-    return _repository.getPrayerTime(cityId, date);
+    return _repository.getPrayerTime(latitude, longitude, date);
   }
 }

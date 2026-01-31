@@ -41,7 +41,8 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
       emit(state.copyWith(notificationSettings: settings));
 
       final result = await _getPrayerTime(
-        cityId: event.cityId,
+        latitude: event.latitude,
+        longitude: event.longitude,
         date: event.date,
       );
 
@@ -109,7 +110,13 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
           isSearching: false,
         ),
       );
-      add(FetchPrayerTime(cityId: event.city.id, date: DateTime.now()));
+      add(
+        FetchPrayerTime(
+          latitude: event.city.latitude,
+          longitude: event.city.longitude,
+          date: DateTime.now(),
+        ),
+      );
     });
 
     on<FetchPrayerTimeByLocation>((event, emit) async {
@@ -117,7 +124,15 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
 
       final position = await _locationService.getCurrentPosition();
       if (position == null) {
-        add(FetchPrayerTime(cityId: '1301', date: DateTime.now()));
+        // Fallback to Jakarta (Default)
+        final defaultCity = state.currentCity;
+        add(
+          FetchPrayerTime(
+            latitude: defaultCity.latitude,
+            longitude: defaultCity.longitude,
+            date: DateTime.now(),
+          ),
+        );
         return;
       }
 
@@ -125,25 +140,21 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
         position.latitude,
         position.longitude,
       );
-      if (cityName == null) {
-        add(FetchPrayerTime(cityId: '1301', date: DateTime.now()));
-        return;
-      }
 
-      final searchResult = await _searchCity(cityName);
-      searchResult.fold(
-        (failure) => add(
-          FetchPrayerTime(cityId: '1301', date: DateTime.now()),
-        ), // Fallback
-        (cities) {
-          if (cities.isNotEmpty) {
-            final city = cities.first;
-            emit(state.copyWith(currentCity: city));
-            add(FetchPrayerTime(cityId: city.id, date: DateTime.now()));
-          } else {
-            add(FetchPrayerTime(cityId: '1301', date: DateTime.now()));
-          }
-        },
+      final city = City(
+        id: "${position.latitude}_${position.longitude}",
+        name: cityName ?? "Current Location",
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+
+      emit(state.copyWith(currentCity: city));
+      add(
+        FetchPrayerTime(
+          latitude: position.latitude,
+          longitude: position.longitude,
+          date: DateTime.now(),
+        ),
       );
     });
   }

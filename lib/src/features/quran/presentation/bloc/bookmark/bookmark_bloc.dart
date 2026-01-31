@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/database/database_service.dart';
 import 'bookmark_event.dart';
 import 'bookmark_state.dart';
+import 'bookmark_operation_type.dart';
 
 import '../../../data/repositories/last_read_repository.dart';
 
@@ -13,6 +14,7 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     : super(BookmarkInitial()) {
     on<LoadBookmarks>(_onLoadBookmarks);
     on<AddBookmark>(_onAddBookmark);
+    on<ToggleBookmark>(_onToggleBookmark);
     on<DeleteBookmark>(_onDeleteBookmark);
     on<SaveLastRead>(_onSaveLastRead);
     on<LoadLastRead>(_onLoadLastRead); // Explicit Load
@@ -54,9 +56,39 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
       await _databaseService.insertBookmark(event.bookmark);
       add(LoadBookmarks());
       // Emit success for UI feedback
-      emit(const BookmarkOperationSuccess("Bookmark saved"));
+      emit(const BookmarkOperationSuccess(BookmarkOperationType.saved));
     } catch (e) {
       emit(BookmarkError("Failed to add bookmark: $e"));
+    }
+  }
+
+  Future<void> _onToggleBookmark(
+    ToggleBookmark event,
+    Emitter<BookmarkState> emit,
+  ) async {
+    try {
+      final exists = await _databaseService.isBookmarked(
+        surahNumber: event.bookmark.surahNumber,
+        ayahNumber: event.bookmark.ayahNumber,
+        pageNumber: event.bookmark.pageNumber,
+        mode: event.bookmark.mode,
+      );
+
+      if (exists) {
+        await _databaseService.deleteBookmarkByDetails(
+          surahNumber: event.bookmark.surahNumber,
+          ayahNumber: event.bookmark.ayahNumber,
+          pageNumber: event.bookmark.pageNumber,
+          mode: event.bookmark.mode,
+        );
+        emit(const BookmarkOperationSuccess(BookmarkOperationType.removed));
+      } else {
+        await _databaseService.insertBookmark(event.bookmark);
+        emit(const BookmarkOperationSuccess(BookmarkOperationType.saved));
+      }
+      add(LoadBookmarks());
+    } catch (e) {
+      emit(BookmarkError("Failed to toggle bookmark: $e"));
     }
   }
 

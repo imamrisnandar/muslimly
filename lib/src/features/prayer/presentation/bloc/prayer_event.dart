@@ -9,13 +9,18 @@ abstract class PrayerEvent extends Equatable {
 }
 
 class FetchPrayerTime extends PrayerEvent {
-  final String cityId;
+  final double latitude;
+  final double longitude;
   final DateTime date;
 
-  const FetchPrayerTime({required this.cityId, required this.date});
+  const FetchPrayerTime({
+    required this.latitude,
+    required this.longitude,
+    required this.date,
+  });
 
   @override
-  List<Object> get props => [cityId, date];
+  List<Object> get props => [latitude, longitude, date];
 }
 
 class SearchCityEvent extends PrayerEvent {

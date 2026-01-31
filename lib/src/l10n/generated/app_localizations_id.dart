@@ -305,7 +305,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String notificationPrePrayerBody(Object prayerName) {
-    return '15 menit lagi waktu $prayerName akan tiba.';
+    return '15 menit lagi waktu $prayerName akan tiba. Jangan lupa sempatkan membaca Al-Quran setelah sholat ya.';
   }
 
   @override
@@ -666,4 +666,261 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get quranNavigationTitle => 'Navigasi Al-Quran';
+
+  @override
+  String get qiblaCompass => 'Arah Kiblat';
+
+  @override
+  String get findQiblaDirection => 'Cari Arah Kiblat';
+
+  @override
+  String get qiblaDirection => 'Arah Kiblat';
+
+  @override
+  String get locationPermissionRequired => 'Izin Lokasi Diperlukan';
+
+  @override
+  String get errorReadingCompass => 'Gagal membaca kompas';
+
+  @override
+  String get deviceNoSensors => 'Perangkat tidak memiliki sensor';
+
+  @override
+  String get compassCalibrateHint =>
+      'Putar perangkat membentuk angka 8 untuk kalibrasi';
+
+  @override
+  String get onboardingTitle1 => 'Bangun Kebiasaan Mengaji';
+
+  @override
+  String get onboardingDesc1 =>
+      'Atur target harianmu (misal: 1 Juz atau 4 Halaman) dan pantau istiqomahmu setiap hari.';
+
+  @override
+  String get onboardingTitle2 => 'Sahabat Ibadah Terlengkap';
+
+  @override
+  String get onboardingDesc2 =>
+      'Jadwal sholat akurat, arah kiblat presisi, dan dzikir harian dalam satu aplikasi.';
+
+  @override
+  String get onboardingTitle3 => 'Syafaat di Hari Kiamat';
+
+  @override
+  String get onboardingDesc3 =>
+      '\"Bacalah Al-Qur\'an, karena sesungguhnya ia akan datang pada hari kiamat sebagai pemberi syafa\'at bagi pembacanya.\" (HR. Muslim)';
+
+  @override
+  String get getStarted => 'Mulai Sekarang';
+
+  @override
+  String get share => 'Bagikan';
+
+  @override
+  String get continueReadingAyah => 'LANJUT BACA (AYAT)';
+
+  @override
+  String get continueReadingPage => 'LANJUT BACA (HALAMAN)';
+
+  @override
+  String get showcaseDzikirTitle => 'Dzikir & Doa';
+
+  @override
+  String get showcaseSettingsTitle => 'Pengaturan';
+
+  @override
+  String get showcaseQuranTabTitle => 'Al-Quran';
+
+  @override
+  String get showcaseDailyGoalTitle => 'Target Harian';
+
+  @override
+  String get showcaseQuickAccessTitle => 'Akses Cepat';
+
+  @override
+  String get showcasePrayerTitle => 'Jadwal Sholat';
+
+  @override
+  String sbJumpToAyah(Object ayah, Object page) {
+    return 'Lompat ke Ayat $ayah (Hal $page)';
+  }
+
+  @override
+  String get sbPageNotFound => 'Halaman tidak ditemukan di data.';
+
+  @override
+  String sbAyahNotFound(Object ayah) {
+    return 'Ayat $ayah tidak ditemukan';
+  }
+
+  @override
+  String get sbDataNotLoaded => 'Data belum dimuat.';
+
+  @override
+  String sbOpeningSurah(Object surah) {
+    return 'Membuka $surah...';
+  }
+
+  @override
+  String get sbNextSurahNotFound => 'Surah berikutnya tidak ditemukan!';
+
+  @override
+  String get sbEndOfQuran => 'Akhir Al-Quran';
+
+  @override
+  String get sbStartOfQuran => 'Awal Al-Quran';
+
+  @override
+  String sbBookmarkedPage(Object page) {
+    return 'Halaman $page ditandai';
+  }
+
+  @override
+  String get sbReadingSaved => 'Riwayat bacaan disimpan!';
+
+  @override
+  String get sbAyahBookmarked => 'Ayat berhasil ditandai!';
+
+  @override
+  String get searchSortedByRelevance =>
+      'Diurutkan berdasar relevansi, untuk detail klik pada ayat';
+
+  @override
+  String get qiblaFacing => 'Anda menghadap Kiblat';
+
+  @override
+  String get qiblaTurnRight => 'Putar Kanan →';
+
+  @override
+  String get qiblaTurnLeft => '← Putar Kiri';
+
+  @override
+  String get qiblaLocating => 'Mencari Qiblat...';
+
+  @override
+  String get qiblaAligned => 'LURUS';
+
+  @override
+  String get qiblaAlignArrow => 'Luruskan panah ke atas';
+
+  @override
+  String get qiblaNoSensor => 'Sensor Kompas Tidak Ditemukan';
+
+  @override
+  String get sbBookmarkSaved => 'Bookmark tersimpan';
+
+  @override
+  String get sbBookmarkRemoved => 'Bookmark dihapus';
+
+  @override
+  String sbJumpedToAyah(Object ayah) {
+    return 'Pindah ke Ayat $ayah';
+  }
+
+  @override
+  String sbRecordedAyahs(Object count) {
+    return 'Tercatat $count Ayat telah dibaca!';
+  }
+
+  @override
+  String get sbLastReadUpdated => 'Posisi terakhir dibaca diperbarui';
+
+  @override
+  String get emptyHistorySubtitle => 'Mulai membaca untuk melacak progres Anda';
+
+  @override
+  String get lblThisWeek => 'Minggu Ini';
+
+  @override
+  String sbPageReadLogged(Object duration, Object page) {
+    return 'Halaman $page tercatat (${duration}d)';
+  }
+
+  @override
+  String get lblLifetimeTotal => 'Total';
+
+  @override
+  String get lblReadingStreak => 'Streak';
+
+  @override
+  String get lblDailyAverage => 'Rata-rata/Hari';
+
+  @override
+  String get lblAyahs => 'Ayat';
+
+  @override
+  String get lblDays => 'Hari';
+
+  @override
+  String insightStreakWarning(Object streak, Object unit) {
+    return 'Jangan putuskan streak $streak hari! Baca minimal 1 $unit hari ini.';
+  }
+
+  @override
+  String insightAheadTarget(Object percent) {
+    return 'Hebat! Kamu $percent% lebih maju dari target mingguan!';
+  }
+
+  @override
+  String insightBehindTarget(Object needed, Object remaining, Object unit) {
+    return 'Kamu tertinggal $remaining $unit. Coba baca $needed $unit hari ini!';
+  }
+
+  @override
+  String insightStreakMilestone(Object streak) {
+    return 'Streak $streak hari! Pertahankan!';
+  }
+
+  @override
+  String get insightPerfectWeek =>
+      'Minggu sempurna! Kamu mencapai target setiap hari!';
+
+  @override
+  String insightDailyRecord(Object max, Object unit) {
+    return 'Rekor baru! $max $unit dalam sehari!';
+  }
+
+  @override
+  String insightLifetimeMilestone(Object total, Object unit) {
+    return 'Pencapaian luar biasa! Total bacaan $total $unit!';
+  }
+
+  @override
+  String insightTargetInfo(Object daily, Object unit, Object weekly) {
+    return 'Target: $daily $unit/Hari • $weekly $unit/Minggu';
+  }
+
+  @override
+  String get guideTitle => 'Panduan Aplikasi';
+
+  @override
+  String get guideSubtitle => 'Pelajari cara pencatatan dan target';
+
+  @override
+  String get guideTargetTitle => '1. Target & Niat';
+
+  @override
+  String get guideTargetDesc =>
+      'Atur Target Harian di Pengaturan. **Kamu bisa memilih target berdasarkan Halaman atau Ayat.** Target Mingguan adalah target harian x 7. Kamu bisa menabung bacaan di akhir pekan untuk mengejar target mingguan.';
+
+  @override
+  String get guideMushafTitle => '2. Mode Mushaf (Halaman)';
+
+  @override
+  String get guideMushafDesc =>
+      '• **Timer Otomatis:** Berjalan saat halaman terbuka.\n• **Progres:** Geser ke halaman berikutnya akan mencatat halaman sebelumnya sebagai sudah dibaca (setelah minimal 20 detik membaca).\n• **Tandai Manual:** Gunakan **Tombol Checklist Hijau** (kanan bawah) untuk menyimpan posisi terakhir tanpa pindah halaman.';
+
+  @override
+  String get guideListTitle => '3. Mode Ayat (List)';
+
+  @override
+  String get guideListDesc =>
+      '• **Tanpa Timer:** Fokus pada jumlah ayat, bukan durasi.\n• **Progres:** Tekan ayat dan pilih **Tandai Terakhir Baca**. Kami menghitung selisih ayat baru dari sesi terakhirmu.\n• *Contoh:* Terakhir baca Ayat 5, hari ini tandai Ayat 20. Tercatat: **15 Ayat Baru**.';
+
+  @override
+  String get guideInsightTitle => '4. Statistik & Streak';
+
+  @override
+  String get guideInsightDesc =>
+      '• **Halaman Unik:** Di Mode Mushaf, kami mencatat *Halaman Unik* untuk progres Khatam. Membaca halaman yang sama berulang kali tidak menambah \'Total Halaman\', tapi durasinya tetap dicatat!\n• **Streak:** Baca minimal 1 ayat/halaman setiap hari agar streak tidak putus.';
 }

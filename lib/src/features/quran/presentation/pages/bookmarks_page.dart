@@ -70,7 +70,7 @@ class BookmarksPage extends StatelessWidget {
                   centerTitle: true,
                   leading: const BackButton(color: Colors.white),
                   title: Text(
-                    AppLocalizations.of(context)!.lblBookmarks ?? "Bookmarks",
+                    AppLocalizations.of(context)!.lblBookmarks,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.sp,
@@ -134,8 +134,7 @@ class BookmarksPage extends StatelessWidget {
                                 SizedBox(width: 6.w),
                                 Flexible(
                                   child: Text(
-                                    AppLocalizations.of(context)!.lblListType ??
-                                        "Ayah",
+                                    AppLocalizations.of(context)!.lblListType,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -150,10 +149,7 @@ class BookmarksPage extends StatelessWidget {
                                 SizedBox(width: 6.w),
                                 Flexible(
                                   child: Text(
-                                    AppLocalizations.of(
-                                          context,
-                                        )!.lblMushafType ??
-                                        "Mushaf",
+                                    AppLocalizations.of(context)!.lblMushafType,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -194,16 +190,12 @@ class BookmarksPage extends StatelessWidget {
                             bookmarks: listBookmarks,
                             lastRead: state.lastReadList,
                             isListMode: true,
-                            emptyMessageTitle:
-                                AppLocalizations.of(
-                                  context,
-                                )!.emptyBookmarkAyahTitle ??
-                                "No Ayah Bookmarks",
-                            emptyMessageSubtitle:
-                                AppLocalizations.of(
-                                  context,
-                                )!.emptyBookmarkAyahSubtitle ??
-                                "Your marked ayahs will appear here",
+                            emptyMessageTitle: AppLocalizations.of(
+                              context,
+                            )!.emptyBookmarkAyahTitle,
+                            emptyMessageSubtitle: AppLocalizations.of(
+                              context,
+                            )!.emptyBookmarkAyahSubtitle,
                           ),
 
                           // --- TAB 2: MUSHAF MODE ---
@@ -212,16 +204,12 @@ class BookmarksPage extends StatelessWidget {
                             bookmarks: mushafBookmarks,
                             lastRead: state.lastReadMushaf,
                             isListMode: false,
-                            emptyMessageTitle:
-                                AppLocalizations.of(
-                                  context,
-                                )!.emptyBookmarkPageTitle ??
-                                "No Page Bookmarks",
-                            emptyMessageSubtitle:
-                                AppLocalizations.of(
-                                  context,
-                                )!.emptyBookmarkPageSubtitle ??
-                                "Your marked pages will appear here",
+                            emptyMessageTitle: AppLocalizations.of(
+                              context,
+                            )!.emptyBookmarkPageTitle,
+                            emptyMessageSubtitle: AppLocalizations.of(
+                              context,
+                            )!.emptyBookmarkPageSubtitle,
                           ),
                         ],
                       );
@@ -337,8 +325,7 @@ class BookmarksPage extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  AppLocalizations.of(context)!.lblSavedBookmarks ??
-                      "SAVED BOOKMARKS",
+                  AppLocalizations.of(context)!.lblSavedBookmarks,
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 14.sp,
@@ -457,8 +444,8 @@ class BookmarksPage extends StatelessWidget {
                                 Text(
                                   (bookmark.ayahNumber != null &&
                                           bookmark.ayahNumber! > 0)
-                                      ? "${AppLocalizations.of(context)!.lblAyah ?? 'Ayah'} ${bookmark.ayahNumber}"
-                                      : "${AppLocalizations.of(context)!.lblPage ?? 'Page'} ${bookmark.pageNumber}",
+                                      ? "${AppLocalizations.of(context)!.lblAyah} ${bookmark.ayahNumber}"
+                                      : "${AppLocalizations.of(context)!.lblPage} ${bookmark.pageNumber}",
                                   style: TextStyle(
                                     fontSize: 13.sp,
                                     color: Colors.white54,
@@ -598,8 +585,12 @@ class BookmarksPage extends StatelessWidget {
                         ),
                         child: Text(
                           isListMode
-                              ? "CONTINUE READING (AYAH)"
-                              : "CONTINUE READING (PAGE)",
+                              ? AppLocalizations.of(
+                                  context,
+                                )!.continueReadingAyah
+                              : AppLocalizations.of(
+                                  context,
+                                )!.continueReadingPage,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 10.sp,
@@ -622,8 +613,8 @@ class BookmarksPage extends StatelessWidget {
                       SizedBox(height: 4.h),
                       Text(
                         isListMode
-                            ? "Ayah ${lastRead.ayahNumber}"
-                            : "Page ${lastRead.pageNumber}",
+                            ? "${AppLocalizations.of(context)!.lblAyah} ${lastRead.ayahNumber}"
+                            : "${AppLocalizations.of(context)!.lblPage} ${lastRead.pageNumber}",
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.9),
                           fontSize: 16.sp,

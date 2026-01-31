@@ -12,6 +12,7 @@ import '../../../settings/presentation/bloc/settings_state.dart';
 import 'prayer_page.dart';
 import '../../../settings/presentation/pages/settings_page.dart';
 import '../../../quran/presentation/pages/quran_page.dart';
+import '../../../quran/presentation/pages/help_guide_page.dart';
 import '../../../zikir/presentation/pages/dzikir_page.dart';
 import '../../../prayer/presentation/bloc/prayer_bloc.dart';
 import '../../../prayer/presentation/bloc/prayer_event.dart';
@@ -33,6 +34,7 @@ import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
 import '../../../../core/di/di_container.dart';
 import '../../../../core/services/notification_service.dart';
 
+import '../../../../core/presentation/widgets/premium_showcase.dart'; // Import
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,7 +50,6 @@ class _DashboardPageState extends State<DashboardPage> {
   late int _currentIndex;
 
   // Showcase Keys
-  // Showcase Keys
   final GlobalKey _dailyGoalKey = GlobalKey();
   final GlobalKey _settingsTabKey = GlobalKey();
   final GlobalKey _prayerCardKey = GlobalKey();
@@ -56,16 +57,12 @@ class _DashboardPageState extends State<DashboardPage> {
   final GlobalKey _dzikirTabKey = GlobalKey();
   final GlobalKey _quranTabKey = GlobalKey();
 
-  // Audio Player Showcase Keys
-
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
-    // Force reload settings (e.g. name update from Intro)
     context.read<SettingsCubit>().loadSettings();
     _requestAllPermissions();
-    // Check for showcase
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkShowcase());
   }
 
@@ -100,19 +97,15 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _requestAllPermissions() async {
-    // 1. Location (Prioritized for Dashboard Data)
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-
-    // 2. Notifications (Secondary)
     await getIt<NotificationService>().requestPermissions();
   }
 
   @override
   Widget build(BuildContext context) {
-    // 1. Wrap with MultiBlocProvider
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -146,8 +139,8 @@ class _DashboardPageState extends State<DashboardPage> {
                   child: BottomNavigationBar(
                     currentIndex: _currentIndex,
                     onTap: (index) => context.go('/dashboard?index=$index'),
-                    backgroundColor: const Color(0xFF1C2A30), // Dark background
-                    selectedItemColor: const Color(0xFF00E676), // Accent Green
+                    backgroundColor: const Color(0xFF1C2A30),
+                    selectedItemColor: const Color(0xFF00E676),
                     unselectedItemColor: Colors.white54,
                     type: BottomNavigationBarType.fixed,
                     showUnselectedLabels: true,
@@ -166,41 +159,48 @@ class _DashboardPageState extends State<DashboardPage> {
                         label: AppLocalizations.of(context)!.bottomNavPrayer,
                       ),
                       BottomNavigationBarItem(
-                        icon: Showcase(
-                          key: _quranTabKey,
+                        icon: PremiumShowcase(
+                          globalKey: _quranTabKey,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.showcaseQuranTabTitle, // Localized
                           description: AppLocalizations.of(
                             context,
                           )!.showcaseQuranTab,
                           targetShapeBorder: const CircleBorder(),
                           child: const Icon(
                             Icons.menu_book_rounded,
-                            color: Color(
-                              0xFFFFC107,
-                            ), // Amber/Gold Highlight (Diff from Focus)
+                            color: Color(0xFFFFC107),
                           ),
                         ),
                         label: AppLocalizations.of(context)!.bottomNavQuran,
                       ),
                       BottomNavigationBarItem(
-                        icon: Showcase(
-                          key: _dzikirTabKey,
+                        icon: PremiumShowcase(
+                          globalKey: _dzikirTabKey,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.showcaseDzikirTitle, // Localized
                           description: AppLocalizations.of(
                             context,
                           )!.showcaseDzikir,
                           targetShapeBorder: const CircleBorder(),
                           child: const Icon(Icons.spa),
-                        ), // Dzikir Icon
+                        ),
                         label: AppLocalizations.of(context)!.bottomNavDzikir,
                       ),
                       BottomNavigationBarItem(
-                        icon: Showcase(
-                          key: _settingsTabKey,
+                        icon: PremiumShowcase(
+                          globalKey: _settingsTabKey,
+                          title: AppLocalizations.of(
+                            context,
+                          )!.showcaseSettingsTitle, // Localized
                           description: AppLocalizations.of(
                             context,
                           )!.showcaseSettingsGoal,
                           targetShapeBorder: const CircleBorder(),
                           child: const Icon(Icons.settings),
-                        ), // Settings Icon
+                        ),
                         label: AppLocalizations.of(context)!.bottomNavSettings,
                       ),
                     ],
@@ -224,16 +224,13 @@ class _DashboardPageState extends State<DashboardPage> {
                         IndexedStack(
                           index: _currentIndex,
                           children: [
-                            _buildHomeContent(context), // Uses inner context
+                            _buildHomeContent(context),
                             const PrayerPage(),
                             QuranPage(isVisible: _currentIndex == 2),
-                            // Dzikir & Doa (Index 3)
                             const DzikirPage(),
-                            // Settings (Index 4)
                             const SettingsPage(),
                           ],
                         ),
-                        // Listen to Audio Bloc for Showcase Trigger
                         BlocListener<AudioBloc, AudioState>(
                           listener: (context, state) {},
                           child: const DraggableAudioPlayer(),
@@ -366,8 +363,11 @@ class _DashboardPageState extends State<DashboardPage> {
                           ? "Ayahs"
                           : l10n.lblPages; // Todo: Add localized "Ayahs"
 
-                      return Showcase(
-                        key: _dailyGoalKey,
+                      return PremiumShowcase(
+                        globalKey: _dailyGoalKey,
+                        title: AppLocalizations.of(
+                          context,
+                        )!.showcaseDailyGoalTitle, // Localized
                         description: AppLocalizations.of(
                           context,
                         )!.showcaseDailyGoal,
@@ -404,8 +404,11 @@ class _DashboardPageState extends State<DashboardPage> {
                           MediaQuery.of(context).orientation ==
                           Orientation.landscape;
 
-                      return Showcase(
-                        key: _prayerCardKey,
+                      return PremiumShowcase(
+                        globalKey: _prayerCardKey,
+                        title: AppLocalizations.of(
+                          context,
+                        )!.showcasePrayerTitle, // Localized
                         description: AppLocalizations.of(
                           context,
                         )!.showcasePrayerCard,
@@ -444,120 +447,154 @@ class _DashboardPageState extends State<DashboardPage> {
                                       ? Row(
                                           children: [
                                             // Left: Label & City
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Container(
+                                            Expanded(
+                                              flex: 3,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal: 8.w,
+                                                          vertical: 4.h,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black12,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            20.r,
+                                                          ),
+                                                    ),
+                                                    child: Text(
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      )!.cardNextPrayer,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 10.sp,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 4.h),
+                                                  Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.location_on,
+                                                        color: Colors.white70,
+                                                        size: 12.sp,
+                                                      ),
+                                                      SizedBox(width: 4.w),
+                                                      Expanded(
+                                                        child: Text(
+                                                          state
+                                                              .currentCity
+                                                              .name,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 12.sp,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // Middle: Prayer Name & Time
+                                            Expanded(
+                                              flex: 4,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.baseline,
+                                                textBaseline:
+                                                    TextBaseline.alphabetic,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      nextPrayer['name'],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 20.sp,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 8.w),
+                                                  Text(
+                                                    nextPrayer['time'],
+                                                    style: TextStyle(
+                                                      color: Colors.white70,
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // Right: Countdown
+                                            Expanded(
+                                              flex: 3,
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Container(
                                                   padding: EdgeInsets.symmetric(
                                                     horizontal: 8.w,
                                                     vertical: 4.h,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                    color: Colors.black12,
+                                                    color: Colors.black26,
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          20.r,
+                                                          12.r,
                                                         ),
                                                   ),
-                                                  child: Text(
-                                                    AppLocalizations.of(
-                                                      context,
-                                                    )!.cardNextPrayer,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 10.sp,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  child: PrayerCountdownWidget(
+                                                    targetTime:
+                                                        nextPrayer['nextPrayerTime']
+                                                            as DateTime,
+                                                    baseColor: const Color(
+                                                      0xFF00E676,
                                                     ),
+                                                    onFinished: () {
+                                                      context
+                                                          .read<PrayerBloc>()
+                                                          .add(
+                                                            FetchPrayerTime(
+                                                              latitude: state
+                                                                  .currentCity
+                                                                  .latitude,
+                                                              longitude: state
+                                                                  .currentCity
+                                                                  .longitude,
+                                                              date:
+                                                                  DateTime.now(),
+                                                            ),
+                                                          );
+                                                    },
                                                   ),
                                                 ),
-                                                SizedBox(height: 4.h),
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.location_on,
-                                                      color: Colors.white70,
-                                                      size: 12.sp,
-                                                    ),
-                                                    SizedBox(width: 4.w),
-                                                    Text(
-                                                      state.currentCity.name,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 12.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            const Spacer(),
-                                            // Middle: Prayer Name & Time
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.baseline,
-                                              textBaseline:
-                                                  TextBaseline.alphabetic,
-                                              children: [
-                                                Text(
-                                                  nextPrayer['name'],
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 20.sp,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                SizedBox(width: 8.w),
-                                                Text(
-                                                  nextPrayer['time'],
-                                                  style: TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 16.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Spacer(),
-                                            // Right: Countdown
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 8.w,
-                                                vertical: 4.h,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.black26,
-                                                borderRadius:
-                                                    BorderRadius.circular(12.r),
-                                              ),
-                                              child: PrayerCountdownWidget(
-                                                targetTime:
-                                                    nextPrayer['nextPrayerTime']
-                                                        as DateTime,
-                                                baseColor: const Color(
-                                                  0xFF00E676,
-                                                ),
-                                                onFinished: () {
-                                                  context
-                                                      .read<PrayerBloc>()
-                                                      .add(
-                                                        FetchPrayerTime(
-                                                          cityId: state
-                                                              .currentCity
-                                                              .id,
-                                                          date: DateTime.now(),
-                                                        ),
-                                                      );
-                                                },
                                               ),
                                             ),
                                           ],
@@ -599,24 +636,35 @@ class _DashboardPageState extends State<DashboardPage> {
                                                     ),
                                                   ),
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Icon(
-                                                      Icons.location_on,
-                                                      color: Colors.white70,
-                                                      size: 14.sp,
-                                                    ),
-                                                    SizedBox(width: 4.w),
-                                                    Text(
-                                                      state.currentCity.name,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
+                                                Flexible(
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize
+                                                        .min, // Keep closely packed
+                                                    children: [
+                                                      Icon(
+                                                        Icons.location_on,
+                                                        color: Colors.white70,
+                                                        size: 14.sp,
                                                       ),
-                                                    ),
-                                                  ],
+                                                      SizedBox(width: 4.w),
+                                                      Flexible(
+                                                        child: Text(
+                                                          state
+                                                              .currentCity
+                                                              .name,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14.sp,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -671,14 +719,16 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       0xFF00E676,
                                                     ),
                                                     onFinished: () {
-                                                      // Refresh Prayer Times when countdown finishes
                                                       context
                                                           .read<PrayerBloc>()
                                                           .add(
                                                             FetchPrayerTime(
-                                                              cityId: state
+                                                              latitude: state
                                                                   .currentCity
-                                                                  .id,
+                                                                  .latitude,
+                                                              longitude: state
+                                                                  .currentCity
+                                                                  .longitude,
                                                               date:
                                                                   DateTime.now(),
                                                             ),
@@ -720,8 +770,11 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   SizedBox(height: 16.h),
                   // QUICK ACCESS GRID
-                  Showcase(
-                    key: _quickAccessKey,
+                  PremiumShowcase(
+                    globalKey: _quickAccessKey,
+                    title: AppLocalizations.of(
+                      context,
+                    )!.showcaseQuickAccessTitle, // Localized
                     description: AppLocalizations.of(
                       context,
                     )!.showcaseQuickAccess,
@@ -844,272 +897,319 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          // Background Pattern
-          Positioned(
-            right: -20,
-            bottom: -20,
-            child: Icon(
-              Icons.auto_stories,
-              size: isLandscape ? 80.sp : 140.sp,
-              color: Colors.white.withOpacity(0.08),
+      child: GestureDetector(
+        onTap: () => context.push('/quran/history'),
+        behavior: HitTestBehavior.opaque,
+        child: Stack(
+          children: [
+            // Background Pattern
+            Positioned(
+              right: -20,
+              bottom: -20,
+              child: Icon(
+                Icons.auto_stories,
+                size: isLandscape ? 80.sp : 140.sp,
+                color: Colors.white.withOpacity(0.08),
+              ),
             ),
-          ),
 
-          Padding(
-            padding: EdgeInsets.all(isLandscape ? 8.w : 24.w),
-            child: isLandscape
-                ? Row(
-                    children: [
-                      // Icon
-                      Container(
-                        padding: EdgeInsets.all(6.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white24,
-                          borderRadius: BorderRadius.circular(8.r),
+            Padding(
+              padding: EdgeInsets.all(isLandscape ? 8.w : 24.w),
+              child: isLandscape
+                  ? Row(
+                      children: [
+                        // Icon
+                        Container(
+                          padding: EdgeInsets.all(6.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white24,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Icon(
+                            Icons.flag_rounded,
+                            color: Colors.white,
+                            size: 16.sp,
+                          ),
                         ),
-                        child: Icon(
-                          Icons.flag_rounded,
-                          color: Colors.white,
-                          size: 16.sp,
+                        SizedBox(width: 8.w),
+                        // Title
+                        Text(
+                          l10n.cardDailyGoal,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 8.w),
-                      // Title
-                      Text(
-                        l10n.cardDailyGoal,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-
-                      const Spacer(),
-                      // Progress Text
-                      Text(
-                        "$progress",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            " / $target",
-                            style: TextStyle(
+                        SizedBox(width: 4.w),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HelpGuidePage(),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: Padding(
+                            padding: EdgeInsets.all(2.w),
+                            child: Icon(
+                              Icons.info_outline_rounded,
                               color: Colors.white70,
-                              fontSize: 12.sp,
+                              size: 14.sp,
                             ),
                           ),
-                          SizedBox(width: 4.w),
-                          InkWell(
-                            onTap: () => context.push('/settings'),
-                            borderRadius: BorderRadius.circular(12.r),
-                            child: Padding(
-                              padding: EdgeInsets.all(4.w),
-                              child: Icon(
-                                Icons.edit,
-                                color: Colors.white54,
-                                size: 14.sp,
-                              ),
-                            ),
+                        ),
+
+                        const Spacer(),
+                        // Progress Text
+                        Text(
+                          "$progress",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ],
-                      ),
-                      SizedBox(width: 12.w),
-                      // Circular Progress
-                      SizedBox(
-                        width: 40.w,
-                        height: 40.w,
-                        child: Stack(
-                          alignment: Alignment.center,
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            CircularProgressIndicator(
-                              value: 1.0,
-                              strokeWidth: 4.w,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white.withOpacity(0.1),
+                            Text(
+                              " / $target",
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12.sp,
                               ),
                             ),
-                            CircularProgressIndicator(
-                              value: percentage,
-                              strokeWidth: 4.w,
-                              strokeCap: StrokeCap.round,
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                Color(0xFF00E676),
+                            SizedBox(width: 4.w),
+                            InkWell(
+                              onTap: () => context.push('/settings'),
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: Padding(
+                                padding: EdgeInsets.all(4.w),
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Colors.white54,
+                                  size: 14.sp,
+                                ),
                               ),
-                              backgroundColor: Colors.transparent,
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(8.w),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white24,
-                                    borderRadius: BorderRadius.circular(12.r),
-                                  ),
-                                  child: Icon(
-                                    Icons.flag_rounded,
-                                    color: Colors.white,
-                                    size: 20.sp,
-                                  ),
+                        SizedBox(width: 12.w),
+                        // Circular Progress
+                        SizedBox(
+                          width: 40.w,
+                          height: 40.w,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                value: 1.0,
+                                strokeWidth: 4.w,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white.withOpacity(0.1),
                                 ),
-                                SizedBox(width: 8.w),
-                                Expanded(
-                                  child: Text(
-                                    l10n.cardDailyGoal,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                              ),
+                              CircularProgressIndicator(
+                                value: percentage,
+                                strokeWidth: 4.w,
+                                strokeCap: StrokeCap.round,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF00E676),
                                 ),
-                                if (isCompleted) ...[
-                                  SizedBox(width: 4.w),
+                                backgroundColor: Colors.transparent,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                children: [
                                   Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w,
-                                      vertical: 4.h,
-                                    ),
+                                    padding: EdgeInsets.all(8.w),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF00E676),
-                                      borderRadius: BorderRadius.circular(8.r),
+                                      color: Colors.white24,
+                                      borderRadius: BorderRadius.circular(12.r),
                                     ),
+                                    child: Icon(
+                                      Icons.flag_rounded,
+                                      color: Colors.white,
+                                      size: 20.sp,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Expanded(
                                     child: Text(
-                                      l10n.lblCompleted,
+                                      l10n.cardDailyGoal,
                                       style: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 10.sp,
-                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(width: 4.w),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HelpGuidePage(),
+                                        ),
+                                      );
+                                    },
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(4.w),
+                                      child: Icon(
+                                        Icons.info_outline_rounded,
+                                        color: Colors.white70,
+                                        size: 16.sp,
+                                      ),
+                                    ),
+                                  ),
+                                  if (isCompleted) ...[
+                                    SizedBox(width: 4.w),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF00E676),
+                                        borderRadius: BorderRadius.circular(
+                                          8.r,
+                                        ),
+                                      ),
+                                      child: Text(
+                                        l10n.lblCompleted,
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                "$progress",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 32.sp,
+                                  fontWeight: FontWeight.bold,
+                                  height: 1.0,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Row(
+                                children: [
+                                  Text(
+                                    "/ $target $unitLabel",
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  InkWell(
+                                    onTap: () => context.push('/settings'),
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(4.w),
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Colors.white54,
+                                        size: 16.sp,
                                       ),
                                     ),
                                   ),
                                 ],
-                              ],
-                            ),
-                            SizedBox(height: 16.h),
-                            Text(
-                              "$progress",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 32.sp,
-                                fontWeight: FontWeight.bold,
-                                height: 1.0,
-                              ),
-                            ),
-                            SizedBox(height: 4.h),
-                            Row(
-                              children: [
-                                Text(
-                                  "/ $target $unitLabel",
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 14.sp,
-                                  ),
-                                ),
-                                SizedBox(width: 8.w),
-                                InkWell(
-                                  onTap: () => context.push('/settings'),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(4.w),
-                                    child: Icon(
-                                      Icons.edit,
-                                      color: Colors.white54,
-                                      size: 16.sp,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Circular Progress
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              SizedBox(
-                                width: 80.w,
-                                height: 80.w,
-                                child: CircularProgressIndicator(
-                                  value: 1.0,
-                                  strokeWidth: 8.w,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white.withOpacity(0.1),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 80.w,
-                                height: 80.w,
-                                child: CircularProgressIndicator(
-                                  value: percentage,
-                                  strokeWidth: 8.w,
-                                  strokeCap: StrokeCap.round,
-                                  valueColor:
-                                      const AlwaysStoppedAnimation<Color>(
-                                        Color(0xFF00E676),
-                                      ),
-                                  backgroundColor: Colors.transparent,
-                                ),
-                              ),
-                              Text(
-                                "${(percentage * 100).toInt()}%",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
                               ),
                             ],
                           ),
-                          if (!isCompleted) ...[
-                            SizedBox(height: 12.h),
-                            GestureDetector(
-                              onTap: () => context.push('/quran/bookmarks'),
-                              child: Text(
-                                l10n.lblReadMore,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.white54,
+                        ),
+                        // Circular Progress
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 80.w,
+                                  height: 80.w,
+                                  child: CircularProgressIndicator(
+                                    value: 1.0,
+                                    strokeWidth: 8.w,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white.withOpacity(0.1),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 80.w,
+                                  height: 80.w,
+                                  child: CircularProgressIndicator(
+                                    value: percentage,
+                                    strokeWidth: 8.w,
+                                    strokeCap: StrokeCap.round,
+                                    valueColor:
+                                        const AlwaysStoppedAnimation<Color>(
+                                          Color(0xFF00E676),
+                                        ),
+                                    backgroundColor: Colors.transparent,
+                                  ),
+                                ),
+                                Text(
+                                  "${(percentage * 100).toInt()}%",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (!isCompleted) ...[
+                              SizedBox(height: 12.h),
+                              GestureDetector(
+                                onTap: () => context.push('/quran/bookmarks'),
+                                child: Text(
+                                  l10n.lblReadMore,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.white54,
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
-                        ],
-                      ),
-                    ],
-                  ),
-          ),
-        ],
+                        ),
+                      ],
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

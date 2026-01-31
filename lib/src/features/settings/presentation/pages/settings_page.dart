@@ -10,6 +10,7 @@ import '../../../../core/di/di_container.dart';
 import '../../../../core/utils/custom_snackbar.dart'; // Import Custom SnackBar
 import '../../../../core/services/background_service.dart'; // Correct import
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../quran/presentation/pages/help_guide_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -17,71 +18,94 @@ class SettingsPage extends StatelessWidget {
   void _showLanguageBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1E1E1E),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
-        return BlocBuilder<SettingsCubit, SettingsState>(
-          builder: (context, state) {
-            final l10n = AppLocalizations.of(context)!;
-            final isIndo = state.locale.languageCode == 'id';
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E2F36),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 20,
+                offset: const Offset(0, -5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle Bar
+              Center(
+                child: Container(
+                  margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
+                ),
+              ),
 
-            return Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 24.h),
-                      width: 40.w,
-                      height: 4.h,
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(2.r),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 32.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.settingsLanguage,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Outfit',
                       ),
                     ),
-                  ),
-                  Text(
-                    l10n.settingsLanguage,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
+                    SizedBox(height: 24.h),
+
+                    BlocBuilder<SettingsCubit, SettingsState>(
+                      builder: (context, state) {
+                        final isIndo = state.locale.languageCode == 'id';
+                        return Column(
+                          children: [
+                            _buildLanguageOption(
+                              context,
+                              "English",
+                              "US", // Using iso code or emoji
+                              "🇺🇸",
+                              !isIndo,
+                              () {
+                                context.read<SettingsCubit>().updateLanguage(
+                                  const Locale('en'),
+                                );
+                                Navigator.pop(context);
+                              },
+                            ),
+                            SizedBox(height: 12.h),
+                            _buildLanguageOption(
+                              context,
+                              "Bahasa Indonesia",
+                              "ID",
+                              "🇮🇩",
+                              isIndo,
+                              () {
+                                context.read<SettingsCubit>().updateLanguage(
+                                  const Locale('id'),
+                                );
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                  ),
-                  SizedBox(height: 24.h),
-                  _buildLanguageOption(
-                    context,
-                    l10n.settingsLanguageEnglish,
-                    "🇺🇸",
-                    !isIndo,
-                    () {
-                      context.read<SettingsCubit>().updateLanguage(
-                        const Locale('en'),
-                      );
-                      Navigator.pop(context);
-                    },
-                  ),
-                  SizedBox(height: 12.h),
-                  _buildLanguageOption(
-                    context,
-                    l10n.settingsLanguageIndonesian,
-                    "🇮🇩",
-                    isIndo,
-                    () {
-                      context.read<SettingsCubit>().updateLanguage(
-                        const Locale('id'),
-                      );
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
-            );
-          },
+            ],
+          ),
         );
       },
     );
@@ -90,40 +114,77 @@ class SettingsPage extends StatelessWidget {
   Widget _buildLanguageOption(
     BuildContext context,
     String label,
+    String subLabel,
     String flag,
     bool isSelected,
     VoidCallback onTap,
   ) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF00E676).withOpacity(0.1)
+              ? const Color(0xFF00E676).withOpacity(0.15)
               : Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isSelected ? const Color(0xFF00E676) : Colors.transparent,
-            width: 1.5,
+            color: isSelected ? const Color(0xFF00E676) : Colors.white10,
+            width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
           children: [
-            Text(flag, style: TextStyle(fontSize: 24.sp)),
+            Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Text(flag, style: TextStyle(fontSize: 24.sp)),
+            ),
             SizedBox(width: 16.w),
             Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.w600,
+                      fontFamily: 'Outfit',
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    subLabel,
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle, color: Color(0xFF00E676)),
+              Container(
+                padding: EdgeInsets.all(4.w),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF00E676),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check,
+                  color: const Color(0xFF1E2F36),
+                  size: 16.sp,
+                ),
+              ),
           ],
         ),
       ),
@@ -674,6 +735,20 @@ class SettingsPage extends StatelessWidget {
                     ? "${state.dailyAyahTarget} ${l10n.lblAyah}"
                     : l10n.settingsTargetPages(state.dailyTarget),
                 onTap: () => _showTargetBottomSheet(context, state),
+              ),
+              SizedBox(height: 12.h),
+              _buildListTile(
+                icon: Icons.help_outline,
+                title: l10n.guideTitle,
+                subtitle: l10n.guideSubtitle,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HelpGuidePage(),
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 24.h),
               _buildSectionHeader(context, l10n.aboutTitle),

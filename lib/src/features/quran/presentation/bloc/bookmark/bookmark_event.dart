@@ -20,6 +20,14 @@ class AddBookmark extends BookmarkEvent {
   List<Object?> get props => [bookmark];
 }
 
+class ToggleBookmark extends BookmarkEvent {
+  final QuranBookmark bookmark;
+  const ToggleBookmark(this.bookmark);
+
+  @override
+  List<Object?> get props => [bookmark];
+}
+
 class DeleteBookmark extends BookmarkEvent {
   final int id;
 

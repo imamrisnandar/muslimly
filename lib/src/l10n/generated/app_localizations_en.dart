@@ -305,7 +305,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String notificationPrePrayerBody(Object prayerName) {
-    return '15 minutes left until $prayerName time.';
+    return '15 minutes left until $prayerName time. Don\'t forget to read Quran after prayer.';
   }
 
   @override
@@ -661,4 +661,261 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quranNavigationTitle => 'Quran Navigation';
+
+  @override
+  String get qiblaCompass => 'Qibla Compass';
+
+  @override
+  String get findQiblaDirection => 'Find Qibla Direction';
+
+  @override
+  String get qiblaDirection => 'Qibla Direction';
+
+  @override
+  String get locationPermissionRequired => 'Location Permission Required';
+
+  @override
+  String get errorReadingCompass => 'Error reading compass';
+
+  @override
+  String get deviceNoSensors => 'Device does not have sensors';
+
+  @override
+  String get compassCalibrateHint =>
+      'Rotate your device in a figure 8 pattern to calibrate';
+
+  @override
+  String get onboardingTitle1 => 'Build a Reading Habit';
+
+  @override
+  String get onboardingDesc1 =>
+      'Set your daily target (e.g. 1 Juz or 4 Pages) and track your consistency every day.';
+
+  @override
+  String get onboardingTitle2 => 'Complete Worship Companion';
+
+  @override
+  String get onboardingDesc2 =>
+      'Accurate prayer times, precise Qibla direction, and daily Dzikir in one app.';
+
+  @override
+  String get onboardingTitle3 => 'Intercession in the Hereafter';
+
+  @override
+  String get onboardingDesc3 =>
+      '\"Read the Quran, for indeed it will come on the Day of Resurrection as an intercessor for its companions.\" (Muslim)';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get continueReadingAyah => 'CONTINUE READING (AYAH)';
+
+  @override
+  String get continueReadingPage => 'CONTINUE READING (PAGE)';
+
+  @override
+  String get showcaseDzikirTitle => 'Dzikir & Dua';
+
+  @override
+  String get showcaseSettingsTitle => 'Settings';
+
+  @override
+  String get showcaseQuranTabTitle => 'Quran';
+
+  @override
+  String get showcaseDailyGoalTitle => 'Daily Goal';
+
+  @override
+  String get showcaseQuickAccessTitle => 'Quick Access';
+
+  @override
+  String get showcasePrayerTitle => 'Prayer Times';
+
+  @override
+  String sbJumpToAyah(Object ayah, Object page) {
+    return 'Jumped to Ayah $ayah (Page $page)';
+  }
+
+  @override
+  String get sbPageNotFound => 'Page not found in loaded data.';
+
+  @override
+  String sbAyahNotFound(Object ayah) {
+    return 'Could not find Ayah $ayah';
+  }
+
+  @override
+  String get sbDataNotLoaded => 'Data not loaded yet.';
+
+  @override
+  String sbOpeningSurah(Object surah) {
+    return 'Opening $surah...';
+  }
+
+  @override
+  String get sbNextSurahNotFound => 'Next Surah Not Found!';
+
+  @override
+  String get sbEndOfQuran => 'End of Quran';
+
+  @override
+  String get sbStartOfQuran => 'Start of Quran';
+
+  @override
+  String sbBookmarkedPage(Object page) {
+    return 'Bookmarked Page $page';
+  }
+
+  @override
+  String get sbReadingSaved => 'Reading progress saved!';
+
+  @override
+  String get sbAyahBookmarked => 'Ayah Bookmarked!';
+
+  @override
+  String get searchSortedByRelevance =>
+      'Sorted by relevance, for details click on the ayah';
+
+  @override
+  String get qiblaFacing => 'You are facing Qibla';
+
+  @override
+  String get qiblaTurnRight => 'Turn Right →';
+
+  @override
+  String get qiblaTurnLeft => '← Turn Left';
+
+  @override
+  String get qiblaLocating => 'Locating Qibla...';
+
+  @override
+  String get qiblaAligned => 'ALIGNED';
+
+  @override
+  String get qiblaAlignArrow => 'Align the arrow to the top';
+
+  @override
+  String get qiblaNoSensor => 'No Compass Sensor';
+
+  @override
+  String get sbBookmarkSaved => 'Bookmark saved';
+
+  @override
+  String get sbBookmarkRemoved => 'Bookmark removed';
+
+  @override
+  String sbJumpedToAyah(Object ayah) {
+    return 'Jumped to Ayah $ayah';
+  }
+
+  @override
+  String sbRecordedAyahs(Object count) {
+    return 'Recorded $count Ayahs read!';
+  }
+
+  @override
+  String get sbLastReadUpdated => 'Last read position updated';
+
+  @override
+  String get emptyHistorySubtitle => 'Start reading to track your progress';
+
+  @override
+  String get lblThisWeek => 'This Week';
+
+  @override
+  String sbPageReadLogged(Object duration, Object page) {
+    return 'Page $page recorded (${duration}s)';
+  }
+
+  @override
+  String get lblLifetimeTotal => 'Total';
+
+  @override
+  String get lblReadingStreak => 'Streak';
+
+  @override
+  String get lblDailyAverage => 'Avg/Day';
+
+  @override
+  String get lblAyahs => 'Ayahs';
+
+  @override
+  String get lblDays => 'Days';
+
+  @override
+  String insightStreakWarning(Object streak, Object unit) {
+    return 'Don\'t break your $streak-day streak! Read at least 1 $unit today.';
+  }
+
+  @override
+  String insightAheadTarget(Object percent) {
+    return 'Great job! You\'re $percent% ahead of your weekly target!';
+  }
+
+  @override
+  String insightBehindTarget(Object needed, Object remaining, Object unit) {
+    return 'You\'re behind by $remaining $unit. Try reading $needed $unit today!';
+  }
+
+  @override
+  String insightStreakMilestone(Object streak) {
+    return '$streak-day streak! Keep it up!';
+  }
+
+  @override
+  String get insightPerfectWeek =>
+      'Perfect week! You\'ve reached your target every day!';
+
+  @override
+  String insightDailyRecord(Object max, Object unit) {
+    return 'New Record! $max $unit in a single day!';
+  }
+
+  @override
+  String insightLifetimeMilestone(Object total, Object unit) {
+    return 'Amazing! You\'ve reached $total $unit lifetime total!';
+  }
+
+  @override
+  String insightTargetInfo(Object daily, Object unit, Object weekly) {
+    return 'Target: $daily $unit/Day • $weekly $unit/Week';
+  }
+
+  @override
+  String get guideTitle => 'App Guide';
+
+  @override
+  String get guideSubtitle => 'Learn about tracking and targets';
+
+  @override
+  String get guideTargetTitle => '1. Targets & Goals';
+
+  @override
+  String get guideTargetDesc =>
+      'Set your Daily Target in Settings. **You can choose to track by Pages or Ayahs.** Your Weekly Target is simply your daily target x 7. You can accumulate reading on weekends to meet the weekly goal.';
+
+  @override
+  String get guideMushafTitle => '2. Mushaf Mode (Page View)';
+
+  @override
+  String get guideMushafDesc =>
+      '• **Timer:** Starts automatically when you open a page.\n• **Progress:** Swiping to the next page counts the previous one as read (after reading for at least 20 seconds).\n• **Manual Mark:** Use the **Green Checklist Button** (bottom right) to save your last position without changing pages.';
+
+  @override
+  String get guideListTitle => '3. List Mode (Ayah View)';
+
+  @override
+  String get guideListDesc =>
+      '• **No Timer:** We focus on Ayah count here, not duration.\n• **Progress:** Tap an ayah and select **Mark as Last Read**. We calculate how many new ayahs you\'ve read since your last session.\n• *Example:* If you last read Ayah 5, and today mark Ayah 20, we record **15 new ayahs**.';
+
+  @override
+  String get guideInsightTitle => '4. Stats & Streak';
+
+  @override
+  String get guideInsightDesc =>
+      '• **Unique Pages:** In Mushaf Mode, we track *Unique Pages* for Khatam progress. Reading the same page twice won\'t double your \'Total Pages\' count, but the duration is added!\n• **Streak:** Read at least 1 ayah/page daily to keep your streak alive.';
 }

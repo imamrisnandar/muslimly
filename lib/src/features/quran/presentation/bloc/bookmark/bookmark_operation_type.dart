@@ -1,0 +1,1 @@
+enum BookmarkOperationType { saved, removed }

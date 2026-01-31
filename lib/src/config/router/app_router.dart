@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import '../../features/intro/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../features/quran/domain/entities/surah.dart';
@@ -13,11 +14,16 @@ import '../../features/quran/presentation/pages/reading_history_page.dart';
 import '../../features/dashboard/presentation/pages/daily_inspiration_page.dart';
 import '../../core/utils/quran_constants.dart';
 import '../../features/quran/presentation/pages/search_results_page.dart';
+import '../../features/prayer/presentation/pages/qibla_compass_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const SplashPage()),
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingPage(),
+    ),
     GoRoute(
       path: '/name-input',
       builder: (context, state) => const NameInputPage(),
@@ -42,6 +48,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/quran/history',
       builder: (context, state) => const ReadingHistoryPage(),
+    ),
+    GoRoute(
+      path: '/qibla',
+      builder: (context, state) => const QiblaCompassPage(),
     ),
     GoRoute(
       path: '/quran/mushaf/:number',

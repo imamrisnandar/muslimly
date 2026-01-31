@@ -60,3 +60,12 @@ class NavigateWeeklyChart extends ReadingEvent {
   @override
   List<Object?> get props => [direction];
 }
+
+class ToggleChartView extends ReadingEvent {
+  final bool isWeekly;
+
+  const ToggleChartView({required this.isWeekly});
+
+  @override
+  List<Object?> get props => [isWeekly];
+}

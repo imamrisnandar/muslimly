@@ -19,7 +19,7 @@ import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 
 // Prayer
-import '../../features/prayer/data/datasources/prayer_remote_data_source.dart';
+
 import '../../features/prayer/data/repositories/prayer_repository_impl.dart';
 import '../../features/prayer/domain/repositories/prayer_repository.dart';
 import '../../features/prayer/domain/usecases/get_prayer_time.dart';
@@ -67,12 +67,8 @@ void configureDependencies() {
   getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<LoginUseCase>()));
 
   // --- Prayer Feature ---
-  getIt.registerLazySingleton<PrayerRemoteDataSource>(
-    () => networkModule.getPrayerRemoteDataSource(getIt<Dio>()),
-  );
-  getIt.registerLazySingleton<PrayerRepository>(
-    () => PrayerRepositoryImpl(getIt<PrayerRemoteDataSource>()),
-  );
+
+  getIt.registerLazySingleton<PrayerRepository>(() => PrayerRepositoryImpl());
   getIt.registerFactory<GetPrayerTime>(
     () => GetPrayerTime(getIt<PrayerRepository>()),
   );

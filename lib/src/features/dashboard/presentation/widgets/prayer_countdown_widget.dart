@@ -71,22 +71,25 @@ class _PrayerCountdownWidgetState extends State<PrayerCountdownWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.timer_outlined, color: widget.baseColor, size: 16.sp),
-        SizedBox(width: 8.w),
-        Text(
-          "- ${_formatDuration(_timeLeft)}",
-          style:
-              widget.textStyle ??
-              TextStyle(
-                color: widget.baseColor,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ],
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.timer_outlined, color: widget.baseColor, size: 16.sp),
+          SizedBox(width: 8.w),
+          Text(
+            "- ${_formatDuration(_timeLeft)}",
+            style:
+                widget.textStyle ??
+                TextStyle(
+                  color: widget.baseColor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+        ],
+      ),
     );
   }
 }

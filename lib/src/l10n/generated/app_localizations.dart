@@ -647,7 +647,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationPrePrayerBody.
   ///
   /// In en, this message translates to:
-  /// **'15 minutes left until {prayerName} time.'**
+  /// **'15 minutes left until {prayerName} time. Don\'t forget to read Quran after prayer.'**
   String notificationPrePrayerBody(Object prayerName);
 
   /// No description provided for @notificationSmartTitle.
@@ -1291,6 +1291,444 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Quran Navigation'**
   String get quranNavigationTitle;
+
+  /// No description provided for @qiblaCompass.
+  ///
+  /// In en, this message translates to:
+  /// **'Qibla Compass'**
+  String get qiblaCompass;
+
+  /// No description provided for @findQiblaDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Find Qibla Direction'**
+  String get findQiblaDirection;
+
+  /// No description provided for @qiblaDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Qibla Direction'**
+  String get qiblaDirection;
+
+  /// No description provided for @locationPermissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Permission Required'**
+  String get locationPermissionRequired;
+
+  /// No description provided for @errorReadingCompass.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading compass'**
+  String get errorReadingCompass;
+
+  /// No description provided for @deviceNoSensors.
+  ///
+  /// In en, this message translates to:
+  /// **'Device does not have sensors'**
+  String get deviceNoSensors;
+
+  /// No description provided for @compassCalibrateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate your device in a figure 8 pattern to calibrate'**
+  String get compassCalibrateHint;
+
+  /// No description provided for @onboardingTitle1.
+  ///
+  /// In en, this message translates to:
+  /// **'Build a Reading Habit'**
+  String get onboardingTitle1;
+
+  /// No description provided for @onboardingDesc1.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your daily target (e.g. 1 Juz or 4 Pages) and track your consistency every day.'**
+  String get onboardingDesc1;
+
+  /// No description provided for @onboardingTitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Worship Companion'**
+  String get onboardingTitle2;
+
+  /// No description provided for @onboardingDesc2.
+  ///
+  /// In en, this message translates to:
+  /// **'Accurate prayer times, precise Qibla direction, and daily Dzikir in one app.'**
+  String get onboardingDesc2;
+
+  /// No description provided for @onboardingTitle3.
+  ///
+  /// In en, this message translates to:
+  /// **'Intercession in the Hereafter'**
+  String get onboardingTitle3;
+
+  /// No description provided for @onboardingDesc3.
+  ///
+  /// In en, this message translates to:
+  /// **'\"Read the Quran, for indeed it will come on the Day of Resurrection as an intercessor for its companions.\" (Muslim)'**
+  String get onboardingDesc3;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @continueReadingAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTINUE READING (AYAH)'**
+  String get continueReadingAyah;
+
+  /// No description provided for @continueReadingPage.
+  ///
+  /// In en, this message translates to:
+  /// **'CONTINUE READING (PAGE)'**
+  String get continueReadingPage;
+
+  /// No description provided for @showcaseDzikirTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dzikir & Dua'**
+  String get showcaseDzikirTitle;
+
+  /// No description provided for @showcaseSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get showcaseSettingsTitle;
+
+  /// No description provided for @showcaseQuranTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran'**
+  String get showcaseQuranTabTitle;
+
+  /// No description provided for @showcaseDailyGoalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Goal'**
+  String get showcaseDailyGoalTitle;
+
+  /// No description provided for @showcaseQuickAccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Access'**
+  String get showcaseQuickAccessTitle;
+
+  /// No description provided for @showcasePrayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Times'**
+  String get showcasePrayerTitle;
+
+  /// No description provided for @sbJumpToAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumped to Ayah {ayah} (Page {page})'**
+  String sbJumpToAyah(Object ayah, Object page);
+
+  /// No description provided for @sbPageNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Page not found in loaded data.'**
+  String get sbPageNotFound;
+
+  /// No description provided for @sbAyahNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not find Ayah {ayah}'**
+  String sbAyahNotFound(Object ayah);
+
+  /// No description provided for @sbDataNotLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Data not loaded yet.'**
+  String get sbDataNotLoaded;
+
+  /// No description provided for @sbOpeningSurah.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening {surah}...'**
+  String sbOpeningSurah(Object surah);
+
+  /// No description provided for @sbNextSurahNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Surah Not Found!'**
+  String get sbNextSurahNotFound;
+
+  /// No description provided for @sbEndOfQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'End of Quran'**
+  String get sbEndOfQuran;
+
+  /// No description provided for @sbStartOfQuran.
+  ///
+  /// In en, this message translates to:
+  /// **'Start of Quran'**
+  String get sbStartOfQuran;
+
+  /// No description provided for @sbBookmarkedPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked Page {page}'**
+  String sbBookmarkedPage(Object page);
+
+  /// No description provided for @sbReadingSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading progress saved!'**
+  String get sbReadingSaved;
+
+  /// No description provided for @sbAyahBookmarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayah Bookmarked!'**
+  String get sbAyahBookmarked;
+
+  /// No description provided for @searchSortedByRelevance.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorted by relevance, for details click on the ayah'**
+  String get searchSortedByRelevance;
+
+  /// No description provided for @qiblaFacing.
+  ///
+  /// In en, this message translates to:
+  /// **'You are facing Qibla'**
+  String get qiblaFacing;
+
+  /// No description provided for @qiblaTurnRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn Right →'**
+  String get qiblaTurnRight;
+
+  /// No description provided for @qiblaTurnLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'← Turn Left'**
+  String get qiblaTurnLeft;
+
+  /// No description provided for @qiblaLocating.
+  ///
+  /// In en, this message translates to:
+  /// **'Locating Qibla...'**
+  String get qiblaLocating;
+
+  /// No description provided for @qiblaAligned.
+  ///
+  /// In en, this message translates to:
+  /// **'ALIGNED'**
+  String get qiblaAligned;
+
+  /// No description provided for @qiblaAlignArrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Align the arrow to the top'**
+  String get qiblaAlignArrow;
+
+  /// No description provided for @qiblaNoSensor.
+  ///
+  /// In en, this message translates to:
+  /// **'No Compass Sensor'**
+  String get qiblaNoSensor;
+
+  /// No description provided for @sbBookmarkSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark saved'**
+  String get sbBookmarkSaved;
+
+  /// No description provided for @sbBookmarkRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark removed'**
+  String get sbBookmarkRemoved;
+
+  /// No description provided for @sbJumpedToAyah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumped to Ayah {ayah}'**
+  String sbJumpedToAyah(Object ayah);
+
+  /// No description provided for @sbRecordedAyahs.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded {count} Ayahs read!'**
+  String sbRecordedAyahs(Object count);
+
+  /// No description provided for @sbLastReadUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last read position updated'**
+  String get sbLastReadUpdated;
+
+  /// No description provided for @emptyHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start reading to track your progress'**
+  String get emptyHistorySubtitle;
+
+  /// No description provided for @lblThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get lblThisWeek;
+
+  /// No description provided for @sbPageReadLogged.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} recorded ({duration}s)'**
+  String sbPageReadLogged(Object duration, Object page);
+
+  /// No description provided for @lblLifetimeTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get lblLifetimeTotal;
+
+  /// No description provided for @lblReadingStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak'**
+  String get lblReadingStreak;
+
+  /// No description provided for @lblDailyAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg/Day'**
+  String get lblDailyAverage;
+
+  /// No description provided for @lblAyahs.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayahs'**
+  String get lblAyahs;
+
+  /// No description provided for @lblDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get lblDays;
+
+  /// No description provided for @insightStreakWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t break your {streak}-day streak! Read at least 1 {unit} today.'**
+  String insightStreakWarning(Object streak, Object unit);
+
+  /// No description provided for @insightAheadTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Great job! You\'re {percent}% ahead of your weekly target!'**
+  String insightAheadTarget(Object percent);
+
+  /// No description provided for @insightBehindTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re behind by {remaining} {unit}. Try reading {needed} {unit} today!'**
+  String insightBehindTarget(Object needed, Object remaining, Object unit);
+
+  /// No description provided for @insightStreakMilestone.
+  ///
+  /// In en, this message translates to:
+  /// **'{streak}-day streak! Keep it up!'**
+  String insightStreakMilestone(Object streak);
+
+  /// No description provided for @insightPerfectWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect week! You\'ve reached your target every day!'**
+  String get insightPerfectWeek;
+
+  /// No description provided for @insightDailyRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'New Record! {max} {unit} in a single day!'**
+  String insightDailyRecord(Object max, Object unit);
+
+  /// No description provided for @insightLifetimeMilestone.
+  ///
+  /// In en, this message translates to:
+  /// **'Amazing! You\'ve reached {total} {unit} lifetime total!'**
+  String insightLifetimeMilestone(Object total, Object unit);
+
+  /// No description provided for @insightTargetInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Target: {daily} {unit}/Day • {weekly} {unit}/Week'**
+  String insightTargetInfo(Object daily, Object unit, Object weekly);
+
+  /// No description provided for @guideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Guide'**
+  String get guideTitle;
+
+  /// No description provided for @guideSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn about tracking and targets'**
+  String get guideSubtitle;
+
+  /// No description provided for @guideTargetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Targets & Goals'**
+  String get guideTargetTitle;
+
+  /// No description provided for @guideTargetDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your Daily Target in Settings. **You can choose to track by Pages or Ayahs.** Your Weekly Target is simply your daily target x 7. You can accumulate reading on weekends to meet the weekly goal.'**
+  String get guideTargetDesc;
+
+  /// No description provided for @guideMushafTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Mushaf Mode (Page View)'**
+  String get guideMushafTitle;
+
+  /// No description provided for @guideMushafDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'• **Timer:** Starts automatically when you open a page.\n• **Progress:** Swiping to the next page counts the previous one as read (after reading for at least 20 seconds).\n• **Manual Mark:** Use the **Green Checklist Button** (bottom right) to save your last position without changing pages.'**
+  String get guideMushafDesc;
+
+  /// No description provided for @guideListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3. List Mode (Ayah View)'**
+  String get guideListTitle;
+
+  /// No description provided for @guideListDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'• **No Timer:** We focus on Ayah count here, not duration.\n• **Progress:** Tap an ayah and select **Mark as Last Read**. We calculate how many new ayahs you\'ve read since your last session.\n• *Example:* If you last read Ayah 5, and today mark Ayah 20, we record **15 new ayahs**.'**
+  String get guideListDesc;
+
+  /// No description provided for @guideInsightTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Stats & Streak'**
+  String get guideInsightTitle;
+
+  /// No description provided for @guideInsightDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'• **Unique Pages:** In Mushaf Mode, we track *Unique Pages* for Khatam progress. Reading the same page twice won\'t double your \'Total Pages\' count, but the duration is added!\n• **Streak:** Read at least 1 ayah/page daily to keep your streak alive.'**
+  String get guideInsightDesc;
 }
 
 class _AppLocalizationsDelegate

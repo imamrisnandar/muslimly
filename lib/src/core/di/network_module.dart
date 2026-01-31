@@ -3,7 +3,6 @@ import 'package:injectable/injectable.dart';
 
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import '../../features/prayer/data/datasources/prayer_remote_data_source.dart';
 
 @module
 abstract class NetworkModule {
@@ -48,8 +47,4 @@ abstract class NetworkModule {
 
     return dio;
   }
-
-  @lazySingleton
-  PrayerRemoteDataSource getPrayerRemoteDataSource(Dio dio) =>
-      PrayerRemoteDataSource(dio);
 }

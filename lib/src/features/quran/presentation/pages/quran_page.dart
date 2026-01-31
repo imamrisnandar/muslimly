@@ -15,6 +15,7 @@ import '../bloc/audio_event.dart';
 import '../widgets/reciter_selector_bottom_sheet.dart';
 import '../widgets/quran_navigation_bottom_sheet.dart';
 
+import '../../../../core/presentation/widgets/premium_showcase.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -106,8 +107,9 @@ class _QuranPageState extends State<QuranPage> {
                                       ),
                                     ),
                                     // Global Navigation Button
-                                    Showcase(
-                                      key: _navigationKey,
+                                    PremiumShowcase(
+                                      globalKey: _navigationKey,
+                                      title: "Navigation", // Todo: Localize
                                       description: AppLocalizations.of(
                                         context,
                                       )!.showcaseQuranNavigation,
@@ -131,8 +133,8 @@ class _QuranPageState extends State<QuranPage> {
                                         },
                                       ),
                                     ),
-                                    Showcase(
-                                      key: _bookmarksKey,
+                                    PremiumShowcase(
+                                      globalKey: _bookmarksKey,
                                       title: 'Bookmarks',
                                       description: AppLocalizations.of(
                                         context,
@@ -150,8 +152,8 @@ class _QuranPageState extends State<QuranPage> {
                                 ),
                                 SizedBox(height: 16.h),
                                 // Search Bar
-                                Showcase(
-                                  key: _searchKey,
+                                PremiumShowcase(
+                                  globalKey: _searchKey,
                                   title: 'Search',
                                   description: AppLocalizations.of(
                                     context,
@@ -277,22 +279,6 @@ class _QuranPageState extends State<QuranPage> {
                                   }).toList();
 
                                   // Remove the early exit. We handle empty surahs inside ListView to show the button.
-                                  if (filteredSurahs.isEmpty &&
-                                      _searchQuery.isEmpty) {
-                                    // This case handles empty data from Bloc, usually we show loading or error before this.
-                                    // But if actual surahs are 0, show text.
-                                    // Wait, if _searchQuery is NOT empty, we want to show the button.
-                                    // So if (filteredSurahs.isEmpty && _searchQuery.isEmpty) is actually impossible if data loaded.
-                                    // existing logic: if (filteredSurahs.isEmpty) return "Not found".
-                                    // We change it to: only return "Not found" if _searchQuery is empty (which means filters didn't run, so dataset is empty?)
-                                    // No, filteredSurahs comes from local filtering.
-                                    // if (filteredSurahs.isEmpty && _searchQuery.isNotEmpty) -> show ONLY the search button.
-                                  }
-
-                                  // If empty matches but has query, itemCount is 1 (the button).
-                                  // If no query and loaded, itemCount = surahs.length (114).
-                                  // If no matches and no query? Impossible if loaded.
-
                                   if (filteredSurahs.isEmpty &&
                                       _searchQuery.isEmpty) {
                                     return Center(
@@ -523,8 +509,8 @@ class _QuranPageState extends State<QuranPage> {
                                               ),
                                               SizedBox(width: 12.w),
                                               isFirst
-                                                  ? Showcase(
-                                                      key: _playButtonKey,
+                                                  ? PremiumShowcase(
+                                                      globalKey: _playButtonKey,
                                                       title: 'Play Audio',
                                                       description:
                                                           AppLocalizations.of(
@@ -585,8 +571,8 @@ class _QuranPageState extends State<QuranPage> {
                                         ),
                                       );
                                       return isFirst
-                                          ? Showcase(
-                                              key: _surahItemKey,
+                                          ? PremiumShowcase(
+                                              globalKey: _surahItemKey,
                                               title: 'Read Surah',
                                               description: AppLocalizations.of(
                                                 context,

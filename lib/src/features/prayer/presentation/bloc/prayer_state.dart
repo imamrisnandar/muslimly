@@ -18,7 +18,12 @@ class PrayerState extends Equatable {
   const PrayerState({
     this.status = PrayerStatus.initial,
     this.prayerTime,
-    this.currentCity = const City(id: '1301', name: 'JAKARTA'),
+    this.currentCity = const City(
+      id: 'jakarta',
+      name: 'Jakarta',
+      latitude: -6.2088,
+      longitude: 106.8456,
+    ),
     this.errorMessage,
     this.isSearching = false,
     this.searchResults = const [],

@@ -25,6 +25,7 @@ import 'package:muslimly/src/features/quran/presentation/bloc/reading/reading_ev
 import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_bloc.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_state.dart';
+import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_operation_type.dart';
 import 'package:muslimly/src/features/quran/domain/entities/quran_bookmark.dart';
 import 'package:muslimly/src/features/quran/domain/entities/last_read.dart';
 // import 'package:wakelock_plus/wakelock_plus.dart'; // Temporarily disabled if package missing
@@ -38,6 +39,7 @@ import 'package:muslimly/src/features/quran/presentation/bloc/audio_bloc.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_state.dart';
 import 'package:showcaseview/showcaseview.dart';
+import '../../../../core/presentation/widgets/premium_showcase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:muslimly/src/features/quran/presentation/widgets/ayah_selector_bottom_sheet.dart';
@@ -170,12 +172,24 @@ class _MushafPageState extends State<MushafPage> {
   void _logReading(BuildContext context, int pageNum, {bool manual = false}) {
     // If manual, we bypass the 20s check
     if (manual || _readStopwatch.elapsed.inSeconds > 20) {
+      final duration = _readStopwatch.elapsed.inSeconds;
+
       context.read<ReadingBloc>().add(
         LogPageRead(
           pageNumber: pageNum,
-          durationSeconds: _readStopwatch.elapsed.inSeconds,
+          durationSeconds: duration,
           surahNumber: _surah.number,
         ),
+      );
+
+      // Subtle notification - small toast at bottom
+      showCustomSnackBar(
+        context,
+        message: AppLocalizations.of(
+          context,
+        )!.sbPageReadLogged(pageNum.toString(), duration.toString()),
+        type: SnackBarType.info,
+        duration: const Duration(seconds: 3),
       );
     }
     _readStopwatch.reset();
@@ -224,8 +238,10 @@ class _MushafPageState extends State<MushafPage> {
                     // Feedback
                     showCustomSnackBar(
                       context,
-                      message:
-                          'Jumped to Ayah $ayahNumber (Page ${targetAyah.page})',
+                      message: AppLocalizations.of(context)!.sbJumpToAyah(
+                        ayahNumber.toString(),
+                        targetAyah.page.toString(),
+                      ),
                       type: SnackBarType.success,
                     );
                   }
@@ -233,21 +249,23 @@ class _MushafPageState extends State<MushafPage> {
               } else {
                 showCustomSnackBar(
                   context,
-                  message: 'Page not found in loaded data.',
+                  message: AppLocalizations.of(context)!.sbPageNotFound,
                   type: SnackBarType.error,
                 );
               }
             } catch (e) {
               showCustomSnackBar(
                 context,
-                message: 'Could not find Ayah $ayahNumber',
+                message: AppLocalizations.of(
+                  context,
+                )!.sbAyahNotFound(ayahNumber.toString()),
                 type: SnackBarType.error,
               );
             }
           } else {
             showCustomSnackBar(
               context,
-              message: 'Data not loaded yet.',
+              message: AppLocalizations.of(context)!.sbDataNotLoaded,
               type: SnackBarType.error,
             );
           }
@@ -283,7 +301,11 @@ class _MushafPageState extends State<MushafPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Opening ${prevSurah.englishName}...'),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.sbOpeningSurah(prevSurah.englishName),
+            ),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -306,9 +328,9 @@ class _MushafPageState extends State<MushafPage> {
       }
     } else {
       // Start of Quran
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Start of Quran')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.sbStartOfQuran)),
+      );
     }
   }
 
@@ -342,7 +364,11 @@ class _MushafPageState extends State<MushafPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Opening ${nextSurah.englishName}...'),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.sbOpeningSurah(nextSurah.englishName),
+            ),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -359,13 +385,15 @@ class _MushafPageState extends State<MushafPage> {
       } else {
         _isNavigating = false; // Reset if failed
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Next Surah Data Not Found!')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.sbNextSurahNotFound),
+          ),
         );
       }
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('End of Quran')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.sbEndOfQuran)),
+      );
     }
   }
 
@@ -483,8 +511,11 @@ class _MushafPageState extends State<MushafPage> {
                               }
                               return false;
                             },
-                            child: Showcase(
-                              key: _swipeKey,
+                            child: PremiumShowcase(
+                              globalKey: _swipeKey,
+                              title: AppLocalizations.of(
+                                context,
+                              )!.quranNavigationTitle,
                               description: AppLocalizations.of(
                                 context,
                               )!.showcaseNavigation, // Localized
@@ -566,24 +597,53 @@ class _MushafPageState extends State<MushafPage> {
                       right: 16.w,
                       child: BlocConsumer<BookmarkBloc, BookmarkState>(
                         listener: (context, state) {
-                          // SnackBar is handled manually on button press for custom UI
-                          // if (state is BookmarkOperationSuccess) { ... }
+                          if (state is BookmarkOperationSuccess) {
+                            final l10n = AppLocalizations.of(context)!;
+                            final message =
+                                state.type == BookmarkOperationType.saved
+                                ? l10n.sbBookmarkSaved
+                                : l10n.sbBookmarkRemoved;
+
+                            showCustomSnackBar(
+                              context,
+                              message: message,
+                              type: state.type == BookmarkOperationType.removed
+                                  ? SnackBarType.info
+                                  : SnackBarType.success,
+                            );
+                          }
                         },
                         builder: (context, state) {
+                          bool isBookmarked = false;
+                          if (state is BookmarkLoaded) {
+                            isBookmarked = state.bookmarks.any(
+                              (b) =>
+                                  b.pageNumber == _lastPageNumber &&
+                                  b.pageNumber == _lastPageNumber &&
+                                  b.mode == 'mushaf' &&
+                                  b.ayahNumber == null,
+                            );
+                          }
+
                           return CircleAvatar(
                             backgroundColor: Colors.black.withOpacity(
                               0.0,
                             ), // Transparent
-                            child: Showcase(
-                              key: _bookmarkKey,
+                            child: PremiumShowcase(
+                              globalKey: _bookmarkKey,
+                              title: AppLocalizations.of(context)!.menuBookmark,
                               description: AppLocalizations.of(
                                 context,
                               )!.showcaseBookmark,
                               targetShapeBorder: const CircleBorder(),
                               child: IconButton(
-                                icon: const Icon(
-                                  Icons.bookmark_border,
-                                  color: Colors.black,
+                                icon: Icon(
+                                  isBookmarked
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_border,
+                                  color: isBookmarked
+                                      ? const Color(0xFF00E676)
+                                      : Colors.black,
                                 ),
                                 onPressed: () {
                                   // Get current page info
@@ -598,14 +658,7 @@ class _MushafPageState extends State<MushafPage> {
                                     );
 
                                     context.read<BookmarkBloc>().add(
-                                      AddBookmark(bookmark),
-                                    );
-
-                                    showCustomSnackBar(
-                                      context,
-                                      message:
-                                          'Bookmarked Page $_lastPageNumber',
-                                      type: SnackBarType.success,
+                                      ToggleBookmark(bookmark),
                                     );
                                   }
                                 },
@@ -630,8 +683,9 @@ class _MushafPageState extends State<MushafPage> {
                             elevation: 0,
                             heroTag: 'finish_reading_btn',
                             backgroundColor: const Color(0xFF00E676),
-                            child: Showcase(
-                              key: _completionKey,
+                            child: PremiumShowcase(
+                              globalKey: _completionKey,
+                              title: AppLocalizations.of(context)!.markAsRead,
                               description: AppLocalizations.of(
                                 context,
                               )!.showcaseCompletion,
@@ -651,7 +705,9 @@ class _MushafPageState extends State<MushafPage> {
                                 );
                                 showCustomSnackBar(
                                   context,
-                                  message: 'Reading progress saved!',
+                                  message: AppLocalizations.of(
+                                    context,
+                                  )!.sbReadingSaved,
                                   type: SnackBarType.success,
                                 );
                               }
@@ -855,8 +911,9 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (widget.onJumpTap != null && widget.jumpKey != null)
-                      Showcase(
-                        key: widget.jumpKey!,
+                      PremiumShowcase(
+                        globalKey: widget.jumpKey!,
+                        title: AppLocalizations.of(context)!.jumpToAyah,
                         description: AppLocalizations.of(
                           context,
                         )!.showcaseJumpToAyahDesc,
@@ -1384,43 +1441,56 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                     },
                   ),
                   _buildDivider(),
-                  _buildBubbleItem(
-                    icon: Icons.bookmark_border,
-                    label: l10n.menuBookmark,
-                    onTap: () {
-                      if (_selectedSurah != null && _selectedAyah != null) {
-                        // Find page of current ayah
-                        // We need the page number to store.
-                        // But _selectedAyah doesn't give us page easily unless we look it up.
-                        // Efficient way: use `widget.ayahs` if it contains the ayah?
-                        // Problem: `widget.ayahs` is not available in THIS inner widget scope effectively (Wait, it is available if passed, but _buildFloatingBubble is in MushafState, MushafState creates MushafSinglePage)
-                        // Wait, `_buildFloatingBubble` is in `MushafSinglePage`. So we access `widget.ayahs`.
-                        final ayah = widget.ayahs.firstWhere(
-                          (element) => element.numberInSurah == _selectedAyah,
-                          orElse: () => widget.ayahs.first,
+                  BlocBuilder<BookmarkBloc, BookmarkState>(
+                    builder: (context, state) {
+                      bool isBookmarked = false;
+                      if (state is BookmarkLoaded &&
+                          _selectedSurah != null &&
+                          _selectedAyah != null) {
+                        isBookmarked = state.bookmarks.any(
+                          (b) =>
+                              b.surahNumber == _selectedSurah &&
+                              b.ayahNumber == _selectedAyah &&
+                              b.surahNumber == _selectedSurah &&
+                              b.ayahNumber == _selectedAyah &&
+                              b.mode == 'mushaf',
                         );
-
-                        final bookmark = QuranBookmark(
-                          surahNumber: _selectedSurah!,
-                          surahName: widget.surahName,
-                          pageNumber: ayah.page,
-                          ayahNumber: _selectedAyah,
-                          createdAt: DateTime.now().millisecondsSinceEpoch,
-                          mode: 'mushaf',
-                        );
-
-                        context.read<BookmarkBloc>().add(AddBookmark(bookmark));
-
-                        showCustomSnackBar(
-                          context,
-                          message: 'Ayah Bookmarked!',
-                          type: SnackBarType.success,
-                        );
-
-                        setState(() {
-                          _tapPosition = null;
-                        });
                       }
+                      return _buildBubbleItem(
+                        icon: isBookmarked
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                        color: isBookmarked
+                            ? const Color(0xFF00E676)
+                            : Colors.white,
+                        label: l10n.menuBookmark,
+                        onTap: () {
+                          if (_selectedSurah != null && _selectedAyah != null) {
+                            final ayah = widget.ayahs.firstWhere(
+                              (element) =>
+                                  element.numberInSurah == _selectedAyah,
+                              orElse: () => widget.ayahs.first,
+                            );
+
+                            final bookmark = QuranBookmark(
+                              surahNumber: _selectedSurah!,
+                              surahName: widget.surahName,
+                              pageNumber: ayah.page,
+                              ayahNumber: _selectedAyah,
+                              createdAt: DateTime.now().millisecondsSinceEpoch,
+                              mode: 'mushaf',
+                            );
+
+                            context.read<BookmarkBloc>().add(
+                              ToggleBookmark(bookmark),
+                            );
+
+                            setState(() {
+                              _tapPosition = null;
+                            });
+                          }
+                        },
+                      );
                     },
                   ),
                   // Close Button (Small at bottom or rely on outside tap)

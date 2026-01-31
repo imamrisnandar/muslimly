@@ -19,6 +19,7 @@ import '../bloc/audio_bloc.dart';
 import '../bloc/audio_state.dart';
 import '../widgets/draggable_audio_player.dart';
 import 'package:showcaseview/showcaseview.dart';
+import '../../../../core/presentation/widgets/premium_showcase.dart';
 
 import '../bloc/reading/reading_bloc.dart';
 import '../bloc/reading/reading_event.dart';
@@ -132,7 +133,9 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
               _scrollToAyah(ayahNumber);
               showCustomSnackBar(
                 context,
-                message: 'Jumped to Ayah $ayahNumber',
+                message: AppLocalizations.of(
+                  context,
+                )!.sbJumpedToAyah(ayahNumber.toString()),
                 type: SnackBarType.success,
               );
             }
@@ -285,6 +288,19 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     return juzMap[surahNumber] ?? 1;
   }
 
+  void _handleBookmarkTap(BuildContext context, Ayah ayah) {
+    final bookmark = QuranBookmark(
+      surahNumber: widget.surah.number,
+      surahName: widget.surah.englishName,
+      ayahNumber: ayah.numberInSurah,
+      pageNumber: ayah.page,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      mode: 'list',
+    );
+
+    context.read<BookmarkBloc>().add(ToggleBookmark(bookmark));
+  }
+
   void _shareAyah(
     String arabicText,
     String? translation,
@@ -299,25 +315,6 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     textToShare += '\n\nShared from Muslimly App';
 
     Share.share(textToShare);
-  }
-
-  void _handleBookmarkTap(BuildContext context, Ayah ayah) {
-    // Only add Bookmark
-    final newBookmark = QuranBookmark(
-      surahNumber: widget.surah.number,
-      surahName: widget.surah.englishName,
-      pageNumber: ayah.page,
-      ayahNumber: ayah.numberInSurah,
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-      mode: 'list',
-    );
-    context.read<BookmarkBloc>().add(AddBookmark(newBookmark));
-
-    showCustomSnackBar(
-      context,
-      message: 'Ayah Saved',
-      type: SnackBarType.success,
-    );
   }
 
   void _handleMarkAsRead(BuildContext context, Ayah ayah) {
@@ -383,14 +380,16 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
 
       showCustomSnackBar(
         context,
-        message: "Recorded $delta Ayahs read!",
+        message: AppLocalizations.of(
+          context,
+        )!.sbRecordedAyahs(delta.toString()),
         type: SnackBarType.success,
       );
     } else {
       // Just updating position, no progress?
       showCustomSnackBar(
         context,
-        message: "Last Read Position Updated",
+        message: AppLocalizations.of(context)!.sbLastReadUpdated,
         type: SnackBarType.success,
       );
     }
@@ -402,6 +401,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     required VoidCallback onTap,
     Color? color,
     GlobalKey? showcaseKey,
+    String? showcaseTitle,
     String? showcaseDesc,
     bool enableShowcase = false,
   }) {
@@ -416,9 +416,10 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     );
 
     if (enableShowcase && showcaseKey != null) {
-      return Showcase(
-        key: showcaseKey,
-        description: showcaseDesc,
+      return PremiumShowcase(
+        globalKey: showcaseKey,
+        title: showcaseTitle ?? '',
+        description: showcaseDesc ?? '',
         child: button,
       );
     }
@@ -514,8 +515,9 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                     ),
                     centerTitle: true,
                     actions: [
-                      Showcase(
-                        key: _jumpToAyahKey,
+                      PremiumShowcase(
+                        globalKey: _jumpToAyahKey,
+                        title: AppLocalizations.of(context)!.jumpToAyah,
                         description: AppLocalizations.of(
                           context,
                         )!.showcaseJumpToAyahDesc,
@@ -643,491 +645,548 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                       ),
 
                       Expanded(
-                        child: BlocBuilder<QuranBloc, QuranState>(
-                          builder: (context, state) {
-                            if (state is QuranLoading) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            } else if (state is QuranError) {
-                              return Center(
-                                child: Text(
-                                  state.message,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              );
-                            } else if (state is QuranAyahsLoaded) {
-                              return ScrollablePositionedList.separated(
-                                itemScrollController: _itemScrollController,
-                                itemPositionsListener: _itemPositionsListener,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 16.w,
-                                  vertical: 16.h,
-                                ),
-                                itemCount: state.ayahs.length,
-                                separatorBuilder: (context, index) =>
-                                    SizedBox(height: 12.h),
-                                itemBuilder: (context, index) {
-                                  final ayah = state.ayahs[index];
-                                  String ayahText = ayah.text;
+                        child: BlocBuilder<BookmarkBloc, BookmarkState>(
+                          builder: (context, bookmarkState) {
+                            return BlocBuilder<QuranBloc, QuranState>(
+                              builder: (context, state) {
+                                if (state is QuranLoading) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else if (state is QuranError) {
+                                  return Center(
+                                    child: Text(
+                                      state.message,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  );
+                                } else if (state is QuranAyahsLoaded) {
+                                  return ScrollablePositionedList.separated(
+                                    itemScrollController: _itemScrollController,
+                                    itemPositionsListener:
+                                        _itemPositionsListener,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16.w,
+                                      vertical: 16.h,
+                                    ),
+                                    itemCount: state.ayahs.length,
+                                    separatorBuilder: (context, index) =>
+                                        SizedBox(height: 12.h),
+                                    itemBuilder: (context, index) {
+                                      final ayah = state.ayahs[index];
+                                      String ayahText = ayah.text;
 
-                                  // Handled Bismillah Logic (Simplified for brevity as it was already correct)
-                                  const bismillahVariations = [
-                                    'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                                    'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
-                                    'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                                    'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                                  ];
+                                      // Handled Bismillah Logic (Simplified for brevity as it was already correct)
+                                      const bismillahVariations = [
+                                        'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                                        'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ',
+                                        'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                                        'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                                      ];
 
-                                  if (index == 0 && widget.surah.number != 1) {
-                                    ayahText = ayahText
-                                        .replaceAll('\uFEFF', '')
-                                        .trim();
-                                    for (final bismillah
-                                        in bismillahVariations) {
-                                      if (ayahText.startsWith(bismillah)) {
+                                      if (index == 0 &&
+                                          widget.surah.number != 1) {
                                         ayahText = ayahText
-                                            .substring(bismillah.length)
+                                            .replaceAll('\uFEFF', '')
                                             .trim();
-                                        break;
+                                        for (final bismillah
+                                            in bismillahVariations) {
+                                          if (ayahText.startsWith(bismillah)) {
+                                            ayahText = ayahText
+                                                .substring(bismillah.length)
+                                                .trim();
+                                            break;
+                                          }
+                                        }
+                                        // Regex fallback omitted for brevity, assuming standard text usually works or preserved from previous
+                                        if (ayahText.isEmpty) {
+                                          // If empty after strip, verify if we should show nothing?
+                                          // User wants clean view.
+                                          // Original logic: if empty, return SizedBox.shrink().
+                                          // But we need to ensure we don't drop Ayah 1 content if it wasn't just Bismillah.
+                                          // Re-using original Regex logic inline or simplified:
+                                          if (ayahText.isEmpty)
+                                            return const SizedBox.shrink();
+                                        }
                                       }
-                                    }
-                                    // Regex fallback omitted for brevity, assuming standard text usually works or preserved from previous
-                                    if (ayahText.isEmpty) {
-                                      // If empty after strip, verify if we should show nothing?
-                                      // User wants clean view.
-                                      // Original logic: if empty, return SizedBox.shrink().
-                                      // But we need to ensure we don't drop Ayah 1 content if it wasn't just Bismillah.
-                                      // Re-using original Regex logic inline or simplified:
-                                      if (ayahText.isEmpty)
-                                        return const SizedBox.shrink();
-                                    }
-                                  }
 
-                                  // Ensure Key
-                                  // _ayahKeys.putIfAbsent(
-                                  //   ayah.numberInSurah,
-                                  //   () => GlobalKey(),
-                                  // );
+                                      // Ensure Key
+                                      // _ayahKeys.putIfAbsent(
+                                      //   ayah.numberInSurah,
+                                      //   () => GlobalKey(),
+                                      // );
 
-                                  final bool isPlaying =
-                                      _currentPlayingAyah == ayah.numberInSurah;
-                                  final bool isHighlighted =
-                                      _highlightedAyah == ayah.numberInSurah;
+                                      final bool isPlaying =
+                                          _currentPlayingAyah ==
+                                          ayah.numberInSurah;
+                                      final bool isHighlighted =
+                                          _highlightedAyah ==
+                                          ayah.numberInSurah;
 
-                                  final bool showBismillah =
-                                      index == 0 &&
-                                      widget.surah.number != 1 &&
-                                      widget.surah.number != 9;
+                                      final bool showBismillah =
+                                          index == 0 &&
+                                          widget.surah.number != 1 &&
+                                          widget.surah.number != 9;
 
-                                  return Column(
-                                    children: [
-                                      if (showBismillah)
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            bottom: 24.h,
-                                            top: 8.h,
-                                          ),
-                                          child: ShaderMask(
-                                            shaderCallback: (bounds) =>
-                                                const LinearGradient(
-                                                  colors: [
-                                                    Color(
-                                                      0xFF1B5E20,
-                                                    ), // Dark Green
-                                                    Color(
-                                                      0xFF43A047,
-                                                    ), // Rich Green
-                                                  ],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                ).createShader(bounds),
-                                            blendMode: BlendMode.srcIn,
-                                            child: Container(
-                                              margin: EdgeInsets.symmetric(
-                                                horizontal: 24.w,
+                                      return Column(
+                                        children: [
+                                          if (showBismillah)
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                bottom: 24.h,
+                                                top: 8.h,
                                               ),
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 8.h,
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  // Top Decoration
-                                                  Row(
+                                              child: ShaderMask(
+                                                shaderCallback: (bounds) =>
+                                                    const LinearGradient(
+                                                      colors: [
+                                                        Color(
+                                                          0xFF1B5E20,
+                                                        ), // Dark Green
+                                                        Color(
+                                                          0xFF43A047,
+                                                        ), // Rich Green
+                                                      ],
+                                                      begin: Alignment.topLeft,
+                                                      end:
+                                                          Alignment.bottomRight,
+                                                    ).createShader(bounds),
+                                                blendMode: BlendMode.srcIn,
+                                                child: Container(
+                                                  margin: EdgeInsets.symmetric(
+                                                    horizontal: 24.w,
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 8.h,
+                                                  ),
+                                                  child: Column(
                                                     children: [
-                                                      const Expanded(
-                                                        child: Divider(
-                                                          color: Colors.white,
-                                                          thickness: 1,
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal: 8.w,
+                                                      // Top Decoration
+                                                      Row(
+                                                        children: [
+                                                          const Expanded(
+                                                            child: Divider(
+                                                              color:
+                                                                  Colors.white,
+                                                              thickness: 1,
                                                             ),
-                                                        child: Icon(
-                                                          Icons
-                                                              .star_outline_rounded,
-                                                          size: 16.sp,
-                                                          color: Colors.white,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      8.w,
+                                                                ),
+                                                            child: Icon(
+                                                              Icons
+                                                                  .star_outline_rounded,
+                                                              size: 16.sp,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                          const Expanded(
+                                                            child: Divider(
+                                                              color:
+                                                                  Colors.white,
+                                                              thickness: 1,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 12.h),
+
+                                                      // Bismillah Calligraphy
+                                                      FittedBox(
+                                                        fit: BoxFit.scaleDown,
+                                                        child: Text(
+                                                          '﷽', // U+FDFD Calligraphy
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style:
+                                                              GoogleFonts.amiri(
+                                                                fontSize: 42.sp,
+                                                                color: Colors
+                                                                    .white,
+                                                                height: 1.2,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
                                                         ),
                                                       ),
-                                                      const Expanded(
-                                                        child: Divider(
-                                                          color: Colors.white,
-                                                          thickness: 1,
-                                                        ),
+
+                                                      SizedBox(height: 12.h),
+
+                                                      // Bottom Decoration (Mirrored)
+                                                      Row(
+                                                        children: [
+                                                          const Expanded(
+                                                            child: Divider(
+                                                              color:
+                                                                  Colors.white,
+                                                              thickness: 1,
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.symmetric(
+                                                                  horizontal:
+                                                                      8.w,
+                                                                ),
+                                                            child: Icon(
+                                                              Icons
+                                                                  .star_outline_rounded,
+                                                              size: 16.sp,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                          ),
+                                                          const Expanded(
+                                                            child: Divider(
+                                                              color:
+                                                                  Colors.white,
+                                                              thickness: 1,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),
-                                                  SizedBox(height: 12.h),
-
-                                                  // Bismillah Calligraphy
-                                                  FittedBox(
-                                                    fit: BoxFit.scaleDown,
-                                                    child: Text(
-                                                      '﷽', // U+FDFD Calligraphy
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: GoogleFonts.amiri(
-                                                        fontSize: 42.sp,
-                                                        color: Colors.white,
-                                                        height: 1.2,
+                                                ),
+                                              ),
+                                            ),
+                                          Container(
+                                            // key: _ayahKeys[ayah.numberInSurah],
+                                            decoration: BoxDecoration(
+                                              color: isPlaying || isHighlighted
+                                                  ? const Color(
+                                                      0xFFE8F5E9,
+                                                    ) // Light Green Highlight
+                                                  : const Color(
+                                                      0xFFFFFCF2,
+                                                    ), // Soft Cream
+                                              borderRadius:
+                                                  BorderRadius.circular(16.r),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.05),
+                                                  blurRadius: 10,
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
+                                              border: isPlaying || isHighlighted
+                                                  ? Border.all(
+                                                      color: const Color(
+                                                        0xFF00E676,
+                                                      ),
+                                                      width: 1.5,
+                                                    )
+                                                  : Border.all(
+                                                      color: Colors.transparent,
+                                                    ),
+                                            ),
+                                            padding: EdgeInsets.all(16.w),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                // Arabic Text
+                                                if (ayah.textTajweed != null &&
+                                                    ayah
+                                                        .textTajweed!
+                                                        .isNotEmpty)
+                                                  RichText(
+                                                    textAlign: TextAlign.right,
+                                                    text: TajweedParser.parse(
+                                                      ayah.textTajweed!,
+                                                      style: GoogleFonts.amiriQuran(
+                                                        color: Colors
+                                                            .black, // Dark Text
+                                                        fontSize: 26.sp,
+                                                        height: 2.2,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
                                                     ),
-                                                  ),
-
-                                                  SizedBox(height: 12.h),
-
-                                                  // Bottom Decoration (Mirrored)
-                                                  Row(
-                                                    children: [
-                                                      const Expanded(
-                                                        child: Divider(
-                                                          color: Colors.white,
-                                                          thickness: 1,
+                                                  )
+                                                else
+                                                  Text(
+                                                    ayahText,
+                                                    textAlign: TextAlign.right,
+                                                    style:
+                                                        GoogleFonts.amiriQuran(
+                                                          color: Colors.black,
+                                                          fontSize: 26.sp,
+                                                          height: 2.2,
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                         ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.symmetric(
-                                                              horizontal: 8.w,
-                                                            ),
-                                                        child: Icon(
-                                                          Icons
-                                                              .star_outline_rounded,
-                                                          size: 16.sp,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                      const Expanded(
-                                                        child: Divider(
-                                                          color: Colors.white,
-                                                          thickness: 1,
-                                                        ),
-                                                      ),
-                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      Container(
-                                        // key: _ayahKeys[ayah.numberInSurah],
-                                        decoration: BoxDecoration(
-                                          color: isPlaying || isHighlighted
-                                              ? const Color(
-                                                  0xFFE8F5E9,
-                                                ) // Light Green Highlight
-                                              : const Color(
-                                                  0xFFFFFCF2,
-                                                ), // Soft Cream
-                                          borderRadius: BorderRadius.circular(
-                                            16.r,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black.withOpacity(
-                                                0.05,
-                                              ),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                          border: isPlaying || isHighlighted
-                                              ? Border.all(
-                                                  color: const Color(
-                                                    0xFF00E676,
-                                                  ),
-                                                  width: 1.5,
-                                                )
-                                              : Border.all(
-                                                  color: Colors.transparent,
-                                                ),
-                                        ),
-                                        padding: EdgeInsets.all(16.w),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            // Arabic Text
-                                            if (ayah.textTajweed != null &&
-                                                ayah.textTajweed!.isNotEmpty)
-                                              RichText(
-                                                textAlign: TextAlign.right,
-                                                text: TajweedParser.parse(
-                                                  ayah.textTajweed!,
-                                                  style: GoogleFonts.amiriQuran(
-                                                    color: Colors
-                                                        .black, // Dark Text
-                                                    fontSize: 26.sp,
-                                                    height: 2.2,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                              )
-                                            else
-                                              Text(
-                                                ayahText,
-                                                textAlign: TextAlign.right,
-                                                style: GoogleFonts.amiriQuran(
-                                                  color: Colors.black,
-                                                  fontSize: 26.sp,
-                                                  height: 2.2,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
 
-                                            SizedBox(height: 16.h),
+                                                SizedBox(height: 16.h),
 
-                                            // Translation
-                                            if (state.translationMap
-                                                .containsKey(
-                                                  ayah.numberInSurah,
-                                                ))
-                                              Text(
-                                                state.translationMap[ayah
-                                                    .numberInSurah]!,
-                                                textAlign: TextAlign.left,
-                                                style: GoogleFonts.outfit(
-                                                  color: const Color(
-                                                    0xFF424242,
-                                                  ), // Dark Grey
-                                                  fontSize: 15.sp,
-                                                  height: 1.5,
-                                                ),
-                                              ),
-
-                                            SizedBox(height: 16.h),
-                                            Divider(
-                                              color: Colors.grey.withOpacity(
-                                                0.1,
-                                              ),
-                                              height: 1,
-                                            ),
-                                            SizedBox(height: 12.h),
-
-                                            // Compact Action Bar
-                                            Row(
-                                              children: [
-                                                // Number Badge
-                                                Container(
-                                                  width: 28.w,
-                                                  height: 28.w,
-                                                  decoration: BoxDecoration(
-                                                    color: const Color(
-                                                      0xFF00E676,
-                                                    ).withOpacity(0.1),
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    '${ayah.numberInSurah}',
-                                                    style: TextStyle(
+                                                // Translation
+                                                if (state.translationMap
+                                                    .containsKey(
+                                                      ayah.numberInSurah,
+                                                    ))
+                                                  Text(
+                                                    state.translationMap[ayah
+                                                        .numberInSurah]!,
+                                                    textAlign: TextAlign.left,
+                                                    style: GoogleFonts.outfit(
                                                       color: const Color(
-                                                        0xFF1B5E20,
-                                                      ),
-                                                      fontSize: 12.sp,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                        0xFF424242,
+                                                      ), // Dark Grey
+                                                      fontSize: 15.sp,
+                                                      height: 1.5,
                                                     ),
                                                   ),
-                                                ),
-                                                SizedBox(width: 8.w),
-                                                _buildActionButton(
-                                                  key:
-                                                      (index ==
-                                                          ((widget.initialAyah ??
-                                                                  1) -
-                                                              1))
-                                                      ? _markReadKey
-                                                      : null,
-                                                  icon: Icons
-                                                      .check_circle_outline,
-                                                  color: const Color(
-                                                    0xFF00E676,
-                                                  ),
-                                                  onTap: () {
-                                                    _handleMarkAsRead(
-                                                      context,
-                                                      ayah,
-                                                    );
-                                                  },
-                                                  showcaseKey: _markReadKey,
-                                                  showcaseDesc:
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.showcaseMarkRead,
-                                                  enableShowcase:
-                                                      index ==
-                                                      ((widget.initialAyah ??
-                                                              1) -
-                                                          1),
-                                                ),
-                                                const Spacer(),
 
-                                                // Actions
-                                                _buildActionButton(
-                                                  key:
-                                                      (index ==
-                                                          ((widget.initialAyah ??
-                                                                  1) -
-                                                              1))
-                                                      ? _shareKey
-                                                      : null,
-                                                  icon: Icons.share_outlined,
-                                                  onTap: () {
-                                                    final translation =
-                                                        state
-                                                            .translationMap[ayah
-                                                            .numberInSurah];
-                                                    _shareAyah(
-                                                      ayahText,
-                                                      translation,
-                                                      surahName,
-                                                      ayah.numberInSurah,
-                                                    );
-                                                  },
-                                                  showcaseKey: _shareKey,
-                                                  showcaseDesc:
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.showcaseAyahShare,
-                                                  enableShowcase:
-                                                      index ==
-                                                      ((widget.initialAyah ??
-                                                              1) -
-                                                          1),
+                                                SizedBox(height: 16.h),
+                                                Divider(
+                                                  color: Colors.grey
+                                                      .withOpacity(0.1),
+                                                  height: 1,
                                                 ),
-                                                SizedBox(width: 8.w),
-                                                _buildActionButton(
-                                                  icon: Icons
-                                                      .library_books, // Tafsir Icon
-                                                  onTap: () {
-                                                    showModalBottomSheet(
-                                                      context: context,
-                                                      isScrollControlled: true,
-                                                      backgroundColor:
-                                                          Colors.transparent,
-                                                      builder: (context) =>
-                                                          TafsirBottomSheet(
-                                                            surahId: widget
-                                                                .surah
-                                                                .number,
-                                                            surahName:
-                                                                surahName,
-                                                            ayahNumber: ayah
-                                                                .numberInSurah,
-                                                            initialTabIndex:
-                                                                1, // Open directly to Tafsir
-                                                            arabicText:
-                                                                ayah.text,
+                                                SizedBox(height: 12.h),
+
+                                                // Compact Action Bar
+                                                BlocBuilder<
+                                                  BookmarkBloc,
+                                                  BookmarkState
+                                                >(
+                                                  builder: (context, bookmarkState) {
+                                                    bool isBookmarked = false;
+                                                    if (bookmarkState
+                                                        is BookmarkLoaded) {
+                                                      isBookmarked = bookmarkState
+                                                          .bookmarks
+                                                          .any(
+                                                            (b) =>
+                                                                b.surahNumber ==
+                                                                    widget
+                                                                        .surah
+                                                                        .number &&
+                                                                b.ayahNumber ==
+                                                                    ayah.numberInSurah &&
+                                                                b.mode ==
+                                                                    'list',
+                                                          );
+                                                    }
+
+                                                    return Row(
+                                                      children: [
+                                                        // Number Badge
+                                                        Container(
+                                                          width: 28.w,
+                                                          height: 28.w,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                color:
+                                                                    const Color(
+                                                                      0xFF00E676,
+                                                                    ).withOpacity(
+                                                                      0.1,
+                                                                    ),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                          alignment:
+                                                              Alignment.center,
+                                                          child: Text(
+                                                            '${ayah.numberInSurah}',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  const Color(
+                                                                    0xFF1B5E20,
+                                                                  ),
+                                                              fontSize: 12.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                           ),
-                                                    );
-                                                  },
-                                                  showcaseKey: _tafsirKey,
-                                                  showcaseDesc:
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.showcaseTafsir,
-                                                  enableShowcase:
-                                                      index ==
-                                                      ((widget.initialAyah ??
-                                                              1) -
-                                                          1),
-                                                ),
-                                                SizedBox(width: 8.w),
-                                                _buildActionButton(
-                                                  icon:
-                                                      Icons.play_circle_outline,
-                                                  onTap: () {
-                                                    context
-                                                        .read<AudioBloc>()
-                                                        .add(
-                                                          PlaySurah(
-                                                            surahId: widget
-                                                                .surah
-                                                                .number,
-                                                            surahName:
-                                                                surahName,
-                                                            startAyah: ayah
-                                                                .numberInSurah,
+                                                        ),
+                                                        SizedBox(width: 8.w),
+                                                        _buildActionButton(
+                                                          key:
+                                                              (index ==
+                                                                  ((widget.initialAyah ??
+                                                                          1) -
+                                                                      1))
+                                                              ? _markReadKey
+                                                              : null,
+                                                          icon: Icons
+                                                              .check_circle_outline,
+                                                          color: const Color(
+                                                            0xFF00E676,
+                                                          ), // Use Green
+                                                          onTap: () =>
+                                                              _handleMarkAsRead(
+                                                                context,
+                                                                ayah,
+                                                              ),
+                                                        ),
+                                                        SizedBox(width: 8.w),
+                                                        _buildActionButton(
+                                                          icon: Icons.share,
+                                                          onTap: () => _shareAyah(
+                                                            ayah.text,
+                                                            state
+                                                                .translationMap[ayah
+                                                                .numberInSurah],
+                                                            surahName,
+                                                            ayah.numberInSurah,
                                                           ),
-                                                        );
-                                                  },
-                                                  showcaseKey: _playKey,
-                                                  showcaseDesc:
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.showcasePlayAyah,
-                                                  enableShowcase:
-                                                      index ==
-                                                      ((widget.initialAyah ??
-                                                              1) -
-                                                          1),
-                                                ),
-                                                SizedBox(width: 8.w),
-                                                _buildActionButton(
-                                                  key:
-                                                      (index ==
-                                                          ((widget.initialAyah ??
-                                                                  1) -
-                                                              1))
-                                                      ? _bookmarkKey
-                                                      : null,
-                                                  icon: Icons.bookmark_border,
-                                                  onTap: () {
-                                                    _handleBookmarkTap(
-                                                      context,
-                                                      ayah,
+                                                          showcaseKey:
+                                                              _shareKey,
+                                                          showcaseTitle:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.share,
+                                                          showcaseDesc:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.showcaseAyahShare,
+                                                          enableShowcase:
+                                                              index ==
+                                                              ((widget.initialAyah ??
+                                                                      1) -
+                                                                  1),
+                                                        ),
+                                                        SizedBox(width: 8.w),
+                                                        _buildActionButton(
+                                                          icon: Icons
+                                                              .library_books, // Tafsir Icon
+                                                          onTap: () {
+                                                            showModalBottomSheet(
+                                                              context: context,
+                                                              isScrollControlled:
+                                                                  true,
+                                                              backgroundColor:
+                                                                  Colors
+                                                                      .transparent,
+                                                              builder: (context) => TafsirBottomSheet(
+                                                                surahId: widget
+                                                                    .surah
+                                                                    .number,
+                                                                surahName:
+                                                                    surahName,
+                                                                ayahNumber: ayah
+                                                                    .numberInSurah,
+                                                                initialTabIndex:
+                                                                    1, // Open directly to Tafsir
+                                                                arabicText:
+                                                                    ayah.text,
+                                                              ),
+                                                            );
+                                                          },
+                                                          showcaseKey:
+                                                              _tafsirKey,
+                                                          showcaseTitle:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.menuTafsir,
+                                                          showcaseDesc:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.showcaseTafsir,
+                                                          enableShowcase:
+                                                              index ==
+                                                              ((widget.initialAyah ??
+                                                                      1) -
+                                                                  1),
+                                                        ),
+                                                        SizedBox(width: 8.w),
+                                                        _buildActionButton(
+                                                          icon: Icons
+                                                              .play_circle_outline,
+                                                          onTap: () {
+                                                            context.read<AudioBloc>().add(
+                                                              PlaySurah(
+                                                                surahId: widget
+                                                                    .surah
+                                                                    .number,
+                                                                surahName:
+                                                                    surahName,
+                                                                startAyah: ayah
+                                                                    .numberInSurah,
+                                                              ),
+                                                            );
+                                                          },
+                                                          showcaseKey: _playKey,
+                                                          showcaseTitle:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.menuPlay,
+                                                          showcaseDesc:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.showcasePlayAyah,
+                                                          enableShowcase:
+                                                              index ==
+                                                              ((widget.initialAyah ??
+                                                                      1) -
+                                                                  1),
+                                                        ),
+                                                        SizedBox(width: 8.w),
+                                                        _buildActionButton(
+                                                          key:
+                                                              (index ==
+                                                                  ((widget.initialAyah ??
+                                                                          1) -
+                                                                      1))
+                                                              ? _bookmarkKey
+                                                              : null,
+                                                          icon: isBookmarked
+                                                              ? Icons.bookmark
+                                                              : Icons
+                                                                    .bookmark_border,
+                                                          color: isBookmarked
+                                                              ? const Color(
+                                                                  0xFF00E676,
+                                                                )
+                                                              : null,
+                                                          onTap: () {
+                                                            _handleBookmarkTap(
+                                                              context,
+                                                              ayah,
+                                                            );
+                                                          },
+                                                          showcaseKey:
+                                                              _bookmarkKey,
+                                                          showcaseTitle:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.menuBookmark,
+                                                          showcaseDesc:
+                                                              AppLocalizations.of(
+                                                                context,
+                                                              )!.showcaseAyahBookmark,
+                                                          enableShowcase:
+                                                              index ==
+                                                              ((widget.initialAyah ??
+                                                                      1) -
+                                                                  1),
+                                                        ),
+                                                      ],
                                                     );
                                                   },
-                                                  showcaseKey: _bookmarkKey,
-                                                  showcaseDesc:
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.showcaseAyahBookmark,
-                                                  enableShowcase:
-                                                      index ==
-                                                      ((widget.initialAyah ??
-                                                              1) -
-                                                          1),
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   );
-                                },
-                              );
-                            }
-                            return const SizedBox.shrink();
+                                }
+                                return const SizedBox.shrink();
+                              },
+                            );
                           },
                         ),
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'help_guide_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -78,6 +79,19 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                       fontFamily: 'Outfit',
                     ),
                   ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.info_outline, color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HelpGuidePage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(60.h),
                     child: Container(
@@ -190,16 +204,26 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                           ayahHistory,
                           true,
                           state.weeklyAyahProgress,
+                          state.monthlyAyahProgress,
                           state.chartReferenceDate,
                           state.dailyAyahTarget, // Pass Ayah Target
+                          state.lifetimeTotalAyah,
+                          state.currentStreakAyah,
+                          state.thirtyDayAverageAyah,
+                          state.isWeeklyView,
                         ),
                         _buildHistoryList(
                           context,
                           pageHistory,
                           false,
                           state.weeklyPageProgress,
+                          state.monthlyPageProgress,
                           state.chartReferenceDate,
                           state.dailyTarget, // Pass Page Target
+                          state.lifetimeTotalPage,
+                          state.currentStreakPage,
+                          state.thirtyDayAveragePage,
+                          state.isWeeklyView,
                         ),
                       ],
                     );
@@ -218,8 +242,13 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     List<ReadingActivity> history,
     bool isListMode, // Ayah Mode
     Map<String, int> weeklyProgress,
+    Map<String, int> monthlyProgress,
     DateTime? chartRefDate,
     int target, // Daily Target for chart
+    int lifetimeTotal,
+    int currentStreak,
+    double thirtyDayAverage,
+    bool isWeeklyView,
   ) {
     // 1. Group History by Week
     final groupedHistory = _groupHistoryByWeek(history, context);
@@ -227,8 +256,38 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     return ListView(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       children: [
-        // --- Weekly Graph ---
-        _buildWeeklySummary(context, weeklyProgress, chartRefDate, target),
+        // --- Lifetime Stats Cards ---
+        _buildLifetimeStatsCards(
+          context,
+          lifetimeTotal,
+          currentStreak,
+          thirtyDayAverage,
+          isListMode,
+        ),
+        SizedBox(height: 16.h),
+
+        // --- Reading Insight ---
+        _buildInsightCard(
+          context,
+          weeklyProgress,
+          target,
+          currentStreak,
+          lifetimeTotal,
+          isListMode, // Pass mode to determine unit
+        ),
+
+        // --- View Toggle ---
+        _buildViewToggle(context, isWeeklyView),
+        SizedBox(height: 12.h),
+
+        // --- Weekly/Monthly Graph ---
+        _buildWeeklySummary(
+          context,
+          isWeeklyView ? weeklyProgress : monthlyProgress,
+          chartRefDate,
+          target,
+          isWeeklyView,
+        ),
 
         // --- History List Title ---
         Padding(
@@ -271,6 +330,32 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         ] else ...[
           // --- Grouped List View ---
           ...groupedHistory.entries.map((entry) {
+            // Calculate Weekly Total
+            int weeklyTotal = 0;
+            int totalDuration = 0; // Sum duration
+
+            if (isListMode) {
+              weeklyTotal = entry.value.fold(
+                0,
+                (sum, item) => sum + (item.totalAyahs ?? 0),
+              );
+            } else {
+              // Count unique pages
+              weeklyTotal = entry.value.map((e) => e.pageNumber).toSet().length;
+            }
+            totalDuration = entry.value.fold(
+              0,
+              (sum, item) => sum + item.durationSeconds,
+            );
+
+            final l10n = AppLocalizations.of(context)!;
+            final unit = isListMode
+                ? (l10n.lblAyahs ?? 'Ayahs')
+                : (l10n.lblPages ?? 'Pages');
+            final durationStr = _formatDuration(
+              totalDuration,
+            ); // Format duration
+
             return Theme(
               data: Theme.of(context).copyWith(
                 dividerColor: Colors.transparent,
@@ -284,14 +369,49 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
               child: ExpansionTile(
                 initiallyExpanded: true, // Auto open new items
                 tilePadding: EdgeInsets.zero,
-                title: Text(
-                  "${AppLocalizations.of(context)!.lblWeek ?? 'Week'}: ${entry.key}",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Outfit',
-                  ),
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${l10n.lblWeek ?? 'Week'}: ${entry.key}",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Outfit',
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "$weeklyTotal $unit", // Show Total
+                          style: TextStyle(
+                            color: const Color(0xFF00E676),
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Outfit',
+                          ),
+                        ),
+                        if (totalDuration > 0) ...[
+                          SizedBox(width: 8.w),
+                          Icon(
+                            Icons.access_time,
+                            size: 12.sp,
+                            color: Colors.white54,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            durationStr,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12.sp,
+                              fontFamily: 'Outfit',
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
                 ),
                 children: entry.value.map((activity) {
                   return _buildHistoryItem(context, activity, isListMode);
@@ -383,42 +503,133 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
               ],
             ),
           ),
-          Text(
-            DateFormat(
-              "EEE, HH:mm",
-              locale,
-            ).format(DateTime.fromMillisecondsSinceEpoch(activity.timestamp)),
-            style: TextStyle(color: Colors.white30, fontSize: 11.sp),
+          Row(
+            children: [
+              if (activity.durationSeconds > 0) ...[
+                Icon(Icons.access_time, size: 10.sp, color: Colors.white30),
+                SizedBox(width: 2.w),
+                Text(
+                  _formatDuration(activity.durationSeconds),
+                  style: TextStyle(color: Colors.white30, fontSize: 11.sp),
+                ),
+                SizedBox(width: 8.w),
+                Text(
+                  "•",
+                  style: TextStyle(color: Colors.white30, fontSize: 11.sp),
+                ),
+                SizedBox(width: 8.w),
+              ],
+              Text(
+                DateFormat("EEE, HH:mm", locale).format(
+                  DateTime.fromMillisecondsSinceEpoch(activity.timestamp),
+                ),
+                style: TextStyle(color: Colors.white30, fontSize: 11.sp),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
+  String _formatDuration(int seconds) {
+    if (seconds < 60) return "${seconds}s";
+    final minutes = (seconds / 60).floor();
+    final remainingSeconds = seconds % 60;
+    if (remainingSeconds == 0) return "${minutes}m";
+    return "${minutes}m ${remainingSeconds}s";
+  }
+
+  Widget _buildViewToggle(BuildContext context, bool isWeeklyView) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Row(
+        children: [
+          _buildToggleButton(context, 'Weekly', isWeeklyView, true),
+          SizedBox(width: 8.w),
+          _buildToggleButton(context, 'Monthly', !isWeeklyView, false),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildToggleButton(
+    BuildContext context,
+    String label,
+    bool isActive,
+    bool isWeekly,
+  ) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          context.read<ReadingBloc>().add(ToggleChartView(isWeekly: isWeekly));
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          decoration: BoxDecoration(
+            color: isActive
+                ? const Color(0xFF00E676)
+                : Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(8.r),
+            border: Border.all(
+              color: isActive
+                  ? const Color(0xFF00E676)
+                  : Colors.white.withOpacity(0.1),
+            ),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isActive ? Colors.black : Colors.white70,
+              fontSize: 12.sp,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildWeeklySummary(
     BuildContext context,
-    Map<String, int> weeklyProgress,
+    Map<String, int> progress,
     DateTime? chartRefDate,
     int target, // Daily Target
+    bool isWeeklyView, // NEW Param
   ) {
-    // Determine Last 7 Days based on chartRefDate
+    // Determine number of days to show
+    final daysToShow = isWeeklyView ? 7 : 30;
+
     final refDate = chartRefDate ?? DateTime.now();
     final bool isCurrentWeek = refDate.isAfter(
       DateTime.now().subtract(const Duration(days: 1)),
     );
-    final List<String> last7Days = [];
+
+    final List<String> labels = [];
     final List<int> values = [];
-    int maxVal = target > 0 ? target : 1; // Base max on target
+    int maxVal = target > 0 ? target : 1;
 
     final String locale = Localizations.localeOf(context).languageCode;
 
-    for (int i = 6; i >= 0; i--) {
+    for (int i = daysToShow - 1; i >= 0; i--) {
       final d = refDate.subtract(Duration(days: i));
-      final key = DateFormat(
-        'yyyy-MM-dd',
-      ).format(d); // Key format doesn't depend on locale
-      final val = weeklyProgress[key] ?? 0;
-      last7Days.add(DateFormat('E', locale).format(d)); // Mon, Tue... LOCALIZED
+      final key = DateFormat('yyyy-MM-dd').format(d);
+      final val = progress[key] ?? 0;
+
+      if (isWeeklyView) {
+        labels.add(
+          DateFormat('E', locale).format(d)[0],
+        ); // M, T, W (Single letter)
+      } else {
+        // Show label for first, last, and every 5th day
+        if (i == 0 || i == daysToShow - 1 || i % 5 == 0) {
+          labels.add(DateFormat('d').format(d));
+        } else {
+          labels.add('');
+        }
+      }
+
       values.add(val);
       if (val > maxVal) maxVal = val;
     }
@@ -427,7 +638,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     if (maxVal == target) maxVal = (target * 1.5).ceil();
 
     // Date Range Label
-    final startDate = refDate.subtract(const Duration(days: 6));
+    final startDate = refDate.subtract(Duration(days: daysToShow - 1));
     final dateRange =
         "${DateFormat('d MMM', locale).format(startDate)} - ${DateFormat('d MMM', locale).format(refDate)}";
 
@@ -457,8 +668,10 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.chartWeeklyTitle ??
-                          "Weekly Progress",
+                      isWeeklyView
+                          ? (AppLocalizations.of(context)!.chartWeeklyTitle ??
+                                "Weekly Progress")
+                          : "Monthly Progress", // Hardcoded fallback or need key
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.sp,
@@ -515,72 +728,82 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: List.generate(7, (index) {
+            children: List.generate(daysToShow, (index) {
               final val = values[index];
-              final day = last7Days[index];
+              final label = labels[index];
 
               // Calculate Heights
               final double maxH = 120.h;
-              double valHeight = (val / maxVal) * maxH;
-              double targetHeight = (target / maxVal) * maxH;
+              double valHeight = maxVal > 0 ? (val / maxVal) * maxH : 0;
+              double targetHeight = maxVal > 0 ? (target / maxVal) * maxH : 0;
 
               // Cap heights
               if (valHeight > maxH) valHeight = maxH;
               if (targetHeight > maxH) targetHeight = maxH;
+              if (valHeight < 0) valHeight = 0;
+
+              final bool isAchieved = val >= target && target > 0;
+              final bool isToday =
+                  isWeeklyView && (index == daysToShow - 1) && isCurrentWeek;
+
+              // Bar width adjustment
+              final barWidth = isWeeklyView ? 24.w : 6.w;
+              final fontSize = isWeeklyView ? 11.sp : 9.sp;
 
               return Column(
                 children: [
-                  // Value/Target Text
-                  Text(
-                    target > 0 ? "$val/$target" : "$val",
-                    style: TextStyle(
-                      color: val >= target
-                          ? const Color(0xFF00E676) // Green text if reached
-                          : Colors.white70,
-                      fontSize: 9.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  // Stack for Bar
-                  SizedBox(
-                    height: maxH,
-                    width: 12.w, // Slightly wider for overlay
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        // Target Bar (Background)
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: [
+                      // Target Line (Background)
+                      if (isWeeklyView) // Only show target marker in weekly view if simpler
                         Container(
-                          width: 12.w,
                           height: targetHeight,
+                          width: barWidth,
+                          alignment: Alignment.topCenter,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(4.r),
-                              topRight: Radius.circular(4.r),
+                            border: Border(
+                              top: BorderSide(
+                                color: Colors.white.withOpacity(0.1),
+                                width: 1,
+                              ),
                             ),
                           ),
                         ),
-                        // Realization Bar (Foreground)
-                        Container(
-                          width: 12.w,
-                          height: valHeight,
-                          decoration: BoxDecoration(
-                            color: val >= target
-                                ? const Color(
-                                    0xFF00E676,
-                                  ) // Green if target reached
-                                : const Color(0xFFFFB74D), // Orange if below
-                            borderRadius: BorderRadius.circular(4.r),
-                          ),
+
+                      // Value Bar
+                      Container(
+                        width: barWidth,
+                        height: valHeight > 0 ? valHeight : 2.h, // Min height
+                        decoration: BoxDecoration(
+                          color: isAchieved
+                              ? const Color(0xFF00E676)
+                              : (val > 0
+                                    ? const Color(0xFFFFB74D)
+                                    : Colors.white10),
+                          borderRadius: BorderRadius.circular(4.r),
+                          gradient: isAchieved
+                              ? const LinearGradient(
+                                  colors: [
+                                    Color(0xFF00E676),
+                                    Color(0xFF69F0AE),
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                )
+                              : null,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 8.h),
                   Text(
-                    day,
-                    style: TextStyle(color: Colors.white54, fontSize: 10.sp),
+                    label,
+                    style: TextStyle(
+                      color: isToday ? const Color(0xFF00E676) : Colors.white54,
+                      fontSize: fontSize,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                    ),
                   ),
                 ],
               );
@@ -634,6 +857,450 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLifetimeStatsCards(
+    BuildContext context,
+    int total,
+    int streak,
+    double average,
+    bool isListMode,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    final unitLabel = isListMode ? l10n.lblAyahs : l10n.lblPages;
+
+    return Row(
+      children: [
+        // Card 1: Total
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF00E676).withOpacity(0.15),
+                  Colors.white.withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      isListMode ? Icons.format_list_bulleted : Icons.menu_book,
+                      color: const Color(0xFF00E676),
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 6.w),
+                    Flexible(
+                      child: Text(
+                        l10n.lblLifetimeTotal,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                          fontFamily: 'Outfit',
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  total.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                Text(
+                  unitLabel,
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 11.sp,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(width: 12.w),
+
+        // Card 2: Streak
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFFFFB74D).withOpacity(0.15),
+                  Colors.white.withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text('🔥', style: TextStyle(fontSize: 20.sp)),
+                    SizedBox(width: 6.w),
+                    Flexible(
+                      child: Text(
+                        l10n.lblReadingStreak,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                          fontFamily: 'Outfit',
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  streak.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                Text(
+                  l10n.lblDays,
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 11.sp,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(width: 12.w),
+
+        // Card 3: Average
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.all(16.w),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF64B5F6).withOpacity(0.15),
+                  Colors.white.withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: Colors.white.withOpacity(0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.trending_up,
+                      color: const Color(0xFF64B5F6),
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 6.w),
+                    Flexible(
+                      child: Text(
+                        l10n.lblDailyAverage,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                          fontFamily: 'Outfit',
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+                Text(
+                  average.toStringAsFixed(1),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                Text(
+                  unitLabel,
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 11.sp,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Helper: Generate Reading Insight
+  Map<String, dynamic>? _generateInsight(
+    BuildContext context,
+    Map<String, int> weeklyProgress,
+    int target,
+    int currentStreak,
+    int lifetimeTotal,
+  ) {
+    final now = DateTime.now();
+
+    // Calculate weekly stats
+    int weeklyTotal = 0;
+    int weeklyTarget = target * 7;
+    int daysWithProgress = 0;
+    int maxDailyValue = 0;
+
+    for (int i = 6; i >= 0; i--) {
+      final d = now.subtract(Duration(days: i));
+      final key = DateFormat('yyyy-MM-dd').format(d);
+      final val = weeklyProgress[key] ?? 0;
+      weeklyTotal += val;
+      if (val > 0) daysWithProgress++;
+      if (val > maxDailyValue) maxDailyValue = val;
+    }
+
+    final todayKey = DateFormat('yyyy-MM-dd').format(now);
+    final todayProgress = weeklyProgress[todayKey] ?? 0;
+    final percentage = weeklyTarget > 0
+        ? (weeklyTotal / weeklyTarget * 100)
+        : 0;
+
+    // Priority 1: Streak warnings (if streak exists and today = 0)
+    if (currentStreak >= 3 && todayProgress == 0) {
+      return {
+        'type': 'warning',
+        'icon': '⚠️',
+        'message': 'insightStreakWarning',
+        'color': const Color(0xFFFFB74D),
+        'params': {'streak': currentStreak.toString()},
+      };
+    }
+
+    // Priority 2: Ahead of target
+    if (percentage >= 120) {
+      return {
+        'type': 'success',
+        'icon': '🎉',
+        'message': 'insightAheadTarget',
+        'color': const Color(0xFF00E676),
+        'params': {'percent': (percentage - 100).toStringAsFixed(0)},
+      };
+    }
+
+    // Priority 3: Behind target with actionable tip
+    if (percentage < 80 && daysWithProgress < 7) {
+      final remaining = weeklyTarget - weeklyTotal;
+
+      // Calculate actual days left in current week (from today forward)
+      final dayOfWeek = now.weekday; // 1=Mon, 7=Sun
+      final daysLeft = 8 - dayOfWeek; // Days left including today
+
+      final needed = daysLeft > 0 ? (remaining / daysLeft).ceil() : remaining;
+      return {
+        'type': 'warning',
+        'icon': '💪',
+        'message': 'insightBehindTarget',
+        'color': const Color(0xFFFFB74D),
+        'params': {
+          'remaining': remaining.toString(),
+          'needed': needed.toString(),
+        },
+      };
+    }
+
+    // Priority 4: Streak milestone
+    if (currentStreak == 5 ||
+        currentStreak == 7 ||
+        currentStreak == 14 ||
+        currentStreak == 30) {
+      return {
+        'type': 'milestone',
+        'icon': '🔥',
+        'message': 'insightStreakMilestone',
+        'color': const Color(0xFFFF6E40),
+        'params': {'streak': currentStreak.toString()},
+      };
+    }
+
+    // Priority 5: Perfect week
+    if (daysWithProgress == 7 && weeklyTotal >= weeklyTarget) {
+      return {
+        'type': 'success',
+        'icon': '👏',
+        'message': 'insightPerfectWeek',
+        'color': const Color(0xFF00E676),
+        'params': {},
+      };
+    }
+
+    // Priority 6: New daily record
+    if (maxDailyValue >= target * 2 && maxDailyValue > 0) {
+      return {
+        'type': 'milestone',
+        'icon': '⭐',
+        'message': 'insightDailyRecord',
+        'color': const Color(0xFFFFD700),
+        'params': {'max': maxDailyValue.toString()},
+      };
+    }
+
+    // Priority 7: Lifetime milestone
+    if (lifetimeTotal == 100 || lifetimeTotal == 500 || lifetimeTotal == 1000) {
+      return {
+        'type': 'milestone',
+        'icon': '🌟',
+        'message': 'insightLifetimeMilestone',
+        'color': const Color(0xFF00E676),
+        'params': {'total': lifetimeTotal.toString()},
+      };
+    }
+
+    return null; // No insight for now
+  }
+
+  Widget _buildInsightCard(
+    BuildContext context,
+    Map<String, int> weeklyProgress,
+    int target,
+    int currentStreak,
+    int lifetimeTotal,
+    bool isListMode, // Add mode parameter
+  ) {
+    final insight = _generateInsight(
+      context,
+      weeklyProgress,
+      target,
+      currentStreak,
+      lifetimeTotal,
+    );
+
+    if (insight == null) return const SizedBox.shrink();
+
+    final l10n = AppLocalizations.of(context)!;
+    final unitLabel = isListMode
+        ? l10n.lblAyahs
+        : l10n.lblPages; // Get unit label
+    String message = '';
+
+    // Get localized message with params
+    switch (insight['message']) {
+      case 'insightStreakWarning':
+        message = l10n.insightStreakWarning(
+          insight['params']['streak'],
+          unitLabel, // Add unit
+        );
+        break;
+      case 'insightAheadTarget':
+        message = l10n.insightAheadTarget(insight['params']['percent']);
+        break;
+      case 'insightBehindTarget':
+        message = l10n.insightBehindTarget(
+          insight['params']['needed'], // Swap: needed first
+          insight['params']['remaining'], // then remaining
+          unitLabel, // Add unit
+        );
+        break;
+      case 'insightStreakMilestone':
+        message = l10n.insightStreakMilestone(insight['params']['streak']);
+        break;
+      case 'insightPerfectWeek':
+        message = l10n.insightPerfectWeek;
+        break;
+      case 'insightDailyRecord':
+        message = l10n.insightDailyRecord(
+          insight['params']['max'],
+          unitLabel, // Add unit
+        );
+        break;
+      case 'insightLifetimeMilestone':
+        message = l10n.insightLifetimeMilestone(
+          insight['params']['total'],
+          unitLabel, // Add unit
+        );
+        break;
+    }
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            (insight['color'] as Color).withOpacity(0.2),
+            Colors.white.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(
+          color: (insight['color'] as Color).withOpacity(0.3),
+          width: 1.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Text(insight['icon'] as String, style: TextStyle(fontSize: 24.sp)),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  message,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  l10n.insightTargetInfo(
+                    target.toString(),
+                    unitLabel,
+                    (target * 7).toString(),
+                  ),
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 10.sp,
+                    fontFamily: 'Outfit',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

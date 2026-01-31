@@ -9,6 +9,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "92.0.0"
+  adhan:
+    dependency: "direct main"
+    description:
+      name: adhan
+      sha256: e1d3363c8127dc614947ecf312e458fbf4783af3db8e3b465c4a286eb37374ac
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0+1"
   analyzer:
     dependency: transitive
     description:
@@ -366,6 +374,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_compass:
+    dependency: "direct main"
+    description:
+      name: flutter_compass
+      sha256: "1b4d7e6c95a675ec8482b5c9c9ccf1ebf0ced3dbec59dce28ad609da953de850"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:

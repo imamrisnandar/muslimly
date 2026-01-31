@@ -46,7 +46,7 @@ class _SplashPageState extends State<SplashPage>
 
       if (mounted) {
         if (name == null || name.isEmpty) {
-          context.go('/name-input');
+          context.go('/onboarding');
         } else {
           context.go('/dashboard');
         }

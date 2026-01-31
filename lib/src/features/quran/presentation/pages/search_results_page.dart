@@ -141,32 +141,51 @@ class _SearchViewState extends State<_SearchView> {
               );
             }
 
-            return ListView.separated(
-              controller: _scrollController,
-              padding: EdgeInsets.all(16.w),
-              itemCount: state.hasReachedMax
-                  ? state.results.length
-                  : state.results.length + 1,
-              separatorBuilder: (_, __) => SizedBox(height: 12.h),
-              itemBuilder: (context, index) {
-                if (index >= state.results.length) {
-                  return Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(
-                        color: accentColor,
-                        strokeWidth: 2,
-                      ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 0),
+                  child: Text(
+                    AppLocalizations.of(context)!.searchSortedByRelevance,
+                    style: GoogleFonts.outfit(
+                      fontSize: 10.sp,
+                      color: textColor.withOpacity(0.5),
+                      fontStyle: FontStyle.italic,
                     ),
-                  );
-                }
+                    textAlign: TextAlign.end,
+                  ),
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    controller: _scrollController,
+                    padding: EdgeInsets.all(16.w),
+                    itemCount: state.hasReachedMax
+                        ? state.results.length
+                        : state.results.length + 1,
+                    separatorBuilder: (_, __) => SizedBox(height: 12.h),
+                    itemBuilder: (context, index) {
+                      if (index >= state.results.length) {
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(
+                              color: accentColor,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        );
+                      }
 
-                return _SearchResultCard(
-                  item: state.results[index],
-                  textColor: textColor,
-                  accentColor: accentColor,
-                );
-              },
+                      return _SearchResultCard(
+                        item: state.results[index],
+                        textColor: textColor,
+                        accentColor: accentColor,
+                      );
+                    },
+                  ),
+                ),
+              ],
             );
           }
           return const SizedBox.shrink();

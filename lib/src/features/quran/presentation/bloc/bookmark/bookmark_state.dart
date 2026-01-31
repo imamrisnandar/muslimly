@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../../domain/entities/quran_bookmark.dart';
 import '../../../domain/entities/last_read.dart';
+import 'bookmark_operation_type.dart';
 
 abstract class BookmarkState extends Equatable {
   const BookmarkState();
@@ -42,10 +43,10 @@ class BookmarkError extends BookmarkState {
 }
 
 class BookmarkOperationSuccess extends BookmarkState {
-  final String message;
+  final BookmarkOperationType type;
 
-  const BookmarkOperationSuccess(this.message);
+  const BookmarkOperationSuccess(this.type);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [type];
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../../prayer/presentation/bloc/prayer_bloc.dart';
 import '../../../prayer/presentation/bloc/prayer_event.dart';
 import '../../../prayer/presentation/bloc/prayer_state.dart';
@@ -32,7 +33,8 @@ class _PrayerPageView extends StatelessWidget {
               onRefresh: () async {
                 context.read<PrayerBloc>().add(
                   FetchPrayerTime(
-                    cityId: state.currentCity.id,
+                    latitude: state.currentCity.latitude,
+                    longitude: state.currentCity.longitude,
                     date: DateTime.now(),
                   ),
                 );
@@ -44,6 +46,7 @@ class _PrayerPageView extends StatelessWidget {
                 slivers: [
                   // HEADER
                   SliverToBoxAdapter(child: _buildHeader(context, state)),
+
                   // PRAYER LIST
                   SliverFillRemaining(
                     hasScrollBody: false,
@@ -120,33 +123,45 @@ class _PrayerPageView extends StatelessWidget {
                           flex: 2,
                           child: Row(
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    state.currentCity.name,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      state.currentCity.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: 2.h),
-                                  Text(
-                                    state.prayerTime?.date ?? l10n.loading,
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 12.sp,
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      state.prayerTime?.date ?? l10n.loading,
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 12.sp,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                               IconButton(
                                 onPressed: () => _showCitySearchDialog(context),
                                 icon: Icon(
                                   Icons.edit_location_alt,
                                   color: Colors.white70,
+                                  size: 20.sp,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => context.push('/qibla'),
+                                icon: Icon(
+                                  Icons.explore, // or compass_calibration
+                                  color: const Color(0xFF00E676),
                                   size: 20.sp,
                                 ),
                               ),
@@ -233,42 +248,59 @@ class _PrayerPageView extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    state.currentCity.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  Text(
+                                    state.prayerTime?.date ?? l10n.loading,
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                  Text(
+                                    state.prayerTime != null
+                                        ? state.prayerTime!.getHijriDate()
+                                        : "-",
+                                    style: TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  state.currentCity.name,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 24.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4.h),
-                                Text(
-                                  state.prayerTime?.date ?? l10n.loading,
-                                  style: TextStyle(
+                                IconButton(
+                                  onPressed: () =>
+                                      _showCitySearchDialog(context),
+                                  icon: const Icon(
+                                    Icons.edit_location_alt,
                                     color: Colors.white70,
-                                    fontSize: 14.sp,
                                   ),
                                 ),
-                                Text(
-                                  state.prayerTime != null
-                                      ? state.prayerTime!.getHijriDate()
-                                      : "-",
-                                  style: TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: 12.sp,
+                                IconButton(
+                                  onPressed: () => context.push('/qibla'),
+                                  icon: const Icon(
+                                    Icons.explore,
+                                    color: Color(0xFF00E676),
                                   ),
                                 ),
                               ],
-                            ),
-                            IconButton(
-                              onPressed: () => _showCitySearchDialog(context),
-                              icon: const Icon(
-                                Icons.edit_location_alt,
-                                color: Colors.white70,
-                              ),
                             ),
                           ],
                         ),

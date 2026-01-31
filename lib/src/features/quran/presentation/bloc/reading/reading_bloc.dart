@@ -18,6 +18,11 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     on<LogAyahRead>(_onLogAyahRead);
     on<UpdateDailyTarget>(_onUpdateDailyTarget);
     on<NavigateWeeklyChart>(_onNavigateWeeklyChart);
+    on<ToggleChartView>(_onToggleChartView);
+  }
+
+  void _onToggleChartView(ToggleChartView event, Emitter<ReadingState> emit) {
+    emit(state.copyWith(isWeeklyView: event.isWeekly));
   }
 
   Future<void> _onLoadReadingHistory(
@@ -28,32 +33,150 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     try {
       final history = await _databaseService.getReadingHistory();
       final now = DateTime.now();
+
+      // Weekly Stats (7 days)
       final weeklyPage = await _databaseService.getWeeklyProgress(
         endDate: now,
         mode: 'page',
+        days: 7,
       );
       final weeklyAyah = await _databaseService.getWeeklyProgress(
         endDate: now,
         mode: 'ayah',
+        days: 7,
       );
+
+      // Monthly Stats (30 days)
+      final monthlyPage = await _databaseService.getWeeklyProgress(
+        endDate: now,
+        mode: 'page',
+        days: 30,
+      );
+      final monthlyAyah = await _databaseService.getWeeklyProgress(
+        endDate: now,
+        mode: 'ayah',
+        days: 30,
+      );
+
       final target = await _settingsRepository.getDailyReadingTarget();
       final ayahTarget = await _settingsRepository.getDailyAyahTarget();
       final unit = await _settingsRepository.getReadingTargetUnit();
+
+      // Calculate Lifetime Stats - Separate for Ayah and Page
+      final ayahHistory = history.where((a) => a.mode == 'ayah').toList();
+      final pageHistory = history.where((a) => a.mode != 'ayah').toList();
+
+      final ayahStats = _calculateLifetimeStats(ayahHistory, 'ayah');
+      final pageStats = _calculateLifetimeStats(pageHistory, 'page');
+
       emit(
         state.copyWith(
           isLoading: false,
           readingHistory: history,
           weeklyPageProgress: weeklyPage,
           weeklyAyahProgress: weeklyAyah,
+          monthlyPageProgress: monthlyPage,
+          monthlyAyahProgress: monthlyAyah,
           chartReferenceDate: now,
           dailyTarget: target,
           dailyAyahTarget: ayahTarget,
           targetUnit: unit,
+          lifetimeTotalAyah: ayahStats['total'] as int,
+          currentStreakAyah: ayahStats['streak'] as int,
+          thirtyDayAverageAyah: ayahStats['average'] as double,
+          lifetimeTotalPage: pageStats['total'] as int,
+          currentStreakPage: pageStats['streak'] as int,
+          thirtyDayAveragePage: pageStats['average'] as double,
         ),
       );
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
+  }
+
+  // Helper: Calculate Lifetime Stats
+  Map<String, dynamic> _calculateLifetimeStats(
+    List<ReadingActivity> history,
+    String unit,
+  ) {
+    if (history.isEmpty) {
+      return {'total': 0, 'streak': 0, 'average': 0.0};
+    }
+
+    // 1. Calculate Total (based on mode)
+    int total = 0;
+    if (unit == 'ayah') {
+      // Sum all totalAyahs from ayah mode
+      total = history
+          .where((a) => a.mode == 'ayah')
+          .fold(0, (sum, a) => sum + (a.totalAyahs ?? 0));
+    } else {
+      // Count unique pages from page mode
+      final uniquePages = history
+          .where((a) => a.mode != 'ayah')
+          .map((a) => a.pageNumber)
+          .toSet();
+      total = uniquePages.length;
+    }
+
+    // 2. Calculate Streak (consecutive days with reading)
+    final sortedDates = history.map((a) => a.date).toSet().toList()
+      ..sort((a, b) => b.compareTo(a)); // Descending
+
+    int streak = 0;
+    if (sortedDates.isNotEmpty) {
+      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final yesterday = DateFormat(
+        'yyyy-MM-dd',
+      ).format(DateTime.now().subtract(const Duration(days: 1)));
+
+      // Check if streak is alive (today or yesterday)
+      if (sortedDates.first == today || sortedDates.first == yesterday) {
+        DateTime currentDate = DateFormat(
+          'yyyy-MM-dd',
+        ).parse(sortedDates.first);
+        streak = 1;
+
+        for (int i = 1; i < sortedDates.length; i++) {
+          final prevDate = DateFormat('yyyy-MM-dd').parse(sortedDates[i]);
+          final diff = currentDate.difference(prevDate).inDays;
+
+          if (diff == 1) {
+            streak++;
+            currentDate = prevDate;
+          } else {
+            break;
+          }
+        }
+      }
+    }
+
+    // 3. Calculate 30-Day Average
+    final now = DateTime.now();
+    final thirtyDaysAgo = now.subtract(const Duration(days: 30));
+    final recentHistory = history.where((a) {
+      final activityDate = DateTime.fromMillisecondsSinceEpoch(a.timestamp);
+      return activityDate.isAfter(thirtyDaysAgo);
+    }).toList();
+
+    double average = 0.0;
+    if (recentHistory.isNotEmpty) {
+      if (unit == 'ayah') {
+        final totalAyahs = recentHistory
+            .where((a) => a.mode == 'ayah')
+            .fold(0, (sum, a) => sum + (a.totalAyahs ?? 0));
+        average = totalAyahs / 30.0;
+      } else {
+        final uniquePages = recentHistory
+            .where((a) => a.mode != 'ayah')
+            .map((a) => a.pageNumber)
+            .toSet()
+            .length;
+        average = uniquePages / 30.0;
+      }
+    }
+
+    return {'total': total, 'streak': streak, 'average': average};
   }
 
   Future<void> _onNavigateWeeklyChart(
