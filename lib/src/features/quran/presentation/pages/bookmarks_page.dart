@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../../../core/utils/surah_names.dart';
 import '../../domain/entities/surah.dart';
 import '../../data/surah_details.dart'; // To reconstruct Surah object for logic
@@ -165,9 +166,7 @@ class BookmarksPage extends StatelessWidget {
                   builder: (context, state) {
                     if (state is BookmarkLoading) {
                       return const Center(
-                        child: CircularProgressIndicator(
-                          color: Color(0xFF00E676),
-                        ),
+                        child: IslamicLoadingIndicator(size: 64),
                       );
                     } else if (state is BookmarkLoaded) {
                       // Filter Bookmarks based on MODE
@@ -247,7 +246,7 @@ class BookmarksPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(24.w),
+              padding: EdgeInsets.all(16.w), // Even smaller padding
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.05),
                 shape: BoxShape.circle,
@@ -256,25 +255,48 @@ class BookmarksPage extends StatelessWidget {
                 isListMode
                     ? Icons.format_list_bulleted_rounded
                     : Icons.menu_book_rounded,
-                size: 48.sp,
+                size: 28.sp, // Even smaller icon
                 color: Colors.white24,
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 12.h),
             Text(
               emptyMessageTitle,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18.sp,
+                fontSize: 14.sp, // Even smaller font
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Outfit',
               ),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: 4.h),
             Text(
               emptyMessageSubtitle,
-              style: TextStyle(color: Colors.white54, fontSize: 14.sp),
+              style: TextStyle(
+                color: Colors.white54,
+                fontSize: 12.sp,
+              ), // Even smaller font
             ),
+            SizedBox(height: 16.h),
+            ElevatedButton(
+              onPressed: () {
+                // Go to Quran Tab (Index 2)
+                context.go('/dashboard?index=2');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00E676),
+                foregroundColor: Colors.black,
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.btnGoToQuran ?? "Read Quran",
+                style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 80.h), // Push content up
           ],
         ),
       );

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/utils/surah_names.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/utils/tajweed_parser.dart';
 import '../../domain/entities/surah.dart';
@@ -651,7 +652,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                               builder: (context, state) {
                                 if (state is QuranLoading) {
                                   return const Center(
-                                    child: CircularProgressIndicator(),
+                                    child: IslamicLoadingIndicator(size: 48),
                                   );
                                 } else if (state is QuranError) {
                                   return Center(

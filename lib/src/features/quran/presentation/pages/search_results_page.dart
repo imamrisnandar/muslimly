@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 
 import '../../../../core/di/di_container.dart';
 import '../../../../core/utils/surah_names.dart';
@@ -107,7 +108,7 @@ class _SearchViewState extends State<_SearchView> {
         builder: (context, state) {
           if (state is SearchInitial ||
               (state is SearchLoading && state.isFirstFetch)) {
-            return Center(child: CircularProgressIndicator(color: accentColor));
+            return Center(child: IslamicLoadingIndicator(size: 64));
           } else if (state is SearchError) {
             return Center(
               child: Text(
@@ -169,10 +170,7 @@ class _SearchViewState extends State<_SearchView> {
                         return Center(
                           child: Padding(
                             padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(
-                              color: accentColor,
-                              strokeWidth: 2,
-                            ),
+                            child: IslamicLoadingIndicator(size: 32),
                           ),
                         );
                       }

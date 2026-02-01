@@ -273,5 +273,9 @@
   "guideListTitle": "3. List Mode (Ayah View)",
   "guideListDesc": "• **No Timer:** We focus on Ayah count here, not duration.\n• **Progress:** Tap an ayah and select **Mark as Last Read**. We calculate how many new ayahs you've read since your last session.\n• *Example:* If you last read Ayah 5, and today mark Ayah 20, we record **15 new ayahs**.",
   "guideInsightTitle": "4. Stats & Streak",
-  "guideInsightDesc": "• **Unique Pages:** In Mushaf Mode, we track *Unique Pages* for Khatam progress. Reading the same page twice won't double your 'Total Pages' count, but the duration is added!\n• **Streak:** Read at least 1 ayah/page daily to keep your streak alive."
+  "guideInsightDesc": "• **Unique Pages:** In Mushaf Mode, we track *Unique Pages* for Khatam progress. Reading the same page twice won't double your 'Total Pages' count, but the duration is added!\n• **Streak:** Read at least 1 ayah/page daily to keep your streak alive.",
+  "lblWeekly": "Weekly",
+  "lblMonthly": "Monthly",
+  "msgEndOfHistory": "You've reached the end of your history",
+  "chartMonthlyTitle": "Monthly Progress"
 }

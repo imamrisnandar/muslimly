@@ -19,10 +19,45 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     on<UpdateDailyTarget>(_onUpdateDailyTarget);
     on<NavigateWeeklyChart>(_onNavigateWeeklyChart);
     on<ToggleChartView>(_onToggleChartView);
+    on<LoadMoreHistory>(_onLoadMoreHistory);
   }
 
   void _onToggleChartView(ToggleChartView event, Emitter<ReadingState> emit) {
     emit(state.copyWith(isWeeklyView: event.isWeekly));
+  }
+
+  Future<void> _onLoadMoreHistory(
+    LoadMoreHistory event,
+    Emitter<ReadingState> emit,
+  ) async {
+    if (state.isLoadingMore || !state.hasMoreHistory) return;
+
+    emit(state.copyWith(isLoadingMore: true));
+
+    // Simulate async delay (optional, for UX)
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final newCount = state.displayedWeeksCount + 6;
+
+    // Calculate total weeks available
+    final uniqueWeeks = state.readingHistory
+        .map((a) {
+          final date = DateTime.fromMillisecondsSinceEpoch(a.timestamp);
+          final monday = date.subtract(Duration(days: date.weekday - 1));
+          return DateFormat('yyyy-MM-dd').format(monday);
+        })
+        .toSet()
+        .length;
+
+    final hasMore = uniqueWeeks > newCount;
+
+    emit(
+      state.copyWith(
+        displayedWeeksCount: newCount,
+        hasMoreHistory: hasMore,
+        isLoadingMore: false,
+      ),
+    );
   }
 
   Future<void> _onLoadReadingHistory(
@@ -31,31 +66,50 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
   ) async {
     emit(state.copyWith(isLoading: true));
     try {
-      final history = await _databaseService.getReadingHistory();
+      // Get all history (set high limit for 1 year of data)
+      final allHistory = await _databaseService.getReadingHistory(
+        limit: 10000, // Large enough for 1 year of data
+      );
+
+      // Filter to 1 year max (inclusive)
+      final oneYearAgo = DateTime.now().subtract(const Duration(days: 365));
+      final history = allHistory.where((activity) {
+        final activityDate = DateTime.fromMillisecondsSinceEpoch(
+          activity.timestamp,
+        );
+        return activityDate.isAfter(oneYearAgo) ||
+            activityDate.isAtSameMomentAs(oneYearAgo);
+      }).toList();
       final now = DateTime.now();
 
-      // Weekly Stats (7 days)
+      // Calculate End of Week (Sunday)
+      // If today is Monday (1), daysUntilSunday = 7 - 1 = 6. Add 6 days.
+      // If today is Sunday (7), daysUntilSunday = 7 - 7 = 0. Add 0 days.
+      final int daysUntilSunday = DateTime.sunday - now.weekday;
+      final DateTime endOfWeek = now.add(Duration(days: daysUntilSunday));
+
+      // Weekly Stats (Fixed Week: Mon-Sun ending on endOfWeek)
       final weeklyPage = await _databaseService.getWeeklyProgress(
-        endDate: now,
+        endDate: endOfWeek,
         mode: 'page',
         days: 7,
       );
       final weeklyAyah = await _databaseService.getWeeklyProgress(
-        endDate: now,
+        endDate: endOfWeek,
         mode: 'ayah',
         days: 7,
       );
 
-      // Monthly Stats (30 days)
+      // Monthly Stats (365 days to support navigation through past months)
       final monthlyPage = await _databaseService.getWeeklyProgress(
         endDate: now,
         mode: 'page',
-        days: 30,
+        days: 365,
       );
       final monthlyAyah = await _databaseService.getWeeklyProgress(
         endDate: now,
         mode: 'ayah',
-        days: 30,
+        days: 365,
       );
 
       final target = await _settingsRepository.getDailyReadingTarget();
@@ -69,6 +123,18 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
       final ayahStats = _calculateLifetimeStats(ayahHistory, 'ayah');
       final pageStats = _calculateLifetimeStats(pageHistory, 'page');
 
+      // Calculate total weeks available
+      final uniqueWeeks = history
+          .map((a) {
+            final date = DateTime.fromMillisecondsSinceEpoch(a.timestamp);
+            final monday = date.subtract(Duration(days: date.weekday - 1));
+            return DateFormat('yyyy-MM-dd').format(monday);
+          })
+          .toSet()
+          .length;
+
+      final hasMore = uniqueWeeks > 6;
+
       emit(
         state.copyWith(
           isLoading: false,
@@ -77,7 +143,7 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
           weeklyAyahProgress: weeklyAyah,
           monthlyPageProgress: monthlyPage,
           monthlyAyahProgress: monthlyAyah,
-          chartReferenceDate: now,
+          chartReferenceDate: endOfWeek, // Anchor to Sunday
           dailyTarget: target,
           dailyAyahTarget: ayahTarget,
           targetUnit: unit,
@@ -87,6 +153,9 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
           lifetimeTotalPage: pageStats['total'] as int,
           currentStreakPage: pageStats['streak'] as int,
           thirtyDayAveragePage: pageStats['average'] as double,
+          displayedWeeksCount: 6,
+          hasMoreHistory: hasMore,
+          isLoadingMore: false,
         ),
       );
     } catch (e) {
@@ -184,17 +253,55 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     Emitter<ReadingState> emit,
   ) async {
     final currentRef = state.chartReferenceDate ?? DateTime.now();
-    // Move by 7 days
-    final newRef = currentRef.add(Duration(days: event.direction * 7));
+    final isWeeklyView = state.isWeeklyView;
 
-    if (event.direction > 0 &&
-        newRef.isAfter(DateTime.now().add(const Duration(days: 1)))) {
-      // Allow going back to 'current week' but not further future
+    DateTime newRef;
+
+    if (isWeeklyView) {
+      // Weekly: Move by 7 days
+      newRef = currentRef.add(Duration(days: event.direction * 7));
+    } else {
+      // Monthly: Move by 1 month
+      newRef = DateTime(
+        currentRef.year,
+        currentRef.month + event.direction,
+        currentRef.day,
+      );
+      // Ensure day is valid for the new month
+      final lastDayOfNewMonth = DateTime(newRef.year, newRef.month + 1, 0).day;
+      if (newRef.day > lastDayOfNewMonth) {
+        newRef = DateTime(newRef.year, newRef.month, lastDayOfNewMonth);
+      }
+    }
+
+    // Cap at current period
+    final now = DateTime.now();
+    DateTime maxAllowedDate;
+
+    if (isWeeklyView) {
+      // Cap at current week's Sunday
+      final int daysUntilSunday = DateTime.sunday - now.weekday;
+      maxAllowedDate = now.add(Duration(days: daysUntilSunday));
+    } else {
+      // Cap at current month
+      maxAllowedDate = now;
+    }
+
+    // Normalize dates to ignore time for comparison
+    final newRefDate = DateTime(newRef.year, newRef.month, newRef.day);
+    final maxDate = DateTime(
+      maxAllowedDate.year,
+      maxAllowedDate.month,
+      maxAllowedDate.day,
+    );
+
+    if (event.direction > 0 && newRefDate.isAfter(maxDate)) {
+      return; // Don't allow navigating past current period
     }
 
     try {
       final weeklyPage = await _databaseService.getWeeklyProgress(
-        endDate: newRef,
+        endDate: newRef, // newRef is a Sunday
         mode: 'page',
       );
       final weeklyAyah = await _databaseService.getWeeklyProgress(

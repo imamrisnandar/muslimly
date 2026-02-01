@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/repositories/zikir_local_repository.dart';
 import '../../domain/entities/zikir_item.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
 import 'dzikir_reading_page.dart';
 
@@ -53,16 +54,20 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: const Color(0xFFFFF8E1), // Quran Theme
       appBar: AppBar(
         title: Text(
           l10n.dzikirDailyTitle,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: const Color(0xFF4E342E),
+            fontWeight: FontWeight.bold,
+            fontFamily: GoogleFonts.outfit().fontFamily,
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF4E342E)),
           onPressed: () => context.pop(),
         ),
       ),
@@ -79,22 +84,22 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
             child: TextField(
               controller: _searchController,
               style: TextStyle(
-                color: Colors.white,
+                color: const Color(0xFF4E342E),
                 fontSize: isLandscape ? 12.sp : 14.sp,
               ),
               decoration: InputDecoration(
                 hintText: 'Cari doa...',
                 hintStyle: TextStyle(
-                  color: Colors.white38,
+                  color: const Color(0xFF4E342E).withOpacity(0.5),
                   fontSize: isLandscape ? 12.sp : 14.sp,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: Colors.white38,
+                  color: const Color(0xFF4E342E).withOpacity(0.5),
                   size: isLandscape ? 18.sp : 20.sp,
                 ),
                 filled: true,
-                fillColor: const Color(0xFF1A2C33),
+                fillColor: Colors.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
@@ -102,6 +107,17 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 16.w,
                   vertical: isLandscape ? 8.h : 12.h,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF1B5E20),
+                    width: 1,
+                  ),
                 ),
               ),
             ),
@@ -114,7 +130,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                     child: Text(
                       "Tidak ditemukan doa",
                       style: TextStyle(
-                        color: Colors.white38,
+                        color: const Color(0xFF4E342E).withOpacity(0.5),
                         fontSize: isLandscape ? 12.sp : 14.sp,
                       ),
                     ),
@@ -136,15 +152,23 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                           bottom: isLandscape ? 8.h : 12.h,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1A2C33),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Colors.white, const Color(0xFFFFF8E1)],
+                          ),
                           borderRadius: BorderRadius.circular(16.r),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                              offset: Offset(0, 2),
+                              color: const Color(0xFF1B5E20).withOpacity(0.08),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
                             ),
                           ],
+                          border: Border.all(
+                            color: const Color(0xFF1B5E20).withOpacity(0.1),
+                            width: 1,
+                          ),
                         ),
                         child: Material(
                           color: Colors.transparent,
@@ -156,11 +180,9 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                 MaterialPageRoute(
                                   builder: (context) => DzikirReadingPage(
                                     title: l10n.dzikirDailyTitle,
-                                    items:
-                                        _allItems, // Pass _allItems to allow full swipe
+                                    items: _allItems,
                                     initialIndex: originalIndex,
-                                    enableCounter:
-                                        false, // Disable counter for Daily Doa
+                                    enableCounter: false,
                                   ),
                                 ),
                               );
@@ -168,45 +190,67 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 16.w,
-                                vertical: isLandscape ? 10.h : 16.h,
+                                vertical: 16.h,
                               ),
                               child: Row(
                                 children: [
+                                  // Decorative Number Badge
                                   Container(
-                                    width: isLandscape ? 32.w : 40.w,
-                                    height: isLandscape ? 32.w : 40.w,
+                                    width: 40.w,
+                                    height: 40.w,
                                     decoration: BoxDecoration(
-                                      color: const Color(
-                                        0xFF00E676,
-                                      ).withOpacity(0.1),
+                                      color: const Color(0xFFFFF8E1),
                                       shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: const Color(
+                                          0xFF1B5E20,
+                                        ).withOpacity(0.2),
+                                        width: 1.5,
+                                      ),
                                     ),
                                     child: Center(
                                       child: Text(
                                         "${originalIndex + 1}",
                                         style: TextStyle(
-                                          color: const Color(0xFF00E676),
+                                          color: const Color(0xFF1B5E20),
                                           fontWeight: FontWeight.bold,
-                                          fontSize: isLandscape ? 12.sp : 16.sp,
+                                          fontSize: 14.sp,
+                                          fontFamily:
+                                              GoogleFonts.outfit().fontFamily,
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(width: isLandscape ? 12.w : 16.w),
+                                  SizedBox(width: 16.w),
+
+                                  // Title
                                   Expanded(
                                     child: Text(
                                       item.title,
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: isLandscape ? 13.sp : 16.sp,
+                                        color: const Color(0xFF4E342E),
+                                        fontSize: 16.sp,
                                         fontWeight: FontWeight.w600,
+                                        fontFamily:
+                                            GoogleFonts.outfit().fontFamily,
                                       ),
                                     ),
                                   ),
-                                  Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.white54,
-                                    size: isLandscape ? 20.sp : 24.sp,
+
+                                  // Action Icon
+                                  Container(
+                                    padding: EdgeInsets.all(8.w),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF1B5E20,
+                                      ).withOpacity(0.05),
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: const Color(0xFF1B5E20),
+                                      size: 16.sp,
+                                    ),
                                   ),
                                 ],
                               ),

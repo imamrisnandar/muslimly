@@ -69,3 +69,5 @@ class ToggleChartView extends ReadingEvent {
   @override
   List<Object?> get props => [isWeekly];
 }
+
+class LoadMoreHistory extends ReadingEvent {}

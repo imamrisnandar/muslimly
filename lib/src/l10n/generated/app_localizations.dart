@@ -1729,6 +1729,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• **Unique Pages:** In Mushaf Mode, we track *Unique Pages* for Khatam progress. Reading the same page twice won\'t double your \'Total Pages\' count, but the duration is added!\n• **Streak:** Read at least 1 ayah/page daily to keep your streak alive.'**
   String get guideInsightDesc;
+
+  /// No description provided for @lblWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get lblWeekly;
+
+  /// No description provided for @lblMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get lblMonthly;
+
+  /// No description provided for @msgEndOfHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached the end of your history'**
+  String get msgEndOfHistory;
+
+  /// No description provided for @chartMonthlyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Progress'**
+  String get chartMonthlyTitle;
 }
 
 class _AppLocalizationsDelegate

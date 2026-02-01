@@ -26,6 +26,11 @@ class ReadingState extends Equatable {
   final int currentStreakPage;
   final double thirtyDayAveragePage;
 
+  // Pagination for History
+  final int displayedWeeksCount; // Number of weeks currently displayed
+  final bool hasMoreHistory; // Whether more history is available
+  final bool isLoadingMore; // Loading state for pagination
+
   const ReadingState({
     this.isLoading = false,
     this.dailyProgress = 0,
@@ -46,6 +51,9 @@ class ReadingState extends Equatable {
     this.lifetimeTotalPage = 0,
     this.currentStreakPage = 0,
     this.thirtyDayAveragePage = 0.0,
+    this.displayedWeeksCount = 6,
+    this.hasMoreHistory = true,
+    this.isLoadingMore = false,
   });
 
   ReadingState copyWith({
@@ -68,6 +76,9 @@ class ReadingState extends Equatable {
     int? lifetimeTotalPage,
     int? currentStreakPage,
     double? thirtyDayAveragePage,
+    int? displayedWeeksCount,
+    bool? hasMoreHistory,
+    bool? isLoadingMore,
   }) {
     return ReadingState(
       isLoading: isLoading ?? this.isLoading,
@@ -89,6 +100,9 @@ class ReadingState extends Equatable {
       lifetimeTotalPage: lifetimeTotalPage ?? this.lifetimeTotalPage,
       currentStreakPage: currentStreakPage ?? this.currentStreakPage,
       thirtyDayAveragePage: thirtyDayAveragePage ?? this.thirtyDayAveragePage,
+      displayedWeeksCount: displayedWeeksCount ?? this.displayedWeeksCount,
+      hasMoreHistory: hasMoreHistory ?? this.hasMoreHistory,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
@@ -113,5 +127,8 @@ class ReadingState extends Equatable {
     lifetimeTotalPage,
     currentStreakPage,
     thirtyDayAveragePage,
+    displayedWeeksCount,
+    hasMoreHistory,
+    isLoadingMore,
   ];
 }

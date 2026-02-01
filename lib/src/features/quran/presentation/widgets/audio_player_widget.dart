@@ -8,6 +8,7 @@ import '../bloc/audio_state.dart';
 import '../../domain/entities/reciter.dart';
 import '../../../../core/utils/custom_snackbar.dart';
 import 'reciter_selector_bottom_sheet.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 
 class AudioPlayerWidget extends StatelessWidget {
   final GlobalKey? qoriShowcaseKey;
@@ -74,7 +75,7 @@ class AudioPlayerWidget extends StatelessWidget {
                       SizedBox(
                         width: 24.w,
                         height: 24.w,
-                        child: const CircularProgressIndicator(strokeWidth: 2),
+                        child: const IslamicLoadingIndicator(size: 24),
                       )
                     else
                       IconButton(

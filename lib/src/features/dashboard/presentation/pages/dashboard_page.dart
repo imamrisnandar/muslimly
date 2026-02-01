@@ -13,6 +13,7 @@ import 'prayer_page.dart';
 import '../../../settings/presentation/pages/settings_page.dart';
 import '../../../quran/presentation/pages/quran_page.dart';
 import '../../../quran/presentation/pages/help_guide_page.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../../zikir/presentation/pages/dzikir_page.dart';
 import '../../../prayer/presentation/bloc/prayer_bloc.dart';
 import '../../../prayer/presentation/bloc/prayer_event.dart';
@@ -844,7 +845,7 @@ class _DashboardPageState extends State<DashboardPage> {
         color: Colors.white.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20.r),
       ),
-      child: const Center(child: CircularProgressIndicator()),
+      child: const Center(child: IslamicLoadingIndicator(size: 64)),
     );
   }
 

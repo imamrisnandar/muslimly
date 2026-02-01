@@ -918,4 +918,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get guideInsightDesc =>
       '• **Unique Pages:** In Mushaf Mode, we track *Unique Pages* for Khatam progress. Reading the same page twice won\'t double your \'Total Pages\' count, but the duration is added!\n• **Streak:** Read at least 1 ayah/page daily to keep your streak alive.';
+
+  @override
+  String get lblWeekly => 'Weekly';
+
+  @override
+  String get lblMonthly => 'Monthly';
+
+  @override
+  String get msgEndOfHistory => 'You\'ve reached the end of your history';
+
+  @override
+  String get chartMonthlyTitle => 'Monthly Progress';
 }

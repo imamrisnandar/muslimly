@@ -6,10 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../bloc/settings_cubit.dart';
 import '../bloc/settings_state.dart';
-import '../../../../core/di/di_container.dart';
-import '../../../../core/utils/custom_snackbar.dart'; // Import Custom SnackBar
-import '../../../../core/services/background_service.dart'; // Correct import
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../quran/presentation/pages/help_guide_page.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -803,46 +799,6 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 24.h),
-              _buildSectionHeader(
-                context,
-                l10n.settingsDeveloper,
-              ), // "Developer Options"
-              _buildListTile(
-                icon: Icons.sync,
-                title: l10n.settingsTestBackground,
-                subtitle: l10n.settingsTestBackgroundSubtitle,
-                onTap: () {
-                  // Trigger Background Sync
-                  getIt<BackgroundService>().triggerImmediateSync();
-                  showCustomSnackBar(
-                    context,
-                    message: 'Background Sync Triggered!',
-                    type: SnackBarType.success,
-                  );
-                },
-              ),
-              SizedBox(height: 12.h),
-              _buildListTile(
-                icon: Icons.restore,
-                title: l10n.settingsResetShowcase, // "Reset Showcase"
-                subtitle: l10n.settingsResetShowcaseSubtitle,
-                onTap: () async {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.remove('hasShownQuranListShowcase');
-                  await prefs.remove('hasShownSurahDetailShowcase');
-                  await prefs.remove('hasShownDashboardShowcase');
-                  await prefs.remove('hasShownMushafShowcase');
-                  if (context.mounted) {
-                    showCustomSnackBar(
-                      context,
-                      message:
-                          'Showcase flags reset! Restart feature to see tutorials.',
-                      type: SnackBarType.success,
-                    );
-                  }
-                },
               ),
               SizedBox(height: 100.h),
             ],

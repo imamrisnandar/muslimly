@@ -923,4 +923,16 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get guideInsightDesc =>
       '• **Halaman Unik:** Di Mode Mushaf, kami mencatat *Halaman Unik* untuk progres Khatam. Membaca halaman yang sama berulang kali tidak menambah \'Total Halaman\', tapi durasinya tetap dicatat!\n• **Streak:** Baca minimal 1 ayat/halaman setiap hari agar streak tidak putus.';
+
+  @override
+  String get lblWeekly => 'Mingguan';
+
+  @override
+  String get lblMonthly => 'Bulanan';
+
+  @override
+  String get msgEndOfHistory => 'Anda telah mencapai akhir riwayat';
+
+  @override
+  String get chartMonthlyTitle => 'Progres Bulanan';
 }

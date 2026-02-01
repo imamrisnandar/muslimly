@@ -6,6 +6,7 @@ import '../bloc/audio_bloc.dart';
 import '../bloc/audio_event.dart';
 import '../bloc/audio_state.dart';
 import '../../domain/entities/reciter.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 
 class ReciterSelectorBottomSheet extends StatelessWidget {
   final AudioSourceType? filterSource;
@@ -41,7 +42,7 @@ class ReciterSelectorBottomSheet extends StatelessWidget {
               builder: (context, state) {
                 if (state.status == AudioStatus.loading &&
                     state.reciters.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: IslamicLoadingIndicator(size: 48));
                 }
 
                 // Filter Logic

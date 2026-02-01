@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muslimly/src/core/di/di_container.dart';
+import 'package:muslimly/src/core/widgets/islamic_loading_indicator.dart';
 import 'package:muslimly/src/features/quran/domain/entities/surah.dart';
 import 'package:muslimly/src/features/quran/domain/entities/ayah.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/quran_bloc.dart';
@@ -450,7 +451,7 @@ class _MushafPageState extends State<MushafPage> {
                       builder: (context, state) {
                         if (state is QuranLoading) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: IslamicLoadingIndicator(size: 48),
                           );
                         } else if (state is QuranError) {
                           return Center(child: Text(state.message));
@@ -961,7 +962,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                           if (snapshot.connectionState !=
                               ConnectionState.done) {
                             return const Center(
-                              child: CircularProgressIndicator(),
+                              child: IslamicLoadingIndicator(size: 40),
                             );
                           }
                           if (snapshot.hasError) {

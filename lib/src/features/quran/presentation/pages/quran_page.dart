@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/utils/surah_names.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 
 import '../../domain/entities/reciter.dart';
 import '../bloc/quran_bloc.dart';
@@ -245,7 +246,7 @@ class _QuranPageState extends State<QuranPage> {
                               builder: (context, state) {
                                 if (state is QuranLoading) {
                                   return const Center(
-                                    child: CircularProgressIndicator(),
+                                    child: IslamicLoadingIndicator(size: 48),
                                   );
                                 } else if (state is QuranError) {
                                   return Center(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../domain/entities/word.dart';
 import '../bloc/translation/translation_bloc.dart';
 import '../bloc/translation/translation_event.dart';
@@ -132,9 +133,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                 builder: (context, state) {
                   if (state is TranslationLoading) {
                     return const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF00E676),
-                      ),
+                      child: IslamicLoadingIndicator(size: 64),
                     );
                   } else if (state is TranslationError) {
                     return Center(

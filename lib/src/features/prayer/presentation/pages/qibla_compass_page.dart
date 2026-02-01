@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart'; // basic geolocator to get position for calculation
 import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../../../core/utils/qibla_util.dart'; // Import utility we just made
 
 class QiblaCompassPage extends StatefulWidget {
@@ -124,7 +125,7 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
-                            child: CircularProgressIndicator(),
+                            child: IslamicLoadingIndicator(size: 48),
                           );
                         }
 
@@ -403,14 +404,7 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
         if (_qiblaDirection == null)
           Column(
             children: [
-              const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white70,
-                ),
-              ),
+              const IslamicLoadingIndicator(size: 20),
               SizedBox(height: 12.h),
               Text(
                 l10n.qiblaLocating,

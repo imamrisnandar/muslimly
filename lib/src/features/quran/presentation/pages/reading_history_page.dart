@@ -11,6 +11,8 @@ import '../bloc/reading/reading_bloc.dart';
 import '../bloc/reading/reading_event.dart';
 import '../bloc/reading/reading_state.dart';
 import '../../domain/entities/reading_activity.dart';
+import '../../../../core/database/generate_dummy_data.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 
 class ReadingHistoryPage extends StatefulWidget {
   const ReadingHistoryPage({super.key});
@@ -20,23 +22,48 @@ class ReadingHistoryPage extends StatefulWidget {
 }
 
 class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
-  // We use a key to force rebuild of TabController when initialIndex changes if needed,
-  // but typically we just need to set it once or listen to changes.
-  // Actually, BlocBuilder inside Scaffold body allows us to read state,
-  // but DefaultTabController wraps Scaffold.
-  // We need to access Bloc BEFORE DefaultTabController.
+  final ScrollController _scrollController = ScrollController();
+  ReadingBloc? _readingBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_readingBloc == null) return;
+
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent * 0.8) {
+      // Trigger load more when scrolled to 80%
+      _readingBloc!.add(LoadMoreHistory());
+    }
+  }
+
+  Future<void> _generateDummyData() async {
+    await generateDummyData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<ReadingBloc>()..add(LoadReadingHistory()),
+      create: (context) {
+        _readingBloc = getIt<ReadingBloc>()..add(LoadReadingHistory());
+        return _readingBloc!;
+      },
       child: BlocBuilder<ReadingBloc, ReadingState>(
         builder: (context, state) {
           if (state.isLoading) {
             return const Material(
-              child: Center(
-                child: CircularProgressIndicator(color: Color(0xFF00E676)),
-              ),
+              child: Center(child: IslamicLoadingIndicator(size: 64)),
             );
           }
 
@@ -80,6 +107,48 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                     ),
                   ),
                   actions: [
+                    // Debug: Generate Dummy Data
+                    IconButton(
+                      icon: const Icon(Icons.science, color: Colors.amber),
+                      tooltip: 'Generate 6 months dummy data',
+                      onPressed: () async {
+                        // Import the generator
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        try {
+                          // Show loading
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Generating dummy data...'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+
+                          // Generate data
+                          await _generateDummyData();
+
+                          // Reload history
+                          if (context.mounted) {
+                            context.read<ReadingBloc>().add(
+                              LoadReadingHistory(),
+                            );
+                          }
+
+                          scaffoldMessenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('✅ Dummy data generated!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } catch (e) {
+                          scaffoldMessenger.showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                    ),
                     IconButton(
                       icon: const Icon(Icons.info_outline, color: Colors.white),
                       onPressed: () {
@@ -250,10 +319,24 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     double thirtyDayAverage,
     bool isWeeklyView,
   ) {
-    // 1. Group History by Week
-    final groupedHistory = _groupHistoryByWeek(history, context);
+    // 1. Group History by Week or Month based on toggle
+    final groupedHistory = isWeeklyView
+        ? _groupHistoryByWeek(history, context)
+        : _groupHistoryByMonth(history, context);
+
+    // 2. Get pagination state from BlocBuilder context
+    final state = context.read<ReadingBloc>().state;
+    final displayedWeeksCount = state.displayedWeeksCount;
+    final isLoadingMore = state.isLoadingMore;
+    final hasMoreHistory = state.hasMoreHistory;
+
+    // 3. Limit displayed periods (weeks or months)
+    final limitedHistory = groupedHistory.entries
+        .take(displayedWeeksCount)
+        .toList();
 
     return ListView(
+      controller: _scrollController,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       children: [
         // --- Lifetime Stats Cards ---
@@ -305,23 +388,61 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
 
         // --- Empty State ---
         if (history.isEmpty) ...[
-          SizedBox(height: 40.h),
+          SizedBox(height: 20.h),
           Center(
             child: Column(
               children: [
-                Icon(
-                  Icons.history_toggle_off,
-                  size: 64.sp,
-                  color: Colors.white12,
+                Container(
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.history_toggle_off,
+                    size: 28.sp,
+                    color: Colors.white24,
+                  ),
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: 12.h),
                 Text(
-                  AppLocalizations.of(context)!.emptyBookmarkTitle ??
-                      "No History Yet",
+                  AppLocalizations.of(context)!.emptyHistorySubtitle ??
+                      "Start reading to track your progress",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  AppLocalizations.of(context)!.emptyBookmarkSubtitle ??
+                      "Calculated automatically as you read pages",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+                ),
+                SizedBox(height: 16.h),
+                ElevatedButton(
+                  onPressed: () {
+                    context.go('/dashboard?index=2');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00E676),
+                    foregroundColor: Colors.black,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 10.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.btnGoToQuran ?? "Read Quran",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -329,7 +450,13 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
           ),
         ] else ...[
           // --- Grouped List View ---
-          ...groupedHistory.entries.map((entry) {
+          ...limitedHistory.asMap().entries.map((mapEntry) {
+            final index = mapEntry.key;
+            final entry = mapEntry.value;
+
+            // Auto-expand only first 2 weeks
+            final shouldExpand = index < 2;
+
             // Calculate Weekly Total
             int weeklyTotal = 0;
             int totalDuration = 0; // Sum duration
@@ -367,13 +494,15 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                 ),
               ),
               child: ExpansionTile(
-                initiallyExpanded: true, // Auto open new items
+                initiallyExpanded: shouldExpand,
                 tilePadding: EdgeInsets.zero,
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${l10n.lblWeek ?? 'Week'}: ${entry.key}",
+                      isWeeklyView
+                          ? "${l10n.lblWeek ?? 'Week'}: ${entry.key}"
+                          : entry.key, // For monthly, just show "January 2026"
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,
@@ -419,6 +548,30 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
               ),
             );
           }),
+
+          // --- Loading Indicator ---
+          if (isLoadingMore)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: const Center(child: IslamicLoadingIndicator(size: 32)),
+            ),
+
+          // --- End of History Message ---
+          if (!hasMoreHistory && limitedHistory.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.h),
+              child: Center(
+                child: Text(
+                  AppLocalizations.of(context)!.msgEndOfHistory ??
+                      "You've reached the end of your history",
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontSize: 12.sp,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ),
         ],
       ],
     );
@@ -447,6 +600,28 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         groups[rangeKey]!.add(activity);
       } else {
         groups[rangeKey] = [activity];
+      }
+    }
+    return groups;
+  }
+
+  Map<String, List<ReadingActivity>> _groupHistoryByMonth(
+    List<ReadingActivity> history,
+    BuildContext context,
+  ) {
+    final Map<String, List<ReadingActivity>> groups = {};
+    final String locale = Localizations.localeOf(context).languageCode;
+
+    for (var activity in history) {
+      final date = DateTime.fromMillisecondsSinceEpoch(activity.timestamp);
+
+      // Group by month (e.g., "January 2026", "February 2026")
+      final monthKey = DateFormat('MMMM yyyy', locale).format(date);
+
+      if (groups.containsKey(monthKey)) {
+        groups[monthKey]!.add(activity);
+      } else {
+        groups[monthKey] = [activity];
       }
     }
     return groups;
@@ -520,7 +695,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                 SizedBox(width: 8.w),
               ],
               Text(
-                DateFormat("EEE, HH:mm", locale).format(
+                DateFormat("d MMM, HH:mm", locale).format(
                   DateTime.fromMillisecondsSinceEpoch(activity.timestamp),
                 ),
                 style: TextStyle(color: Colors.white30, fontSize: 11.sp),
@@ -541,13 +716,24 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
   }
 
   Widget _buildViewToggle(BuildContext context, bool isWeeklyView) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20.w),
       child: Row(
         children: [
-          _buildToggleButton(context, 'Weekly', isWeeklyView, true),
+          _buildToggleButton(
+            context,
+            l10n.lblWeekly ?? 'Weekly',
+            isWeeklyView,
+            true,
+          ),
           SizedBox(width: 8.w),
-          _buildToggleButton(context, 'Monthly', !isWeeklyView, false),
+          _buildToggleButton(
+            context,
+            l10n.lblMonthly ?? 'Monthly',
+            !isWeeklyView,
+            false,
+          ),
         ],
       ),
     );
@@ -562,7 +748,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          context.read<ReadingBloc>().add(ToggleChartView(isWeekly: isWeekly));
+          _readingBloc?.add(ToggleChartView(isWeekly: isWeekly));
         },
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 8.h),
@@ -598,32 +784,53 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     int target, // Daily Target
     bool isWeeklyView, // NEW Param
   ) {
-    // Determine number of days to show
-    final daysToShow = isWeeklyView ? 7 : 30;
+    final now = DateTime.now();
+    final refDate = chartRefDate ?? now;
 
-    final refDate = chartRefDate ?? DateTime.now();
-    final bool isCurrentWeek = refDate.isAfter(
+    // Determine number of days to show based on view type
+    int daysToShow;
+    DateTime startDate;
+    DateTime endDate;
+
+    if (isWeeklyView) {
+      // Weekly: 7 days ending on refDate
+      daysToShow = 7;
+      endDate = refDate;
+      startDate = refDate.subtract(Duration(days: daysToShow - 1));
+    } else {
+      // Monthly: Show full calendar month of refDate
+      // Get first day of the month
+      startDate = DateTime(refDate.year, refDate.month, 1);
+      // Get last day of the month
+      endDate = DateTime(refDate.year, refDate.month + 1, 0);
+      daysToShow = endDate.day; // Number of days in this month
+    }
+
+    final bool isCurrentPeriod = refDate.isAfter(
       DateTime.now().subtract(const Duration(days: 1)),
     );
 
     final List<String> labels = [];
     final List<int> values = [];
+    final List<String> dateKeys = [];
     int maxVal = target > 0 ? target : 1;
 
     final String locale = Localizations.localeOf(context).languageCode;
 
-    for (int i = daysToShow - 1; i >= 0; i--) {
-      final d = refDate.subtract(Duration(days: i));
+    for (int i = 0; i < daysToShow; i++) {
+      final d = startDate.add(Duration(days: i));
       final key = DateFormat('yyyy-MM-dd').format(d);
       final val = progress[key] ?? 0;
+
+      dateKeys.add(key);
 
       if (isWeeklyView) {
         labels.add(
           DateFormat('E', locale).format(d)[0],
         ); // M, T, W (Single letter)
       } else {
-        // Show label for first, last, and every 5th day
-        if (i == 0 || i == daysToShow - 1 || i % 5 == 0) {
+        // Show label for 1st, 10th, 20th, and last day
+        if (d.day == 1 || d.day == 10 || d.day == 20 || d.day == endDate.day) {
           labels.add(DateFormat('d').format(d));
         } else {
           labels.add('');
@@ -638,9 +845,11 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     if (maxVal == target) maxVal = (target * 1.5).ceil();
 
     // Date Range Label
-    final startDate = refDate.subtract(Duration(days: daysToShow - 1));
-    final dateRange =
-        "${DateFormat('d MMM', locale).format(startDate)} - ${DateFormat('d MMM', locale).format(refDate)}";
+    final dateRange = isWeeklyView
+        ? "${DateFormat('d MMM', locale).format(startDate)} - ${DateFormat('d MMM', locale).format(endDate)}"
+        : DateFormat('MMMM yyyy', locale).format(refDate); // "January 2026"
+
+    final todayStr = DateFormat('yyyy-MM-dd').format(now);
 
     return Container(
       margin: EdgeInsets.only(bottom: 24.h),
@@ -671,7 +880,8 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                       isWeeklyView
                           ? (AppLocalizations.of(context)!.chartWeeklyTitle ??
                                 "Weekly Progress")
-                          : "Monthly Progress", // Hardcoded fallback or need key
+                          : (AppLocalizations.of(context)!.chartMonthlyTitle ??
+                                "Monthly Progress"),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.sp,
@@ -696,9 +906,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                       size: 24.sp,
                     ),
                     onPressed: () {
-                      context.read<ReadingBloc>().add(
-                        const NavigateWeeklyChart(-1),
-                      );
+                      _readingBloc?.add(const NavigateWeeklyChart(-1));
                     },
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -707,15 +915,13 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                   IconButton(
                     icon: Icon(
                       Icons.chevron_right,
-                      color: isCurrentWeek ? Colors.white24 : Colors.white,
+                      color: isCurrentPeriod ? Colors.white24 : Colors.white,
                       size: 24.sp,
                     ),
-                    onPressed: isCurrentWeek
+                    onPressed: isCurrentPeriod
                         ? null
                         : () {
-                            context.read<ReadingBloc>().add(
-                              const NavigateWeeklyChart(1),
-                            );
+                            _readingBloc?.add(const NavigateWeeklyChart(1));
                           },
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -731,6 +937,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
             children: List.generate(daysToShow, (index) {
               final val = values[index];
               final label = labels[index];
+              final dateKey = dateKeys[index];
 
               // Calculate Heights
               final double maxH = 120.h;
@@ -743,8 +950,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
               if (valHeight < 0) valHeight = 0;
 
               final bool isAchieved = val >= target && target > 0;
-              final bool isToday =
-                  isWeeklyView && (index == daysToShow - 1) && isCurrentWeek;
+              final bool isToday = dateKey == todayStr;
 
               // Bar width adjustment
               final barWidth = isWeeklyView ? 24.w : 6.w;
@@ -752,6 +958,19 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
 
               return Column(
                 children: [
+                  // Value Label
+                  if (val > 0) ...[
+                    Text(
+                      val.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Outfit',
+                      ),
+                    ),
+                    SizedBox(height: 4.h),
+                  ],
                   Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
@@ -1071,6 +1290,9 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     int lifetimeTotal,
   ) {
     final now = DateTime.now();
+    // Calculate End of Week (Sunday)
+    final int daysUntilSunday = DateTime.sunday - now.weekday;
+    final DateTime endOfWeek = now.add(Duration(days: daysUntilSunday));
 
     // Calculate weekly stats
     int weeklyTotal = 0;
@@ -1079,7 +1301,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     int maxDailyValue = 0;
 
     for (int i = 6; i >= 0; i--) {
-      final d = now.subtract(Duration(days: i));
+      final d = endOfWeek.subtract(Duration(days: i));
       final key = DateFormat('yyyy-MM-dd').format(d);
       final val = weeklyProgress[key] ?? 0;
       weeklyTotal += val;

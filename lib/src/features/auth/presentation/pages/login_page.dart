@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../bloc/auth_bloc.dart';
 import '../../../../core/utils/custom_snackbar.dart';
 
@@ -212,11 +213,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       // LOGIN BUTTON
                       if (isLoading)
-                        const Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF00E676),
-                          ),
-                        )
+                        const Center(child: IslamicLoadingIndicator(size: 48))
                       else
                         SizedBox(
                           height: 50.h,

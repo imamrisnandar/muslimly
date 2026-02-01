@@ -7,6 +7,7 @@ import '../../../prayer/presentation/bloc/prayer_event.dart';
 import '../../../prayer/presentation/bloc/prayer_state.dart';
 import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/widgets/islamic_loading_indicator.dart';
 
 class PrayerPage extends StatelessWidget {
   const PrayerPage({super.key});
@@ -374,7 +375,7 @@ class _PrayerPageView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     if (state.status == PrayerStatus.loading && state.prayerTime == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: IslamicLoadingIndicator(size: 64));
     } else if (state.status == PrayerStatus.failure &&
         state.prayerTime == null) {
       return Center(

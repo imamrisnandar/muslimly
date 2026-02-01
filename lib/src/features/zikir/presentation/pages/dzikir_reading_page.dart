@@ -134,13 +134,19 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027), // Dark Theme
+      backgroundColor: const Color(0xFFFFF8E1), // Quran Theme
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(widget.title, style: const TextStyle(color: Colors.white)),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            color: const Color(0xFF4E342E), // Dark Brown
+            fontFamily: GoogleFonts.outfit().fontFamily,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF4E342E)),
           onPressed: () => context.pop(),
         ),
         actions: [
@@ -149,7 +155,10 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
               padding: EdgeInsets.only(right: 16.w),
               child: Text(
                 "${_currentIndex + 1}/${widget.items.length}",
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                style: TextStyle(
+                  color: const Color(0xFF4E342E),
+                  fontSize: 14.sp,
+                ),
               ),
             ),
           ),
@@ -158,8 +167,8 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
           preferredSize: Size.fromHeight(4.h),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.white12,
-            valueColor: const AlwaysStoppedAnimation(Color(0xFF00E676)),
+            backgroundColor: const Color(0xFF1B5E20).withOpacity(0.1),
+            valueColor: const AlwaysStoppedAnimation(Color(0xFF1B5E20)),
             minHeight: 4.h,
           ),
         ),
@@ -193,21 +202,28 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                               ),
                               padding: EdgeInsets.all(12.w),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1A2C33),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Colors.white,
+                                    const Color(0xFFFFF8E1),
+                                  ],
+                                ),
                                 borderRadius: BorderRadius.circular(24.r),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black26,
+                                    color: const Color(
+                                      0xFF1B5E20,
+                                    ).withOpacity(0.1),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   ),
                                 ],
                                 border: isCurrent
                                     ? Border.all(
-                                        color: const Color(
-                                          0xFF00E676,
-                                        ).withOpacity(0.3),
-                                        width: 1,
+                                        color: const Color(0xFF1B5E20),
+                                        width: 1.5,
                                       )
                                     : null,
                               ),
@@ -218,9 +234,11 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                     Text(
                                       item.title,
                                       style: TextStyle(
-                                        color: const Color(0xFF00E676),
+                                        color: const Color(0xFF1B5E20),
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.bold,
+                                        fontFamily:
+                                            GoogleFonts.outfit().fontFamily,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -228,7 +246,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                     Text(
                                       item.arabic,
                                       style: GoogleFonts.amiriQuran(
-                                        color: Colors.white,
+                                        color: Colors.black87,
                                         fontSize: 20.sp,
                                         height: 1.8,
                                       ),
@@ -239,7 +257,9 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                       Text(
                                         item.transliteration,
                                         style: TextStyle(
-                                          color: Colors.orangeAccent,
+                                          color: const Color(
+                                            0xFF6D4C41,
+                                          ), // Medium Brown
                                           fontSize: 11.sp,
                                           fontStyle: FontStyle.italic,
                                         ),
@@ -250,8 +270,10 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                     Text(
                                       item.translation,
                                       style: TextStyle(
-                                        color: Colors.white70,
+                                        color: const Color(0xFF4E342E),
                                         fontSize: 11.sp,
+                                        fontFamily:
+                                            GoogleFonts.outfit().fontFamily,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -260,7 +282,9 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                       Text(
                                         item.source,
                                         style: TextStyle(
-                                          color: Colors.white30,
+                                          color: const Color(
+                                            0xFF4E342E,
+                                          ).withOpacity(0.5),
                                           fontSize: 8.sp,
                                         ),
                                         textAlign: TextAlign.center,
@@ -333,28 +357,40 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                       child: GestureDetector(
                         onTap: _incrementCounter,
                         child: Container(
-                          height: 40.w,
-                          width: 40.w,
+                          height: 56.w, // Slightly larger touch area
+                          width: 56.w,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: const Color(0xFF00E676).withOpacity(0.35),
+                            color: const Color(0xFF1B5E20), // Dark Green
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF00E676).withOpacity(0.2),
+                                color: const Color(0xFF1B5E20).withOpacity(0.4),
                                 blurRadius: 8,
                                 spreadRadius: 0,
                               ),
                             ],
                           ),
-                          child: Center(
-                            child: Text(
-                              "${currentItem.targetCount - _currentCount}",
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.85),
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                value:
+                                    (currentItem.targetCount - _currentCount) /
+                                    currentItem.targetCount,
+                                valueColor: const AlwaysStoppedAnimation(
+                                  Colors.white,
+                                ),
+                                strokeWidth: 3,
                               ),
-                            ),
+                              Text(
+                                "${currentItem.targetCount - _currentCount}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -387,21 +423,23 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                           ),
                           padding: EdgeInsets.all(20.w),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1A2C33),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Colors.white, const Color(0xFFFFF8E1)],
+                            ),
                             borderRadius: BorderRadius.circular(24.r),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black26,
+                                color: const Color(0xFF1B5E20).withOpacity(0.1),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
                             ],
                             border: isCurrent
                                 ? Border.all(
-                                    color: const Color(
-                                      0xFF00E676,
-                                    ).withOpacity(0.3),
-                                    width: 1,
+                                    color: const Color(0xFF1B5E20),
+                                    width: 1.5,
                                   )
                                 : null,
                           ),
@@ -412,9 +450,10 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                 Text(
                                   item.title,
                                   style: TextStyle(
-                                    color: const Color(0xFF00E676),
+                                    color: const Color(0xFF1B5E20),
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.bold,
+                                    fontFamily: GoogleFonts.outfit().fontFamily,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -422,7 +461,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                 Text(
                                   item.arabic,
                                   style: GoogleFonts.amiriQuran(
-                                    color: Colors.white,
+                                    color: Colors.black87,
                                     fontSize: 28.sp,
                                     height: 2.2,
                                   ),
@@ -433,7 +472,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                   Text(
                                     item.transliteration,
                                     style: TextStyle(
-                                      color: Colors.orangeAccent,
+                                      color: const Color(0xFF6D4C41),
                                       fontSize: 14.sp,
                                       fontStyle: FontStyle.italic,
                                     ),
@@ -444,8 +483,9 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                 Text(
                                   item.translation,
                                   style: TextStyle(
-                                    color: Colors.white70,
+                                    color: const Color(0xFF4E342E),
                                     fontSize: 14.sp,
+                                    fontFamily: GoogleFonts.outfit().fontFamily,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -454,7 +494,9 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                   Text(
                                     item.source,
                                     style: TextStyle(
-                                      color: Colors.white30,
+                                      color: const Color(
+                                        0xFF4E342E,
+                                      ).withOpacity(0.5),
                                       fontSize: 10.sp,
                                     ),
                                     textAlign: TextAlign.center,
@@ -481,7 +523,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                         Text(
                           l10n.dzikirReadCount(currentItem.targetCount),
                           style: TextStyle(
-                            color: Colors.white54,
+                            color: const Color(0xFF4E342E).withOpacity(0.6),
                             fontSize: 14.sp,
                           ),
                         ),
@@ -494,7 +536,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                               icon: Icon(
                                 Icons.arrow_back_ios_rounded,
                                 color: _currentIndex > 0
-                                    ? Colors.white.withOpacity(0.5)
+                                    ? const Color(0xFF4E342E)
                                     : Colors.transparent,
                                 size: 32.sp,
                               ),
@@ -510,11 +552,11 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                 width: 80.h,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: const Color(0xFF00E676),
+                                  color: const Color(0xFF1B5E20),
                                   boxShadow: [
                                     BoxShadow(
                                       color: const Color(
-                                        0xFF00E676,
+                                        0xFF1B5E20,
                                       ).withOpacity(0.4),
                                       blurRadius: 20,
                                       spreadRadius: 2,
@@ -525,7 +567,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                   child: Text(
                                     "${currentItem.targetCount - _currentCount}",
                                     style: TextStyle(
-                                      color: Colors.black87,
+                                      color: Colors.white,
                                       fontSize: 32.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -540,8 +582,8 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                             IconButton(
                               icon: Icon(
                                 Icons.arrow_forward_ios_rounded,
-                                color: Colors.white.withOpacity(
-                                  0.5,
+                                color: const Color(
+                                  0xFF4E342E,
                                 ), // Always visible (Next or Finish)
                                 size: 32.sp,
                               ),
@@ -553,7 +595,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                         Text(
                           l10n.dzikirTapToCount,
                           style: TextStyle(
-                            color: Colors.white30,
+                            color: const Color(0xFF4E342E).withOpacity(0.5),
                             fontSize: 12.sp,
                           ),
                         ),
@@ -571,7 +613,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                           icon: Icon(
                             Icons.arrow_back_ios_rounded,
                             color: _currentIndex > 0
-                                ? Colors.white.withOpacity(0.5)
+                                ? const Color(0xFF4E342E)
                                 : Colors.transparent,
                             size: 32.sp,
                           ),
@@ -581,7 +623,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                         Text(
                           "${_currentIndex + 1} / ${widget.items.length}",
                           style: TextStyle(
-                            color: Colors.white54,
+                            color: const Color(0xFF4E342E),
                             fontSize: 16.sp,
                           ),
                         ),
@@ -590,7 +632,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                           icon: Icon(
                             Icons.arrow_forward_ios_rounded,
                             color: _currentIndex < widget.items.length - 1
-                                ? Colors.white.withOpacity(0.5)
+                                ? const Color(0xFF4E342E)
                                 : Colors.transparent,
                             size: 32.sp,
                           ),

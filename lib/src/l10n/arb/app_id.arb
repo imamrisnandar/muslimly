@@ -273,6 +273,10 @@
   "guideListTitle": "3. Mode Ayat (List)",
   "guideListDesc": "• **Tanpa Timer:** Fokus pada jumlah ayat, bukan durasi.\n• **Progres:** Tekan ayat dan pilih **Tandai Terakhir Baca**. Kami menghitung selisih ayat baru dari sesi terakhirmu.\n• *Contoh:* Terakhir baca Ayat 5, hari ini tandai Ayat 20. Tercatat: **15 Ayat Baru**.",
   "guideInsightTitle": "4. Statistik & Streak",
-  "guideInsightDesc": "• **Halaman Unik:** Di Mode Mushaf, kami mencatat *Halaman Unik* untuk progres Khatam. Membaca halaman yang sama berulang kali tidak menambah 'Total Halaman', tapi durasinya tetap dicatat!\n• **Streak:** Baca minimal 1 ayat/halaman setiap hari agar streak tidak putus."
+  "guideInsightDesc": "• **Halaman Unik:** Di Mode Mushaf, kami mencatat *Halaman Unik* untuk progres Khatam. Membaca halaman yang sama berulang kali tidak menambah 'Total Halaman', tapi durasinya tetap dicatat!\n• **Streak:** Baca minimal 1 ayat/halaman setiap hari agar streak tidak putus.",
+  "lblWeekly": "Mingguan",
+  "lblMonthly": "Bulanan",
+  "msgEndOfHistory": "Anda telah mencapai akhir riwayat",
+  "chartMonthlyTitle": "Progres Bulanan"
 }
 
