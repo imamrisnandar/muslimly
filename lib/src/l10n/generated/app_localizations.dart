@@ -1753,6 +1753,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Monthly Progress'**
   String get chartMonthlyTitle;
+
+  /// No description provided for @calendarDayMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get calendarDayMon;
+
+  /// No description provided for @calendarDayTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get calendarDayTue;
+
+  /// No description provided for @calendarDayWed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get calendarDayWed;
+
+  /// No description provided for @calendarDayThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get calendarDayThu;
+
+  /// No description provided for @calendarDayFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get calendarDayFri;
+
+  /// No description provided for @calendarDaySat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get calendarDaySat;
+
+  /// No description provided for @calendarDaySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get calendarDaySun;
+
+  /// No description provided for @calendarLegendWajib.
+  ///
+  /// In en, this message translates to:
+  /// **'Wajib'**
+  String get calendarLegendWajib;
+
+  /// No description provided for @calendarLegendSunnah.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunnah'**
+  String get calendarLegendSunnah;
+
+  /// No description provided for @calendarLegendHaram.
+  ///
+  /// In en, this message translates to:
+  /// **'Forbidden'**
+  String get calendarLegendHaram;
+
+  /// No description provided for @fastingRamadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan Fasting'**
+  String get fastingRamadan;
+
+  /// No description provided for @fastingArafah.
+  ///
+  /// In en, this message translates to:
+  /// **'Arafah Fasting'**
+  String get fastingArafah;
+
+  /// No description provided for @fastingAshura.
+  ///
+  /// In en, this message translates to:
+  /// **'Ashura Fasting'**
+  String get fastingAshura;
+
+  /// No description provided for @fastingTasua.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasu\'a Fasting'**
+  String get fastingTasua;
+
+  /// No description provided for @fastingAyyamulBidh.
+  ///
+  /// In en, this message translates to:
+  /// **'Ayyamul Bidh'**
+  String get fastingAyyamulBidh;
+
+  /// No description provided for @fastingMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday Fasting'**
+  String get fastingMonday;
+
+  /// No description provided for @fastingThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday Fasting'**
+  String get fastingThursday;
+
+  /// No description provided for @eidFitr.
+  ///
+  /// In en, this message translates to:
+  /// **'Eid Al-Fitr'**
+  String get eidFitr;
+
+  /// No description provided for @eidAdha.
+  ///
+  /// In en, this message translates to:
+  /// **'Eid Al-Adha'**
+  String get eidAdha;
+
+  /// No description provided for @daysTasyrik.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasyrik Days'**
+  String get daysTasyrik;
 }
 
 class _AppLocalizationsDelegate

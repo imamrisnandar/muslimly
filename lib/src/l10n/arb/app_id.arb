@@ -277,6 +277,26 @@
   "lblWeekly": "Mingguan",
   "lblMonthly": "Bulanan",
   "msgEndOfHistory": "Anda telah mencapai akhir riwayat",
-  "chartMonthlyTitle": "Progres Bulanan"
+  "chartMonthlyTitle": "Progres Bulanan",
+  "calendarDayMon": "Sen",
+  "calendarDayTue": "Sel",
+  "calendarDayWed": "Rab",
+  "calendarDayThu": "Kam",
+  "calendarDayFri": "Jum",
+  "calendarDaySat": "Sab",
+  "calendarDaySun": "Min",
+  "calendarLegendWajib": "Wajib",
+  "calendarLegendSunnah": "Sunnah",
+  "calendarLegendHaram": "Diharamkan",
+  "fastingRamadan": "Puasa Ramadan",
+  "fastingArafah": "Puasa Arafah",
+  "fastingAshura": "Puasa Asyura",
+  "fastingTasua": "Puasa Tasu'a",
+  "fastingAyyamulBidh": "Ayyamul Bidh",
+  "fastingMonday": "Puasa Senin",
+  "fastingThursday": "Puasa Kamis",
+  "eidFitr": "Idul Fitri",
+  "eidAdha": "Idul Adha",
+  "daysTasyrik": "Hari Tasyrik"
 }
 

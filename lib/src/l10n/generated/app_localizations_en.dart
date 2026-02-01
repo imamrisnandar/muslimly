@@ -930,4 +930,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chartMonthlyTitle => 'Monthly Progress';
+
+  @override
+  String get calendarDayMon => 'Mon';
+
+  @override
+  String get calendarDayTue => 'Tue';
+
+  @override
+  String get calendarDayWed => 'Wed';
+
+  @override
+  String get calendarDayThu => 'Thu';
+
+  @override
+  String get calendarDayFri => 'Fri';
+
+  @override
+  String get calendarDaySat => 'Sat';
+
+  @override
+  String get calendarDaySun => 'Sun';
+
+  @override
+  String get calendarLegendWajib => 'Wajib';
+
+  @override
+  String get calendarLegendSunnah => 'Sunnah';
+
+  @override
+  String get calendarLegendHaram => 'Forbidden';
+
+  @override
+  String get fastingRamadan => 'Ramadan Fasting';
+
+  @override
+  String get fastingArafah => 'Arafah Fasting';
+
+  @override
+  String get fastingAshura => 'Ashura Fasting';
+
+  @override
+  String get fastingTasua => 'Tasu\'a Fasting';
+
+  @override
+  String get fastingAyyamulBidh => 'Ayyamul Bidh';
+
+  @override
+  String get fastingMonday => 'Monday Fasting';
+
+  @override
+  String get fastingThursday => 'Thursday Fasting';
+
+  @override
+  String get eidFitr => 'Eid Al-Fitr';
+
+  @override
+  String get eidAdha => 'Eid Al-Adha';
+
+  @override
+  String get daysTasyrik => 'Tasyrik Days';
 }

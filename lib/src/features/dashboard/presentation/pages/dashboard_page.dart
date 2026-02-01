@@ -148,8 +148,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     selectedLabelStyle: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.bold,
+                      fontFamily: 'Outfit',
                     ),
-                    unselectedLabelStyle: TextStyle(fontSize: 10.sp),
+                    unselectedLabelStyle: TextStyle(
+                      fontSize: 10.sp,
+                      fontFamily: 'Outfit',
+                    ),
                     items: [
                       BottomNavigationBarItem(
                         icon: const Icon(Icons.home_filled),
@@ -164,7 +168,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           globalKey: _quranTabKey,
                           title: AppLocalizations.of(
                             context,
-                          )!.showcaseQuranTabTitle, // Localized
+                          )!.showcaseQuranTabTitle,
                           description: AppLocalizations.of(
                             context,
                           )!.showcaseQuranTab,
@@ -181,7 +185,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           globalKey: _dzikirTabKey,
                           title: AppLocalizations.of(
                             context,
-                          )!.showcaseDzikirTitle, // Localized
+                          )!.showcaseDzikirTitle,
                           description: AppLocalizations.of(
                             context,
                           )!.showcaseDzikir,
@@ -195,7 +199,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           globalKey: _settingsTabKey,
                           title: AppLocalizations.of(
                             context,
-                          )!.showcaseSettingsTitle, // Localized
+                          )!.showcaseSettingsTitle,
                           description: AppLocalizations.of(
                             context,
                           )!.showcaseSettingsGoal,

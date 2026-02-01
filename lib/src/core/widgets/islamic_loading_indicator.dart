@@ -63,7 +63,7 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
               width: widget.size,
               height: widget.size,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(widget.size * 0.2),
+                shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
                     color: const Color(
@@ -74,8 +74,7 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
                   ),
                 ],
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(widget.size * 0.2),
+              child: ClipOval(
                 child: Image.asset(
                   widget.logoPath!,
                   width: widget.size,

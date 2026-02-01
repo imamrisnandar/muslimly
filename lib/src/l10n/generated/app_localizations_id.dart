@@ -935,4 +935,64 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get chartMonthlyTitle => 'Progres Bulanan';
+
+  @override
+  String get calendarDayMon => 'Sen';
+
+  @override
+  String get calendarDayTue => 'Sel';
+
+  @override
+  String get calendarDayWed => 'Rab';
+
+  @override
+  String get calendarDayThu => 'Kam';
+
+  @override
+  String get calendarDayFri => 'Jum';
+
+  @override
+  String get calendarDaySat => 'Sab';
+
+  @override
+  String get calendarDaySun => 'Min';
+
+  @override
+  String get calendarLegendWajib => 'Wajib';
+
+  @override
+  String get calendarLegendSunnah => 'Sunnah';
+
+  @override
+  String get calendarLegendHaram => 'Diharamkan';
+
+  @override
+  String get fastingRamadan => 'Puasa Ramadan';
+
+  @override
+  String get fastingArafah => 'Puasa Arafah';
+
+  @override
+  String get fastingAshura => 'Puasa Asyura';
+
+  @override
+  String get fastingTasua => 'Puasa Tasu\'a';
+
+  @override
+  String get fastingAyyamulBidh => 'Ayyamul Bidh';
+
+  @override
+  String get fastingMonday => 'Puasa Senin';
+
+  @override
+  String get fastingThursday => 'Puasa Kamis';
+
+  @override
+  String get eidFitr => 'Idul Fitri';
+
+  @override
+  String get eidAdha => 'Idul Adha';
+
+  @override
+  String get daysTasyrik => 'Hari Tasyrik';
 }
