@@ -54,12 +54,12 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8E1), // Quran Theme
+      backgroundColor: const Color(0xFF1C2A30), // Dark Theme Background
       appBar: AppBar(
         title: Text(
           l10n.dzikirDailyTitle,
           style: TextStyle(
-            color: const Color(0xFF4E342E),
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             fontFamily: GoogleFonts.outfit().fontFamily,
           ),
@@ -67,7 +67,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF4E342E)),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.pop(),
         ),
       ),
@@ -84,22 +84,22 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
             child: TextField(
               controller: _searchController,
               style: TextStyle(
-                color: const Color(0xFF4E342E),
+                color: Colors.white,
                 fontSize: isLandscape ? 12.sp : 14.sp,
               ),
               decoration: InputDecoration(
                 hintText: 'Cari doa...',
                 hintStyle: TextStyle(
-                  color: const Color(0xFF4E342E).withOpacity(0.5),
+                  color: Colors.white54,
                   fontSize: isLandscape ? 12.sp : 14.sp,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: const Color(0xFF4E342E).withOpacity(0.5),
+                  color: Colors.white54,
                   size: isLandscape ? 18.sp : 20.sp,
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Colors.black.withOpacity(0.3),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
@@ -115,7 +115,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: const BorderSide(
-                    color: Color(0xFF1B5E20),
+                    color: Color(0xFF00E676),
                     width: 1,
                   ),
                 ),
@@ -130,7 +130,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                     child: Text(
                       "Tidak ditemukan doa",
                       style: TextStyle(
-                        color: const Color(0xFF4E342E).withOpacity(0.5),
+                        color: Colors.white54,
                         fontSize: isLandscape ? 12.sp : 14.sp,
                       ),
                     ),
@@ -155,18 +155,14 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Colors.white, const Color(0xFFFFF8E1)],
+                            colors: [
+                              Colors.white.withOpacity(0.05),
+                              Colors.white.withOpacity(0.02),
+                            ],
                           ),
                           borderRadius: BorderRadius.circular(16.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF1B5E20).withOpacity(0.08),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
                           border: Border.all(
-                            color: const Color(0xFF1B5E20).withOpacity(0.1),
+                            color: Colors.white.withOpacity(0.05),
                             width: 1,
                           ),
                         ),
@@ -199,12 +195,14 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                     width: 40.w,
                                     height: 40.w,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFFFF8E1),
+                                      color: const Color(
+                                        0xFF00E676,
+                                      ).withOpacity(0.1),
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: const Color(
-                                          0xFF1B5E20,
-                                        ).withOpacity(0.2),
+                                          0xFF00E676,
+                                        ).withOpacity(0.3),
                                         width: 1.5,
                                       ),
                                     ),
@@ -212,7 +210,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                       child: Text(
                                         "${originalIndex + 1}",
                                         style: TextStyle(
-                                          color: const Color(0xFF1B5E20),
+                                          color: const Color(0xFF00E676),
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14.sp,
                                           fontFamily:
@@ -228,7 +226,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                     child: Text(
                                       item.title,
                                       style: TextStyle(
-                                        color: const Color(0xFF4E342E),
+                                        color: Colors.white,
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w600,
                                         fontFamily:
@@ -241,14 +239,12 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                   Container(
                                     padding: EdgeInsets.all(8.w),
                                     decoration: BoxDecoration(
-                                      color: const Color(
-                                        0xFF1B5E20,
-                                      ).withOpacity(0.05),
+                                      color: Colors.white.withOpacity(0.05),
                                       borderRadius: BorderRadius.circular(8.r),
                                     ),
                                     child: Icon(
                                       Icons.arrow_forward_ios_rounded,
-                                      color: const Color(0xFF1B5E20),
+                                      color: Colors.white70,
                                       size: 16.sp,
                                     ),
                                   ),

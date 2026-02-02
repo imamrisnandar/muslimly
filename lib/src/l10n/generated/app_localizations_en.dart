@@ -990,4 +990,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get daysTasyrik => 'Tasyrik Days';
+
+  @override
+  String get reminderFasting => 'FASTING';
+
+  @override
+  String get reminderDzikir => 'DZIKIR';
+
+  @override
+  String reminderIftarIn(Object duration) {
+    return 'Iftar in $duration';
+  }
+
+  @override
+  String reminderFastingType(Object type) {
+    return '$type Fasting';
+  }
+
+  @override
+  String reminderDzikirTime(Object type) {
+    return 'Time for $type Dzikir';
+  }
 }

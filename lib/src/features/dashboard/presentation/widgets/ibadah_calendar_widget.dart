@@ -141,9 +141,12 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
-        childAspectRatio: 1.0, // Smaller cells (was 0.85)
+        childAspectRatio:
+            MediaQuery.of(context).orientation == Orientation.landscape
+            ? 1.5 // Flatter cells in Landscape
+            : 1.15,
       ),
       itemCount: totalCells,
       itemBuilder: (context, index) {
@@ -160,6 +163,12 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
   }
 
   Widget _buildDayCell(DateTime date) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final double daySize = isLandscape ? 10.sp : 14.sp;
+    final double hijriSize = isLandscape ? 8.sp : 10.sp;
+    final double dotSize = isLandscape ? 4.h : 6.h;
+
     final isSelected =
         date.year == _selectedDate.year &&
         date.month == _selectedDate.month &&
@@ -172,6 +181,9 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
 
     final fastingType = widget.fastingService.getFastingType(date);
 
+    // Hijri Day Calculation
+    final hijriDate = HijriCalendar.fromDate(date);
+
     return InkWell(
       onTap: () {
         setState(() {
@@ -179,7 +191,7 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
         });
       },
       child: Container(
-        margin: EdgeInsets.all(2.w),
+        margin: EdgeInsets.all(1.w), // Smaller margin
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF00E676).withOpacity(0.2)
@@ -192,23 +204,36 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Gregorian Text
             Text(
               "${date.day}",
               style: TextStyle(
                 color: isSelected ? const Color(0xFF1B5E20) : Colors.white,
-                fontSize: 16.sp,
+                fontSize: daySize, // Responsive Size
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                height: 1.0,
               ),
             ),
-            SizedBox(height: 2.h),
-            _buildFastingDot(fastingType),
+            // Hijri Text
+            Text(
+              "${hijriDate.hDay}",
+              style: TextStyle(
+                color: Colors.white54,
+                fontSize: hijriSize, // Responsive Size
+                height: 1.0,
+              ),
+            ),
+            if (fastingType != FastingType.none) ...[
+              SizedBox(height: 2.h),
+              _buildFastingDot(fastingType, size: dotSize),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildFastingDot(FastingType type) {
+  Widget _buildFastingDot(FastingType type, {double? size}) {
     Color? color;
     if (type == FastingType.wajib) color = const Color(0xFFFFC107); // Gold
     if (type == FastingType.sunnah) color = const Color(0xFF00E676); // Green
@@ -263,42 +288,31 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
+                // Line 1: Date & Hijri
                 Text(
-                  DateFormat(
-                    'EEEE, d MMMM yyyy',
-                    AppLocalizations.of(context)!.localeName,
-                  ).format(_selectedDate),
+                  "${DateFormat('d MMM yyyy', AppLocalizations.of(context)!.localeName).format(_selectedDate)} • ${hijri.hDay} ${hijri.longMonthName} ${hijri.hYear} H",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16.sp,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4.h),
-                Text(
-                  "${hijri.hDay} ${hijri.longMonthName} ${hijri.hYear} H",
-                  style: TextStyle(color: Colors.white70, fontSize: 14.sp),
-                ),
+                // Line 2: Event (if any)
                 if (eventName != null) ...[
-                  SizedBox(height: 8.h),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
+                  SizedBox(height: 4.h),
+                  Text(
+                    eventName,
+                    style: TextStyle(
+                      color: borderColor,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
                     ),
-                    decoration: BoxDecoration(
-                      color: borderColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Text(
-                      eventName,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ],

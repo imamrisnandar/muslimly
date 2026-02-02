@@ -1873,6 +1873,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tasyrik Days'**
   String get daysTasyrik;
+
+  /// No description provided for @reminderFasting.
+  ///
+  /// In en, this message translates to:
+  /// **'FASTING'**
+  String get reminderFasting;
+
+  /// No description provided for @reminderDzikir.
+  ///
+  /// In en, this message translates to:
+  /// **'DZIKIR'**
+  String get reminderDzikir;
+
+  /// No description provided for @reminderIftarIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Iftar in {duration}'**
+  String reminderIftarIn(Object duration);
+
+  /// No description provided for @reminderFastingType.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} Fasting'**
+  String reminderFastingType(Object type);
+
+  /// No description provided for @reminderDzikirTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for {type} Dzikir'**
+  String reminderDzikirTime(Object type);
 }
 
 class _AppLocalizationsDelegate

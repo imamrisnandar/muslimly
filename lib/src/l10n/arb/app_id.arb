@@ -297,6 +297,11 @@
   "fastingThursday": "Puasa Kamis",
   "eidFitr": "Idul Fitri",
   "eidAdha": "Idul Adha",
-  "daysTasyrik": "Hari Tasyrik"
+  "daysTasyrik": "Hari Tasyrik",
+  "reminderFasting": "PUASA",
+  "reminderDzikir": "DZIKIR",
+  "reminderIftarIn": "Berbuka {duration} lagi",
+  "reminderFastingType": "Puasa {type}",
+  "reminderDzikirTime": "Waktunya Dzikir {type}"
 }
 

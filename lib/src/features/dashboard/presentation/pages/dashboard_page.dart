@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart'; // Fixed import
 import 'package:intl/intl.dart';
-import '../../../quran/domain/entities/last_read.dart';
+
 import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart';
@@ -24,12 +24,17 @@ import '../../../quran/presentation/bloc/reading/reading_state.dart';
 import '../../../quran/presentation/bloc/bookmark/bookmark_bloc.dart';
 import '../../../quran/presentation/bloc/bookmark/bookmark_event.dart';
 import '../../../quran/presentation/bloc/bookmark/bookmark_state.dart';
-import '../../../quran/domain/entities/surah.dart';
+
 import '../widgets/prayer_countdown_widget.dart';
 import '../../../quran/presentation/bloc/audio_bloc.dart';
 import '../../../quran/presentation/bloc/audio_event.dart';
 import '../../../quran/presentation/bloc/audio_state.dart';
 import '../../../quran/presentation/widgets/draggable_audio_player.dart';
+import '../../domain/services/reminder_service.dart';
+import '../../../prayer/domain/services/fasting_service.dart';
+import '../../domain/models/reminder_models.dart';
+import '../../../zikir/data/repositories/zikir_local_repository.dart';
+import '../../../zikir/presentation/pages/dzikir_reading_page.dart';
 
 import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
 import '../../../../core/di/di_container.dart';
@@ -348,7 +353,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       );
                     },
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: 12.h),
 
                   // PROGRESS SECTION (Moved Up)
                   BlocBuilder<ReadingBloc, ReadingState>(
@@ -386,7 +391,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       );
                     },
                   ),
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 12.h),
 
                   // HERO CARD (Prayer Time)
                   BlocBuilder<PrayerBloc, PrayerState>(
@@ -404,6 +409,14 @@ class _DashboardPageState extends State<DashboardPage> {
                         AppLocalizations.of(context)!,
                       );
 
+                      // Get reminder data
+                      final reminderService = ReminderService(FastingService());
+                      final reminderData = reminderService.getReminderData(
+                        state.prayerTime!,
+                        DateTime.now(),
+                      );
+                      final l10n = AppLocalizations.of(context)!;
+
                       final gradient = _getPrayerGradient(nextPrayer['name']);
                       final isLandscape =
                           MediaQuery.of(context).orientation ==
@@ -420,7 +433,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: GestureDetector(
                           onTap: () => context.go('/dashboard?index=1'),
                           child: Container(
-                            height: isLandscape ? null : 150.h,
+                            height: isLandscape
+                                ? null
+                                : null, // Auto height for reminders
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.r),
                               gradient: gradient,
@@ -605,9 +620,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                           ],
                                         )
                                       : Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
@@ -673,6 +686,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                 ),
                                               ],
                                             ),
+                                            SizedBox(height: 12.h),
                                             // MIDDLE ROW: Prayer Name & Time
                                             Row(
                                               crossAxisAlignment:
@@ -698,6 +712,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                 ),
                                               ],
                                             ),
+                                            SizedBox(height: 12.h),
                                             // BOTTOM ROW: Countdown & Hijri Date
                                             Row(
                                               mainAxisAlignment:
@@ -752,6 +767,74 @@ class _DashboardPageState extends State<DashboardPage> {
                                                 ),
                                               ],
                                             ),
+
+                                            // REMINDERS SECTION
+                                            if (reminderData.todayFasting !=
+                                                    null ||
+                                                reminderData.nextFasting !=
+                                                    null ||
+                                                reminderData
+                                                    .hasAnyActiveDzikir) ...[
+                                              SizedBox(height: 12.h),
+                                              Container(
+                                                padding: EdgeInsets.all(10.w),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        12.r,
+                                                      ),
+                                                ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    // Fasting info
+                                                    if (reminderData
+                                                                .todayFasting !=
+                                                            null ||
+                                                        reminderData
+                                                                .nextFasting !=
+                                                            null)
+                                                      _buildCompactFastingInfo(
+                                                        reminderData,
+                                                        l10n.localeName,
+                                                      ),
+
+                                                    // Dzikir reminder (only if active)
+                                                    if (reminderData
+                                                        .hasAnyActiveDzikir) ...[
+                                                      if (reminderData
+                                                                  .todayFasting !=
+                                                              null ||
+                                                          reminderData
+                                                                  .nextFasting !=
+                                                              null)
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.symmetric(
+                                                                vertical: 6.h,
+                                                              ),
+                                                          child: Divider(
+                                                            color: Colors.white
+                                                                .withOpacity(
+                                                                  0.1,
+                                                                ),
+                                                            height: 1,
+                                                          ),
+                                                        ),
+                                                      _buildCompactDzikirInfo(
+                                                        context,
+                                                        reminderData,
+                                                      ),
+                                                    ],
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ],
                                         ),
                                 ),
@@ -762,7 +845,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       );
                     },
                   ),
-                  SizedBox(height: 32.h),
+                  SizedBox(height: 12.h),
 
                   // QUICK ACCESS
                   Text(
@@ -773,7 +856,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 12.h),
                   // QUICK ACCESS GRID
                   PremiumShowcase(
                     globalKey: _quickAccessKey,
@@ -1112,7 +1195,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ],
                                 ],
                               ),
-                              SizedBox(height: 16.h),
+                              SizedBox(height: 12.h),
                               Text(
                                 "$progress",
                                 style: TextStyle(
@@ -1318,5 +1401,224 @@ class _DashboardPageState extends State<DashboardPage> {
           end: Alignment.bottomRight,
         );
     }
+  }
+
+  // Compact fasting info for prayer card
+  Widget _buildCompactFastingInfo(
+    ReminderCardData reminderData,
+    String locale,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.nightlight_round,
+              color: const Color(0xFF00E676),
+              size: 12.sp,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              l10n.reminderFasting,
+              style: TextStyle(
+                color: const Color(0xFF00E676),
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 6.h),
+        if (reminderData.todayFasting != null)
+          _buildCompactFastingItem(
+            context,
+            reminderData.todayFasting!,
+            'Hari ini',
+            showCountdown: true,
+          ),
+        if (reminderData.todayFasting != null &&
+            reminderData.nextFasting != null)
+          SizedBox(height: 4.h),
+        if (reminderData.nextFasting != null)
+          _buildCompactFastingItem(
+            context,
+            reminderData.nextFasting!,
+            'Berikutnya',
+            showCountdown: false,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildCompactFastingItem(
+    BuildContext context,
+    FastingReminder fasting,
+    String label, {
+    required bool showCountdown,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      children: [
+        Icon(
+          showCountdown ? Icons.restaurant : Icons.event,
+          color: fasting.color.withOpacity(0.8),
+          size: 12.sp,
+        ),
+        SizedBox(width: 6.w),
+        Expanded(
+          child: RichText(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: showCountdown && fasting.timeUntilIftar != null
+                      ? l10n.reminderIftarIn(
+                          ReminderService.formatDuration(
+                            fasting.timeUntilIftar!,
+                          ),
+                        )
+                      : l10n.reminderFastingType(fasting.type),
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                TextSpan(
+                  text: ' • ${_formatFastingDate(fasting.date)}',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.6),
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Format fasting date with Gregorian and Hijri
+  String _formatFastingDate(DateTime date) {
+    final gregorian = DateFormat('d MMM').format(date);
+    final hijri = HijriCalendar.fromDate(date);
+    return '$gregorian • ${hijri.hDay} ${_getShortHijriMonth(hijri.hMonth)}';
+  }
+
+  // Get short Hijri month name
+  String _getShortHijriMonth(int month) {
+    const months = [
+      'Muh',
+      'Saf',
+      'R.Awl',
+      'R.Akh',
+      'J.Ula',
+      'J.Ukh',
+      'Raj',
+      'Syab',
+      'Ram',
+      'Syaw',
+      'Zulqa',
+      'Zulhi',
+    ];
+    return month >= 1 && month <= 12 ? months[month - 1] : '';
+  }
+
+  // Compact dzikir info for prayer card
+  Widget _buildCompactDzikirInfo(
+    BuildContext context,
+    ReminderCardData reminderData,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Icon(
+              Icons.menu_book_rounded,
+              color: const Color(0xFFFFC107),
+              size: 12.sp,
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              l10n.reminderDzikir,
+              style: TextStyle(
+                color: const Color(0xFFFFC107),
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 6.h),
+        if (reminderData.morningDzikir.isActiveNow)
+          _buildCompactDzikirItem(context, reminderData.morningDzikir),
+        if (reminderData.morningDzikir.isActiveNow &&
+            reminderData.eveningDzikir.isActiveNow)
+          SizedBox(height: 4.h),
+        if (reminderData.eveningDzikir.isActiveNow)
+          _buildCompactDzikirItem(context, reminderData.eveningDzikir),
+      ],
+    );
+  }
+
+  Widget _buildCompactDzikirItem(BuildContext context, DzikirReminder dzikir) {
+    final l10n = AppLocalizations.of(context)!;
+    return InkWell(
+      onTap: () {
+        // Navigate to specific dzikir page
+        final items = dzikir.type == DzikirType.morning
+            ? getIt<ZikirLocalRepository>().getMorningZikir()
+            : getIt<ZikirLocalRepository>().getEveningZikir();
+        final title = dzikir.type == DzikirType.morning
+            ? l10n.dzikirMorningTitle
+            : l10n.dzikirEveningTitle;
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DzikirReadingPage(title: title, items: items),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(8.r),
+      child: Row(
+        children: [
+          Icon(
+            Icons.notifications_active,
+            color: const Color(0xFFFFC107).withOpacity(0.8),
+            size: 12.sp,
+          ),
+          SizedBox(width: 6.w),
+          Expanded(
+            child: Text(
+              l10n.reminderDzikirTime(dzikir.displayName),
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.9),
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios,
+            color: const Color(0xFFFFC107).withOpacity(0.5),
+            size: 10.sp,
+          ),
+        ],
+      ),
+    );
   }
 }

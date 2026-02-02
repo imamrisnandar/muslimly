@@ -995,4 +995,25 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get daysTasyrik => 'Hari Tasyrik';
+
+  @override
+  String get reminderFasting => 'PUASA';
+
+  @override
+  String get reminderDzikir => 'DZIKIR';
+
+  @override
+  String reminderIftarIn(Object duration) {
+    return 'Berbuka $duration lagi';
+  }
+
+  @override
+  String reminderFastingType(Object type) {
+    return 'Puasa $type';
+  }
+
+  @override
+  String reminderDzikirTime(Object type) {
+    return 'Waktunya Dzikir $type';
+  }
 }

@@ -297,5 +297,10 @@
   "fastingThursday": "Thursday Fasting",
   "eidFitr": "Eid Al-Fitr",
   "eidAdha": "Eid Al-Adha",
-  "daysTasyrik": "Tasyrik Days"
+  "daysTasyrik": "Tasyrik Days",
+  "reminderFasting": "FASTING",
+  "reminderDzikir": "DZIKIR",
+  "reminderIftarIn": "Iftar in {duration}",
+  "reminderFastingType": "{type} Fasting",
+  "reminderDzikirTime": "Time for {type} Dzikir"
 }
