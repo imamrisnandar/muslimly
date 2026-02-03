@@ -163,149 +163,166 @@ class _PageTabState extends State<_PageTab> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            l10n.hintEnterPage,
-            style: TextStyle(color: Colors.white54, fontSize: 16.sp),
-          ),
-          SizedBox(height: 32.h),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: IntrinsicHeight(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    l10n.hintEnterPage,
+                    style: TextStyle(color: Colors.white54, fontSize: 16.sp),
+                  ),
+                  SizedBox(height: 32.h),
 
-          // Large Page Number Display
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: const Color(0xFF00E676), width: 2.h),
+                  // Large Page Number Display
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: const Color(0xFF00E676),
+                          width: 2.h,
+                        ),
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _controller,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(3),
+                      ],
+                      style: TextStyle(
+                        color: const Color(0xFF00E676),
+                        fontSize: 72.sp,
+                        fontWeight: FontWeight.bold,
+                        height: 1.0,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "1",
+                        hintStyle: TextStyle(
+                          color: Colors.white12,
+                          fontSize: 72.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      onChanged: (val) {
+                        if (val.isEmpty) {
+                          setState(() => _currentPage = 1);
+                          return;
+                        }
+
+                        final n = int.tryParse(val);
+                        if (n != null) {
+                          if (n > 604) {
+                            _controller.text = '604';
+                            _controller.selection = TextSelection.fromPosition(
+                              TextPosition(offset: _controller.text.length),
+                            );
+                            setState(() {
+                              _currentPage = 604;
+                            });
+                          } else if (n < 1) {
+                            setState(() {
+                              _currentPage = 1;
+                            });
+                          } else {
+                            setState(() {
+                              _currentPage = n.toDouble();
+                            });
+                          }
+                        }
+                      },
+                      onSubmitted: (_) => _navigateToPage(),
+                    ),
+                  ),
+
+                  SizedBox(height: 48.h),
+
+                  // Custom Slider
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 8.h,
+                      activeTrackColor: const Color(0xFF00E676),
+                      inactiveTrackColor: Colors.white12,
+                      thumbColor: Colors.white,
+                      thumbShape: RoundSliderThumbShape(
+                        enabledThumbRadius: 12.r,
+                      ),
+                      overlayColor: const Color(0xFF00E676).withOpacity(0.2),
+                    ),
+                    child: Slider(
+                      value: _currentPage,
+                      min: 1,
+                      max: 604,
+                      onChanged: (val) {
+                        setState(() {
+                          _currentPage = val;
+                          _controller.text = val.round().toString();
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "1",
+                        style: TextStyle(
+                          color: Colors.white30,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                      Text(
+                        "604",
+                        style: TextStyle(
+                          color: Colors.white30,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const Spacer(),
+
+                  // Go Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _navigateToPage,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF00E676),
+                        foregroundColor: Colors.black,
+                        padding: EdgeInsets.symmetric(vertical: 18.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        l10n.goButton,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 32.h),
+                ],
               ),
             ),
-            child: TextField(
-              controller: _controller,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(3),
-              ],
-              style: TextStyle(
-                color: const Color(0xFF00E676),
-                fontSize: 72.sp,
-                fontWeight: FontWeight.bold,
-                height: 1.0,
-              ),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "1",
-                hintStyle: TextStyle(
-                  color: Colors.white12,
-                  fontSize: 72.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              onChanged: (val) {
-                if (val.isEmpty) {
-                  setState(() => _currentPage = 1);
-                  return;
-                }
-
-                final n = int.tryParse(val);
-                if (n != null) {
-                  if (n > 604) {
-                    _controller.text = '604';
-                    _controller.selection = TextSelection.fromPosition(
-                      TextPosition(offset: _controller.text.length),
-                    );
-                    setState(() {
-                      _currentPage = 604;
-                    });
-                  } else if (n < 1) {
-                    // Usually 0 is typed first if they want to type 0... but page 0 doesn't exist.
-                    // Just let it be 1 for state, but allow typing 0 if they want to correct it?
-                    // But 0 is invalid.
-                    // If we strictly enforce 1..604, typing logic is tricky.
-                    // Let's just update state to 1 but keep text if they are editing.
-                    // Actually, if val is "0", maybe default to 1 logic.
-                    setState(() {
-                      _currentPage = 1;
-                    });
-                  } else {
-                    setState(() {
-                      _currentPage = n.toDouble();
-                    });
-                  }
-                }
-              },
-              onSubmitted: (_) => _navigateToPage(),
-            ),
           ),
-
-          SizedBox(height: 48.h),
-
-          // Custom Slider
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              trackHeight: 8.h,
-              activeTrackColor: const Color(0xFF00E676),
-              inactiveTrackColor: Colors.white12,
-              thumbColor: Colors.white,
-              thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.r),
-              overlayColor: const Color(0xFF00E676).withOpacity(0.2),
-            ),
-            child: Slider(
-              value: _currentPage,
-              min: 1,
-              max: 604,
-              onChanged: (val) {
-                setState(() {
-                  _currentPage = val;
-                  _controller.text = val.round().toString();
-                });
-              },
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "1",
-                style: TextStyle(color: Colors.white30, fontSize: 12.sp),
-              ),
-              Text(
-                "604",
-                style: TextStyle(color: Colors.white30, fontSize: 12.sp),
-              ),
-            ],
-          ),
-
-          const Spacer(),
-
-          // Go Button
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _navigateToPage,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF00E676),
-                foregroundColor: Colors.black,
-                padding: EdgeInsets.symmetric(vertical: 18.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                elevation: 0,
-              ),
-              child: Text(
-                l10n.goButton,
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          SizedBox(height: 32.h),
-        ],
-      ),
+        );
+      },
     );
   }
 }

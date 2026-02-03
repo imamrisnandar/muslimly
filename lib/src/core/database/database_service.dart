@@ -222,7 +222,7 @@ class DatabaseService {
   Future<int> getDailyPageCount(String date) async {
     final db = await database;
     final result = await db.rawQuery(
-      'SELECT COUNT(DISTINCT page_number) as count FROM reading_activity WHERE date = ?',
+      "SELECT COUNT(DISTINCT page_number) as count FROM reading_activity WHERE date = ? AND mode = 'page'",
       [date],
     );
     return Sqflite.firstIntValue(result) ?? 0;
@@ -230,9 +230,9 @@ class DatabaseService {
 
   Future<int> getDailyAyahCount(String date) async {
     final db = await database;
-    // We sum the total_ayahs column for a specific date
+    // We sum the total_ayahs column for a specific date, filtering only 'ayah' mode
     final result = await db.rawQuery(
-      'SELECT SUM(total_ayahs) as count FROM reading_activity WHERE date = ?',
+      "SELECT SUM(total_ayahs) as count FROM reading_activity WHERE date = ? AND mode = 'ayah'",
       [date],
     );
     return Sqflite.firstIntValue(result) ?? 0;
