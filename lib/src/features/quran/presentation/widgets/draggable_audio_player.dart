@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_state.dart';
 import 'audio_player_widget.dart';
 
 class DraggableAudioPlayer extends StatefulWidget {
-  // Keys are no longer needed, but if parent widgets still pass them during transition,
-  // we can keep optional params or just remove them.
-  // To be safe and compatible with current calls (even if clean), we can leave them out
-  // since I cleaned the parents. But if I missed one, keeping them as unused optionals is safer
-  // to avoid build errors, OR I can just remove them since I am confident I cleaned parents.
-  // I cleaned parents in previous steps. I will remove them.
-
   const DraggableAudioPlayer({super.key});
 
   @override
@@ -23,14 +18,27 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
   double? _top;
   bool _isDragging = false;
 
+  // Showcase Keys
+  final GlobalKey _dragKey = GlobalKey();
+  final GlobalKey _qoriKey = GlobalKey();
+  final GlobalKey _speedKey = GlobalKey();
+  final GlobalKey _repeatKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     // Media Query for bounds
     final size = MediaQuery.of(context).size;
 
     return BlocListener<AudioBloc, AudioState>(
+      listenWhen: (previous, current) =>
+          !previous.isMiniPlayerVisible && current.isMiniPlayerVisible,
       listener: (context, state) {
-        // No showcase logic anymore
+        if (state.isMiniPlayerVisible) {
+          // Delay slightly to ensure widget is rendered
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) _checkShowcase();
+          });
+        }
       },
       child: Positioned(
         top: _top,
@@ -63,6 +71,7 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
             setState(() {
               _isDragging = false;
             });
+            // No showcase trigger here anymore
           },
           child: _buildBody(),
         ),
@@ -76,7 +85,26 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
       transform: _isDragging
           ? Matrix4.diagonal3Values(1.05, 1.05, 1.0)
           : Matrix4.identity(),
-      child: const AudioPlayerWidget(),
+      child: AudioPlayerWidget(
+        dragShowcaseKey: _dragKey,
+        qoriShowcaseKey: _qoriKey,
+        speedShowcaseKey: _speedKey,
+        repeatShowcaseKey: _repeatKey,
+      ),
     );
+  }
+
+  Future<void> _checkShowcase() async {
+    // Check SharedPreferences first
+    final prefs = await SharedPreferences.getInstance();
+    final hasShown = prefs.getBool('hasShownPlayerShowcase') ?? false;
+
+    if (!hasShown && mounted) {
+      // Remove height check - trigger regardless of position
+      ShowCaseWidget.of(
+        context,
+      ).startShowCase([_dragKey, _qoriKey, _speedKey, _repeatKey]);
+      await prefs.setBool('hasShownPlayerShowcase', true);
+    }
   }
 }

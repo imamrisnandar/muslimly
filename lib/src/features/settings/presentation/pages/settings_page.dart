@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../bloc/settings_cubit.dart';
 import '../bloc/settings_state.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../quran/presentation/pages/help_guide_page.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -101,6 +103,7 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(height: 32.h),
             ],
           ),
         );
@@ -802,6 +805,31 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 24.h),
+              if (kDebugMode) ...[
+                SizedBox(height: 24.h),
+                _buildSectionHeader(context, "Developer Mode"),
+                _buildListTile(
+                  icon: Icons.restore_page_outlined,
+                  title: "Reset Tutorials",
+                  subtitle: "Clear showcase history for testing",
+                  iconColor: Colors.orangeAccent,
+                  onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.remove('hasShownPlayerShowcase');
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            "Tutorials reset! Restart app or revisit pages.",
+                          ),
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+              SizedBox(height: 24.h),
               FutureBuilder<PackageInfo>(
                 future: PackageInfo.fromPlatform(),
                 builder: (context, snapshot) {
@@ -848,6 +876,7 @@ class SettingsPage extends StatelessWidget {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    Color? iconColor,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -855,20 +884,20 @@ class SettingsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: ListTile(
-        leading: Icon(icon, color: Colors.white),
+        leading: Icon(icon, color: iconColor ?? const Color(0xFF00E676)),
         title: Text(
           title,
           style: TextStyle(
             color: Colors.white,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w600,
           ),
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+          style: TextStyle(color: Colors.white54, fontSize: 12.sp),
         ),
-        trailing: Icon(Icons.chevron_right, color: Colors.white54, size: 20.sp),
+        trailing: const Icon(Icons.chevron_right, color: Colors.white54),
         onTap: onTap,
       ),
     );
