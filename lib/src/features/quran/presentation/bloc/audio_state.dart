@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../domain/entities/reciter.dart';
 
 enum AudioStatus { initial, loading, ready, playing, paused, error }
@@ -14,6 +15,8 @@ class AudioState extends Equatable {
   final Duration duration;
   final String? errorMessage;
   final bool isMiniPlayerVisible;
+  final LoopMode loopMode;
+  final double playbackSpeed;
 
   const AudioState({
     this.status = AudioStatus.initial,
@@ -26,6 +29,8 @@ class AudioState extends Equatable {
     this.duration = Duration.zero,
     this.errorMessage,
     this.isMiniPlayerVisible = false,
+    this.loopMode = LoopMode.off,
+    this.playbackSpeed = 1.0,
   });
 
   AudioState copyWith({
@@ -40,6 +45,8 @@ class AudioState extends Equatable {
     Duration? duration,
     String? errorMessage,
     bool? isMiniPlayerVisible,
+    LoopMode? loopMode,
+    double? playbackSpeed,
   }) {
     return AudioState(
       status: status ?? this.status,
@@ -54,6 +61,8 @@ class AudioState extends Equatable {
       duration: duration ?? this.duration,
       errorMessage: errorMessage ?? this.errorMessage,
       isMiniPlayerVisible: isMiniPlayerVisible ?? this.isMiniPlayerVisible,
+      loopMode: loopMode ?? this.loopMode,
+      playbackSpeed: playbackSpeed ?? this.playbackSpeed,
     );
   }
 
@@ -69,5 +78,7 @@ class AudioState extends Equatable {
     duration,
     errorMessage,
     isMiniPlayerVisible,
+    loopMode,
+    playbackSpeed,
   ];
 }

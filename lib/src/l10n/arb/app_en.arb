@@ -249,7 +249,7 @@
   "sbLastReadUpdated": "Last read position updated",
   "emptyHistorySubtitle": "Start reading to track your progress",
   "lblThisWeek": "This Week",
-  "sbPageReadLogged": "Page {page} recorded ({duration}s)",
+    "sbPageReadLogged": "Page {page} recorded ({duration})",
   "lblLifetimeTotal": "Total",
   "lblReadingStreak": "Streak",
   "lblDailyAverage": "Avg/Day",

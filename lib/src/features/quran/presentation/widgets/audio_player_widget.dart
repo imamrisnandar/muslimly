@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_event.dart';
@@ -38,18 +39,19 @@ class AudioPlayerWidget extends StatelessWidget {
         final isPlaying = state.status == AudioStatus.playing;
         final position = state.position.inMilliseconds.toDouble();
         final duration = state.duration.inMilliseconds.toDouble();
-        final progress = (duration > 0)
-            ? (position / duration).clamp(0.0, 1.0)
-            : 0.0;
+
+        // Ensure slider value doesn't exceed max
+        final sliderValue = position.clamp(0.0, duration > 0 ? duration : 0.0);
+        final sliderMax = duration > 0 ? duration : 1.0;
 
         return Material(
           color: Colors.transparent,
           child: Container(
             margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 8.h),
             decoration: BoxDecoration(
               color: const Color(0xFF1A2C33),
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
@@ -61,30 +63,104 @@ class AudioPlayerWidget extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // ROW 1: Header (Icon, Info, Close)
                 Row(
                   children: [
-                    // Icon or Album Art Placeholder
                     _buildIcon(),
                     SizedBox(width: 12.w),
-
-                    // Text Info
                     Expanded(child: _buildQoriInfo(context, state)),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      color: Colors.white54,
+                      iconSize: 20.sp,
+                      onPressed: () {
+                        context.read<AudioBloc>().add(CloseAudio());
+                      },
+                    ),
+                  ],
+                ),
 
-                    // Controls
-                    if (state.status == AudioStatus.loading)
-                      SizedBox(
-                        width: 24.w,
-                        height: 24.w,
-                        child: const IslamicLoadingIndicator(size: 24),
-                      )
-                    else
-                      IconButton(
+                SizedBox(height: 8.h),
+
+                // ROW 2: Slider & Time Labels
+                Row(
+                  children: [
+                    Text(
+                      _formatDuration(state.position),
+                      style: TextStyle(color: Colors.white54, fontSize: 10.sp),
+                    ),
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 2.h,
+                          thumbShape: RoundSliderThumbShape(
+                            enabledThumbRadius: 6.r,
+                          ),
+                          overlayShape: RoundSliderOverlayShape(
+                            overlayRadius: 14.r,
+                          ),
+                          activeTrackColor: const Color(0xFF00E676),
+                          inactiveTrackColor: Colors.white10,
+                          thumbColor: Colors.white,
+                          overlayColor: const Color(
+                            0xFF00E676,
+                          ).withOpacity(0.2),
+                        ),
+                        child: Slider(
+                          value: sliderValue,
+                          min: 0.0,
+                          max: sliderMax,
+                          onChanged: (value) {
+                            context.read<AudioBloc>().add(
+                              SeekTo(Duration(milliseconds: value.toInt())),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Text(
+                      _formatDuration(state.duration),
+                      style: TextStyle(color: Colors.white54, fontSize: 10.sp),
+                    ),
+                  ],
+                ),
+
+                // ROW 3: Controls (Repeat, Prev, Play, Next, Speed)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Repeat Button
+                    IconButton(
+                      onPressed: () =>
+                          context.read<AudioBloc>().add(ToggleLoopMode()),
+                      icon: _buildLoopIcon(state.loopMode),
+                      iconSize: 20.sp,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+
+                    // Prev Button
+                    IconButton(
+                      onPressed: () =>
+                          context.read<AudioBloc>().add(SkipToPrevious()),
+                      icon: const Icon(Icons.skip_previous_rounded),
+                      color: Colors.white,
+                      iconSize: 28.sp,
+                    ),
+
+                    // Play/Pause Button (Center)
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF00E676),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
                         icon: Icon(
                           isPlaying
-                              ? Icons.pause_circle_filled
-                              : Icons.play_circle_filled,
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
                         ),
-                        color: const Color(0xFF00E676),
+                        color: const Color(0xFF1A2C33),
                         iconSize: 32.sp,
                         onPressed: () {
                           if (isPlaying) {
@@ -94,24 +170,36 @@ class AudioPlayerWidget extends StatelessWidget {
                           }
                         },
                       ),
+                    ),
 
+                    // Next Button
                     IconButton(
-                      icon: const Icon(Icons.close),
-                      color: Colors.white54,
-                      onPressed: () {
-                        context.read<AudioBloc>().add(CloseAudio());
-                      },
+                      onPressed: () =>
+                          context.read<AudioBloc>().add(SkipToNext()),
+                      icon: const Icon(Icons.skip_next_rounded),
+                      color: Colors.white,
+                      iconSize: 28.sp,
+                    ),
+
+                    // Speed Button
+                    TextButton(
+                      onPressed: () =>
+                          context.read<AudioBloc>().add(CyclePlaybackSpeed()),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        "${state.playbackSpeed}x",
+                        style: TextStyle(
+                          color: const Color(0xFF00E676),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
-                ),
-                SizedBox(height: 8.h),
-                LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: Colors.white.withOpacity(0.1),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color(0xFF00E676),
-                  ),
-                  minHeight: 2.h,
                 ),
               ],
             ),
@@ -121,10 +209,30 @@ class AudioPlayerWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildLoopIcon(LoopMode mode) {
+    switch (mode) {
+      case LoopMode.off:
+        return Icon(Icons.repeat_rounded, color: Colors.white24);
+      case LoopMode.all:
+        return Icon(Icons.repeat_rounded, color: const Color(0xFF00E676));
+      case LoopMode.one:
+        return Icon(Icons.repeat_one_rounded, color: const Color(0xFF00E676));
+    }
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    if (duration.inHours > 0) {
+      return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+    }
+    return "$twoDigitMinutes:$twoDigitSeconds";
+  }
+
   Widget _buildQoriInfo(BuildContext context, AudioState state) {
     return GestureDetector(
       onTap: () {
-        // Filter Qori based on Context (Ayah vs Surah)
         final filter = state.currentAyahNumber != null
             ? AudioSourceType.alQuranCloudVerse
             : AudioSourceType.quranComChapter;

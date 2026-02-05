@@ -4,6 +4,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../bloc/settings_cubit.dart';
 import '../bloc/settings_state.dart';
 import '../../../quran/presentation/pages/help_guide_page.dart';
@@ -799,6 +800,25 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              SizedBox(height: 24.h),
+              FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Center(
+                      child: Text(
+                        "v${snapshot.data!.version} (${snapshot.data!.buildNumber})",
+                        style: TextStyle(
+                          color: Colors.white24,
+                          fontSize: 12.sp,
+                          fontFamily: 'Outfit',
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               ),
               SizedBox(height: 100.h),
             ],

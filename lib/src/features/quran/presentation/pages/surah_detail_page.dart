@@ -18,6 +18,7 @@ import '../bloc/quran_event.dart';
 import '../bloc/quran_state.dart';
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_state.dart';
+import '../../data/surah_details.dart';
 import '../widgets/draggable_audio_player.dart';
 import 'package:showcaseview/showcaseview.dart';
 import '../../../../core/presentation/widgets/premium_showcase.dart';
@@ -454,6 +455,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
             listeners: [
               BlocListener<AudioBloc, AudioState>(
                 listener: (context, state) {
+                  // SAME SURAH: Highlight/Scroll
                   if (state.currentSurahId == widget.surah.number &&
                       state.currentAyahNumber != null) {
                     if (_currentPlayingAyah != state.currentAyahNumber) {
@@ -461,6 +463,35 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                         _currentPlayingAyah = state.currentAyahNumber;
                       });
                       _scrollToAyah(state.currentAyahNumber!);
+                    }
+                  }
+                  // SURAH CHANGED: Navigate
+                  else if (state.status == AudioStatus.playing &&
+                      state.currentSurahId != null &&
+                      state.currentSurahId != widget.surah.number) {
+                    // Logic to navigate to new Surah Page (List View)
+                    final newSurahId = state.currentSurahId!;
+                    final nextSurahData = surahDetails.firstWhere(
+                      (element) => element['number'] == newSurahId,
+                      orElse: () => {},
+                    );
+
+                    if (nextSurahData.isNotEmpty) {
+                      final nextSurah = Surah(
+                        number: nextSurahData['number'],
+                        name: nextSurahData['name'],
+                        englishName: nextSurahData['englishName'],
+                        englishNameTranslation: '',
+                        indonesianNameTranslation: '',
+                        numberOfAyahs: nextSurahData['numberOfAyahs'],
+                        revelationType: nextSurahData['revelationType'],
+                      );
+
+                      // Use simple pushReplacement to switch to the new Surah list view
+                      context.pushReplacement(
+                        '/quran/${nextSurah.number}',
+                        extra: nextSurah,
+                      );
                     }
                   } else {
                     if (_currentPlayingAyah != null) {

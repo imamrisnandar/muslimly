@@ -1589,7 +1589,7 @@ abstract class AppLocalizations {
   /// No description provided for @sbPageReadLogged.
   ///
   /// In en, this message translates to:
-  /// **'Page {page} recorded ({duration}s)'**
+  /// **'Page {page} recorded ({duration})'**
   String sbPageReadLogged(Object duration, Object page);
 
   /// No description provided for @lblLifetimeTotal.

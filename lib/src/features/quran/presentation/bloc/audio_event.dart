@@ -61,3 +61,18 @@ class UpdateCurrentAyah extends AudioEvent {
   @override
   List<Object?> get props => [ayahNumber];
 }
+
+class ToggleLoopMode extends AudioEvent {}
+
+class CyclePlaybackSpeed extends AudioEvent {}
+
+class SkipToNext extends AudioEvent {}
+
+class SkipToPrevious extends AudioEvent {}
+
+class SeekTo extends AudioEvent {
+  final Duration position;
+  const SeekTo(this.position);
+  @override
+  List<Object?> get props => [position];
+}

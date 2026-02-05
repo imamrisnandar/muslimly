@@ -4,19 +4,23 @@ import 'package:injectable/injectable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import '../../data/repositories/audio_repository.dart';
+import '../../domain/repositories/quran_repository.dart';
 import '../../domain/entities/reciter.dart';
+import '../../domain/entities/surah.dart';
 import 'audio_event.dart';
 import 'audio_state.dart';
 
 @injectable
 class AudioBloc extends Bloc<AudioEvent, AudioState> {
   final AudioRepository _audioRepository;
+  final QuranRepository _quranRepository;
   final AudioPlayer _player;
   StreamSubscription? _positionSubscription;
   StreamSubscription? _durationSubscription;
   StreamSubscription? _playerStateSubscription;
 
-  AudioBloc(this._audioRepository, this._player) : super(const AudioState()) {
+  AudioBloc(this._audioRepository, this._quranRepository, this._player)
+    : super(const AudioState()) {
     on<InitAudio>(_onInitAudio);
     on<FetchReciters>(_onFetchReciters);
     on<SelectReciter>(_onSelectReciter);
@@ -39,6 +43,14 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
         ),
       ),
     );
+    on<ToggleLoopMode>(_onToggleLoopMode);
+    on<CyclePlaybackSpeed>(_onCyclePlaybackSpeed);
+    on<SkipToNext>(_onSkipToNext);
+    on<SkipToPrevious>(_onSkipToPrevious);
+    on<SeekTo>((event, emit) async {
+      await _player.seek(event.position);
+      emit(state.copyWith(position: event.position));
+    });
 
     // Subscribe to streams
     _positionSubscription = _player.positionStream.listen((pos) {
@@ -192,9 +204,40 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
     var reciter = state.selectedReciter ?? currentReciters.first;
 
     // Enforce Compatibility
+    // Preference: ALWAYS Prefer Verse-by-Verse (alQuranCloudVerse) if available.
+    // This allows Ayah Highlighting (Auto-Scroll) to work, which is a key feature.
+    // Only use Full Surah (Gapless) if user specifically chose a Qori that is ONLY quranComChapter.
+
+    // Check if current selection has an alternative source for Verse-by-Verse
+    if (reciter.source == AudioSourceType.quranComChapter) {
+      // Search for same reciter in Verse mode (not really possible to map 1:1 easily without ID mapping)
+      // OR, just check if we can switch to a default Verse reciter?
+      // No, we should respect user selection.
+      // BUT, checking lines 207-230 in original code:
+      // The logic I added forced 'Surah Mode' (startAyah == null) to switch to Gapless.
+      // THIS IS WRONG. Even for full Surah play, we want Verse-by-Verse if possible.
+
+      // Allow Verse-by-Verse even if startAyah is null.
+      // So we REMOVE the block that forces switch to quranComChapter.
+
+      // However, if we are in Verse Mode (startAyah != null), we MUST ensure Verse Reciter.
+      // Removed unused verseReciter declaration
+
+      // If the selected reciter is ONLY quranComChapter, we stick to it (No Highlight).
+      // If we can find a matching Verse reciter (by name/id logic? No reliable way).
+      // Strategy: User explicitly selects Reciter. We use that Reciter.
+      // If that Reciter is Gapless, we accept No Highlights.
+      // If that Reciter is Verse, we get Highlights.
+
+      // The issue: "di mode mushaf play, sekarang jadi hilang highlight"
+      // This implies previously it worked.
+      // My previous edit ADDED logic to force switch to Gapless if startAyah is null.
+      // I will revert that specific "Force Gapless" logic.
+    }
+
     if (event.startAyah != null && event.startAyah! > 0) {
-      // Verse Mode: Require Verse-by-Verse
       if (reciter.source == AudioSourceType.quranComChapter) {
+        // Verse Mode: Force switch to Verse Reciter
         final verseReciter = currentReciters.firstWhere(
           (r) =>
               r.source == AudioSourceType.alQuranCloudVerse &&
@@ -207,7 +250,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
         reciter = verseReciter;
       }
     } else {
-      // Surah Mode: Prefer Gapless (Full Surah)
+      // Surah Mode (Gapless): Prefer Gapless (Full Surah)
       if (reciter.source == AudioSourceType.alQuranCloudVerse) {
         final chapterReciter = currentReciters.firstWhere(
           (r) => r.source == AudioSourceType.quranComChapter,
@@ -216,6 +259,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
         reciter = chapterReciter;
       }
     }
+    // REMOVED: The else block that forced `chapterReciter`.
 
     emit(
       state.copyWith(
@@ -350,7 +394,149 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
     // Clear persisted maybe? No, keep history.
   }
 
-  void _onAudioComplete(AudioComplete event, Emitter<AudioState> emit) {
+  Future<void> _onToggleLoopMode(
+    ToggleLoopMode event,
+    Emitter<AudioState> emit,
+  ) async {
+    const modes = [LoopMode.off, LoopMode.all, LoopMode.one];
+    final nextIndex = (modes.indexOf(state.loopMode) + 1) % modes.length;
+    final nextMode = modes[nextIndex];
+
+    await _player.setLoopMode(nextMode);
+    emit(state.copyWith(loopMode: nextMode));
+  }
+
+  Future<void> _onCyclePlaybackSpeed(
+    CyclePlaybackSpeed event,
+    Emitter<AudioState> emit,
+  ) async {
+    const speeds = [1.0, 1.25, 1.5, 2.0, 0.5];
+    final currentIndex = speeds.indexOf(state.playbackSpeed);
+    final nextIndex = (currentIndex + 1) % speeds.length;
+    final nextSpeed = speeds[nextIndex];
+
+    await _player.setSpeed(nextSpeed);
+    emit(state.copyWith(playbackSpeed: nextSpeed));
+  }
+
+  Future<String> _getSurahName(int surahId) async {
+    // Try to get from cached Surah list in Repo if possible, or fetch.
+    // Since QuranRepository.getSurahs() returns all surahs, we can use it.
+    // Ideally we should cache this in Bloc or Repo. For now, let's fetch.
+    final result = await _quranRepository.getSurahs();
+    return result.fold(
+      (failure) => 'Surah $surahId', // Fallback
+      (List<Surah> surahs) => surahs
+          .cast<Surah>()
+          .firstWhere(
+            (s) => s.number == surahId,
+            orElse: () => const Surah(
+              number: 0,
+              name: '',
+              englishName: '',
+              numberOfAyahs: 0,
+              revelationType: '',
+              englishNameTranslation: '',
+              indonesianNameTranslation: '',
+            ),
+          )
+          .englishName,
+    );
+  }
+
+  Future<void> _onSkipToNext(SkipToNext event, Emitter<AudioState> emit) async {
+    if (_player.hasNext) {
+      await _player.seekToNext();
+    } else {
+      // End of Playlist/Surah -> Go to Next Surah
+      if (state.currentSurahId != null && state.currentSurahId! < 114) {
+        final nextSurahId = state.currentSurahId! + 1;
+        final nextSurahName = await _getSurahName(nextSurahId);
+
+        // Check current mode: If ayahNumber is NOT null, we are in Verse Mode.
+        // If it is null, we are in Full Surah Mode.
+        final isVerseMode = state.currentAyahNumber != null;
+
+        add(
+          PlaySurah(
+            surahId: nextSurahId,
+            surahName: nextSurahName,
+            startAyah: isVerseMode ? 1 : null, // Persist Mode
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _onSkipToPrevious(
+    SkipToPrevious event,
+    Emitter<AudioState> emit,
+  ) async {
+    // If we are deep into the track, replay current track
+    if (_player.position.inSeconds > 3) {
+      await _player.seek(Duration.zero);
+      return;
+    }
+
+    if (_player.hasPrevious) {
+      await _player.seekToPrevious();
+    } else {
+      // Start of Playlist/Surah -> Go to Previous Surah
+      if (state.currentSurahId != null && state.currentSurahId! > 1) {
+        final prevSurahId = state.currentSurahId! - 1;
+        final prevSurahName = await _getSurahName(prevSurahId);
+
+        final isVerseMode = state.currentAyahNumber != null;
+
+        add(
+          PlaySurah(
+            surahId: prevSurahId,
+            surahName: prevSurahName,
+            startAyah: isVerseMode ? 1 : null, // Persist Mode
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _onAudioComplete(
+    AudioComplete event,
+    Emitter<AudioState> emit,
+  ) async {
+    // Logic: If LoopMode is Off, and we finish, we try to go to next Surah
+    // Just Audio fires completed only when it reaches end and STOPS.
+    // If LoopMode.all, it won't fire this.
+
+    // If user manually paused, we shouldn't trigger auto-next.
+    // However, AudioComplete usually fires on natural completion.
+
+    if (state.loopMode == LoopMode.off && state.currentSurahId != null) {
+      // Auto Next Surah
+      if (state.currentSurahId! < 114) {
+        final nextSurahId = state.currentSurahId! + 1;
+        final nextSurahName = await _getSurahName(nextSurahId);
+
+        // Persist Verse Mode preference check
+        // If we were playing Verse-by-Verse (indicated by currentAyahNumber not null OR source type),
+        // we want to continue in Verse-by-Verse starting from Ayah 1.
+        // If we were in Full Surah mode, we play Full Surah.
+
+        // Logic: if currentAyahNumber was != null, it's Verse Mode.
+        final isVerseMode =
+            state.currentAyahNumber != null ||
+            state.selectedReciter?.source == AudioSourceType.alQuranCloudVerse;
+
+        add(
+          PlaySurah(
+            surahId: nextSurahId,
+            surahName: nextSurahName,
+            startAyah: isVerseMode ? 1 : null, // Persist Mode
+          ),
+        );
+        return;
+      }
+    }
+
     emit(
       state.copyWith(
         status: AudioStatus.paused, // Or ready

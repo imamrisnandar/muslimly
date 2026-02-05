@@ -143,10 +143,12 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
+        mainAxisSpacing: 8.h, // Space between rows
+        crossAxisSpacing: 8.w, // Space between columns
         childAspectRatio:
             MediaQuery.of(context).orientation == Orientation.landscape
-            ? 1.5 // Flatter cells in Landscape
-            : 1.15,
+            ? 1.5
+            : 1.0, // Square cells often look neater with spacing
       ),
       itemCount: totalCells,
       itemBuilder: (context, index) {
@@ -165,7 +167,7 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
   Widget _buildDayCell(DateTime date) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    final double daySize = isLandscape ? 10.sp : 14.sp;
+    final double daySize = isLandscape ? 12.sp : 14.sp;
     final double hijriSize = isLandscape ? 8.sp : 10.sp;
     final double dotSize = isLandscape ? 4.h : 6.h;
 
@@ -190,43 +192,48 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
           _selectedDate = date;
         });
       },
+      borderRadius: BorderRadius.circular(8.r),
       child: Container(
-        margin: EdgeInsets.all(1.w), // Smaller margin
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF00E676).withOpacity(0.2)
-              : Colors.transparent,
+              : const Color(0xFF141F23), // Darker bg for cells
           borderRadius: BorderRadius.circular(8.r),
           border: isToday
-              ? Border.all(color: const Color(0xFF00E676), width: 1)
-              : null,
+              ? Border.all(color: const Color(0xFF00E676), width: 1.5)
+              : Border.all(color: Colors.white10, width: 0.5),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            // Gregorian Text
-            Text(
-              "${date.day}",
-              style: TextStyle(
-                color: isSelected ? const Color(0xFF1B5E20) : Colors.white,
-                fontSize: daySize, // Responsive Size
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                height: 1.0,
+            // Gregorian Date (Top Right)
+            Positioned(
+              top: 4.h,
+              right: 6.w,
+              child: Text(
+                "${date.day}",
+                style: TextStyle(
+                  color: isSelected ? const Color(0xFF00E676) : Colors.white,
+                  fontSize: daySize,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            // Hijri Text
-            Text(
-              "${hijriDate.hDay}",
-              style: TextStyle(
-                color: Colors.white54,
-                fontSize: hijriSize, // Responsive Size
-                height: 1.0,
+            // Hijri Date (Bottom Right)
+            Positioned(
+              bottom: 4.h,
+              right: 6.w,
+              child: Text(
+                "${hijriDate.hDay}",
+                style: TextStyle(color: Colors.white38, fontSize: hijriSize),
               ),
             ),
-            if (fastingType != FastingType.none) ...[
-              SizedBox(height: 2.h),
-              _buildFastingDot(fastingType, size: dotSize),
-            ],
+            // Fasting Dot (Bottom Left)
+            if (fastingType != FastingType.none)
+              Positioned(
+                bottom: 6.h,
+                left: 6.w,
+                child: _buildFastingDot(fastingType, size: dotSize),
+              ),
           ],
         ),
       ),

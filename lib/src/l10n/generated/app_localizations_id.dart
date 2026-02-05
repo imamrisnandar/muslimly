@@ -833,7 +833,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String sbPageReadLogged(Object duration, Object page) {
-    return 'Halaman $page tercatat (${duration}d)';
+    return 'Halaman $page tercatat ($duration)';
   }
 
   @override

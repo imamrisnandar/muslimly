@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:muslimly/src/features/quran/presentation/utils/glyph_helper.dart';
 import 'package:muslimly/src/features/quran/presentation/widgets/mushaf_header_widget.dart';
@@ -183,12 +184,21 @@ class _MushafPageState extends State<MushafPage> {
         ),
       );
 
+      String durationStr;
+      if (duration < 60) {
+        durationStr = "${duration}s";
+      } else {
+        final minutes = duration ~/ 60;
+        final seconds = duration % 60;
+        durationStr = "${minutes}m ${seconds}s";
+      }
+
       // Subtle notification - small toast at bottom
       showCustomSnackBar(
         context,
         message: AppLocalizations.of(
           context,
-        )!.sbPageReadLogged(pageNum.toString(), duration.toString()),
+        )!.sbPageReadLogged(durationStr, pageNum.toString()),
         type: SnackBarType.info,
         duration: const Duration(seconds: 3),
       );
@@ -416,7 +426,13 @@ class _MushafPageState extends State<MushafPage> {
         body: Builder(
           builder: (context) {
             return BlocListener<AudioBloc, AudioState>(
+              listenWhen: (previous, current) {
+                return previous.currentSurahId != current.currentSurahId ||
+                    previous.currentAyahNumber != current.currentAyahNumber ||
+                    previous.status != current.status;
+              },
               listener: (context, audioState) {
+                // 1. Auto-Scroll to Ayah if on same Surah
                 if (audioState.currentSurahId == _surah.number &&
                     audioState.currentAyahNumber != null) {
                   final quranState = context.read<QuranBloc>().state;
@@ -425,22 +441,59 @@ class _MushafPageState extends State<MushafPage> {
                       final ayah = quranState.ayahs.firstWhere(
                         (a) => a.numberInSurah == audioState.currentAyahNumber,
                       );
+                      // Determine the Index of the page this ayah belongs to
                       final uniquePages =
                           quranState.ayahs.map((e) => e.page).toSet().toList()
                             ..sort();
-                      final index = uniquePages.indexOf(ayah.page);
-                      if (index != -1 &&
+                      final targetPageIndex = uniquePages.indexOf(ayah.page);
+
+                      if (targetPageIndex != -1 &&
                           _pageController != null &&
                           _pageController!.hasClients) {
-                        if ((_pageController!.page?.round() ?? -1) != index) {
+                        final currentPageIndex =
+                            _pageController!.page?.round() ?? -1;
+
+                        if (currentPageIndex != targetPageIndex) {
+                          // Animate to the correct page
                           _pageController!.animateToPage(
-                            index,
-                            duration: const Duration(milliseconds: 300),
+                            targetPageIndex,
+                            duration: const Duration(milliseconds: 500),
                             curve: Curves.easeInOut,
                           );
                         }
                       }
-                    } catch (_) {}
+                    } catch (_) {
+                      // Fail silently if ayah not found or weird state
+                    }
+                  }
+                }
+                // 2. Auto-Navigate if Surah Changed (Audio moved to next/prev Surah)
+                else if (audioState.status == AudioStatus.playing &&
+                    audioState.currentSurahId != null &&
+                    audioState.currentSurahId != _surah.number) {
+                  // Find new Surah Data
+                  final newSurahId = audioState.currentSurahId!;
+                  final nextSurahData = surahDetails.firstWhere(
+                    (element) => element['number'] == newSurahId,
+                    orElse: () => {},
+                  );
+
+                  if (nextSurahData.isNotEmpty) {
+                    final nextSurah = Surah(
+                      number: nextSurahData['number'],
+                      name: nextSurahData['name'],
+                      englishName: nextSurahData['englishName'],
+                      englishNameTranslation: '',
+                      indonesianNameTranslation: '',
+                      numberOfAyahs: nextSurahData['numberOfAyahs'],
+                      revelationType: nextSurahData['revelationType'],
+                    );
+
+                    // Navigate
+                    context.pushReplacement(
+                      '/quran/mushaf/${nextSurah.number}',
+                      extra: nextSurah,
+                    );
                   }
                 }
               },
@@ -1010,25 +1063,27 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                                         AppLocalizations.of(context)!.tryAgain,
                                       ),
                                     ),
-                                    SizedBox(height: 20.h),
-                                    Container(
-                                      padding: EdgeInsets.all(8.w),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(
-                                          8.r,
+                                    if (kDebugMode) ...[
+                                      SizedBox(height: 20.h),
+                                      Container(
+                                        padding: EdgeInsets.all(8.w),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius: BorderRadius.circular(
+                                            8.r,
+                                          ),
+                                        ),
+                                        child: SelectableText(
+                                          "Debug Info: ${snapshot.error}",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 10.sp,
+                                            fontFamily: 'Courier',
+                                          ),
                                         ),
                                       ),
-                                      child: SelectableText(
-                                        "Debug Info: ${snapshot.error}",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.black54,
-                                          fontSize: 10.sp,
-                                          fontFamily: 'Courier',
-                                        ),
-                                      ),
-                                    ),
+                                    ],
                                   ],
                                 ),
                               ),

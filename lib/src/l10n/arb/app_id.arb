@@ -249,7 +249,7 @@
   "sbLastReadUpdated": "Posisi terakhir dibaca diperbarui",
   "emptyHistorySubtitle": "Mulai membaca untuk melacak progres Anda",
   "lblThisWeek": "Minggu Ini",
-  "sbPageReadLogged": "Halaman {page} tercatat ({duration}d)",
+    "sbPageReadLogged": "Halaman {page} tercatat ({duration})",
   "lblLifetimeTotal": "Total",
   "lblReadingStreak": "Streak",
   "lblDailyAverage": "Rata-rata/Hari",

@@ -152,7 +152,11 @@ void configureDependencies() {
     () => AudioRepositoryImpl(getIt<Dio>(), getIt<DatabaseService>()),
   );
   getIt.registerLazySingleton<AudioBloc>(
-    () => AudioBloc(getIt<AudioRepository>(), getIt<AudioPlayer>()),
+    () => AudioBloc(
+      getIt<AudioRepository>(),
+      getIt<QuranRepository>(),
+      getIt<AudioPlayer>(),
+    ),
   );
 
   // --- Zikir Feature ---
