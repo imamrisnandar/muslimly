@@ -9,6 +9,7 @@ class PremiumShowcase extends StatelessWidget {
   final Widget child;
   final VoidCallback? onNext;
   final ShapeBorder? targetShapeBorder;
+  final EdgeInsets? targetPadding;
 
   const PremiumShowcase({
     super.key,
@@ -18,6 +19,7 @@ class PremiumShowcase extends StatelessWidget {
     required this.child,
     this.onNext,
     this.targetShapeBorder,
+    this.targetPadding,
   });
 
   @override
@@ -27,6 +29,7 @@ class PremiumShowcase extends StatelessWidget {
       // height: 200, // Removed invalid param
       // width: 280.w, // Removed invalid param
       targetShapeBorder: targetShapeBorder ?? const CircleBorder(),
+      targetPadding: targetPadding ?? EdgeInsets.zero,
       overlayColor: Colors.black.withOpacity(0.85),
       container: _buildTooltip(context),
       child: child,

@@ -302,6 +302,14 @@
   "reminderDzikir": "DZIKIR",
   "reminderIftarIn": "Berbuka {duration} lagi",
   "reminderFastingType": "Puasa {type}",
-  "reminderDzikirTime": "Waktunya Dzikir {type}"
+  "reminderDzikirTime": "Waktunya Dzikir {type}",
+  "showcaseMiniPlayerTitle": "Tampilan Mini",
+  "showcaseMiniPlayerDesc": "Geser ke bawah atau tekan tombol ini (v) untuk tampilan mini.",
+  "showcaseChangeQoriTitle": "Ganti Qori",
+  "showcaseChangeQoriDesc": "Ketuk di sini untuk mengganti penyuara.",
+  "showcaseRepeatTitle": "Mode Ulang",
+  "showcaseRepeatDesc": "Ketuk untuk mengulang satu ayat atau seluruh surat.",
+  "showcaseSpeedTitle": "Kecepatan Audio",
+  "showcaseSpeedDesc": "Ketuk untuk mengubah kecepatan bacaan."
 }
 

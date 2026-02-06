@@ -1011,4 +1011,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String reminderDzikirTime(Object type) {
     return 'Time for $type Dzikir';
   }
+
+  @override
+  String get showcaseMiniPlayerTitle => 'Mini Player';
+
+  @override
+  String get showcaseMiniPlayerDesc =>
+      'Swipe down or tap here (v) to minimize.';
+
+  @override
+  String get showcaseChangeQoriTitle => 'Change Reciter';
+
+  @override
+  String get showcaseChangeQoriDesc => 'Tap here to change the reciter.';
+
+  @override
+  String get showcaseRepeatTitle => 'Repeat Mode';
+
+  @override
+  String get showcaseRepeatDesc => 'Tap to repeat single verse or full surah.';
+
+  @override
+  String get showcaseSpeedTitle => 'Playback Speed';
+
+  @override
+  String get showcaseSpeedDesc => 'Tap to adjust playback speed.';
 }

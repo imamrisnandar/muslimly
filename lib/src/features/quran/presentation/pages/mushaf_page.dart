@@ -42,7 +42,7 @@ import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_state.dart';
 import 'package:showcaseview/showcaseview.dart';
 import '../../../../core/presentation/widgets/premium_showcase.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:muslimly/src/features/quran/presentation/widgets/ayah_selector_bottom_sheet.dart';
 import 'package:muslimly/src/core/utils/quran_constants.dart';
@@ -81,6 +81,7 @@ class _MushafPageState extends State<MushafPage> {
   final GlobalKey _bookmarkKey = GlobalKey();
   final GlobalKey _completionKey = GlobalKey();
   final GlobalKey _jumpToAyahKey = GlobalKey();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -97,7 +98,6 @@ class _MushafPageState extends State<MushafPage> {
     _readStopwatch.start();
 
     // Check for showcase
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkShowcase());
   }
 
   void _initializeSurah() {
@@ -143,21 +143,6 @@ class _MushafPageState extends State<MushafPage> {
         numberOfAyahs: 7,
         revelationType: "Meccan",
       );
-    }
-  }
-
-  Future<void> _checkShowcase() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasShown = prefs.getBool('hasShownMushafShowcase') ?? false;
-
-    if (!hasShown && mounted) {
-      ShowCaseWidget.of(context).startShowCase([
-        _swipeKey,
-        _jumpToAyahKey,
-        _bookmarkKey,
-        _completionKey,
-      ]);
-      prefs.setBool('hasShownMushafShowcase', true);
     }
   }
 
@@ -421,11 +406,14 @@ class _MushafPageState extends State<MushafPage> {
         BlocProvider(create: (context) => getIt<ReadingBloc>()),
         BlocProvider(create: (context) => getIt<BookmarkBloc>()),
       ],
-      child: Scaffold(
-        backgroundColor: const Color(0xFFFFF8E1), // Cream background for Mushaf
-        body: Builder(
-          builder: (context) {
-            return BlocListener<AudioBloc, AudioState>(
+      child: ShowCaseWidget(
+        builder: (context) {
+          return Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: const Color(
+              0xFFFFF8E1,
+            ), // Cream background for Mushaf
+            body: BlocListener<AudioBloc, AudioState>(
               listenWhen: (previous, current) {
                 return previous.currentSurahId != current.currentSurahId ||
                     previous.currentAyahNumber != current.currentAyahNumber ||
@@ -497,287 +485,307 @@ class _MushafPageState extends State<MushafPage> {
                   }
                 }
               },
-              child: SafeArea(
-                child: Stack(
-                  children: [
-                    BlocBuilder<QuranBloc, QuranState>(
-                      builder: (context, state) {
-                        if (state is QuranLoading) {
-                          return const Center(
-                            child: IslamicLoadingIndicator(size: 48),
-                          );
-                        } else if (state is QuranError) {
-                          return Center(child: Text(state.message));
-                        } else if (state is QuranAyahsLoaded) {
-                          // Group Ayahs by Page
-                          final Map<int, List<Ayah>> pages = {};
-                          for (var ayah in state.ayahs) {
-                            if (!pages.containsKey(ayah.page)) {
-                              pages[ayah.page] = [];
-                            }
-                            pages[ayah.page]!.add(ayah);
-                          }
-
-                          final sortedDid = pages.keys.toList()..sort();
-
-                          // Init PageController with correct initial page
-                          if (_pageController == null) {
-                            int initialIndex = 0;
-                            if (widget.initialPage != null &&
-                                sortedDid.contains(widget.initialPage)) {
-                              initialIndex = sortedDid.indexOf(
-                                widget.initialPage!,
+              child: Stack(
+                children: [
+                  SafeArea(
+                    child: Stack(
+                      children: [
+                        BlocBuilder<QuranBloc, QuranState>(
+                          builder: (context, state) {
+                            if (state is QuranLoading) {
+                              return const Center(
+                                child: IslamicLoadingIndicator(size: 48),
                               );
-                            } else if (widget.startAtEnd) {
-                              initialIndex = sortedDid.length - 1;
-                            }
+                            } else if (state is QuranError) {
+                              return Center(child: Text(state.message));
+                            } else if (state is QuranAyahsLoaded) {
+                              // Group Ayahs by Page
+                              final Map<int, List<Ayah>> pages = {};
+                              for (var ayah in state.ayahs) {
+                                if (!pages.containsKey(ayah.page)) {
+                                  pages[ayah.page] = [];
+                                }
+                                pages[ayah.page]!.add(ayah);
+                              }
 
-                            _pageController = PageController(
-                              initialPage: initialIndex,
-                            );
+                              final sortedDid = pages.keys.toList()..sort();
 
-                            if (sortedDid.isNotEmpty) {
-                              _lastPageNumber = sortedDid[initialIndex];
-                            }
-                          }
-
-                          return NotificationListener<ScrollNotification>(
-                            onNotification: (notification) {
-                              if (notification is ScrollUpdateNotification &&
-                                  notification.dragDetails != null) {
-                                // NEXT SURAH (End of Page)
-                                if (notification.metrics.pixels >
-                                    notification.metrics.maxScrollExtent + 20) {
-                                  if (_pageController!.page != null &&
-                                      _pageController!.page!.round() ==
-                                          sortedDid.length - 1) {
-                                    _goToNextSurah(context);
-                                  }
+                              // Init PageController with correct initial page
+                              if (_pageController == null) {
+                                int initialIndex = 0;
+                                if (widget.initialPage != null &&
+                                    sortedDid.contains(widget.initialPage)) {
+                                  initialIndex = sortedDid.indexOf(
+                                    widget.initialPage!,
+                                  );
+                                } else if (widget.startAtEnd) {
+                                  initialIndex = sortedDid.length - 1;
                                 }
 
-                                // PREVIOUS SURAH (Start of Page)
-                                if (notification.metrics.pixels < -20) {
-                                  if (_pageController!.page != null &&
-                                      _pageController!.page!.round() == 0) {
-                                    _goToPreviousSurah(context);
-                                  }
+                                _pageController = PageController(
+                                  initialPage: initialIndex,
+                                );
+
+                                if (sortedDid.isNotEmpty) {
+                                  _lastPageNumber = sortedDid[initialIndex];
                                 }
                               }
-                              return false;
-                            },
-                            child: PremiumShowcase(
-                              globalKey: _swipeKey,
-                              title: AppLocalizations.of(
-                                context,
-                              )!.quranNavigationTitle,
-                              description: AppLocalizations.of(
-                                context,
-                              )!.showcaseNavigation, // Localized
-                              child: PageView.builder(
-                                controller: _pageController!,
-                                reverse: true, // Right-to-Left swipe for Quran
-                                physics: const AlwaysScrollableScrollPhysics(
-                                  parent: BouncingScrollPhysics(),
-                                ),
-                                onPageChanged: (index) {
-                                  // Log previous page
-                                  if (_lastPageNumber != -1) {
-                                    _logReading(context, _lastPageNumber);
+
+                              return NotificationListener<ScrollNotification>(
+                                onNotification: (notification) {
+                                  if (notification
+                                          is ScrollUpdateNotification &&
+                                      notification.dragDetails != null) {
+                                    // NEXT SURAH (End of Page)
+                                    if (notification.metrics.pixels >
+                                        notification.metrics.maxScrollExtent +
+                                            20) {
+                                      if (_pageController!.page != null &&
+                                          _pageController!.page!.round() ==
+                                              sortedDid.length - 1) {
+                                        _goToNextSurah(context);
+                                      }
+                                    }
+
+                                    // PREVIOUS SURAH (Start of Page)
+                                    if (notification.metrics.pixels < -20) {
+                                      if (_pageController!.page != null &&
+                                          _pageController!.page!.round() == 0) {
+                                        _goToPreviousSurah(context);
+                                      }
+                                    }
                                   }
-                                  // Update tracking
-                                  final newPage = sortedDid[index];
-
-                                  // Save Last Read
-                                  final lastRead = LastRead(
-                                    pageNumber: newPage,
-                                    surahName: _surah.englishName,
-                                    surahNumber: _surah.number,
-                                    // Note: We don't have exact Ayah here easily without finding first ayah of newPage
-                                    // But pageNumber is enough for navigation.
-                                  );
-                                  context.read<BookmarkBloc>().add(
-                                    SaveLastRead(lastRead),
-                                  );
-
-                                  setState(() {
-                                    _lastPageNumber = newPage;
-                                  });
+                                  return false;
                                 },
-                                itemCount: sortedDid.length,
-                                itemBuilder: (context, index) {
-                                  final pageNumber = sortedDid[index];
-                                  final ayahsOnPage = pages[pageNumber]!;
+                                child: PremiumShowcase(
+                                  globalKey: _swipeKey,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.quranNavigationTitle,
+                                  description: AppLocalizations.of(
+                                    context,
+                                  )!.showcaseNavigation, // Localized
+                                  child: PageView.builder(
+                                    controller: _pageController!,
+                                    reverse:
+                                        true, // Right-to-Left swipe for Quran
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(
+                                          parent: BouncingScrollPhysics(),
+                                        ),
+                                    onPageChanged: (index) {
+                                      // Log previous page
+                                      if (_lastPageNumber != -1) {
+                                        _logReading(context, _lastPageNumber);
+                                      }
+                                      // Update tracking
+                                      final newPage = sortedDid[index];
 
-                                  return MushafSinglePage(
-                                    pageNumber: pageNumber,
-                                    ayahs: ayahsOnPage,
-                                    surahName: _surah.englishName,
-                                    surahNumber: _surah.number,
-                                    panEnabled: true,
-                                    onJumpTap: () => _showJumpToAyah(context),
-                                    jumpKey: _jumpToAyahKey,
-                                    highlightedAyah: _highlightedAyah,
-                                  );
-                                },
-                              ),
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
+                                      // Save Last Read
+                                      final lastRead = LastRead(
+                                        pageNumber: newPage,
+                                        surahName: _surah.englishName,
+                                        surahNumber: _surah.number,
+                                        // Note: We don't have exact Ayah here easily without finding first ayah of newPage
+                                        // But pageNumber is enough for navigation.
+                                      );
+                                      context.read<BookmarkBloc>().add(
+                                        SaveLastRead(lastRead),
+                                      );
 
-                    // Floating Back Button
-                    Positioned(
-                      top: 5.h,
-                      left: 16.w,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.black.withOpacity(
-                          0.0,
-                        ), // Transparent
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
-                          ),
-                          onPressed: () => context.pop(),
+                                      setState(() {
+                                        _lastPageNumber = newPage;
+                                      });
+                                    },
+                                    itemCount: sortedDid.length,
+                                    itemBuilder: (context, index) {
+                                      final pageNumber = sortedDid[index];
+                                      final ayahsOnPage = pages[pageNumber]!;
+
+                                      return MushafSinglePage(
+                                        pageNumber: pageNumber,
+                                        ayahs: ayahsOnPage,
+                                        surahName: _surah.englishName,
+                                        surahNumber: _surah.number,
+                                        panEnabled: true,
+                                        onJumpTap: () =>
+                                            _showJumpToAyah(context),
+                                        jumpKey: _jumpToAyahKey,
+                                        highlightedAyah: _highlightedAyah,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          },
                         ),
-                      ),
-                    ),
 
-                    // Bookmark Button
-                    Positioned(
-                      top: 5.h,
-                      right: 16.w,
-                      child: BlocConsumer<BookmarkBloc, BookmarkState>(
-                        listener: (context, state) {
-                          if (state is BookmarkOperationSuccess) {
-                            final l10n = AppLocalizations.of(context)!;
-                            final message =
-                                state.type == BookmarkOperationType.saved
-                                ? l10n.sbBookmarkSaved
-                                : l10n.sbBookmarkRemoved;
-
-                            showCustomSnackBar(
-                              context,
-                              message: message,
-                              type: state.type == BookmarkOperationType.removed
-                                  ? SnackBarType.info
-                                  : SnackBarType.success,
-                            );
-                          }
-                        },
-                        builder: (context, state) {
-                          bool isBookmarked = false;
-                          if (state is BookmarkLoaded) {
-                            isBookmarked = state.bookmarks.any(
-                              (b) =>
-                                  b.pageNumber == _lastPageNumber &&
-                                  b.pageNumber == _lastPageNumber &&
-                                  b.mode == 'mushaf' &&
-                                  b.ayahNumber == null,
-                            );
-                          }
-
-                          return CircleAvatar(
+                        // Floating Back Button
+                        Positioned(
+                          top: 5.h,
+                          left: 16.w,
+                          child: CircleAvatar(
                             backgroundColor: Colors.black.withOpacity(
                               0.0,
                             ), // Transparent
-                            child: PremiumShowcase(
-                              globalKey: _bookmarkKey,
-                              title: AppLocalizations.of(context)!.menuBookmark,
-                              description: AppLocalizations.of(
-                                context,
-                              )!.showcaseBookmark,
-                              targetShapeBorder: const CircleBorder(),
-                              child: IconButton(
-                                icon: Icon(
-                                  isBookmarked
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_border,
-                                  color: isBookmarked
-                                      ? const Color(0xFF00E676)
-                                      : Colors.black,
+                            child: IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.black,
+                              ),
+                              onPressed: () => context.pop(),
+                            ),
+                          ),
+                        ),
+
+                        // Bookmark Button
+                        Positioned(
+                          top: 5.h,
+                          right: 16.w,
+                          child: BlocConsumer<BookmarkBloc, BookmarkState>(
+                            listener: (context, state) {
+                              if (state is BookmarkOperationSuccess) {
+                                final l10n = AppLocalizations.of(context)!;
+                                final message =
+                                    state.type == BookmarkOperationType.saved
+                                    ? l10n.sbBookmarkSaved
+                                    : l10n.sbBookmarkRemoved;
+
+                                showCustomSnackBar(
+                                  context,
+                                  message: message,
+                                  type:
+                                      state.type ==
+                                          BookmarkOperationType.removed
+                                      ? SnackBarType.info
+                                      : SnackBarType.success,
+                                );
+                              }
+                            },
+                            builder: (context, state) {
+                              bool isBookmarked = false;
+                              if (state is BookmarkLoaded) {
+                                isBookmarked = state.bookmarks.any(
+                                  (b) =>
+                                      b.pageNumber == _lastPageNumber &&
+                                      b.pageNumber == _lastPageNumber &&
+                                      b.mode == 'mushaf' &&
+                                      b.ayahNumber == null,
+                                );
+                              }
+
+                              return CircleAvatar(
+                                backgroundColor: Colors.black.withOpacity(
+                                  0.0,
+                                ), // Transparent
+                                child: PremiumShowcase(
+                                  globalKey: _bookmarkKey,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.menuBookmark,
+                                  description: AppLocalizations.of(
+                                    context,
+                                  )!.showcaseBookmark,
+                                  targetShapeBorder: const CircleBorder(),
+                                  child: IconButton(
+                                    icon: Icon(
+                                      isBookmarked
+                                          ? Icons.bookmark
+                                          : Icons.bookmark_border,
+                                      color: isBookmarked
+                                          ? const Color(0xFF00E676)
+                                          : Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      // Get current page info
+                                      if (_lastPageNumber != -1) {
+                                        final bookmark = QuranBookmark(
+                                          surahNumber: _surah.number,
+                                          surahName: _surah.englishName,
+                                          pageNumber: _lastPageNumber,
+                                          createdAt: DateTime.now()
+                                              .millisecondsSinceEpoch,
+                                          mode: 'mushaf',
+                                        );
+
+                                        context.read<BookmarkBloc>().add(
+                                          ToggleBookmark(bookmark),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        // Manual Completion Button (Bottom Right)
+                        Positioned(
+                          bottom: 40.h,
+                          right: 16.w,
+                          child: Opacity(
+                            opacity: 0.4,
+                            child: SizedBox(
+                              width: 40.w,
+                              height: 40.w,
+                              child: FloatingActionButton(
+                                mini: true,
+                                elevation: 0,
+                                heroTag: 'finish_reading_btn',
+                                backgroundColor: const Color(0xFF00E676),
+                                child: PremiumShowcase(
+                                  globalKey: _completionKey,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.markAsRead,
+                                  description: AppLocalizations.of(
+                                    context,
+                                  )!.showcaseCompletion,
+                                  targetShapeBorder: const CircleBorder(),
+                                  child: const Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
                                 ),
                                 onPressed: () {
-                                  // Get current page info
                                   if (_lastPageNumber != -1) {
-                                    final bookmark = QuranBookmark(
-                                      surahNumber: _surah.number,
-                                      surahName: _surah.englishName,
-                                      pageNumber: _lastPageNumber,
-                                      createdAt:
-                                          DateTime.now().millisecondsSinceEpoch,
-                                      mode: 'mushaf',
+                                    _logReading(
+                                      context,
+                                      _lastPageNumber,
+                                      manual: true,
                                     );
-
-                                    context.read<BookmarkBloc>().add(
-                                      ToggleBookmark(bookmark),
+                                    showCustomSnackBar(
+                                      context,
+                                      message: AppLocalizations.of(
+                                        context,
+                                      )!.sbReadingSaved,
+                                      type: SnackBarType.success,
                                     );
                                   }
                                 },
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    // Manual Completion Button (Bottom Right)
-                    Positioned(
-                      bottom: 40.h,
-                      right: 16.w,
-                      child: Opacity(
-                        opacity: 0.4,
-                        child: SizedBox(
-                          width: 40.w,
-                          height: 40.w,
-                          child: FloatingActionButton(
-                            mini: true,
-                            elevation: 0,
-                            heroTag: 'finish_reading_btn',
-                            backgroundColor: const Color(0xFF00E676),
-                            child: PremiumShowcase(
-                              globalKey: _completionKey,
-                              title: AppLocalizations.of(context)!.markAsRead,
-                              description: AppLocalizations.of(
-                                context,
-                              )!.showcaseCompletion,
-                              targetShapeBorder: const CircleBorder(),
-                              child: const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                            onPressed: () {
-                              if (_lastPageNumber != -1) {
-                                _logReading(
-                                  context,
-                                  _lastPageNumber,
-                                  manual: true,
-                                );
-                                showCustomSnackBar(
-                                  context,
-                                  message: AppLocalizations.of(
-                                    context,
-                                  )!.sbReadingSaved,
-                                  type: SnackBarType.success,
-                                );
-                              }
-                            },
                           ),
                         ),
-                      ),
+                        // Audio Player
+                      ],
                     ),
-                    // Audio Player
-                    const DraggableAudioPlayer(),
-                  ],
-                ),
+                  ),
+                  // Audio Player (Moved outside SafeArea)
+                  // Audio Player (Moved outside SafeArea)
+                  const DraggableAudioPlayer(
+                    showcasePrefsKey: 'hasShownMushafPlayerShowcase',
+                    enableShowcase: false,
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

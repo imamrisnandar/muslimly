@@ -1903,6 +1903,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Time for {type} Dzikir'**
   String reminderDzikirTime(Object type);
+
+  /// No description provided for @showcaseMiniPlayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mini Player'**
+  String get showcaseMiniPlayerTitle;
+
+  /// No description provided for @showcaseMiniPlayerDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe down or tap here (v) to minimize.'**
+  String get showcaseMiniPlayerDesc;
+
+  /// No description provided for @showcaseChangeQoriTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Reciter'**
+  String get showcaseChangeQoriTitle;
+
+  /// No description provided for @showcaseChangeQoriDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap here to change the reciter.'**
+  String get showcaseChangeQoriDesc;
+
+  /// No description provided for @showcaseRepeatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat Mode'**
+  String get showcaseRepeatTitle;
+
+  /// No description provided for @showcaseRepeatDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to repeat single verse or full surah.'**
+  String get showcaseRepeatDesc;
+
+  /// No description provided for @showcaseSpeedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback Speed'**
+  String get showcaseSpeedTitle;
+
+  /// No description provided for @showcaseSpeedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to adjust playback speed.'**
+  String get showcaseSpeedDesc;
 }
 
 class _AppLocalizationsDelegate

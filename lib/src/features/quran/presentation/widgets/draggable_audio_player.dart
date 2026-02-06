@@ -7,7 +7,14 @@ import '../bloc/audio_state.dart';
 import 'audio_player_widget.dart';
 
 class DraggableAudioPlayer extends StatefulWidget {
-  const DraggableAudioPlayer({super.key});
+  final String? showcasePrefsKey;
+  final bool enableShowcase;
+
+  const DraggableAudioPlayer({
+    super.key,
+    this.showcasePrefsKey,
+    this.enableShowcase = true,
+  });
 
   @override
   State<DraggableAudioPlayer> createState() => _DraggableAudioPlayerState();
@@ -34,6 +41,11 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
           !previous.isMiniPlayerVisible && current.isMiniPlayerVisible,
       listener: (context, state) {
         if (state.isMiniPlayerVisible) {
+          // Default to Full Mode (Top) when player appears
+          setState(() {
+            _top = 50.0;
+          });
+
           // Delay slightly to ensure widget is rendered
           Future.delayed(const Duration(milliseconds: 500), () {
             if (mounted) _checkShowcase();
@@ -43,35 +55,52 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
       child: Positioned(
         top: _top,
         left: 0,
-        bottom: (_top == null) ? 0 : null, // Dock bottom if not moved
+        bottom: (_top == null) ? 0 : null, // Dock bottom if moved to null
         right: 0, // Always dock full width
         child: GestureDetector(
-          onLongPressStart: (details) {
+          onVerticalDragStart: (details) {
             setState(() {
               _isDragging = true;
-              // Initialization on first drag: Snap to current position
+              // If dragging from docked (Mini), start from bottom
               if (_top == null) {
+                // Approximate start position from bottom up
+                // We actually want to Switch to Full View content immediately to handle the drag?
+                // Or just calculate _top based on touch?
+                // For simplicity, let's snap to touch position
                 final validTop = details.globalPosition.dy - 50;
-                _top = validTop;
+                _top = validTop.clamp(50.0, size.height - 100.0);
               }
             });
           },
-          onLongPressMoveUpdate: (details) {
+          onVerticalDragUpdate: (details) {
             final screenH = size.height;
 
             setState(() {
               // Update Top with clamping
+              // Ensure we don't drag off screen or too high
               _top = (details.globalPosition.dy - 50).clamp(
                 50.0,
-                screenH - 100.0,
+                screenH - 80.0, // Allow dragging near bottom
               );
             });
           },
-          onLongPressEnd: (details) {
+          onVerticalDragEnd: (details) {
+            final screenH = size.height;
+            final velocity = details.primaryVelocity ?? 0;
+            final currentTop = _top ?? 0;
+
             setState(() {
               _isDragging = false;
+              // Snap Logic:
+              // Only minimize if flung down fast OR dragged near bottom (e.g. > 80% screen height)
+              if (velocity > 1000 || currentTop > screenH * 0.8) {
+                _top = null; // Snap to Mini/Docked
+              } else {
+                // Free Floating: Keep current position
+                // Ensure it respects bounds (though clamp in update should handle it)
+                _top = currentTop.clamp(50.0, screenH - 150.0);
+              }
             });
-            // No showcase trigger here anymore
           },
           child: _buildBody(),
         ),
@@ -81,15 +110,27 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
 
   Widget _buildBody() {
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 100),
+      duration: _isDragging ? Duration.zero : const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
       transform: _isDragging
-          ? Matrix4.diagonal3Values(1.05, 1.05, 1.0)
+          ? Matrix4.diagonal3Values(1.0, 1.0, 1.0)
           : Matrix4.identity(),
       child: AudioPlayerWidget(
         dragShowcaseKey: _dragKey,
         qoriShowcaseKey: _qoriKey,
         speedShowcaseKey: _speedKey,
         repeatShowcaseKey: _repeatKey,
+        isMini: _top == null, // Expanded if _top is set (even if dragging)
+        onMinimize: () {
+          setState(() {
+            _top = null; // Dock/Mini
+          });
+        },
+        onMaximize: () {
+          setState(() {
+            _top = 50.0; // Full/Top
+          });
+        },
       ),
     );
   }
@@ -97,14 +138,15 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
   Future<void> _checkShowcase() async {
     // Check SharedPreferences first
     final prefs = await SharedPreferences.getInstance();
-    final hasShown = prefs.getBool('hasShownPlayerShowcase') ?? false;
+    final key = widget.showcasePrefsKey ?? 'hasShownPlayerShowcase';
+    final hasShown = prefs.getBool(key) ?? false;
 
-    if (!hasShown && mounted) {
-      // Remove height check - trigger regardless of position
+    // Only show if we are in Full Mode (which is default now) AND showcase is enabled
+    if (widget.enableShowcase && !hasShown && mounted && _top != null) {
       ShowCaseWidget.of(
         context,
       ).startShowCase([_dragKey, _qoriKey, _speedKey, _repeatKey]);
-      await prefs.setBool('hasShownPlayerShowcase', true);
+      await prefs.setBool(key, true);
     }
   }
 }

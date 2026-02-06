@@ -1016,4 +1016,31 @@ class AppLocalizationsId extends AppLocalizations {
   String reminderDzikirTime(Object type) {
     return 'Waktunya Dzikir $type';
   }
+
+  @override
+  String get showcaseMiniPlayerTitle => 'Tampilan Mini';
+
+  @override
+  String get showcaseMiniPlayerDesc =>
+      'Geser ke bawah atau tekan tombol ini (v) untuk tampilan mini.';
+
+  @override
+  String get showcaseChangeQoriTitle => 'Ganti Qori';
+
+  @override
+  String get showcaseChangeQoriDesc =>
+      'Ketuk di sini untuk mengganti penyuara.';
+
+  @override
+  String get showcaseRepeatTitle => 'Mode Ulang';
+
+  @override
+  String get showcaseRepeatDesc =>
+      'Ketuk untuk mengulang satu ayat atau seluruh surat.';
+
+  @override
+  String get showcaseSpeedTitle => 'Kecepatan Audio';
+
+  @override
+  String get showcaseSpeedDesc => 'Ketuk untuk mengubah kecepatan bacaan.';
 }

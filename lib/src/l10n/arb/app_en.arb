@@ -302,5 +302,13 @@
   "reminderDzikir": "DZIKIR",
   "reminderIftarIn": "Iftar in {duration}",
   "reminderFastingType": "{type} Fasting",
-  "reminderDzikirTime": "Time for {type} Dzikir"
+  "reminderDzikirTime": "Time for {type} Dzikir",
+  "showcaseMiniPlayerTitle": "Mini Player",
+  "showcaseMiniPlayerDesc": "Swipe down or tap here (v) to minimize.",
+  "showcaseChangeQoriTitle": "Change Reciter",
+  "showcaseChangeQoriDesc": "Tap here to change the reciter.",
+  "showcaseRepeatTitle": "Repeat Mode",
+  "showcaseRepeatDesc": "Tap to repeat single verse or full surah.",
+  "showcaseSpeedTitle": "Playback Speed",
+  "showcaseSpeedDesc": "Tap to adjust playback speed."
 }
