@@ -74,7 +74,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bottomNavQuran => 'Quran';
 
   @override
-  String get bottomNavDzikir => 'Dzikir & Dua';
+  String get bottomNavDzikir => 'Activity';
 
   @override
   String get bottomNavSettings => 'Settings';
@@ -415,7 +415,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showcaseQuickAccess => 'Quick access to Bookmarks and History.';
 
   @override
-  String get showcaseDzikir => 'Read daily Dzikir and specific Duas here.';
+  String get showcaseDzikir =>
+      'Find various daily worship activities and learning guides here.';
 
   @override
   String get showcaseQuranTab => 'Tap here to open the Quran.';
@@ -718,7 +719,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueReadingPage => 'CONTINUE READING (PAGE)';
 
   @override
-  String get showcaseDzikirTitle => 'Dzikir & Dua';
+  String get showcaseDzikirTitle => 'Activity';
 
   @override
   String get showcaseSettingsTitle => 'Settings';
@@ -1036,4 +1037,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showcaseSpeedDesc => 'Tap to adjust playback speed.';
+
+  @override
+  String get ibadahPracticesSection => 'Daily Practices';
+
+  @override
+  String get ibadahLearningSection => 'Knowledge & Guides';
+
+  @override
+  String get ibadahTajweedTitle => 'Tajweed Learning';
+
+  @override
+  String get ibadahTajweedSubtitle => 'Learn Nun Sukun & Mim Sukun';
+
+  @override
+  String get ibadahWudhuTitle => 'Wudhu Guide';
+
+  @override
+  String get ibadahPrayerTitle => 'Prayer Guide';
+
+  @override
+  String get ibadahPrayerSubtitle => 'Step by step prayer guide';
+
+  @override
+  String get ibadahFastingTitle => 'Fasting Guide';
+
+  @override
+  String get ibadahFastingSubtitle => 'Ramadan & Sunnah Fasting';
 }

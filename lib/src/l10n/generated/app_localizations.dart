@@ -227,7 +227,7 @@ abstract class AppLocalizations {
   /// No description provided for @bottomNavDzikir.
   ///
   /// In en, this message translates to:
-  /// **'Dzikir & Dua'**
+  /// **'Activity'**
   String get bottomNavDzikir;
 
   /// No description provided for @bottomNavSettings.
@@ -839,7 +839,7 @@ abstract class AppLocalizations {
   /// No description provided for @showcaseDzikir.
   ///
   /// In en, this message translates to:
-  /// **'Read daily Dzikir and specific Duas here.'**
+  /// **'Find various daily worship activities and learning guides here.'**
   String get showcaseDzikir;
 
   /// No description provided for @showcaseQuranTab.
@@ -1397,7 +1397,7 @@ abstract class AppLocalizations {
   /// No description provided for @showcaseDzikirTitle.
   ///
   /// In en, this message translates to:
-  /// **'Dzikir & Dua'**
+  /// **'Activity'**
   String get showcaseDzikirTitle;
 
   /// No description provided for @showcaseSettingsTitle.
@@ -1951,6 +1951,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap to adjust playback speed.'**
   String get showcaseSpeedDesc;
+
+  /// No description provided for @ibadahPracticesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Practices'**
+  String get ibadahPracticesSection;
+
+  /// No description provided for @ibadahLearningSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Knowledge & Guides'**
+  String get ibadahLearningSection;
+
+  /// No description provided for @ibadahTajweedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tajweed Learning'**
+  String get ibadahTajweedTitle;
+
+  /// No description provided for @ibadahTajweedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn Nun Sukun & Mim Sukun'**
+  String get ibadahTajweedSubtitle;
+
+  /// No description provided for @ibadahWudhuTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wudhu Guide'**
+  String get ibadahWudhuTitle;
+
+  /// No description provided for @ibadahPrayerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Guide'**
+  String get ibadahPrayerTitle;
+
+  /// No description provided for @ibadahPrayerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Step by step prayer guide'**
+  String get ibadahPrayerSubtitle;
+
+  /// No description provided for @ibadahFastingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting Guide'**
+  String get ibadahFastingTitle;
+
+  /// No description provided for @ibadahFastingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan & Sunnah Fasting'**
+  String get ibadahFastingSubtitle;
 }
 
 class _AppLocalizationsDelegate

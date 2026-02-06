@@ -1,0 +1,464 @@
+[
+  {
+    "id": "introduction",
+    "title": "Pengantar Ilmu Tajwid",
+    "description": "Memahami definisi, tujuan, dan hukum mempelajari Ilmu Tajwid.",
+    "lessons": [
+      {
+        "id": "def_tajwid",
+        "title": "Definisi Ilmu Tajwid",
+        "definition": "Lafadz Tajwid menurut bahasa artinya membaguskan.\n\nSedangkan menurut istilah adalah: 'Mengeluarkan setiap huruf dari tempat keluarnya dengan memberi hak dan mustahaknya.'\n\nYang dimaksud dengan hak huruf adalah sifat asli yang selalu bersama dengan huruf tersebut, seperti Al Jahr, Isti'la', istifal dan lain sebagainya.\n\nSedangkan yang dimaksud dengan mustahak huruf adalah sifat yang nampak sewaktu-waktu, seperti tafkhim, tarqiq, ikhfa' dan lain sebagainya.",
+         "letters": [],
+         "examples": []
+      },
+      {
+        "id": "hukum_tajwid",
+        "title": "Hukum Mempelajari",
+        "definition": "Hukum mempelajari Ilmu Tajwid secara teori adalah fardhu kifayah, sedangkan hukum membaca Alquran sesuai dengan kaidah ilmu tajwid adalah fardhu 'ain.\n\nJadi, mungkin saja terjadi seorang Qori' bacaannya bagus dan benar, namun sama sekali ia tidak mengetahui istilah-istilah ilmu Tajwid semisal izh-har, mad dan lain sebagainya. Baginya hal itu sudah cukup bila kaum muslimin yang lain telah banyak yang mempelajari teori ilmu Tajwid, karena -sekali lagi- mempelajari teorinya hanya fardhu kifayah.\n\nAkan lain halnya dengan orang yang tidak mampu membaca Alquran sesuai dengan kaidah-kaidah ilmu Tajwid. Menjadi wajib baginya untuk berusaha membaguskan bacaannya sehingga mencapai standar yang telah ditetapkan oleh Rasulullah Sholallohu'alaihi wasallam.",
+         "letters": [],
+         "examples": []
+      }
+    ]
+  },
+  {
+    "id": "nun_sukun",
+    "title": "Nun Sukun & Tanwin",
+    "description": "Hukum bacaan ketika Nun Mati (نْ) atau Tanwin (ـً ـٍ ـٌ) bertemu dengan huruf-huruf hijaiyah.",
+    "lessons": [
+      {
+        "id": "idzhar_halqi",
+        "title": "Idzhar Halqi",
+        "definition": "Izh-har (atau lengkapnya Izh-har Halqy), secara bahasa artinya jelas. Sedangkan menurut ilmu tajwid adalah pembacaan nun mati atau tanwin sesuai dengan makhrojnya tanpa dighunnahkan apabila bertemu dengan salah satu huruf halqiyah (tenggorokan).",
+        "letters": ["\u0627", "\u062d", "\u062e", "\u0639", "\u063a", "\u0647"],
+        "examples": [
+          {
+            "label": "Man Amana (Qs 2:62)",
+            "surah": 2,
+            "ayah": 62,
+            "highlight": "مَ{نْ} {آ}مَنَ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/002062.mp3#t=8750,9860"
+            ]
+          },
+          {
+            "label": "Min 'Alaq (Qs 96:2)",
+            "surah": 96,
+            "ayah": 2,
+            "highlight": "مِ{نْ} {عَ}لَقٍ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/096002.mp3#t=2720,3650"
+            ]
+          },
+          {
+            "label": "Yan'awna (Qs 6:26)",
+            "surah": 6,
+            "ayah": 26,
+            "highlight": "يَ{نْ}{أَ}وْنَ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/006026.mp3#t=2420,3530"
+            ]
+          },
+           {
+            "label": "Min Haadin (Qs 40:33)",
+            "surah": 40,
+            "ayah": 33,
+            "highlight": "مِ{نْ} {هَ}ادٍ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/040033.mp3#t=12260,14630"
+            ]
+          },
+           {
+            "label": "Min Ali (Qs 2:49)",
+            "surah": 2,
+            "ayah": 49,
+            "highlight": "مِ{نْ} {آ}لِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002049.mp3#t=2780,3570"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "idgham",
+        "title": "Idgham",
+        "definition": "Idgham, secara bahasa artinya memasukkan. Sedangkan menurut ilmu tajwid adalah pengucapan nun mati atau tanwin secara lebur ketika bertemu huruf-huruf idgham, atau pengucapan dua huruf seperti dua huruf yang ditasydidkan. Pembacaan idgham, ada yang harus dighunnahkan yaitu yang dinamakan dengan idgham bighunnah atau idgham ma 'alghunnah, dan ada pula yang tidak boleh dighunnahkan, yang disebut idgham bilaghunnah.",
+        "letters": ["\u064a", "\u0646", "\u0645", "\u0648", "\u0644", "\u0631"],
+        "note": "Terbagi menjadi Bighunnah (Dengung) dan Bilaghunnah (Tanpa Dengung)",
+        "examples": [
+           {
+             "sub_category": "Bighunnah",
+             "label": "May-Yaqulu (Qs 2:8)",
+             "surah": 2,
+             "ayah": 8,
+             "highlight": "مَ{نْ} {يَ}قُولُ",
+             "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002008.mp3#t=1910,3470"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Famay-Ya'mal (Qs 99:7)",
+             "surah": 99,
+             "ayah": 7,
+             "highlight": "فَمَ{نْ} {يَ}عْمَلْ",
+             "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/099007.mp3#t=30,2100"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Miw-Waal (Qs 13:11)",
+             "surah": 13,
+             "ayah": 11,
+             "highlight": "مِ{نْ} {وَ}الٍ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/013011.mp3#t=40590,43680"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Siraatam-Mustaqima (Qs 4:68)",
+             "surah": 4,
+             "ayah": 68,
+             "highlight": "صِرَاطً{ا} {مُ}سْتَقِيمًا",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/004068.mp3#t=1780,5070"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Lahabiw-Wa (Qs 111:1)",
+             "surah": 111,
+             "ayah": 1,
+             "highlight": "لَهَبٍ{ وَّ}تَبَّ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/111001.mp3#t=3890,6680"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Yakul-Lahu (Qs 112:4)",
+             "surah": 112,
+             "ayah": 4,
+             "highlight": "يَكُ{نْ} {لَ}هُ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/112004.mp3#t=660,2040"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Mir-Rabbihim (Qs 2:5)",
+             "surah": 2,
+             "ayah": 5,
+             "highlight": "مِ{نْ} {رَ}بِّهِمْ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/002005.mp3#t=3490,5490"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Hudal-Lilmuttaqin (Qs 2:2)",
+             "surah": 2,
+             "ayah": 2,
+             "highlight": "هُدً{ى} {لِ}لْمُتَّقِينَ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/002002.mp3#t=4990,8610"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Mil-Ladunka (Qs 3:38)",
+             "surah": 3,
+             "ayah": 38,
+             "highlight": "مِ{نْ} {لَ}دُنْكَ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/003038.mp3#t=6990,9220"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Musaddiqal-Lima (Qs 3:3)",
+             "surah": 3,
+             "ayah": 3,
+             "highlight": "مُصَدِّقً{ا} {لِ}مَا",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/003003.mp3#t=3950,5780"
+             ]
+           }
+        ]
+      },
+      {
+        "id": "iqlab",
+        "title": "Iqlab",
+        "definition": "Iqlab, secara bahasa artinya merubah. Sedangkan menurut istilah adalah pengucapan nun mati atau tanwin yang bertemu dengan huruf ba' yang berubah menjadi mim dan disertai dengan ghunnah - sebagian Ulama' menambahkan ikhfa', yakni suara mim tidak terdengar sempurna karena dua bibir tidak merapat dengan sempurna).",
+        "letters": ["\u0628"],
+        "examples": [
+           {
+            "label": "Layum-Bazanna (Qs 104:4)",
+            "surah": 104,
+            "ayah": 4,
+            "highlight": "لَيُ{نْ}{بَ}ذَنَّ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/104004.mp3#t=1600,4790"
+            ]
+          },
+          {
+             "label": "Mim Ba'di (Qs 98:4)",
+             "surah": 98,
+             "ayah": 4,
+             "highlight": "مِ{نْ} {بَ}عْدِ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/098004.mp3#t=5160,6860"
+             ]
+           },
+           {
+            "label": "Lanasfa'am-Bin (Qs 96:15)",
+            "surah": 96,
+            "ayah": 15,
+            "highlight": "لَنَسْفَعً{ا} {بِ}النَّاصِيَةِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/096015.mp3#t=3890,8070"
+            ]
+          },
+          {
+             "label": "Hillum-Bi (Qs 90:2)",
+             "surah": 90,
+             "ayah": 2,
+             "highlight": "حِلٌّ{ بِ}هَذَا",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/090002.mp3#t=1680,4170"
+             ]
+           },
+           {
+             "label": "Mam-Bakhila (Qs 92:8)",
+             "surah": 92,
+             "ayah": 8,
+             "highlight": "مَ{نْ} {بَ}خِلَ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/092008.mp3#t=1690,3170"
+             ]
+           }
+        ]
+      },
+      {
+        "id": "ikhfa_haqiqi",
+        "title": "Ikhfa Haqiqi",
+        "definition": "Ikhfa (atau lengkapnya Ikhfa' Haqiqy), secara bahasa artinya menutupi. Sedangkan yang dimaksud di sini adalah pengucapan nun mati atau tanwin ketika bertemu dengan huruf-huruf Ikhfa' memiliki sifat antara Izh-har dan idgham dengan disertai ghunnah.",
+        "letters": ["\u062a", "\u062b", "\u062c", "\u062f", "\u0630", "\u0632", "\u0633", "\u0634", "\u0635", "\u0636", "\u0637", "\u0638", "\u0641", "\u0642", "\u0643"],
+        "examples": [
+          {
+            "label": "Min-Sijjil (Qs 105:4)",
+            "surah": 105,
+            "ayah": 4,
+            "highlight": "مِ{نْ} {سِ}جِّيلٍ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/105004.mp3#t=4630,8620"
+            ]
+          },
+          {
+            "label": "Min-Ju'in (Qs 106:4)",
+            "surah": 106,
+            "ayah": 4,
+            "highlight": "مِ{نْ} {جُ}وعٍ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/106004.mp3#t=4340,6260"
+            ]
+          },
+          {
+             "label": "Man-Thaqulat (Qs 101:6)",
+             "surah": 101,
+             "ayah": 6,
+             "highlight": "مَ{نْ} {ثَ}قُلَتْ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/101006.mp3#t=1970,3820"
+             ]
+          },
+           {
+             "label": "Min-Kulli Amrin (Qs 97:4)",
+             "surah": 97,
+             "ayah": 4,
+             "highlight": "مِ{نْ} {كُ}لِّ أَمْرٍ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/097004.mp3#t=8320,10570"
+             ]
+           },
+           {
+             "label": "Min-Qablu (Qs 2:25)",
+             "surah": 2,
+             "ayah": 25,
+             "highlight": "مِ{نْ} {قَ}بْلُ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/002025.mp3#t=22100,24610"
+             ]
+           }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mim_sukun",
+    "title": "Mim Sukun",
+    "description": "Hukum bacaan ketika Mim Mati (مْ) bertemu dengan huruf-huruf hijaiyah.",
+    "lessons": [
+       {
+        "id": "ikhfa_syafawi",
+        "title": "Ikhfa Syafawi",
+        "definition": "Ikhfa 'Syafawi, yaitu apabila mim mati bertemu dengan ba'. Cara pengucapannya mim tampak samar disertai dengan ghunnah.",
+        "letters": ["\u0628"],
+        "examples": [
+          {
+            "label": "Tarmihim-Bi (Qs 105:4)",
+            "surah": 105,
+            "ayah": 4,
+            "highlight": "تَرْمِيهِ{مْ} {بِ}حِجَارَةٍ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/105004.mp3#t=30,4620"
+            ]
+          },
+          {
+            "label": "Hum-Bimu'minin (Qs 2:8)",
+            "surah": 2,
+            "ayah": 8,
+            "highlight": "وَمَا هُ{مْ} {بِ}مُؤْمِنِينَ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002008.mp3#t=8570,11690"
+            ]
+          },
+          {
+            "label": "Lahum-Bihi (Qs 18:5)",
+            "surah": 18,
+            "ayah": 5,
+            "highlight": "مَا لَهُ{مْ} {بِ}هِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/018005.mp3#t=450,2160"
+            ]
+          },
+           {
+            "label": "Hum-Bissahirah (Qs 79:14)",
+            "surah": 79,
+            "ayah": 14,
+            "highlight": "فَإِذَا هُ{مْ} {بِ}السَّاهِرَةِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/079014.mp3#t=820,3530"
+            ]
+          },
+           {
+            "label": "Ayyuhum-Bi (Qs 68:40)",
+            "surah": 68,
+            "ayah": 40,
+            "highlight": "سَلْهُمْ أَيُّهُ{مْ} {بِ}ذَلِكَ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/068040.mp3#t=900,3430"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "idgham_mimi",
+        "title": "Idgham Mitslain (Mimi)",
+        "definition": "Idgham Mitslain, yaitu apabila mim mati bertemu dengan mim. Cara pengucapannya harus disertai dengan ghunnah.",
+        "letters": ["\u0645"],
+        "examples": [
+          {
+            "label": "Alaihim-Mu'sadah (Qs 104:8)",
+            "surah": 104,
+            "ayah": 8,
+            "highlight": "عَلَيْهِ{مْ} {مُ}ؤْصَدَةٌ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/104008.mp3#t=1800,4960"
+            ]
+          },
+          {
+            "label": "Ath'amahum-Min (Qs 106:4)",
+            "surah": 106,
+            "ayah": 4,
+            "highlight": "أَطْعَمَهُ{مْ} {مِ}نْ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/106004.mp3#t=2290,5400"
+            ]
+          },
+           {
+            "label": "Rabbihim-Min (Qs 97:4)",
+            "surah": 97,
+            "ayah": 4,
+            "highlight": "بِإِذْنِ رَبِّهِ{مْ} {مِ}نْ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/097004.mp3#t=5810,9380"
+            ]
+          },
+           {
+            "label": "Lakum-Ma (Qs 2:29)",
+            "surah": 2,
+            "ayah": 29,
+            "highlight": "لَكُ{مْ} {مَ}ا",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002029.mp3#t=1700,3320"
+            ]
+          },
+           {
+            "label": "Qulubihim-Maradun (Qs 2:10)",
+            "surah": 2,
+            "ayah": 10,
+            "highlight": "فِي قُلُوبِهِ{مْ} {مَ}رَضٌ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002010.mp3#t=390,3350"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "idzhar_syafawi",
+        "title": "Idzhar Syafawi",
+        "definition": "Izh-har Syafawi, yaitu apabila mim mati bertemu dengan selain huruf mim dan ba'. Cara pengucapannya adalah mim harus tampak jelas tanpa ghunnah, terutama ketika bertemu dengan fa' dan waw. Sedikitpun mim tidak boleh terpengaruh makhroj fa' dan waw walaupun makhrojnya berdekatan/sama.",
+        "letters": ["\u0627", "\u062a", "\u062b", "\u062c", "\u062d", "\u062e", "\u062f", "\u0630", "\u0631", "\u0632", "\u0633", "\u0634", "\u0635", "\u0636", "\u0637", "\u0638", "\u0639", "\u063a", "\u0641", "\u0642", "\u0643", "\u0644", "\u0646", "\u0648", "\u0647", "\u064a"],
+        "examples": [
+          {
+            "label": "Alaihim-Wala (Qs 1:7)",
+            "surah": 1,
+            "ayah": 7,
+            "highlight": "عَلَيْهِ{مْ} {وَ}لَا",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/001007.mp3#t=5300,6630"
+            ]
+          },
+          {
+            "label": "Kaidahum-Fi (Qs 105:2)",
+            "surah": 105,
+            "ayah": 2,
+            "highlight": "كَيْدَهُ{مْ} {فِ}ي",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/105002.mp3#t=1430,2950"
+            ]
+          },
+          {
+            "label": "Hum-Fiha (Qs 2:25)",
+            "surah": 2,
+            "ayah": 25,
+            "highlight": "وَهُ{مْ} {فِ}يهَا",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002025.mp3#t=33800,35260"
+            ]
+          },
+           {
+            "label": "Lakum-Fiha (Qs 23:21)",
+            "surah": 23,
+            "ayah": 21,
+            "highlight": "لَكُ{مْ} {فِ}يهَا",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/023021.mp3#t=10400,12040"
+            ]
+          },
+           {
+            "label": "Alaihim-A (Qs 2:6)",
+            "surah": 2,
+            "ayah": 6,
+            "highlight": "عَلَيْهِ{مْ} {أَ}أَنْذَرْتَهُمْ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002006.mp3#t=4960,7780"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

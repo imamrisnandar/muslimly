@@ -1,0 +1,464 @@
+[
+  {
+    "id": "introduction",
+    "title": "Introduction to Tajweed",
+    "description": "Understanding the definition, purpose, and legal ruling of learning Tajweed.",
+    "lessons": [
+      {
+        "id": "def_tajwid",
+        "title": "Definition of Tajweed",
+        "definition": "Linguistically, Tajweed means 'improvement' or 'to make something better'.\n\nTerminologically, it means: 'Giving every letter its rights and dues from its articulation point.'\n\n'Rights of the letter' (Haqq al-Huruf) refers to its permanent characteristics that never change, such as Al-Jahr, Isti'la', and Istifal.\n\n'Dues of the letter' (Mustahakk al-Huruf) refers to temporary characteristics that appear in certain conditions, such as Tafkhim (heavy), Tarqiq (light), and Ikhfa'.",
+         "letters": [],
+         "examples": []
+      },
+      {
+        "id": "hukum_tajwid",
+        "title": "Ruling on Learning Tajweed",
+        "definition": "The theoretical knowledge of Tajweed rules is Fardhu Kifayah (Communal Obligation) – meaning if some members of the community learn it, the obligation is lifted from the rest.\n\nHowever, reading the Quran with proper Tajweed application is Fardhu 'Ain (Individual Obligation) for every Muslim.\n\nIt is possible for a reciter to read correctly without knowing the technical terms (like Idzhar or Mad). But for those who cannot read correctly, it is mandatory to strive to improve their recitation to meet the standard set by the Prophet Muhammad Sholallohu'alaihi wasallam.",
+         "letters": [],
+         "examples": []
+      }
+    ]
+  },
+  {
+    "id": "nun_sukun",
+    "title": "Nun Sakinah & Tanween",
+    "description": "Rules applied when Nun Sakinah (نْ) or Tanween (ـً ـٍ ـٌ) meets specific Hijaiyah letters.",
+    "lessons": [
+      {
+        "id": "idzhar_halqi",
+        "title": "Idzhar Halqi",
+        "definition": "Idzhar linguistically means 'clear'. In Tajweed, it means pronouncing the Nun Sakinah or Tanween clearly without Ghunnah (nasalization) when followed by one of the Throat Letters (Halqiyah).",
+        "letters": ["\u0627", "\u062d", "\u062e", "\u0639", "\u063a", "\u0647"],
+        "examples": [
+          {
+            "label": "Man Amana (Surah 2:62)",
+            "surah": 2,
+            "ayah": 62,
+            "highlight": "مَ{نْ} {آ}مَنَ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/002062.mp3#t=8750,9860"
+            ]
+          },
+          {
+            "label": "Min 'Alaq (Surah 96:2)",
+            "surah": 96,
+            "ayah": 2,
+            "highlight": "مِ{نْ} {عَ}لَقٍ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/096002.mp3#t=2720,3650"
+            ]
+          },
+          {
+            "label": "Yan'awna (Surah 6:26)",
+            "surah": 6,
+            "ayah": 26,
+            "highlight": "يَ{نْ}{أَ}وْنَ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/006026.mp3#t=2420,3530"
+            ]
+          },
+           {
+            "label": "Min Haadin (Surah 40:33)",
+            "surah": 40,
+            "ayah": 33,
+            "highlight": "مِ{نْ} {هَ}ادٍ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/040033.mp3#t=12260,14630"
+            ]
+          },
+           {
+            "label": "Min Ali (Surah 2:49)",
+            "surah": 2,
+            "ayah": 49,
+            "highlight": "مِ{نْ} {آ}لِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002049.mp3#t=2780,3570"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "idgham",
+        "title": "Idgham",
+        "definition": "Idgham linguistically means 'to merge'. In Tajweed, it is the merging of Nun Sakinah or Tanween into the following letter. It is divided into Idgham Bighunnah (with nasal sound) and Idgham Bilaghunnah (without nasal sound).",
+        "letters": ["\u064a", "\u0646", "\u0645", "\u0648", "\u0644", "\u0631"],
+        "note": "Divided into Bighunnah (With Ghunnah) and Bilaghunnah (Without Ghunnah)",
+        "examples": [
+           {
+             "sub_category": "Bighunnah",
+             "label": "May-Yaqulu (Surah 2:8)",
+             "surah": 2,
+             "ayah": 8,
+             "highlight": "مَ{نْ} {يَ}قُولُ",
+             "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002008.mp3#t=1910,3470"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Famay-Ya'mal (Surah 99:7)",
+             "surah": 99,
+             "ayah": 7,
+             "highlight": "فَمَ{نْ} {يَ}عْمَلْ",
+             "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/099007.mp3#t=30,2100"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Miw-Waal (Surah 13:11)",
+             "surah": 13,
+             "ayah": 11,
+             "highlight": "مِ{نْ} {وَ}الٍ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/013011.mp3#t=40590,43680"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Siraatam-Mustaqima (Surah 4:68)",
+             "surah": 4,
+             "ayah": 68,
+             "highlight": "صِرَاطً{ا} {مُ}سْتَقِيمًا",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/004068.mp3#t=1780,5070"
+             ]
+           },
+           {
+             "sub_category": "Bighunnah",
+             "label": "Lahabiw-Wa (Surah 111:1)",
+             "surah": 111,
+             "ayah": 1,
+             "highlight": "لَهَبٍ{ وَّ}تَبَّ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/111001.mp3#t=3890,6680"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Yakul-Lahu (Surah 112:4)",
+             "surah": 112,
+             "ayah": 4,
+             "highlight": "يَكُ{نْ} {لَ}هُ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/112004.mp3#t=660,2040"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Mir-Rabbihim (Surah 2:5)",
+             "surah": 2,
+             "ayah": 5,
+             "highlight": "مِ{نْ} {رَ}بِّهِمْ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/002005.mp3#t=3490,5490"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Hudal-Lilmuttaqin (Surah 2:2)",
+             "surah": 2,
+             "ayah": 2,
+             "highlight": "هُدً{ى} {لِ}لْمُتَّقِينَ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/002002.mp3#t=4990,8610"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Mil-Ladunka (Surah 3:38)",
+             "surah": 3,
+             "ayah": 38,
+             "highlight": "مِ{نْ} {لَ}دُنْكَ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/003038.mp3#t=6990,9220"
+             ]
+           },
+           {
+             "sub_category": "Bilaghunnah",
+             "label": "Musaddiqal-Lima (Surah 3:3)",
+             "surah": 3,
+             "ayah": 3,
+             "highlight": "مُصَدِّقً{ا} {لِ}مَا",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/003003.mp3#t=3950,5780"
+             ]
+           }
+        ]
+      },
+      {
+        "id": "iqlab",
+        "title": "Iqlab",
+        "definition": "Iqlab linguistically means 'to change'. In Tajweed, it is changing the sound of Nun Sakinah or Tanween into a 'Mim' when followed by the letter Ba, accompanied by Ghunnah.",
+        "letters": ["\u0628"],
+        "examples": [
+           {
+            "label": "Layum-Bazanna (Surah 104:4)",
+            "surah": 104,
+            "ayah": 4,
+            "highlight": "لَيُ{نْ}{بَ}ذَنَّ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/104004.mp3#t=1600,4790"
+            ]
+          },
+          {
+             "label": "Mim Ba'di (Surah 98:4)",
+             "surah": 98,
+             "ayah": 4,
+             "highlight": "مِ{نْ} {بَ}عْدِ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/098004.mp3#t=5160,6860"
+             ]
+           },
+           {
+            "label": "Lanasfa'am-Bin (Surah 96:15)",
+            "surah": 96,
+            "ayah": 15,
+            "highlight": "لَنَسْفَعً{ا} {بِ}النَّاصِيَةِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/096015.mp3#t=3890,8070"
+            ]
+          },
+          {
+             "label": "Hillum-Bi (Surah 90:2)",
+             "surah": 90,
+             "ayah": 2,
+             "highlight": "حِلٌّ{ بِ}هَذَا",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/090002.mp3#t=1680,4170"
+             ]
+           },
+           {
+             "label": "Mam-Bakhila (Surah 92:8)",
+             "surah": 92,
+             "ayah": 8,
+             "highlight": "مَ{نْ} {بَ}خِلَ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/092008.mp3#t=1690,3170"
+             ]
+           }
+        ]
+      },
+      {
+        "id": "ikhfa_haqiqi",
+        "title": "Ikhfa Haqiqi",
+        "definition": "Ikhfa linguistically means 'to hide'. In Tajweed, it is pronouncing the Nun Sakinah or Tanween in a state between Idzhar and Idgham, without Tasydid, and with Ghunnah.",
+        "letters": ["\u062a", "\u062b", "\u062c", "\u062f", "\u0630", "\u0632", "\u0633", "\u0634", "\u0635", "\u0636", "\u0637", "\u0638", "\u0641", "\u0642", "\u0643"],
+        "examples": [
+          {
+            "label": "Min-Sijjil (Surah 105:4)",
+            "surah": 105,
+            "ayah": 4,
+            "highlight": "مِ{نْ} {سِ}جِّيلٍ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/105004.mp3#t=4630,8620"
+            ]
+          },
+          {
+            "label": "Min-Ju'in (Surah 106:4)",
+            "surah": 106,
+            "ayah": 4,
+            "highlight": "مِ{نْ} {جُ}وعٍ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/106004.mp3#t=4340,6260"
+            ]
+          },
+          {
+             "label": "Man-Thaqulat (Surah 101:6)",
+             "surah": 101,
+             "ayah": 6,
+             "highlight": "مَ{نْ} {ثَ}قُلَتْ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/101006.mp3#t=1970,3820"
+             ]
+          },
+           {
+             "label": "Min-Kulli Amrin (Surah 97:4)",
+             "surah": 97,
+             "ayah": 4,
+             "highlight": "مِ{نْ} {كُ}لِّ أَمْرٍ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/097004.mp3#t=8320,10570"
+             ]
+           },
+           {
+             "label": "Min-Qablu (Surah 2:25)",
+             "surah": 2,
+             "ayah": 25,
+             "highlight": "مِ{نْ} {قَ}بْلُ",
+             "audio_urls": [
+                "https://audio.qurancdn.com/Alafasy/mp3/002025.mp3#t=22100,24610"
+             ]
+           }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mim_sukun",
+    "title": "Mim Sakinah",
+    "description": "Rules when Mim Sakinah (Mim with Sukun) meets other Hijaiyah letters.",
+    "lessons": [
+       {
+        "id": "ikhfa_syafawi",
+        "title": "Ikhfa Syafawi",
+        "definition": "Ikhfa Syafawi occurs when Mim Sakinah meets the letter Ba. The pronunciation of Mim is hidden/concealed with Ghunnah.",
+        "letters": ["\u0628"],
+        "examples": [
+          {
+            "label": "Tarmihim-Bi (Surah 105:4)",
+            "surah": 105,
+            "ayah": 4,
+            "highlight": "تَرْمِيهِ{مْ} {بِ}حِجَارَةٍ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/105004.mp3#t=30,4620"
+            ]
+          },
+          {
+            "label": "Hum-Bimu'minin (Surah 2:8)",
+            "surah": 2,
+            "ayah": 8,
+            "highlight": "وَمَا هُ{مْ} {بِ}مُؤْمِنِينَ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002008.mp3#t=8570,11690"
+            ]
+          },
+          {
+            "label": "Lahum-Bihi (Surah 18:5)",
+            "surah": 18,
+            "ayah": 5,
+            "highlight": "مَا لَهُ{مْ} {بِ}هِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/018005.mp3#t=450,2160"
+            ]
+          },
+           {
+            "label": "Hum-Bissahirah (Surah 79:14)",
+            "surah": 79,
+            "ayah": 14,
+            "highlight": "فَإِذَا هُ{مْ} {بِ}السَّاهِرَةِ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/079014.mp3#t=820,3530"
+            ]
+          },
+           {
+            "label": "Ayyuhum-Bi (Surah 68:40)",
+            "surah": 68,
+            "ayah": 40,
+            "highlight": "سَلْهُمْ أَيُّهُ{مْ} {بِ}ذَلِكَ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/068040.mp3#t=900,3430"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "idgham_mimi",
+        "title": "Idgham Mimi",
+        "definition": "Idgham Mimi (or Mitslain) occurs when Mim Sakinah meets another Mim. It must be pronounced with Ghunnah.",
+        "letters": ["\u0645"],
+        "examples": [
+          {
+            "label": "Alaihim-Mu'sadah (Surah 104:8)",
+            "surah": 104,
+            "ayah": 8,
+            "highlight": "عَلَيْهِ{مْ} {مُ}ؤْصَدَةٌ",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/104008.mp3#t=1800,4960"
+            ]
+          },
+          {
+            "label": "Ath'amahum-Min (Surah 106:4)",
+            "surah": 106,
+            "ayah": 4,
+            "highlight": "أَطْعَمَهُ{مْ} {مِ}نْ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/106004.mp3#t=2290,5400"
+            ]
+          },
+           {
+            "label": "Rabbihim-Min (Surah 97:4)",
+            "surah": 97,
+            "ayah": 4,
+            "highlight": "بِإِذْنِ رَبِّهِ{مْ} {مِ}نْ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/097004.mp3#t=5810,9380"
+            ]
+          },
+           {
+            "label": "Lakum-Ma (Surah 2:29)",
+            "surah": 2,
+            "ayah": 29,
+            "highlight": "لَكُ{مْ} {مَ}ا",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002029.mp3#t=1700,3320"
+            ]
+          },
+           {
+            "label": "Qulubihim-Maradun (Surah 2:10)",
+            "surah": 2,
+            "ayah": 10,
+            "highlight": "فِي قُلُوبِهِ{مْ} {مَ}رَضٌ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002010.mp3#t=390,3350"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "idzhar_syafawi",
+        "title": "Idzhar Syafawi",
+        "definition": "Idzhar Syafawi occurs when Mim Sakinah meets any letter other than Mim and Ba. The Mim must be pronounced clearly without Ghunnah, especially when meeting Fa and Waw.",
+        "letters": ["\u0627", "\u062a", "\u062b", "\u062c", "\u062d", "\u062e", "\u062f", "\u0630", "\u0631", "\u0632", "\u0633", "\u0634", "\u0635", "\u0636", "\u0637", "\u0638", "\u0639", "\u063a", "\u0641", "\u0642", "\u0643", "\u0644", "\u0646", "\u0648", "\u0647", "\u064a"],
+        "examples": [
+          {
+            "label": "Alaihim-Wala (Surah 1:7)",
+            "surah": 1,
+            "ayah": 7,
+            "highlight": "عَلَيْهِ{مْ} {وَ}لَا",
+            "audio_urls": [
+              "https://audio.qurancdn.com/Alafasy/mp3/001007.mp3#t=5300,6630"
+            ]
+          },
+          {
+            "label": "Kaidahum-Fi (Surah 105:2)",
+            "surah": 105,
+            "ayah": 2,
+            "highlight": "كَيْدَهُ{مْ} {فِ}ي",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/105002.mp3#t=1430,2950"
+            ]
+          },
+          {
+            "label": "Hum-Fiha (Surah 2:25)",
+            "surah": 2,
+            "ayah": 25,
+            "highlight": "وَهُ{مْ} {فِ}يهَا",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002025.mp3#t=33800,35260"
+            ]
+          },
+           {
+            "label": "Lakum-Fiha (Surah 23:21)",
+            "surah": 23,
+            "ayah": 21,
+            "highlight": "لَكُ{مْ} {فِ}يهَا",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/023021.mp3#t=10400,12040"
+            ]
+          },
+           {
+            "label": "Alaihim-A (Surah 2:6)",
+            "surah": 2,
+            "ayah": 6,
+            "highlight": "عَلَيْهِ{مْ} {أَ}أَنْذَرْتَهُمْ",
+            "audio_urls": [
+               "https://audio.qurancdn.com/Alafasy/mp3/002006.mp3#t=4960,7780"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

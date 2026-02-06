@@ -41,6 +41,7 @@ import '../../features/quran/data/repositories/audio_repository.dart';
 import '../../features/quran/presentation/bloc/audio_bloc.dart';
 import '../../features/zikir/data/repositories/zikir_local_repository.dart';
 import '../../features/quran/data/repositories/translation_repository_impl.dart';
+import '../../features/tajweed/data/repositories/tajweed_repository.dart'; // Added
 import '../../features/quran/domain/repositories/translation_repository.dart';
 import '../../features/quran/presentation/bloc/translation/translation_bloc.dart';
 import '../../features/quran/domain/usecases/search_ayahs.dart'; // Added
@@ -163,6 +164,9 @@ void configureDependencies() {
   getIt.registerLazySingleton<ZikirLocalRepository>(
     () => ZikirLocalRepository(),
   );
+
+  // --- Tajweed Feature ---
+  getIt.registerLazySingleton<TajweedRepository>(() => TajweedRepositoryImpl());
 }
 
 class _$NetworkModule extends NetworkModule {}

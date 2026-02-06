@@ -21,7 +21,7 @@
     "bottomNavHome": "Beranda",
     "bottomNavPrayer": "Jadwal",
     "bottomNavQuran": "Al-Quran",
-    "bottomNavDzikir": "Dzikir & Doa",
+    "bottomNavDzikir": "Aktivitas",
     "bottomNavSettings": "Pengaturan",
     "cardNextPrayer": "Sholat Berikutnya",
     "cardDailyGoal": "Target Harian",
@@ -123,7 +123,7 @@
     "showcaseSettingsGoal": "Atur target bacaan harian di menu Pengaturan.",
     "showcasePrayerCard": "Lihat jadwal sholat dan hitung mundur adzan.",
     "showcaseQuickAccess": "Akses cepat ke Bookmark dan Riwayat.",
-    "showcaseDzikir": "Baca Dzikir pagi/petang dan kumpulan Doa di sini.",
+    "showcaseDzikir": "Temukan berbagai aktivitas ibadah harian dan panduan belajar di sini.",
     "showcaseQuranTab": "Ketuk di sini untuk mulai membaca Al-Quran.",
     "lblPages": "Halaman",
     "lblReadMore": "Baca Lagi",
@@ -217,7 +217,7 @@
   "share": "Bagikan",
   "continueReadingAyah": "LANJUT BACA (AYAT)",
   "continueReadingPage": "LANJUT BACA (HALAMAN)",
-  "showcaseDzikirTitle": "Dzikir & Doa",
+  "showcaseDzikirTitle": "Aktivitas",
   "showcaseSettingsTitle": "Pengaturan",
   "showcaseQuranTabTitle": "Al-Quran",
   "showcaseDailyGoalTitle": "Target Harian",
@@ -310,6 +310,15 @@
   "showcaseRepeatTitle": "Mode Ulang",
   "showcaseRepeatDesc": "Ketuk untuk mengulang satu ayat atau seluruh surat.",
   "showcaseSpeedTitle": "Kecepatan Audio",
-  "showcaseSpeedDesc": "Ketuk untuk mengubah kecepatan bacaan."
+  "showcaseSpeedDesc": "Ketuk untuk mengubah kecepatan bacaan.",
+    "ibadahPracticesSection": "Amalan Harian",
+    "ibadahLearningSection": "Pengetahuan & Panduan",
+    "ibadahTajweedTitle": "Belajar Tajwid",
+    "ibadahTajweedSubtitle": "Pelajari Hukum Nun Sukun & Mim Sukun",
+    "ibadahWudhuTitle": "Tata Cara Wudhu",
+    "ibadahPrayerTitle": "Panduan Sholat",
+    "ibadahPrayerSubtitle": "Tata cara sholat lengkap",
+    "ibadahFastingTitle": "Panduan Puasa",
+    "ibadahFastingSubtitle": "Puasa Wajib & Sunnah"
 }
 
