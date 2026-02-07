@@ -172,8 +172,12 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
       // angle = qibla - heading
       // normalize to -180..180
       deviation = (_qiblaDirection! - heading);
-      while (deviation < -180) deviation += 360;
-      while (deviation > 180) deviation -= 360;
+      while (deviation < -180) {
+        deviation += 360;
+      }
+      while (deviation > 180) {
+        deviation -= 360;
+      }
 
       // Check Alignment (Tolerance 5 degrees - increased from 2)
       bool nowAligned = deviation.abs() < 5.0;

@@ -1,4 +1,3 @@
-import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../../prayer/domain/entities/prayer_time.dart';
@@ -75,6 +74,7 @@ class ReminderService {
 
     return FastingReminder(
       type: eventName,
+      event: event,
       fastingTypeName: type.name,
       date: date,
       isToday: true,
@@ -96,6 +96,7 @@ class ReminderService {
 
         return FastingReminder(
           type: eventName,
+          event: event,
           fastingTypeName: type.name,
           date: checkDate,
           isToday: false,

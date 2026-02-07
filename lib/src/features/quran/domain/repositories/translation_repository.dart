@@ -19,7 +19,11 @@ abstract class TranslationRepository {
   });
 
   /// Fetches Word-by-Word breakdown for a specific Ayah.
-  Future<Either<String, List<Word>>> getWordByWord(int surahId, int ayahId);
+  Future<Either<String, List<Word>>> getWordByWord(
+    int surahId,
+    int ayahId, {
+    String languageCode = 'id',
+  });
 
   /// Fetches all translations for a specific Surah (Bulk).
   /// Returns a Map where key is Ayah Number and value is text.

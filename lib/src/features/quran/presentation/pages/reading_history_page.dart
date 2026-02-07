@@ -11,7 +11,8 @@ import '../bloc/reading/reading_bloc.dart';
 import '../bloc/reading/reading_event.dart';
 import '../bloc/reading/reading_state.dart';
 import '../../domain/entities/reading_activity.dart';
-// import '../../../../core/database/generate_dummy_data.dart'; // HIDDEN FOR PRODUCTION
+import 'package:flutter/foundation.dart'; // For kDebugMode
+import '../../../../core/database/generate_dummy_data.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
 
 class ReadingHistoryPage extends StatefulWidget {
@@ -48,11 +49,9 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
     }
   }
 
-  /* HIDDEN FOR PRODUCTION
   Future<void> _generateDummyData() async {
     await generateDummyData();
   }
-  */
 
   @override
   Widget build(BuildContext context) {
@@ -110,50 +109,51 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                   ),
                   actions: [
                     // Debug: Generate Dummy Data
-                    // HIDDEN FOR PRODUCTION
-                    /*
-                  IconButton(
-                    icon: const Icon(Icons.science, color: Colors.amber),
-                    tooltip: 'Generate 6 months dummy data',
-                    onPressed: () async {
-                      // Import the generator
-                      final scaffoldMessenger = ScaffoldMessenger.of(context);
-                      try {
-                        // Show loading
-                        scaffoldMessenger.showSnackBar(
-                          const SnackBar(
-                            content: Text('Generating dummy data...'),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-
-                        // Generate data
-                        await _generateDummyData();
-
-                        // Reload history
-                        if (context.mounted) {
-                          context.read<ReadingBloc>().add(
-                            LoadReadingHistory(),
+                    // Debug: Generate Dummy Data
+                    if (kDebugMode)
+                      IconButton(
+                        icon: const Icon(Icons.science, color: Colors.amber),
+                        tooltip: 'Generate 6 months dummy data',
+                        onPressed: () async {
+                          // Import the generator
+                          final scaffoldMessenger = ScaffoldMessenger.of(
+                            context,
                           );
-                        }
+                          try {
+                            // Show loading
+                            scaffoldMessenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('Generating dummy data...'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
 
-                        scaffoldMessenger.showSnackBar(
-                          const SnackBar(
-                            content: Text('✅ Dummy data generated!'),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
-                      } catch (e) {
-                        scaffoldMessenger.showSnackBar(
-                          SnackBar(
-                            content: Text('Error: $e'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  */
+                            // Generate data
+                            await _generateDummyData();
+
+                            // Reload history
+                            if (context.mounted) {
+                              context.read<ReadingBloc>().add(
+                                LoadReadingHistory(),
+                              );
+                            }
+
+                            scaffoldMessenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('✅ Dummy data generated!'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          } catch (e) {
+                            scaffoldMessenger.showSnackBar(
+                              SnackBar(
+                                content: Text('Error: $e'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     IconButton(
                       icon: const Icon(Icons.info_outline, color: Colors.white),
                       onPressed: () {

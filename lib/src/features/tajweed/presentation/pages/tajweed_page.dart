@@ -16,6 +16,78 @@ class TajweedPage extends StatefulWidget {
 }
 
 class _TajweedPageState extends State<TajweedPage> {
+  Future<List<TajweedCategory>>? _dataFuture;
+  String? _currentLocale;
+
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  String? _selectedCategoryId;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    // Only fetch if locale changes or first run
+    if (_currentLocale != l10n.localeName) {
+      _currentLocale = l10n.localeName;
+      _dataFuture = getIt<TajweedRepository>().getTajweedContent(
+        l10n.localeName,
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<TajweedCategory> _filterData(List<TajweedCategory> allData) {
+    if (_searchQuery.isEmpty && _selectedCategoryId == null) {
+      return allData;
+    }
+
+    return allData
+        .map((category) {
+          // 1. Check Category Filter
+          final bool categoryMatches =
+              _selectedCategoryId == null || category.id == _selectedCategoryId;
+
+          // 2. Check Search Filter (Lessons)
+          if (_searchQuery.isEmpty) {
+            // Only Category Filter active
+            return categoryMatches ? category : null;
+          }
+
+          // Search active: Filter lessons
+          final matchingLessons = category.lessons.where((lesson) {
+            final titleMatch = lesson.title.toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            );
+            final defMatch = lesson.definition.toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            );
+            return titleMatch || defMatch;
+          }).toList();
+
+          if (matchingLessons.isNotEmpty) {
+            // If searching, we show categories that have matches
+            // Even if category matches (e.g. chip selected), we only show matching lessons
+            // If chip is selected, we STRICTLY enforce it.
+            if (_selectedCategoryId != null &&
+                category.id != _selectedCategoryId) {
+              return null;
+            }
+
+            return category.copyWith(lessons: matchingLessons);
+          }
+
+          return null;
+        })
+        .whereType<TajweedCategory>()
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -41,9 +113,10 @@ class _TajweedPageState extends State<TajweedPage> {
         ),
       ),
       body: FutureBuilder<List<TajweedCategory>>(
-        future: getIt<TajweedRepository>().getTajweedContent(l10n.localeName),
+        future: _dataFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              _dataFuture != null) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
@@ -55,21 +128,196 @@ class _TajweedPageState extends State<TajweedPage> {
             );
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text('No Data', style: TextStyle(color: Colors.white)),
+            return Center(
+              child: Text(
+                l10n.msgNoData,
+                style: const TextStyle(color: Colors.white),
+              ),
             );
           }
 
-          final categories = snapshot.data!;
-          return ListView.builder(
-            padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              final category = categories[index];
-              return _buildCategorySection(context, category, isLandscape);
-            },
+          final allData = snapshot.data!;
+          final filteredData = _filterData(allData);
+
+          return Column(
+            children: [
+              // Search & Filter Section
+              _buildSearchHeader(context, allData),
+
+              // Content List
+              Expanded(
+                child: filteredData.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 48.sp,
+                              color: Colors.white24,
+                            ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              l10n.msgNoResults,
+                              style: TextStyle(
+                                color: Colors.white54,
+                                fontFamily: GoogleFonts.outfit().fontFamily,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
+                        itemCount: filteredData.length,
+                        itemBuilder: (context, index) {
+                          final category = filteredData[index];
+                          // Pass original list for navigation if needed, or filtered?
+                          // Ideally navigation passes all lessons for prev/next
+                          final allLessons = allData
+                              .expand((c) => c.lessons)
+                              .toList();
+
+                          // Auto expand if searching
+                          final forceExpand = _searchQuery.isNotEmpty;
+
+                          return _buildCategorySection(
+                            context,
+                            category,
+                            isLandscape,
+                            allLessons,
+                            forceExpand: forceExpand,
+                          );
+                        },
+                      ),
+              ),
+            ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildSearchHeader(
+    BuildContext context,
+    List<TajweedCategory> categories,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Container(
+      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search Bar
+          TextField(
+            controller: _searchController,
+            onChanged: (val) {
+              setState(() {
+                _searchQuery = val;
+              });
+            },
+            style: TextStyle(color: Colors.white, fontSize: 14.sp),
+            decoration: InputDecoration(
+              hintText: l10n.lblSearch,
+              hintStyle: TextStyle(color: Colors.white38, fontSize: 14.sp),
+              prefixIcon: const Icon(Icons.search, color: Colors.white54),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.white54),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchQuery = '';
+                        });
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: Colors.white.withOpacity(0.05),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 12.h,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          SizedBox(height: 12.h),
+
+          // Filter Chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                // "All" Chip
+                _buildFilterChip(
+                  label: l10n.lblAllCategories,
+                  isSelected: _selectedCategoryId == null,
+                  onTap: () {
+                    setState(() {
+                      _selectedCategoryId = null;
+                    });
+                  },
+                ),
+                SizedBox(width: 8.w),
+                // Category Chips
+                ...categories.map((cat) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 8.w),
+                    child: _buildFilterChip(
+                      label: cat.title,
+                      isSelected: _selectedCategoryId == cat.id,
+                      onTap: () {
+                        setState(() {
+                          _selectedCategoryId = _selectedCategoryId == cat.id
+                              ? null
+                              : cat.id;
+                        });
+                      },
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFF00E676).withOpacity(0.2)
+              : Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF00E676)
+                : Colors.white.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? const Color(0xFF00E676) : Colors.white70,
+            fontSize: 12.sp,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontFamily: GoogleFonts.outfit().fontFamily,
+          ),
+        ),
       ),
     );
   }
@@ -78,7 +326,12 @@ class _TajweedPageState extends State<TajweedPage> {
     BuildContext context,
     TajweedCategory category,
     bool isLandscape,
-  ) {
+    List<TajweedLesson> allLessons, {
+    bool forceExpand = false,
+  }) {
+    // Key is crucial for forcing expansion state change
+    final key = PageStorageKey('${category.id}_$forceExpand');
+
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       decoration: BoxDecoration(
@@ -89,6 +342,8 @@ class _TajweedPageState extends State<TajweedPage> {
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
+          key: key,
+          initiallyExpanded: forceExpand,
           collapsedBackgroundColor: Colors.transparent,
           backgroundColor: Colors.transparent,
           tilePadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -123,6 +378,7 @@ class _TajweedPageState extends State<TajweedPage> {
                     lesson,
                     index + 1,
                     isLandscape,
+                    allLessons,
                   );
                 }).toList(),
               ),
@@ -138,6 +394,7 @@ class _TajweedPageState extends State<TajweedPage> {
     TajweedLesson lesson,
     int index,
     bool isLandscape,
+    List<TajweedLesson> allLessons,
   ) {
     return Container(
       margin: EdgeInsets.only(bottom: 8.h), // Reduced margin inside expansion
@@ -161,7 +418,8 @@ class _TajweedPageState extends State<TajweedPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => TajweedLessonPage(lesson: lesson),
+                builder: (context) =>
+                    TajweedLessonPage(lesson: lesson, allLessons: allLessons),
               ),
             );
           },

@@ -1,0 +1,549 @@
+{
+  "morning": [
+    {
+      "id": 1,
+      "title": "Ayat Al-Kursi",
+      "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّحِيمِ\nاللهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ، لاَ تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ، لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ، يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ، وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ، وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ، وَلَا يَئُودُهُ حِفْظُهُمَا، وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+      "translation": "I seek refuge in Allah from Satan, the rejected.\nAllah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.",
+      "targetCount": 1
+    },
+    {
+      "id": 2,
+      "title": "Surah Al-Ikhlas",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ هُوَ اللَّهُ أَحَدٌ . اللَّهُ الصَّمَدُ . لَمْ يَلِدْ وَلَمْ يُولَدْ . وَلَمْ يَكُن لَّهُ كُفُواً أَحَدٌ",
+      "translation": "In the name of Allah, the Entirely Merciful, the Especially Merciful.\nSay, He is Allah, [who is] One, Allah, the Eternal Refuge. He neither begets nor is born, Nor is there to Him any equivalent.",
+      "targetCount": 3
+    },
+    {
+      "id": 3,
+      "title": "Surah Al-Falaq",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ . مِن شَرِّ مَا خَلَقَ . وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ . وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ . وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+      "translation": "In the name of Allah, the Entirely Merciful, the Especially Merciful.\nSay, I seek refuge in the Lord of daybreak. From the evil of that which He created. And from the evil of darkness when it settles. And from the evil of the blowers in knots. And from the evil of an envier when he envies.",
+      "targetCount": 3
+    },
+    {
+      "id": 4,
+      "title": "Surah An-Naas",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ . مَلِكِ النَّاسِ . إِلَهِ النَّاسِ . مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ . الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ . مِنَ الْجِنَّةِ وَ النَّاسِ",
+      "translation": "In the name of Allah, the Entirely Merciful, the Especially Merciful.\nSay, I seek refuge in the Lord of mankind, The Sovereign of mankind. The God of mankind, From the evil of the retreating whisperer - Who whispers [evil] into the breasts of mankind - From among the jinn and mankind.",
+      "targetCount": 3
+    },
+    {
+      "id": 5,
+      "title": "Morning Remembrance 1",
+      "arabic": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لاَ إِلَهَ إِلَّا اللهُ وَحْدَهُ لا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرُ . رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ، وَأَعُوْذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ، رَبِّ أَعُوْذُ بِكَ مِنَ الْكَسَلِ وَسُوْءِ الْكِبَرِ، رَبِّ أَعُوْذُ بِكَ مِنْ عَذَابِ فِي النَّارِ وَعَذَابِ فِي الْقَبْرِ",
+      "translation": "We have reached the morning and at this very time unto Allah belongs all sovereignty, and all praise is for Allah. None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent. My Lord, I ask You for the good of this day and the good of what follows it and I seek refuge in You from the evil of this day and the evil of what follows it. My Lord, I seek refuge in You from laziness and senility. My Lord, I seek refuge in You from torment in the Fire and torment in the grave.",
+      "targetCount": 1
+    },
+    {
+      "id": 6,
+      "title": "Morning Remembrance 2",
+      "arabic": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا ، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
+      "translation": "O Allah, by Your leave we have reached the morning and by Your leave we have reached the evening, by Your leave we live and die and unto You is our resurrection.",
+      "targetCount": 1
+    },
+    {
+      "id": 7,
+      "title": "The Master of Forgiveness",
+      "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوْذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوْءُ بِذَنْبِي فَاغْفِرْ لي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+      "translation": "O Allah, You are my Lord, none has the right to be worshipped except You, You created me and I am Your servant and I abide to Your covenant and promise as best I can, I seek refuge in You from the evil of what I have done (wrong), I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for none forgives sins except You.",
+      "targetCount": 1
+    },
+    {
+      "id": 8,
+      "title": "Supplication for Body Safety",
+      "arabic": "اَللَّهُمَّ عَافِنِي فِي بَدَنِي، اَللَّهُمَّ عَافِنِي فِي سَمْعِي، اَللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ، اَللَّهُمَّ إِنِّي أَعُوْذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ، وَأَعُوْذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَهَ إلا أَنْتَ",
+      "translation": "O Allah, grant my body health, O Allah, grant my hearing health, O Allah, grant my sight health, none has the right to be worshipped except You. O Allah, I seek refuge with You from disbelief and poverty, and I seek refuge with You from the punishment of the grave. None has the right to be worshipped except You.",
+      "targetCount": 3
+    },
+    {
+      "id": 9,
+      "title": "Supplication for Well-being",
+      "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي . اللَّهُمَّ اسْتُرْ عَوْرَاتِي وَآمِنْ رَوْعَاتِي. اللَّهُمَّ احْفَظْنِي مِنْ بَيْنِ يَدَيَّ، وَمِنْ خَلْفِي، وَعَنْ يَمِينِي وَعَنْ شِمَالِي، وَمِنْ فَوْقِي، وَأَعُوْذُ بِعَظَمَتِكَ أَنْ أَغْتَالَ مِنْ تَحْتِي",
+      "translation": "O Allah, I ask You for pardon and well-being in this life and the hereafter. O Allah, I ask You for pardon and well-being in my religious and worldly affairs, and my family and my wealth. O Allah, veil my weaknesses and set at ease my dismay. O Allah, preserve me from the front and from behind and on my right and on my left and from above, and I seek refuge with Your Magnitude from being swallowed up from beneath me.",
+      "targetCount": 1
+    },
+    {
+      "id": 10,
+      "title": "Supplication to the Knower of the Unseen",
+      "arabic": "اللَّهُمَّ عَالِمَ الْغَيْبِ وَالشَّهَادَةِ فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ، رَبَّ كُلِّ شَيْءٍ وَمَلِيْكَهُ، أَشْهَدُ أَنْ لاَ إِلَهَ إِلا أَنْتَ، أَعُوْذُ بِكَ مِنْ شَرِّ نَفْسِي، وَمِنْ شَرِّ الشَّيْطَانِ وَشِرْكِهِ، وَأَنْ أَقْتَرِفَ عَلَى نَفْسِي سُوْءًا أَوْ أَجُرُّهُ إِلَى مُسْلِمٍ",
+      "translation": "O Allah, Knower of the unseen and the evident, Maker of the heavens and the earth, Lord of everything and its Possessor, I bear witness that there is none worthy of worship but You. I seek refuge in You from the evil of my soul and from the evil of Satan and his helper. (I seek refuge in You) from bringing evil upon my soul and from harming more Muslims.",
+      "targetCount": 1
+    },
+    {
+      "id": 11,
+      "title": "Supplication for Protection",
+      "arabic": "بِسْمِ اللهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+      "translation": "In the name of Allah with whose Name nothing on earth or in the heaven harms, and He is the All-Hearing, the All-Knowing.",
+      "targetCount": 3
+    },
+    {
+      "id": 12,
+      "title": "Supplication of Contentment",
+      "arabic": "رَضِيْتُ بِاللهِ رَبًّا، وَبِالإِسْلامِ دِينًا ، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا",
+      "translation": "I am pleased with Allah as my Lord, with Islam as my religion and with Muhammad (peace and blessings of Allah be upon him) as my Prophet.",
+      "targetCount": 3
+    },
+    {
+      "id": 13,
+      "title": "Supplication of Ya Hayyu Ya Qayyum",
+      "arabic": "يَا حَيُّ يَا قَيُّوْمُ بِرَحْمَتِكَ أَسْتَغِيْتُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",
+      "translation": "O Ever Living One, O Eternal One, by Your mercy I call on You to set right all my affairs. Do not place me in charge of my soul even for the blinking of an eye.",
+      "targetCount": 1
+    },
+    {
+      "id": 14,
+      "title": "Supplication of Fitrah",
+      "arabic": "أَصْبَحْنَا عَلَى فِطْرَةِ الإِسْلَامِ وَعَلَى كَلِمَةِ الإِخْلاَصِ، وَعَلَى دِيْنِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِيْنَا إِبْرَاهِيمَ، حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+      "translation": "We have reached the morning upon the Fitrah of Islam, the word of Ikhlas, the religion of our Prophet Muhammad (peace and blessings of Allah be upon him), and the Millah (religion) of our father Ibraheem, the upright Muslim, who was not of the polytheists.",
+      "targetCount": 1
+    },
+    {
+      "id": 15,
+      "title": "Tasbih Remembrance",
+      "arabic": "سُبْحَانَ اللهِ وَبِحَمْدِهِ، عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ",
+      "translation": "Glory is to Allah and I praise Him by the number of His creation and by His pleasure, and by the weight of His Throne, and by the ink of His words.",
+      "targetCount": 3
+    },
+    {
+      "id": 16,
+      "title": "Supplication for Knowledge",
+      "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلاً مُتَقَبَّلاً",
+      "translation": "O Allah, I ask You for knowledge that is of benefit, a good provision, and deeds that will be accepted.",
+      "targetCount": 1
+    },
+    {
+      "id": 17,
+      "title": "Tahlil",
+      "arabic": "لاَ إِلَهَ إِلَّا اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرُ",
+      "translation": "None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent.",
+      "targetCount": 10
+    },
+    {
+      "id": 18,
+      "title": "Tasbih 100x",
+      "arabic": "سُبْحَانَ اللهِ وَبِحَمْدِهِ",
+      "translation": "Glory is to Allah and I praise Him.",
+      "targetCount": 100
+    },
+    {
+      "id": 19,
+      "title": "Istighfar",
+      "arabic": "أَسْتَغْفِرُ اللهَ وَأَتُوْبُ إِلَيْهِ",
+      "translation": "I seek forgiveness from Allah and repent to Him.",
+      "targetCount": 100
+    }
+  ],
+  "evening": [
+    {
+      "id": 50,
+      "title": "Ayat Al-Kursi",
+      "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّحِيمِ\nاللهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ، لاَ تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ، لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ، يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ، وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ، وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ، وَلَا يَئُودُهُ حِفْظُهُمَا، وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+      "translation": "I seek refuge in Allah from Satan, the rejected.\nAllah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.",
+      "targetCount": 1
+    },
+    {
+      "id": 51,
+      "title": "Surah Al-Ikhlas",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ هُوَ اللَّهُ أَحَدٌ . اللَّهُ الصَّمَدُ . لَمْ يَلِدْ وَلَمْ يُولَدْ . وَلَمْ يَكُن لَّهُ كُفُواً أَحَدٌ",
+      "translation": "In the name of Allah, the Entirely Merciful, the Especially Merciful.\nSay, He is Allah, [who is] One, Allah, the Eternal Refuge. He neither begets nor is born, Nor is there to Him any equivalent.",
+      "targetCount": 3
+    },
+    {
+      "id": 52,
+      "title": "Surah Al-Falaq",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ . مِن شَرِّ مَا خَلَقَ . وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ . وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ . وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+      "translation": "In the name of Allah, the Entirely Merciful, the Especially Merciful.\nSay, I seek refuge in the Lord of daybreak. From the evil of that which He created. And from the evil of darkness when it settles. And from the evil of the blowers in knots. And from the evil of an envier when he envies.",
+      "targetCount": 3
+    },
+    {
+      "id": 53,
+      "title": "Surah An-Naas",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ . مَلِكِ النَّاسِ . إِلَهِ النَّاسِ . مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ . الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ . مِنَ الْجِنَّةِ وَ النَّاسِ",
+      "translation": "In the name of Allah, the Entirely Merciful, the Especially Merciful.\nSay, I seek refuge in the Lord of mankind, The Sovereign of mankind. The God of mankind, From the evil of the retreating whisperer - Who whispers [evil] into the breasts of mankind - From among the jinn and mankind.",
+      "targetCount": 3
+    },
+    {
+      "id": 54,
+      "title": "Evening Remembrance 1",
+      "arabic": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ للهِ، وَالْحَمْدُ للهِ ، لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا، وَأَعُوذُبِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا ، رَبِّ أَعُوذُبِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ، رَبِّ أَعُوذُبِكَ مِنْ عَذَابِ فِي النَّارِ وَعَذَابِ فِي الْقَبْرِ",
+      "translation": "We have reached the evening and at this very time unto Allah belongs all sovereignty, and all praise is for Allah. None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent. My Lord, I ask You for the good of this night and the good of what follows it and I seek refuge in You from the evil of this night and the evil of what follows it. My Lord, I seek refuge in You from laziness and senility. My Lord, I seek refuge in You from torment in the Fire and torment in the grave.",
+      "targetCount": 1
+    },
+    {
+      "id": 55,
+      "title": "Evening Remembrance 2",
+      "arabic": "اَللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوْتُ وَإِلَيْكَ الْمَصِيرُ",
+      "translation": "O Allah, by Your leave we have reached the evening and by Your leave we have reached the morning, by Your leave we live and die and unto You is our return.",
+      "targetCount": 1
+    },
+    {
+      "id": 56,
+      "title": "The Master of Forgiveness",
+      "arabic": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوْذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوْءُ بِذَنْبِي فَاغْفِرْ لي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+      "translation": "O Allah, You are my Lord, none has the right to be worshipped except You, You created me and I am Your servant and I abide to Your covenant and promise as best I can, I seek refuge in You from the evil of what I have done (wrong), I acknowledge Your favor upon me and I acknowledge my sin, so forgive me, for none forgives sins except You.",
+      "targetCount": 1
+    },
+    {
+      "id": 58,
+      "title": "Supplication for Body Safety",
+      "arabic": "اَللَّهُمَّ عَافِنِي فِي بَدَنِي، اَللَّهُمَّ عَافِنِي فِي سَمْعِي، اَللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَهَ إِلَّا أَنْتَ، اَللَّهُمَّ إِنِّي أَعُوْذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ، وَأَعُوْذُ بِكَ مِنْ عَذَابِ الْقَبْرِ، لَا إِلَهَ إلا أَنْتَ",
+      "translation": "O Allah, grant my body health, O Allah, grant my hearing health, O Allah, grant my sight health, none has the right to be worshipped except You. O Allah, I seek refuge with You from disbelief and poverty, and I seek refuge with You from the punishment of the grave. None has the right to be worshipped except You.",
+      "targetCount": 3
+    },
+    {
+      "id": 57,
+      "title": "Supplication for Well-being",
+      "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالآخِرَةِ، اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي دِينِي وَدُنْيَايَ وَأَهْلِي وَمَالِي . اللَّهُمَّ اسْتُرْ عَوْرَاتِي وَآمِنْ رَوْعَاتِي. اللَّهُمَّ احْفَظْنِي مِنْ بَيْنِ يَدَيَّ، وَمِنْ خَلْفِي، وَعَنْ يَمِينِي وَعَنْ شِمَالِي، وَمِنْ فَوْقِي، وَأَعُوْذُ بِعَظَمَتِكَ أَنْ أَغْتَالَ مِنْ تَحْتِي",
+      "translation": "O Allah, I ask You for pardon and well-being in this life and the hereafter. O Allah, I ask You for pardon and well-being in my religious and worldly affairs, and my family and my wealth. O Allah, veil my weaknesses and set at ease my dismay. O Allah, preserve me from the front and from behind and on my right and on my left and from above, and I seek refuge with Your Magnitude from being swallowed up from beneath me.",
+      "targetCount": 1
+    },
+    {
+      "id": 59,
+      "title": "Supplication to the Knower of the Unseen",
+      "arabic": "اللَّهُمَّ عَالِمَ الْغَيْبِ وَالشَّهَادَةِ فَاطِرَ السَّمَاوَاتِ وَالْأَرْضِ، رَبَّ كُلِّ شَيْءٍ وَمَلِيْكَهُ، أَشْهَدُ أَنْ لاَ إِلَهَ إِلا أَنْتَ، أَعُوْذُ بِكَ مِنْ شَرِّ نَفْسِي، وَمِنْ شَرِّ الشَّيْطَانِ وَشِرْكِهِ، وَأَنْ أَقْتَرِفَ عَلَى نَفْسِي سُوْءًا أَوْ أَجُرُّهُ إِلَى مُسْلِمٍ",
+      "translation": "O Allah, Knower of the unseen and the evident, Maker of the heavens and the earth, Lord of everything and its Possessor, I bear witness that there is none worthy of worship but You. I seek refuge in You from the evil of my soul and from the evil of Satan and his helper. (I seek refuge in You) from bringing evil upon my soul and from harming more Muslims.",
+      "targetCount": 1
+    },
+    {
+      "id": 60,
+      "title": "Supplication for Protection",
+      "arabic": "بِسْمِ اللهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+      "translation": "In the name of Allah with whose Name nothing on earth or in the heaven harms, and He is the All-Hearing, the All-Knowing.",
+      "targetCount": 3
+    },
+    {
+      "id": 61,
+      "title": "Supplication of Contentment",
+      "arabic": "رَضِيْتُ بِاللهِ رَبًّا، وَبِالإِسْلامِ دِينًا ، وَبِمُحَمَّدٍ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ نَبِيًّا",
+      "translation": "I am pleased with Allah as my Lord, with Islam as my religion and with Muhammad (peace and blessings of Allah be upon him) as my Prophet.",
+      "targetCount": 3
+    },
+    {
+      "id": 62,
+      "title": "Supplication of Ya Hayyu Ya Qayyum",
+      "arabic": "يَا حَيُّ يَا قَيُّوْمُ بِرَحْمَتِكَ أَسْتَغِيْتُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",
+      "translation": "O Ever Living One, O Eternal One, by Your mercy I call on You to set right all my affairs. Do not place me in charge of my soul even for the blinking of an eye.",
+      "targetCount": 1
+    },
+    {
+      "id": 63,
+      "title": "Evening Fitrah Supplication",
+      "arabic": "أَمْسَيْنَا عَلَى فِطْرَةِ الإِسْلَامِ وَعَلَى كَلِمَةِ الإِخْلاَصِ، وَعَلَى دِيْنِ نَبِيِّنَا مُحَمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ، وَعَلَى مِلَّةِ أَبِيْنَا إِبْرَاهِيمَ، حَنِيفًا مُسْلِمًا وَمَا كَانَ مِنَ الْمُشْرِكِينَ",
+      "translation": "We have reached the evening upon the Fitrah of Islam, the word of Ikhlas, the religion of our Prophet Muhammad (peace and blessings of Allah be upon him), and the Millah (religion) of our father Ibraheem, the upright Muslim, who was not of the polytheists.",
+      "targetCount": 1
+    },
+    {
+      "id": 64,
+      "title": "Tahlil",
+      "arabic": "لاَ إِلَهَ إِلَّا اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرُ",
+      "translation": "None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent.",
+      "targetCount": 10
+    },
+    {
+      "id": 65,
+      "title": "Tasbih 100x",
+      "arabic": "سُبْحَانَ اللهِ وَبِحَمْدِهِ",
+      "translation": "Glory is to Allah and I praise Him.",
+      "targetCount": 100
+    },
+    {
+      "id": 66,
+      "title": "Protection with Words of Allah",
+      "arabic": "أَعُوْذُ بِكَلِمَاتِ اللهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+      "translation": "I seek refuge in the perfect words of Allah from the evil of what He has created.",
+      "targetCount": 3
+    }
+  ],
+  "prayer": [
+    {
+      "id": 100,
+      "title": "Istighfar",
+      "arabic": "أَسْتَغْفِرُ اللهَ",
+      "translation": "I ask Allah for forgiveness.",
+      "targetCount": 3
+    },
+    {
+      "id": 101,
+      "title": "Supplication for Peace",
+      "arabic": "اللَّهُمَّ أَنْتَ السَّلاَمُ، وَمِنْكَ السَّلاَمُ، تَبَارَكْتَ يَا ذَا الْجَلاَلِ وَالْإِكْرَامِ",
+      "translation": "O Allah, You are As-Salam (The One Who is free from all defects and deficiencies), and from You is all peace, blessed are You, O Possessor of majesty and honor.",
+      "targetCount": 1
+    },
+    {
+      "id": 102,
+      "title": "Tahlil & Tawhid Supplication",
+      "arabic": "لاَ إِلَهَ إِلاَّ اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ. لاَ حَوْلَ وَلاَ قُوَّةَ إِلاَّ بِاللهِ، لاَ إِلَهَ إِلاَّ اللهُ، وَلاَ نَعْبُدُ إِلاَّ إِيَّاهُ، لَهُ النِّعْمَةُ وَلَهُ الْفَضْلُ وَلَهُ الثَّنَاءُ الْحَسَنُ، لاَ إِلَهَ إِلاَّ اللهُ مُخْلِصِينَ لَهُ الدِّينَ وَلَوْ كَرِهَ الْكَافِرُونَ",
+      "translation": "None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent. There is no might nor power except with Allah, none has the right to be worshipped except Allah and we worship none but Him. For Him is all favor, grace, and glorious praise. None has the right to be worshipped except Allah and we are sincere in faith and devotion to Him although the disbelievers detest it.",
+      "targetCount": 1
+    },
+    {
+      "id": 103,
+      "title": "Supplication Declaring Allah's Decree",
+      "arabic": "اللَّهُمَّ لا مَانِعَ لِما أعْطَيْتَ، ولَا مُعْطِيَ لِما مَنَعْتَ، ولَا يَنْفَعُ ذَا الجَدِّ مِنْكَ الجَدُّ",
+      "translation": "O Allah, there is none who can withhold what You give, and none may give what You have withheld; and the might of the mighty person cannot benefit him against You.",
+      "targetCount": 1
+    },
+    {
+      "id": 104,
+      "title": "Tasbih",
+      "arabic": "سُبْحَانَ اللهِ",
+      "translation": "Glory is to Allah.",
+      "targetCount": 33
+    },
+    {
+      "id": 105,
+      "title": "Tahmid",
+      "arabic": "الْحَمْدُ لِلَّهِ",
+      "translation": "All praise is for Allah.",
+      "targetCount": 33
+    },
+    {
+      "id": 106,
+      "title": "Takbir",
+      "arabic": "اللهُ أَكْبَرُ",
+      "translation": "Allah is the Greatest.",
+      "targetCount": 33
+    },
+    {
+      "id": 107,
+      "title": "Closing Tasbih",
+      "arabic": "لاَ إِلَهَ إِلاَّ اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+      "translation": "None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise and He is over all things omnipotent.",
+      "targetCount": 1
+    },
+    {
+      "id": 108,
+      "title": "Ayat Al-Kursi",
+      "arabic": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّحِيمِ\nاللهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ، لاَ تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ، لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ، يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ، وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ، وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ، وَلَا يَئُودُهُ حِفْظُهُمَا، وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+      "translation": "Allah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth. Who is it that can intercede with Him except by His permission? He knows what is [presently] before them and what will be after them, and they encompass not a thing of His knowledge except for what He wills. His Kursi extends over the heavens and the earth, and their preservation tires Him not. And He is the Most High, the Most Great.",
+      "targetCount": 1
+    },
+    {
+      "id": 109,
+      "title": "Surah Al-Ikhlas",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ هُوَ اللَّهُ أَحَدٌ . اللَّهُ الصَّمَدُ . لَمْ يَلِدْ وَلَمْ يُولَدْ . وَلَمْ يَكُن لَّهُ كُفُواً أَحَدٌ",
+      "translation": "Say, He is Allah, [who is] One, Allah, the Eternal Refuge. He neither begets nor is born, Nor is there to Him any equivalent.",
+      "targetCount": 1
+    },
+    {
+      "id": 110,
+      "title": "Surah Al-Falaq",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ . مِن شَرِّ مَا خَلَقَ . وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ . وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ . وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ",
+      "translation": "Say, I seek refuge in the Lord of daybreak. From the evil of that which He created. And from the evil of darkness when it settles. And from the evil of the blowers in knots. And from the evil of an envier when he envies.",
+      "targetCount": 1
+    },
+    {
+      "id": 111,
+      "title": "Surah An-Naas",
+      "arabic": "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ\nقُلْ أَعُوذُ بِرَبِّ النَّاسِ . مَلِكِ النَّاسِ . إِلَهِ النَّاسِ . مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ . الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ . مِنَ الْجِنَّةِ وَ النَّاسِ",
+      "translation": "Say, I seek refuge in the Lord of mankind, The Sovereign of mankind. The God of mankind, From the evil of the retreating whisperer - Who whispers [evil] into the breasts of mankind - From among the jinn and mankind.",
+      "targetCount": 1
+    },
+    {
+      "id": 112,
+      "title": "Tahlil 10x (After Fajr & Maghrib)",
+      "arabic": "لاَ إِلَهَ إِلاَّ اللهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ يُحْيِي وَيُمِيتُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+      "translation": "None has the right to be worshipped except Allah, alone, without partner, to Him belongs all sovereignty and praise, He gives life and causes death and He is over all things omnipotent.",
+      "targetCount": 10
+    },
+    {
+      "id": 113,
+      "title": "Prayer for Knowledge & Provision (After Fajr)",
+      "arabic": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلاً مُتَقَبَّلاً",
+      "translation": "O Allah, I ask You for knowledge that is of benefit, a good provision, and deeds that will be accepted.",
+      "targetCount": 1
+    }
+  ],
+  "daily": [
+    {
+      "id": 201,
+      "title": "Seeking Forgiveness & Mercy (1)",
+      "arabic": "رَبِّ إِنِّي أَعُوذُ بِكَ أَنْ أَسْأَلَكَ مَا لَيْسَ لِي بِهِ عِلْمٌ وَإِلَّا تَغْفِرْ لِي وَتَرْحَمْنِي أَكُنْ مِنَ الْخَاسِرِينَ",
+      "translation": "My Lord, I seek refuge in You from asking that of which I have no knowledge. And unless You forgive me and have mercy upon me, I will be among the losers.\n(QS. Hud: 47)",
+      "targetCount": 1
+    },
+    {
+      "id": 202,
+      "title": "Seeking Forgiveness & Mercy (2)",
+      "arabic": "رَبَّنَا آمَنَّا فَاغْفِرْ لَنَا وَارْحَمْنَا وَأَنْتَ خَيْرُ الرَّاحِمِينَ",
+      "translation": "Our Lord, we have believed, so forgive us and have mercy upon us, and You are the best of the merciful.\n(QS. Al-Mu’minun: 109)",
+      "targetCount": 1
+    },
+    {
+      "id": 203,
+      "title": "Seeking Forgiveness & Mercy (3)",
+      "arabic": "رَبِّ اغْفِرْ وَارْحَمْ وَأَنْتَ خَيْرُ الرَّاحِمِينَ",
+      "translation": "My Lord, forgive and have mercy, and You are the best of the merciful.\n(QS. Al-Mu’minun: 118)",
+      "targetCount": 1
+    },
+    {
+      "id": 204,
+      "title": "Forgiveness & Steadfastness",
+      "arabic": "رَبَّنَا اغْفِرْ لَنَا ذُنُوبَنَا وَإِسْرَافَنَا فِي أَمْرِنَا وَثَبِّتْ أَقْدَامَنَا وَانْصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ",
+      "translation": "Our Lord, forgive us our sins and the excess [committed] in our affairs and plant firmly our feet and give us victory over the disbelieving people.\n(QS. Ali Imran: 147)",
+      "targetCount": 1
+    },
+    {
+      "id": 205,
+      "title": "Protection from Hellfire",
+      "arabic": "رَبَّنَا إِنَّنَا آمَنَّا فَاغْفِرْ لَنَا ذُنُوبَنَا وَقِنَا عَذَابَ النَّارِ",
+      "translation": "Our Lord, indeed we have believed, so forgive us our sins and protect us from the punishment of the Fire.\n(QS. Ali Imran: 16)",
+      "targetCount": 1
+    },
+    {
+      "id": 206,
+      "title": "Wisdom & Righteous Company",
+      "arabic": "رَبِّ هَبْ لِي حُكْمًا وَأَلْحِقْنِي بِالصَّالِحِينَ وَاجْعَلْ لِي لِسَانَ صِدْقٍ فِي الْآخِرِينَ وَاجْعَلْنِي مِنْ وَرَثَةِ جَنَّةِ النَّعِيمِ",
+      "translation": "My Lord, grant me authority and join me with the righteous. And grant me a reputation of honor among later generations. And place me among the inheritors of the Garden of Pleasure.\n(QS. Ash-Shu’ara: 83-85)",
+      "targetCount": 1
+    },
+    {
+      "id": 207,
+      "title": "Recorded with Believers",
+      "arabic": "رَبَّنَا آمَنَّا فَاكْتُبْنَا مَعَ الشَّاهِدِينَ",
+      "translation": "Our Lord, we have believed, so register us among the witnesses.\n(QS. Al-Maidah: 83)",
+      "targetCount": 1
+    },
+    {
+      "id": 208,
+      "title": "Prayer for Righteous Offspring (1)",
+      "arabic": "رَبِّ لَا تَذَرْنِي فَرْدًا وَأَنْتَ خَيْرُ الْوَارِثِينَ",
+      "translation": "My Lord, do not leave me alone [with no heir], while you are the best of inheritors.\n(QS. Al-Anbiya: 89)",
+      "targetCount": 1
+    },
+    {
+      "id": 209,
+      "title": "Prayer for Righteous Offspring (2)",
+      "arabic": "رَبِّ هَبْ لِي مِنَ الصَّالِحِينَ",
+      "translation": "My Lord, grant me [a child] from among the righteous.\n(QS. As-Saffat: 100)",
+      "targetCount": 1
+    },
+    {
+      "id": 210,
+      "title": "Prayer for Good Offspring",
+      "arabic": "رَبِّ هَبْ لِي مِنْ لَدُنْكَ ذُرِّيَّةً طَيِّبَةً إِنَّكَ سَمِيعُ الدُّعَاءِ",
+      "translation": "My Lord, grant me from Yourself a good offspring. Indeed, You are the Hearer of supplication.\n(QS. Ali Imran: 38)",
+      "targetCount": 1
+    },
+    {
+      "id": 211,
+      "title": "Prayer for Family",
+      "arabic": "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا",
+      "translation": "Our Lord, grant us from among our wives and offspring comfort to our eyes and make us an example for the righteous.\n(QS. Al-Furqan: 74)",
+      "targetCount": 1
+    },
+    {
+      "id": 212,
+      "title": "Forgiveness for Parents & Believers",
+      "arabic": "رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ",
+      "translation": "Our Lord, forgive me and my parents and the believers the Day the account is established.\n(QS. Ibrahim: 41)",
+      "targetCount": 1
+    },
+    {
+      "id": 213,
+      "title": "Forgiveness for Brethren in Faith",
+      "arabic": "رَبَّنَا اغْفِرْ لَنَا وَلِإِخْوَانِنَا الَّذِينَ سَبَقُونَا بِالْإِيمَانِ وَلَا تَجْعَلْ فِي قُلُوبِنَا غِلًّا لِلَّذِينَ آمَنُوا رَبَّنَا إِنَّكَ رَءُوفٌ رَحِيمٌ",
+      "translation": "Our Lord, forgive us and our brothers who preceded us in faith and put not in our hearts [any] resentment toward those who have believed. Our Lord, indeed You are Kind and Merciful.\n(QS. Al-Hashr: 10)",
+      "targetCount": 1
+    },
+    {
+      "id": 214,
+      "title": "Steadfastness in Prayer",
+      "arabic": "رَبِّ اجْعَلْنِي مُقِيمَ الصَّلَاةِ وَمِنْ ذُرِّيَّتِي رَبَّنَا وَتَقَبَّلْ دُعَاءِ",
+      "translation": "My Lord, make me an establisher of prayer, and [many] from my descendants. Our Lord, and accept my supplication.\n(QS. Ibrahim: 40)",
+      "targetCount": 1
+    },
+    {
+      "id": 215,
+      "title": "Protection from Oppressors",
+      "arabic": "رَبِّ نَجِّنِي مِنَ الْقَوْمِ الظَّالِمِينَ",
+      "translation": "My Lord, save me from the wrongdoing people.\n(QS. Al-Qasas: 21)",
+      "targetCount": 1
+    },
+    {
+      "id": 216,
+      "title": "Acceptance of Deeds & Repentance",
+      "arabic": "رَبَّنَا تَقَبَّلْ مِنَّا إِنَّكَ أَنْتَ السَّمِيعُ الْعَلِيمُ وَتُبْ عَلَيْنَا إِنَّكَ أَنْتَ التَّوَّابُ الرَّحِيمُ",
+      "translation": "Our Lord, accept [this] from us. Indeed You are the Hearing, the Knowing. And accept our repentance. Indeed, You are the Accepting of repentance, the Merciful.\n(QS. Al-Baqarah: 127-128)",
+      "targetCount": 1
+    },
+    {
+      "id": 217,
+      "title": "Prayer of Tawakkul (Trust)",
+      "arabic": "رَبَّنَا عَلَيْكَ تَوَكَّلْنَا وَإِلَيْكَ أَنَبْنَا وَإِلَيْكَ الْمَصِيرُ",
+      "translation": "Our Lord, upon You we have relied, and to You we have returned, and to You is the destination.\n(QS. Al-Mumtahanah: 4)",
+      "targetCount": 1
+    },
+    {
+      "id": 218,
+      "title": "Sufficient is Allah",
+      "arabic": "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+      "translation": "Sufficient for me is Allah; there is no deity except Him. On Him I have relied, and He is the Lord of the Great Throne.\n(QS. At-Tawbah: 129)",
+      "targetCount": 7
+    },
+    {
+      "id": 219,
+      "title": "Increase in Knowledge",
+      "arabic": "رَبِّ زِدْنِي عِلْمًا",
+      "translation": "My Lord, increase me in knowledge.\n(QS. Taha: 114)",
+      "targetCount": 1
+    },
+    {
+      "id": 220,
+      "title": "Perfecting Light & Forgiveness",
+      "arabic": "رَبَّنَا أَتْمِمْ لَنَا نُورَنَا وَاغْفِرْ لَنَا إِنَّكَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+      "translation": "Our Lord, perfect for us our light and forgive us. Indeed, You are over all things competent.\n(QS. At-Tahrim: 8)",
+      "targetCount": 1
+    },
+    {
+      "id": 221,
+      "title": "Goodness in this World & Hereafter",
+      "arabic": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+      "translation": "Our Lord, give us in this world [that which is] good and in the Hereafter [that which is] good and protect us from the punishment of the Fire.\n(QS. Al-Baqarah: 201)",
+      "targetCount": 1
+    },
+    {
+      "id": 222,
+      "title": "Prayer for Gratitude",
+      "arabic": "رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ الَّتِي أَنْعَمْتَ عَلَيَّ وَعَلَى وَالِدَيَّ وَأَنْ أَعْمَلَ صَالِحًا تَرْضَاهُ وَأَدْخِلْنِي بِرَحْمَتِكَ فِي عِبَادِكَ الصَّالِحِينَ",
+      "translation": "My Lord, enable me to be grateful for Your favor which You have bestowed upon me and upon my parents and to do righteousness of which You approve. And admit me by Your mercy into [the ranks of] Your righteous servants.\n(QS. An-Naml: 19)",
+      "targetCount": 1
+    },
+    {
+      "id": 223,
+      "title": "Protection from Satan's Whispers",
+      "arabic": "رَبِّ أَعُوذُ بِكَ مِنْ هَمَزَاتِ الشَّيَاطِينِ وَأَعُوذُ بِكَ رَبِّ أَنْ يَحْضُرُونِ",
+      "translation": "My Lord, I seek refuge in You from the incitements of the devils, And I seek refuge in You, my Lord, lest they be present with me.\n(QS. Al-Mu’minun: 97-98)",
+      "targetCount": 1
+    },
+    {
+      "id": 224,
+      "title": "Steadfastness in Guidance",
+      "arabic": "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِنْ لَدُنْكَ رَحْمَةً إِنَّكَ أَنْتَ الْوَهَّابُ",
+      "translation": "Our Lord, let not our hearts deviate after You have guided us and grant us from Yourself mercy. Indeed, You are the Bestower.\n(QS. Ali Imran: 8)",
+      "targetCount": 1
+    },
+    {
+      "id": 225,
+      "title": "Ease of Heart & Affairs",
+      "arabic": "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي وَاحْلُلْ عُقْدَةً مِنْ لِسَانِي يَفْقَهُوا قَوْلِي",
+      "translation": "My Lord, expand for me my breast [with assurance], And ease for me my task, And untie the knot from my tongue, That they may understand my speech.\n(QS. Taha: 25-28)",
+      "targetCount": 1
+    },
+    {
+      "id": 226,
+      "title": "Security of the Land",
+      "arabic": "رَبِّ اجْعَلْ هَذَا الْبَلَدَ آمِنًا وَاجْنُبْنِي وَبَنِيَّ أَنْ نَعْبُدَ الْأَصْنَامَ",
+      "translation": "My Lord, make this city [Makkah] secure and keep me and my sons away from worshipping idols.\n(QS. Ibrahim: 35)",
+      "targetCount": 1
+    },
+    {
+      "id": 227,
+      "title": "Protection from Hell",
+      "arabic": "رَبَّنَا اصْرِفْ عَنَّا عَذَابَ جَهَنَّمَ إِنَّ عَذَابَهَا كَانَ غَرَامًا إِنَّهَا سَاءَتْ مُسْتَقَرًّا وَمُقَامًا",
+      "translation": "Our Lord, avert from us the punishment of Hell. Indeed, its punishment is ever adhering; Indeed, it is evil as a settlement and residence.\n(QS. Al-Furqan: 65-66)",
+      "targetCount": 1
+    }
+  ]
+}

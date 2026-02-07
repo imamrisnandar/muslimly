@@ -6,6 +6,7 @@ import '../../../tajweed/presentation/pages/tajweed_page.dart';
 import '../../data/repositories/zikir_local_repository.dart';
 import 'dzikir_reading_page.dart';
 import 'doa_harian_list_page.dart';
+import '../../../../features/fasting/presentation/pages/fasting_guide_page.dart';
 
 class DzikirPage extends StatelessWidget {
   const DzikirPage({super.key});
@@ -27,17 +28,22 @@ class DzikirPage extends StatelessWidget {
         subtitle: l10n.dzikirMorningSubtitle,
         icon: Icons.wb_sunny_outlined,
         color: Colors.orangeAccent,
-        onTap: () {
-          final items = getIt<ZikirLocalRepository>().getMorningZikir();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DzikirReadingPage(
-                title: l10n.dzikirMorningTitle,
-                items: items,
-              ),
-            ),
+        onTap: () async {
+          final locale = Localizations.localeOf(context);
+          final items = await getIt<ZikirLocalRepository>().getMorningZikir(
+            locale,
           );
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DzikirReadingPage(
+                  title: l10n.dzikirMorningTitle,
+                  items: items,
+                ),
+              ),
+            );
+          }
         },
       ),
       _IbadahItem(
@@ -45,17 +51,22 @@ class DzikirPage extends StatelessWidget {
         subtitle: l10n.dzikirEveningSubtitle,
         icon: Icons.nightlight_round,
         color: Colors.indigoAccent,
-        onTap: () {
-          final items = getIt<ZikirLocalRepository>().getEveningZikir();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DzikirReadingPage(
-                title: l10n.dzikirEveningTitle,
-                items: items,
-              ),
-            ),
+        onTap: () async {
+          final locale = Localizations.localeOf(context);
+          final items = await getIt<ZikirLocalRepository>().getEveningZikir(
+            locale,
           );
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DzikirReadingPage(
+                  title: l10n.dzikirEveningTitle,
+                  items: items,
+                ),
+              ),
+            );
+          }
         },
       ),
       _IbadahItem(
@@ -63,17 +74,22 @@ class DzikirPage extends StatelessWidget {
         subtitle: l10n.dzikirPrayerSubtitle,
         icon: Icons.mosque_outlined,
         color: const Color(0xFF00E676),
-        onTap: () {
-          final items = getIt<ZikirLocalRepository>().getPrayerZikir();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DzikirReadingPage(
-                title: l10n.dzikirPrayerTitle,
-                items: items,
-              ),
-            ),
+        onTap: () async {
+          final locale = Localizations.localeOf(context);
+          final items = await getIt<ZikirLocalRepository>().getPrayerZikir(
+            locale,
           );
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DzikirReadingPage(
+                  title: l10n.dzikirPrayerTitle,
+                  items: items,
+                ),
+              ),
+            );
+          }
         },
       ),
       _IbadahItem(
@@ -107,6 +123,18 @@ class DzikirPage extends StatelessWidget {
         },
       ),
       _IbadahItem(
+        title: l10n.ibadahFastingTitle,
+        subtitle: l10n.fastingGuideSubtitle,
+        icon: Icons.volunteer_activism_outlined,
+        color: const Color(0xFFFFA000), // Amber/Orange for Fasting
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const FastingGuidePage()),
+          );
+        },
+      ),
+      _IbadahItem(
         title: l10n.ibadahWudhuTitle,
         subtitle: l10n.comingSoon,
         icon: Icons.water_drop_outlined,
@@ -118,13 +146,6 @@ class DzikirPage extends StatelessWidget {
         subtitle:
             l10n.comingSoon, // Placeholder subtitle until content is ready
         icon: Icons.accessibility_new_rounded, // Best fit for prayer movements
-        color: Colors.blueGrey,
-        onTap: null, // Disabled
-      ),
-      _IbadahItem(
-        title: l10n.ibadahFastingTitle,
-        subtitle: l10n.comingSoon,
-        icon: Icons.volunteer_activism_outlined, // Hand holding heart/food
         color: Colors.blueGrey,
         onTap: null, // Disabled
       ),
@@ -275,6 +296,18 @@ class DzikirPage extends StatelessWidget {
   Widget _buildLearningCard(BuildContext context, _IbadahItem item) {
     final isDisabled = item.onTap == null;
 
+    // Matches Dzikir Pagi Button Style (Glassmorphism)
+    final cardColor = isDisabled
+        ? Colors.white.withOpacity(0.02)
+        : Colors.white.withOpacity(0.05);
+
+    final borderColor = isDisabled
+        ? Colors.white.withOpacity(0.05)
+        : Colors.white.withOpacity(0.1);
+
+    final titleColor = isDisabled ? Colors.white38 : Colors.white;
+    final subtitleColor = isDisabled ? Colors.white24 : Colors.white54;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -283,20 +316,9 @@ class DzikirPage extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(16.r),
           decoration: BoxDecoration(
-            color: isDisabled
-                ? Colors.white.withOpacity(0.02)
-                : Colors.white, // White card for Knowledge
+            color: cardColor,
             borderRadius: BorderRadius.circular(16.r),
-            // No border for clean look, or subtle shadow
-            boxShadow: isDisabled
-                ? []
-                : [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+            border: Border.all(color: borderColor),
           ),
           child: Row(
             children: [
@@ -305,7 +327,7 @@ class DzikirPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isDisabled
                       ? Colors.grey.withOpacity(0.1)
-                      : item.color.withOpacity(0.1),
+                      : item.color.withOpacity(0.2), // Increased opacity
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(
@@ -322,11 +344,7 @@ class DzikirPage extends StatelessWidget {
                     Text(
                       item.title,
                       style: TextStyle(
-                        color: isDisabled
-                            ? Colors.white38
-                            : const Color(
-                                0xFF2D2D2D,
-                              ), // Dark text for white card
+                        color: titleColor,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -334,12 +352,7 @@ class DzikirPage extends StatelessWidget {
                     SizedBox(height: 4.h),
                     Text(
                       item.subtitle,
-                      style: TextStyle(
-                        color: isDisabled
-                            ? Colors.white24
-                            : const Color(0xFF757575), // Grey text
-                        fontSize: 12.sp,
-                      ),
+                      style: TextStyle(color: subtitleColor, fontSize: 12.sp),
                     ),
                   ],
                 ),
@@ -347,7 +360,7 @@ class DzikirPage extends StatelessWidget {
               if (!isDisabled)
                 Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: Colors.grey.shade400,
+                  color: Colors.white30,
                   size: 16.sp,
                 ),
             ],

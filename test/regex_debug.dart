@@ -5,8 +5,8 @@ void main() {
   final r1 = RegExp(
     r'<(tajweed|span)\s+class=["'
     ']?([^"'
-    '\s>]+)["'
-    ']?>(.*?)<\/\1>',
+    's>]+)["'
+    ']?>(.*?)</1>',
     caseSensitive: false,
     dotAll: true,
   );
@@ -22,8 +22,8 @@ void main() {
   final r2 = RegExp(
     r'<(tajweed|span)\s+class=["'
     ']?([^"'
-    '\s>]+)["'
-    ']?>(.*?)<\/(?:tajweed|span)>',
+    's>]+)["'
+    ']?>(.*?)</(?:tajweed|span)>',
     caseSensitive: false,
     dotAll: true,
   );

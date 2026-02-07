@@ -8,6 +8,7 @@ import '../../domain/entities/word.dart';
 import '../bloc/translation/translation_bloc.dart';
 import '../bloc/translation/translation_event.dart';
 import '../bloc/translation/translation_state.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class TafsirBottomSheet extends StatefulWidget {
   final int surahId;
@@ -15,6 +16,7 @@ class TafsirBottomSheet extends StatefulWidget {
   final int ayahNumber;
   final int initialTabIndex;
   final String arabicText;
+  final String languageCode;
 
   const TafsirBottomSheet({
     super.key,
@@ -23,6 +25,7 @@ class TafsirBottomSheet extends StatefulWidget {
     required this.ayahNumber,
     this.initialTabIndex = 0,
     this.arabicText = '',
+    this.languageCode = 'id',
   });
 
   @override
@@ -47,6 +50,14 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
       vsync: this,
       initialIndex: widget.initialTabIndex,
     );
+    // Set default tabs based on language
+    if (widget.languageCode == 'id') {
+      _transSubTabIndex = 0; // Indo
+      _tafsirSubTabIndex = 0; // Jalalayn
+    } else {
+      _transSubTabIndex = 1; // Eng
+      _tafsirSubTabIndex = 1; // Ibn Kathir
+    }
   }
 
   @override
@@ -60,7 +71,11 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
     return BlocProvider(
       create: (context) => getIt<TranslationBloc>()
         ..add(
-          LoadAyahDetail(surahId: widget.surahId, ayahId: widget.ayahNumber),
+          LoadAyahDetail(
+            surahId: widget.surahId,
+            ayahId: widget.ayahNumber,
+            languageCode: widget.languageCode,
+          ),
         ),
       child: Container(
         height: 0.85.sh,
@@ -167,7 +182,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                                 backgroundColor: const Color(0xFF00E676),
                               ),
                               child: Text(
-                                "Coba Lagi",
+                                AppLocalizations.of(context)!.tryAgain,
                                 style: GoogleFonts.outfit(color: Colors.black),
                               ),
                             ),
@@ -222,7 +237,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
           // Word-by-Word Section
           if (state.words.isNotEmpty) ...[
             Text(
-              "Per Kata",
+              AppLocalizations.of(context)!.wordByWord,
               style: GoogleFonts.outfit(
                 color: const Color(0xFF00E676),
                 fontSize: 12.sp,
@@ -248,7 +263,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Terjemahan",
+                AppLocalizations.of(context)!.translation,
                 style: GoogleFonts.outfit(
                   color: const Color(0xFF00E676),
                   fontSize: 12.sp,
@@ -324,7 +339,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                     ),
                     SizedBox(width: 12.w),
                     Text(
-                      "Baca Tafsir Ayat Ini",
+                      AppLocalizations.of(context)!.readTafsirButton,
                       style: GoogleFonts.outfit(
                         color: const Color(0xFF00E676),
                         fontSize: 14.sp,
@@ -463,7 +478,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    "Sumber: Tafsir Jalalayn (Indonesia)",
+                    AppLocalizations.of(context)!.tafsirSourceJalalayn,
                     style: GoogleFonts.outfit(
                       color: const Color(0xFF00E676),
                       fontSize: 10.sp,
@@ -473,7 +488,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   SelectableText(
                     state.tafsirJalalayn.isNotEmpty
                         ? state.tafsirJalalayn
-                        : "Tafsir tidak tersedia untuk ayat ini.",
+                        : AppLocalizations.of(context)!.tafsirNotAvailable,
                     style: GoogleFonts.outfit(
                       color: Colors.white.withOpacity(0.9),
                       fontSize: 16.sp,
@@ -492,7 +507,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    "Source: Quran.com (English)",
+                    AppLocalizations.of(context)!.tafsirSourceIbnKathir,
                     style: GoogleFonts.outfit(
                       color: const Color(0xFF00E676),
                       fontSize: 10.sp,
@@ -502,7 +517,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   SelectableText(
                     state.tafsirIbnKathir.isNotEmpty
                         ? state.tafsirIbnKathir
-                        : "Tafsir available for this ayah.",
+                        : AppLocalizations.of(context)!.tafsirNotAvailable,
                     style: GoogleFonts.outfit(
                       color: Colors.white.withOpacity(0.9),
                       fontSize: 16.sp,
@@ -531,7 +546,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  "Kembali ke Terjemahan",
+                  AppLocalizations.of(context)!.backToTranslation,
                   style: GoogleFonts.outfit(
                     color: const Color(0xFF00E676),
                     fontSize: 14.sp,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../prayer/domain/services/fasting_service.dart';
 
 /// Type of dzikir (morning or evening)
 enum DzikirType { morning, evening }
@@ -37,7 +38,9 @@ class DzikirReminder {
 
 /// Fasting reminder data
 class FastingReminder {
-  final String type; // "Senin", "Kamis", "Ayyamul Bidh", etc.
+  final String
+  type; // Keep for backward compatibility if needed, or replace usage.
+  final FastingEvent event; // NEW field for localization
   final String fastingTypeName; // "wajib", "sunnah", "haram"
   final DateTime date;
   final bool isToday;
@@ -46,6 +49,7 @@ class FastingReminder {
 
   FastingReminder({
     required this.type,
+    required this.event,
     required this.fastingTypeName,
     required this.date,
     required this.isToday,

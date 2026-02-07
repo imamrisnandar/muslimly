@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../domain/models/reminder_models.dart';
 import '../../domain/services/reminder_service.dart';
+import '../../../prayer/domain/services/fasting_service.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class FastingReminderSection extends StatelessWidget {
   final FastingReminder? todayFasting;
@@ -34,7 +36,7 @@ class FastingReminderSection extends StatelessWidget {
             ),
             SizedBox(width: 6.w),
             Text(
-              'PUASA',
+              AppLocalizations.of(context)!.lblFastingHeader,
               style: TextStyle(
                 color: const Color(0xFF00E676),
                 fontSize: 11.sp,
@@ -119,7 +121,8 @@ class FastingReminderSection extends StatelessWidget {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      'Puasa ${fasting.type}',
+                      _getLocalizedEventName(context, fasting.event) ??
+                          fasting.type,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 11.sp,
@@ -151,5 +154,33 @@ class FastingReminderSection extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String? _getLocalizedEventName(BuildContext context, FastingEvent event) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (event) {
+      case FastingEvent.eidFitr:
+        return l10n.eidFitr;
+      case FastingEvent.eidAdha:
+        return l10n.eidAdha;
+      case FastingEvent.tasyrik:
+        return l10n.daysTasyrik;
+      case FastingEvent.ramadan:
+        return l10n.fastingRamadan;
+      case FastingEvent.arafah:
+        return l10n.fastingArafah;
+      case FastingEvent.ashura:
+        return l10n.fastingAshura;
+      case FastingEvent.tasua:
+        return l10n.fastingTasua;
+      case FastingEvent.ayyamulBidh:
+        return l10n.fastingAyyamulBidh;
+      case FastingEvent.monday:
+        return l10n.fastingMonday;
+      case FastingEvent.thursday:
+        return l10n.fastingThursday;
+      case FastingEvent.none:
+        return null;
+    }
   }
 }

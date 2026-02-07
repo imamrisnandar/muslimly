@@ -67,8 +67,8 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
 
     // Listen to Sequence State for Ayah tracking
     _player.sequenceStateStream.listen((sequenceState) {
-      if (sequenceState?.currentSource?.tag != null) {
-        final tag = sequenceState!.currentSource!.tag as MediaItem;
+      if (sequenceState.currentSource?.tag != null) {
+        final tag = sequenceState.currentSource!.tag as MediaItem;
         // Tag ID format: "SurahID" or "SurahID_AyahNumber"
         final parts = tag.id.split('_');
         if (parts.length == 2) {

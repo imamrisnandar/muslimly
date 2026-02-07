@@ -2005,6 +2005,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ramadan & Sunnah Fasting'**
   String get ibadahFastingSubtitle;
+
+  /// No description provided for @lblNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get lblNext;
+
+  /// No description provided for @lblPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get lblPrevious;
+
+  /// No description provided for @lblDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition'**
+  String get lblDefinition;
+
+  /// No description provided for @lblLetters.
+  ///
+  /// In en, this message translates to:
+  /// **'Letters'**
+  String get lblLetters;
+
+  /// No description provided for @lblExamples.
+  ///
+  /// In en, this message translates to:
+  /// **'Examples'**
+  String get lblExamples;
+
+  /// No description provided for @lblSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get lblSchedule;
+
+  /// No description provided for @lblCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get lblCalendar;
+
+  /// No description provided for @lblFastingHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'FASTING'**
+  String get lblFastingHeader;
+
+  /// No description provided for @lblSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search...'**
+  String get lblSearch;
+
+  /// No description provided for @lblAllCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get lblAllCategories;
+
+  /// No description provided for @msgNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No Data'**
+  String get msgNoData;
+
+  /// No description provided for @msgNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get msgNoResults;
+
+  /// No description provided for @fastingGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting Guide'**
+  String get fastingGuideTitle;
+
+  /// No description provided for @fastingGuideSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Fasting Fiqh'**
+  String get fastingGuideSubtitle;
+
+  /// No description provided for @searchFastingGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Search fasting topic...'**
+  String get searchFastingGuide;
+
+  /// No description provided for @searchDoa.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Dua...'**
+  String get searchDoa;
+
+  /// No description provided for @msgNoDoaFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Dua found'**
+  String get msgNoDoaFound;
+
+  /// No description provided for @wordByWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Word by Word'**
+  String get wordByWord;
+
+  /// No description provided for @translation.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation'**
+  String get translation;
+
+  /// No description provided for @readTafsirButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Tafsir'**
+  String get readTafsirButton;
+
+  /// No description provided for @tafsirTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir'**
+  String get tafsirTitle;
+
+  /// No description provided for @tafsirSourceJalalayn.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: Tafsir Jalalayn (Indonesia)'**
+  String get tafsirSourceJalalayn;
+
+  /// No description provided for @tafsirSourceIbnKathir.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: Tafsir Ibn Kathir (English)'**
+  String get tafsirSourceIbnKathir;
+
+  /// No description provided for @backToTranslation.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Translation'**
+  String get backToTranslation;
+
+  /// No description provided for @tafsirNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Tafsir not available for this ayah.'**
+  String get tafsirNotAvailable;
 }
 
 class _AppLocalizationsDelegate

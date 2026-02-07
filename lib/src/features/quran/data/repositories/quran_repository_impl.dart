@@ -7,7 +7,6 @@ import '../datasources/quran_local_data_source.dart';
 
 import 'package:dio/dio.dart';
 import '../../../../core/database/database_service.dart';
-import '../models/ayah_model.dart';
 import '../../domain/entities/search_result.dart'; // Import SearchResult entity
 import '../../domain/entities/search_response.dart';
 

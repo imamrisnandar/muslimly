@@ -17,8 +17,7 @@ import '../bloc/search/search_state.dart';
 class SearchResultsPage extends StatelessWidget {
   final String initialQuery;
 
-  const SearchResultsPage({Key? key, required this.initialQuery})
-    : super(key: key);
+  const SearchResultsPage({super.key, required this.initialQuery});
 
   @override
   Widget build(BuildContext context) {

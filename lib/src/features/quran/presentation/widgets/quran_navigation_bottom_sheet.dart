@@ -667,7 +667,7 @@ class _SurahTabState extends State<_SurahTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "$englishName",
+                    englishName,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18.sp,

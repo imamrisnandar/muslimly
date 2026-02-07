@@ -38,7 +38,7 @@ class _SplashPageState extends State<SplashPage>
     super.dispose();
   }
 
-  _navigateToHome() async {
+  Future<void> _navigateToHome() async {
     await Future.delayed(const Duration(seconds: 3));
     if (mounted) {
       final repo = getIt<NameRepository>();

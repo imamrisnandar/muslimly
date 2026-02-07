@@ -10,11 +10,16 @@ abstract class TranslationEvent extends Equatable {
 class LoadAyahDetail extends TranslationEvent {
   final int surahId;
   final int ayahId;
+  final String languageCode;
 
-  const LoadAyahDetail({required this.surahId, required this.ayahId});
+  const LoadAyahDetail({
+    required this.surahId,
+    required this.ayahId,
+    this.languageCode = 'id',
+  });
 
   @override
-  List<Object?> get props => [surahId, ayahId];
+  List<Object> get props => [surahId, ayahId, languageCode];
 }
 
 class ChangeTafsirVersion extends TranslationEvent {

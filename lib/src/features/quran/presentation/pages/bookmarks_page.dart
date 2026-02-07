@@ -515,7 +515,7 @@ class BookmarksPage extends StatelessWidget {
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

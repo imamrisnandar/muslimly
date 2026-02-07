@@ -37,7 +37,11 @@ class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
         event.ayahId,
         languageCode: 'en',
       ),
-      _repository.getWordByWord(event.surahId, event.ayahId),
+      _repository.getWordByWord(
+        event.surahId,
+        event.ayahId,
+        languageCode: event.languageCode,
+      ),
       _repository.getTafsir(
         event.surahId,
         event.ayahId,

@@ -1,4 +1,4 @@
-library quran;
+library;
 
 import 'reciters.dart';
 // import 'tafseers/jalalayn.dart';
@@ -354,7 +354,7 @@ String getAudioURLBySurah(int surahNumber, reciterIdentifier) {
   return "https://cdn.islamic.network/quran/audio-surah/64/$reciterIdentifier/$surahNumber.mp3";
 }
 
-getReciters() {
+List<dynamic> getReciters() {
   return reciters;
 }
 

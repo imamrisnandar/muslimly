@@ -138,13 +138,14 @@ class TranslationRepositoryImpl implements TranslationRepository {
   @override
   Future<Either<String, List<Word>>> getWordByWord(
     int surahId,
-    int ayahId,
-  ) async {
+    int ayahId, {
+    String languageCode = 'id',
+  }) async {
     try {
       // Use language=id for Indonesian
       // Request text_uthmani explicitly to get standard arabic text instead of V1 codes
       final url =
-          'https://api.quran.com/api/v4/verses/by_key/$surahId:$ayahId?language=id&words=true&word_fields=text_uthmani';
+          'https://api.quran.com/api/v4/verses/by_key/$surahId:$ayahId?language=$languageCode&words=true&word_fields=text_uthmani';
 
       final response = await _dio.get(url);
 

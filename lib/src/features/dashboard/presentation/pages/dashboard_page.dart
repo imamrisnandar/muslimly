@@ -243,7 +243,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         BlocListener<AudioBloc, AudioState>(
                           listener: (context, state) {},
-                          child: const DraggableAudioPlayer(),
+                          child: DraggableAudioPlayer(
+                            enableShowcase: _currentIndex == 2,
+                          ),
                         ),
                       ],
                     ),
@@ -1482,7 +1484,8 @@ class _DashboardPageState extends State<DashboardPage> {
                             fasting.timeUntilIftar!,
                           ),
                         )
-                      : l10n.reminderFastingType(fasting.type),
+                      : _getLocalizedEventName(context, fasting.event) ??
+                            fasting.type,
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 10.sp,
@@ -1575,21 +1578,26 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget _buildCompactDzikirItem(BuildContext context, DzikirReminder dzikir) {
     final l10n = AppLocalizations.of(context)!;
     return InkWell(
-      onTap: () {
+      onTap: () async {
         // Navigate to specific dzikir page
+        final locale = Localizations.localeOf(context);
         final items = dzikir.type == DzikirType.morning
-            ? getIt<ZikirLocalRepository>().getMorningZikir()
-            : getIt<ZikirLocalRepository>().getEveningZikir();
+            ? await getIt<ZikirLocalRepository>().getMorningZikir(locale)
+            : await getIt<ZikirLocalRepository>().getEveningZikir(locale);
+
         final title = dzikir.type == DzikirType.morning
             ? l10n.dzikirMorningTitle
             : l10n.dzikirEveningTitle;
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DzikirReadingPage(title: title, items: items),
-          ),
-        );
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  DzikirReadingPage(title: title, items: items),
+            ),
+          );
+        }
       },
       borderRadius: BorderRadius.circular(8.r),
       child: Row(
@@ -1620,5 +1628,34 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
     );
+  }
+
+  // Helper for localized fasting name
+  String? _getLocalizedEventName(BuildContext context, FastingEvent event) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (event) {
+      case FastingEvent.eidFitr:
+        return l10n.eidFitr;
+      case FastingEvent.eidAdha:
+        return l10n.eidAdha;
+      case FastingEvent.tasyrik:
+        return l10n.daysTasyrik;
+      case FastingEvent.ramadan:
+        return l10n.fastingRamadan;
+      case FastingEvent.arafah:
+        return l10n.fastingArafah;
+      case FastingEvent.ashura:
+        return l10n.fastingAshura;
+      case FastingEvent.tasua:
+        return l10n.fastingTasua;
+      case FastingEvent.ayyamulBidh:
+        return l10n.fastingAyyamulBidh;
+      case FastingEvent.monday:
+        return l10n.fastingMonday;
+      case FastingEvent.thursday:
+        return l10n.fastingThursday;
+      case FastingEvent.none:
+        return null;
+    }
   }
 }

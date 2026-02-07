@@ -34,7 +34,6 @@ class FontCacheService {
         // 3. Download if not exists
         await _downloadFont(fileName, localPath);
       }
-      ;
 
       // 4. Load into Flutter
       final Uint8List fontData = await fontFile.readAsBytes();

@@ -1070,4 +1070,79 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get ibadahFastingSubtitle => 'Puasa Wajib & Sunnah';
+
+  @override
+  String get lblNext => 'Selanjutnya';
+
+  @override
+  String get lblPrevious => 'Sebelumnya';
+
+  @override
+  String get lblDefinition => 'Definisi';
+
+  @override
+  String get lblLetters => 'Huruf';
+
+  @override
+  String get lblExamples => 'Contoh Bacaan';
+
+  @override
+  String get lblSchedule => 'Jadwal';
+
+  @override
+  String get lblCalendar => 'Kalender';
+
+  @override
+  String get lblFastingHeader => 'PUASA';
+
+  @override
+  String get lblSearch => 'Cari...';
+
+  @override
+  String get lblAllCategories => 'Semua';
+
+  @override
+  String get msgNoData => 'Tidak ada data';
+
+  @override
+  String get msgNoResults => 'Tidak ada hasil ditemukan';
+
+  @override
+  String get fastingGuideTitle => 'Panduan Puasa';
+
+  @override
+  String get fastingGuideSubtitle => 'Fiqih Puasa Lengkap';
+
+  @override
+  String get searchFastingGuide => 'Cari pembahasan puasa...';
+
+  @override
+  String get searchDoa => 'Cari doa...';
+
+  @override
+  String get msgNoDoaFound => 'Tidak ditemukan doa';
+
+  @override
+  String get wordByWord => 'Per Kata';
+
+  @override
+  String get translation => 'Terjemahan';
+
+  @override
+  String get readTafsirButton => 'Baca Tafsir Ayat Ini';
+
+  @override
+  String get tafsirTitle => 'Tafsir';
+
+  @override
+  String get tafsirSourceJalalayn => 'Sumber: Tafsir Jalalayn (Indonesia)';
+
+  @override
+  String get tafsirSourceIbnKathir => 'Sumber: Tafsir Ibn Kathir (English)';
+
+  @override
+  String get backToTranslation => 'Kembali ke Terjemahan';
+
+  @override
+  String get tafsirNotAvailable => 'Tafsir tidak tersedia untuk ayat ini.';
 }

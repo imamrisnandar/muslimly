@@ -19,6 +19,16 @@ class ZikirItem extends Equatable {
     this.targetCount = 1,
   });
 
+  factory ZikirItem.fromJson(Map<String, dynamic> json) {
+    return ZikirItem(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      arabic: json['arabic'] as String,
+      translation: json['translation'] as String,
+      targetCount: json['targetCount'] as int? ?? 1,
+    );
+  }
+
   @override
   List<Object?> get props => [
     id,

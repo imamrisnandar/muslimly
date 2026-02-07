@@ -16,16 +16,36 @@ class DoaHarianListPage extends StatefulWidget {
 }
 
 class _DoaHarianListPageState extends State<DoaHarianListPage> {
-  late List<ZikirItem> _allItems;
+  List<ZikirItem> _allItems = []; // Initialize as empty
   List<ZikirItem> _filteredItems = [];
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _allItems = getIt<ZikirLocalRepository>().getDailyDzikir();
-    _filteredItems = _allItems;
     _searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final locale = Localizations.localeOf(context);
+    final items = await getIt<ZikirLocalRepository>().getDailyDzikir(locale);
+    if (mounted) {
+      setState(() {
+        _allItems = items;
+        // Re-apply search if exists
+        if (_searchController.text.isNotEmpty) {
+          _onSearchChanged();
+        } else {
+          _filteredItems = items;
+        }
+      });
+    }
   }
 
   @override
@@ -88,7 +108,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                 fontSize: isLandscape ? 12.sp : 14.sp,
               ),
               decoration: InputDecoration(
-                hintText: 'Cari doa...',
+                hintText: l10n.searchDoa,
                 hintStyle: TextStyle(
                   color: Colors.white54,
                   fontSize: isLandscape ? 12.sp : 14.sp,
@@ -128,7 +148,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
             child: _filteredItems.isEmpty
                 ? Center(
                     child: Text(
-                      "Tidak ditemukan doa",
+                      l10n.msgNoDoaFound,
                       style: TextStyle(
                         color: Colors.white54,
                         fontSize: isLandscape ? 12.sp : 14.sp,

@@ -3,7 +3,7 @@ void main() {
   final reg = RegExp(
     r'<(tajweed|span)[^>]*?class=["'
     ']?([a-zA-Z0-9_]+)["'
-    ']?[^>]*>(.*?)<\/(?:tajweed|span)>',
+    ']?[^>]*>(.*?)</(?:tajweed|span)>',
     caseSensitive: false,
     dotAll: true,
   );

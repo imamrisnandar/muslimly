@@ -50,7 +50,7 @@ class _NameInputPageState extends State<NameInputPage> {
 
   Widget _buildLanguageOption(BuildContext context, String label, String code) {
     final currentLocale = context.watch<SettingsCubit>().state.locale;
-    final selectedCode = currentLocale?.languageCode ?? 'id';
+    final selectedCode = currentLocale.languageCode ?? 'id';
     final isActive = selectedCode == code;
 
     return GestureDetector(

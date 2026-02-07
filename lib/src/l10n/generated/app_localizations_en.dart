@@ -1064,4 +1064,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ibadahFastingSubtitle => 'Ramadan & Sunnah Fasting';
+
+  @override
+  String get lblNext => 'Next';
+
+  @override
+  String get lblPrevious => 'Previous';
+
+  @override
+  String get lblDefinition => 'Definition';
+
+  @override
+  String get lblLetters => 'Letters';
+
+  @override
+  String get lblExamples => 'Examples';
+
+  @override
+  String get lblSchedule => 'Schedule';
+
+  @override
+  String get lblCalendar => 'Calendar';
+
+  @override
+  String get lblFastingHeader => 'FASTING';
+
+  @override
+  String get lblSearch => 'Search...';
+
+  @override
+  String get lblAllCategories => 'All';
+
+  @override
+  String get msgNoData => 'No Data';
+
+  @override
+  String get msgNoResults => 'No results found';
+
+  @override
+  String get fastingGuideTitle => 'Fasting Guide';
+
+  @override
+  String get fastingGuideSubtitle => 'Complete Fasting Fiqh';
+
+  @override
+  String get searchFastingGuide => 'Search fasting topic...';
+
+  @override
+  String get searchDoa => 'Search Dua...';
+
+  @override
+  String get msgNoDoaFound => 'No Dua found';
+
+  @override
+  String get wordByWord => 'Word by Word';
+
+  @override
+  String get translation => 'Translation';
+
+  @override
+  String get readTafsirButton => 'Read Tafsir';
+
+  @override
+  String get tafsirTitle => 'Tafsir';
+
+  @override
+  String get tafsirSourceJalalayn => 'Source: Tafsir Jalalayn (Indonesia)';
+
+  @override
+  String get tafsirSourceIbnKathir => 'Source: Tafsir Ibn Kathir (English)';
+
+  @override
+  String get backToTranslation => 'Back to Translation';
+
+  @override
+  String get tafsirNotAvailable => 'Tafsir not available for this ayah.';
 }

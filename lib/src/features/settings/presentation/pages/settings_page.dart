@@ -815,12 +815,17 @@ class SettingsPage extends StatelessWidget {
                   iconColor: Colors.orangeAccent,
                   onTap: () async {
                     final prefs = await SharedPreferences.getInstance();
-                    await prefs.remove('hasShownPlayerShowcase');
+                    final keys = prefs.getKeys();
+                    for (final key in keys) {
+                      if (key.startsWith('hasShown')) {
+                        await prefs.remove(key);
+                      }
+                    }
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
-                            "Tutorials reset! Restart app or revisit pages.",
+                            "All tutorials reset! Restart app or revisit pages.",
                           ),
                           backgroundColor: Colors.orange,
                         ),

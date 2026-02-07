@@ -103,9 +103,9 @@ class _PrayerPageState extends State<PrayerPage>
                           letterSpacing: 0.5,
                         ),
                         splashBorderRadius: BorderRadius.circular(40.r),
-                        tabs: const [
-                          Tab(text: "Jadwal"),
-                          Tab(text: "Kalender"),
+                        tabs: [
+                          Tab(text: AppLocalizations.of(context)!.lblSchedule),
+                          Tab(text: AppLocalizations.of(context)!.lblCalendar),
                         ],
                       ),
                       isLandscape: orientation == Orientation.landscape,
@@ -566,7 +566,7 @@ class _PrayerPageState extends State<PrayerPage>
         children: prayers.map((p) {
           final key = p['key']!;
           final isHighlighted =
-              nextPrayerMap != null && nextPrayerMap['name'] == key;
+              nextPrayerMap['name'] == key;
           final displayName = getPrayerName(key);
 
           return _buildPrayerCard(context, p, key, displayName, isHighlighted);

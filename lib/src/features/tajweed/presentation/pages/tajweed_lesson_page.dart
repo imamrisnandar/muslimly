@@ -5,11 +5,13 @@ import '../../data/models/tajweed_model.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class TajweedLessonPage extends StatefulWidget {
   final TajweedLesson lesson;
+  final List<TajweedLesson>? allLessons;
 
-  const TajweedLessonPage({super.key, required this.lesson});
+  const TajweedLessonPage({super.key, required this.lesson, this.allLessons});
 
   @override
   State<TajweedLessonPage> createState() => _TajweedLessonPageState();
@@ -58,13 +60,13 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
           if (fragment.startsWith('t=')) {
             final times = fragment.substring(2).split(',');
             if (times.length == 2) {
-              final startMs = int.tryParse(times[0]);
-              final endMs = int.tryParse(times[1]);
+              final startSeconds = double.tryParse(times[0]);
+              final endSeconds = double.tryParse(times[1]);
 
-              if (startMs != null && endMs != null) {
+              if (startSeconds != null && endSeconds != null) {
                 return ClippingAudioSource(
-                  start: Duration(milliseconds: startMs),
-                  end: Duration(milliseconds: endMs),
+                  start: Duration(milliseconds: (startSeconds * 1000).toInt()),
+                  end: Duration(milliseconds: (endSeconds * 1000).toInt()),
                   child: AudioSource.uri(
                     uri.removeFragment(),
                   ), // Use clear URI for source
@@ -185,7 +187,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                       ),
                       SizedBox(width: 12.w),
                       Text(
-                        "Definisi", // Localize later
+                        AppLocalizations.of(context)!.lblDefinition,
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
@@ -244,7 +246,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
             // 2. Letters Section
             if (widget.lesson.letters.isNotEmpty) ...[
               Text(
-                "Huruf (${widget.lesson.letters.length})",
+                "${AppLocalizations.of(context)!.lblLetters} (${widget.lesson.letters.length})",
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -294,7 +296,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
             // 3. Examples Section
             if (widget.lesson.examples.isNotEmpty) ...[
               Text(
-                "Contoh Bacaan",
+                AppLocalizations.of(context)!.lblExamples,
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -429,6 +431,169 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                 },
               ),
             ],
+
+            // 4. Navigation Buttons
+            if (widget.allLessons != null) ...[
+              _buildNavigationSection(context),
+              SizedBox(height: 24.h),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavigationSection(BuildContext context) {
+    if (widget.allLessons == null || widget.allLessons!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final currentIndex = widget.allLessons!.indexWhere(
+      (l) => l.id == widget.lesson.id,
+    );
+    if (currentIndex == -1) return const SizedBox.shrink();
+
+    final prevLesson = currentIndex > 0
+        ? widget.allLessons![currentIndex - 1]
+        : null;
+    final nextLesson = currentIndex < widget.allLessons!.length - 1
+        ? widget.allLessons![currentIndex + 1]
+        : null;
+
+    return Column(
+      children: [
+        SizedBox(height: 24.h),
+        Divider(color: Colors.brown.withOpacity(0.2)),
+        SizedBox(height: 16.h),
+        Row(
+          children: [
+            // Previous Button
+            if (prevLesson != null)
+              Expanded(
+                child: _buildNavButton(
+                  context,
+                  title: prevLesson.title,
+                  isNext: false,
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TajweedLessonPage(
+                          lesson: prevLesson,
+                          allLessons: widget.allLessons,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              const Spacer(),
+
+            if (prevLesson != null && nextLesson != null) SizedBox(width: 16.w),
+
+            // Next Button
+            if (nextLesson != null)
+              Expanded(
+                child: _buildNavButton(
+                  context,
+                  title: nextLesson.title,
+                  isNext: true,
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TajweedLessonPage(
+                          lesson: nextLesson,
+                          allLessons: widget.allLessons,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              const Spacer(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNavButton(
+    BuildContext context, {
+    required String title,
+    required bool isNext,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Container(
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: const Color(0xFF1B5E20).withOpacity(0.1)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.brown.withOpacity(0.05),
+              offset: const Offset(0, 2),
+              blurRadius: 4,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: isNext
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: isNext
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              children: [
+                if (!isNext) ...[
+                  Icon(
+                    Icons.arrow_back_rounded,
+                    size: 16.sp,
+                    color: const Color(0xFF1B5E20),
+                  ),
+                  SizedBox(width: 4.w),
+                ],
+                Text(
+                  isNext
+                      ? AppLocalizations.of(context)!.lblNext
+                      : AppLocalizations.of(context)!.lblPrevious,
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (isNext) ...[
+                  SizedBox(width: 4.w),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 16.sp,
+                    color: const Color(0xFF1B5E20),
+                  ),
+                ],
+              ],
+            ),
+            SizedBox(height: 4.h),
+            Text(
+              title,
+              textAlign: isNext ? TextAlign.right : TextAlign.left,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: const Color(0xFF4E342E),
+                fontWeight: FontWeight.bold,
+                fontFamily: GoogleFonts.outfit().fontFamily,
+              ),
+            ),
           ],
         ),
       ),

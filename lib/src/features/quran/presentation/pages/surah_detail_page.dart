@@ -737,8 +737,9 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                           // Original logic: if empty, return SizedBox.shrink().
                                           // But we need to ensure we don't drop Ayah 1 content if it wasn't just Bismillah.
                                           // Re-using original Regex logic inline or simplified:
-                                          if (ayahText.isEmpty)
+                                          if (ayahText.isEmpty) {
                                             return const SizedBox.shrink();
+                                          }
                                         }
                                       }
 
@@ -1109,10 +1110,10 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                                     surahName,
                                                                 ayahNumber: ayah
                                                                     .numberInSurah,
-                                                                initialTabIndex:
-                                                                    1, // Open directly to Tafsir
                                                                 arabicText:
                                                                     ayah.text,
+                                                                languageCode:
+                                                                    locale,
                                                               ),
                                                             );
                                                           },
@@ -1226,7 +1227,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                   ),
                 ),
                 // Audio Player
-                const DraggableAudioPlayer(),
+                const DraggableAudioPlayer(enableShowcase: false),
               ],
             ),
           );

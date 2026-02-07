@@ -17,8 +17,8 @@ void main() {
   // Original fails?
   final rOriginal = RegExp(
     r'<(tajweed|span)[^>]+class=["'
-    ']?([\w_]+)["'
-    ']?[^>]*>(.*?)<\/(tajweed|span)>',
+    ']?([w_]+)["'
+    ']?[^>]*>(.*?)</(tajweed|span)>',
     caseSensitive: false,
   );
   // Test simplified version of original

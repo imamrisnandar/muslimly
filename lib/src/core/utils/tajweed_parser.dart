@@ -53,7 +53,7 @@ class TajweedParser {
 
     final RegExp tagPattern = RegExp(
       r'(<\/?(?:tajweed|span)(?:\s+class\s*=\s*["'
-      ']?([a-zA-Z0-9_\-]+)["'
+      ']?([a-zA-Z0-9_-]+)["'
       ']?)?[^>]*>)',
       caseSensitive: false,
     );

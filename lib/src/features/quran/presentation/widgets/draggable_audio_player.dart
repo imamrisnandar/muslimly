@@ -32,6 +32,16 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
   final GlobalKey _repeatKey = GlobalKey();
 
   @override
+  void didUpdateWidget(DraggableAudioPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.enableShowcase && !oldWidget.enableShowcase) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkShowcase();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Media Query for bounds
     final size = MediaQuery.of(context).size;
@@ -142,6 +152,9 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
     final hasShown = prefs.getBool(key) ?? false;
 
     // Only show if we are in Full Mode (which is default now) AND showcase is enabled
+    // AND we are the current top-most route (prevent hidden dashboard player from showing)
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+
     if (widget.enableShowcase && !hasShown && mounted && _top != null) {
       ShowCaseWidget.of(
         context,
