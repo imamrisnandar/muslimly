@@ -516,7 +516,7 @@ class DatabaseService {
       }
       return result;
     } catch (e) {
-      print('DEBUG: Error querying tajweed: $e');
+      // print('DEBUG: Error querying tajweed: $e');
       return {};
     }
   }

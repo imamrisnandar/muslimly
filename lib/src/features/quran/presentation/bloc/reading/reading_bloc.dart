@@ -394,7 +394,7 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
       emit(state.copyWith(dailyProgress: progress));
     } catch (e) {
       // Fail silently or log error, but don't disrupt user too much
-      print("Error logging reading: $e");
+      // print("Error logging reading: $e");
     }
   }
 
@@ -424,7 +424,7 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
       // For now we just trigger reload
       add(LoadReadingOverview());
     } catch (e) {
-      print("Error logging ayah: $e");
+      // print("Error logging ayah: $e");
     }
   }
 

@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
               return ShowCaseWidget(
                 builder: (context) => MaterialApp.router(
                   title: 'Muslimly',
+                  debugShowCheckedModeBanner: false,
                   locale: state.locale,
                   localizationsDelegates:
                       AppLocalizations.localizationsDelegates,

@@ -90,7 +90,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
         url =
             'https://api.quran.com/api/v4/tafsirs/169/by_ayah/$surahId:$ayahId';
         isQuranCom = true;
-        print('DEBUG: Fetching Ibn Kathir from $url');
+        // print('DEBUG: Fetching Ibn Kathir from $url');
       } else {
         // Use Al Quran Cloud (id.jalalayn)
         url =
@@ -98,7 +98,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
       }
 
       final response = await _dio.get(url);
-      print('DEBUG: Response code ${response.statusCode}');
+      // print('DEBUG: Response code ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -130,7 +130,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
       }
       return const Left('Tafsir not found');
     } catch (e) {
-      print('DEBUG: Error fetching tafsir: $e');
+      // print('DEBUG: Error fetching tafsir: $e');
       return Left('Failed to load tafsir: $e');
     }
   }

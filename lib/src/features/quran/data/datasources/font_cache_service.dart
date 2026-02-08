@@ -43,9 +43,9 @@ class FontCacheService {
       fontLoader.addFont(Future.value(byteData));
       await fontLoader.load();
 
-      print('✅ Font Loaded: $fontName');
+      // print('✅ Font Loaded: $fontName');
     } catch (e) {
-      print('❌ Error loading font $fontName: $e');
+      // print('❌ Error loading font $fontName: $e');
       // Rethrow to show actual error in UI
       throw Exception('Failed to load page $pageNumber: $e');
     }
@@ -56,7 +56,7 @@ class FontCacheService {
     final String downloadUrl = '$_cdnBaseUrl/$fileName';
 
     try {
-      print('⬇️ Downloading font from $downloadUrl...');
+      // print('⬇️ Downloading font from $downloadUrl...');
 
       // Ensure directory exists
       final File file = File(savePath);
@@ -65,13 +65,13 @@ class FontCacheService {
       }
 
       await _dio.download(downloadUrl, savePath);
-      print('✅ Download complete: $savePath');
+      // print('✅ Download complete: $savePath');
     } catch (e) {
-      print('❌ Download failed for $downloadUrl: $e');
+      // print('❌ Download failed for $downloadUrl: $e');
       if (e is DioException) {
-        print(
-          'DioError: ${e.response?.statusCode} - ${e.response?.statusMessage}',
-        );
+        // print(
+        // 'DioError: ${e.response?.statusCode} - ${e.response?.statusMessage}',
+        // );
       }
       rethrow;
     }

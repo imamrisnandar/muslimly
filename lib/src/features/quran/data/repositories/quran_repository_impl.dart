@@ -75,7 +75,7 @@ class QuranRepositoryImpl implements QuranRepository {
           return Right(_mergeTajweed(localAyahs, newMap));
         }
       } catch (e) {
-        print('Tajweed fetch failed: $e. Returning offline text.');
+        // print('Tajweed fetch failed: $e. Returning offline text.');
         // Don't fail the whole request, return offline data
         return Right(localAyahs);
       }

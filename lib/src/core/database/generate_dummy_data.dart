@@ -10,13 +10,14 @@ Future<void> generateDummyData() async {
   final random = Random();
   final now = DateTime.now();
 
-  print('🚀 Generating 6 months of dummy reading history...');
+  // print('🚀 Generating 6 months of dummy reading history...');
 
   // Clear existing history first
   final database = await db.database;
   await database.delete('reading_activity');
-  print('🗑️ Cleared existing history');
+  // print('🗑️ Cleared existing history');
 
+  // ignore: unused_local_variable
   int totalActivities = 0;
 
   // Generate data for last 6 months (180 days)
@@ -77,8 +78,8 @@ Future<void> generateDummyData() async {
     }
   }
 
-  print('✅ Generated $totalActivities reading activities over 6 months!');
-  print(
-    '📊 Data range: ${DateFormat('yyyy-MM-dd').format(now.subtract(const Duration(days: 180)))} to ${DateFormat('yyyy-MM-dd').format(now)}',
-  );
+  // print('✅ Generated $totalActivities reading activities over 6 months!');
+  // print(
+  // '📊 Data range: ${DateFormat('yyyy-MM-dd').format(now.subtract(const Duration(days: 180)))} to ${DateFormat('yyyy-MM-dd').format(now)}',
+  // );
 }

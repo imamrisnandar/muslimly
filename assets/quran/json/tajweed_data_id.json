@@ -29,14 +29,7 @@
         "id": "idzhar_halqi",
         "title": "Idzhar Halqi",
         "definition": "Izh-har (atau lengkapnya Izh-har Halqy), secara bahasa artinya jelas. Sedangkan menurut ilmu tajwid adalah pembacaan nun mati atau tanwin sesuai dengan makhrojnya tanpa dighunnahkan apabila bertemu dengan salah satu huruf halqiyah (tenggorokan).",
-        "letters": [
-          "ا",
-          "ح",
-          "خ",
-          "ع",
-          "غ",
-          "ه"
-        ],
+        "letters": ["ا", "ح", "خ", "ع", "غ", "ه"],
         "examples": [
           {
             "label": "Man Amana (Qs 2:62)",
@@ -89,14 +82,7 @@
         "id": "idgham",
         "title": "Idgham",
         "definition": "Idgham, secara bahasa artinya memasukkan. Sedangkan menurut ilmu tajwid adalah pengucapan nun mati atau tanwin secara lebur ketika bertemu huruf-huruf idgham, atau pengucapan dua huruf seperti dua huruf yang ditasydidkan. Pembacaan idgham, ada yang harus dighunnahkan yaitu yang dinamakan dengan idgham bighunnah atau idgham ma 'alghunnah, dan ada pula yang tidak boleh dighunnahkan, yang disebut idgham bilaghunnah.",
-        "letters": [
-          "ي",
-          "ن",
-          "م",
-          "و",
-          "ل",
-          "ر"
-        ],
+        "letters": ["ي", "ن", "م", "و", "ل", "ر"],
         "note": "Terbagi menjadi Bighunnah (Dengung) dan Bilaghunnah (Tanpa Dengung)",
         "examples": [
           {
@@ -205,9 +191,7 @@
         "id": "iqlab",
         "title": "Iqlab",
         "definition": "Iqlab, secara bahasa artinya merubah. Sedangkan menurut istilah adalah pengucapan nun mati atau tanwin yang bertemu dengan huruf ba' yang berubah menjadi mim dan disertai dengan ghunnah - sebagian Ulama' menambahkan ikhfa', yakni suara mim tidak terdengar sempurna karena dua bibir tidak merapat dengan sempurna).",
-        "letters": [
-          "ب"
-        ],
+        "letters": ["ب"],
         "examples": [
           {
             "label": "Layum-Bazanna (Qs 104:4)",
@@ -336,9 +320,7 @@
         "id": "ikhfa_syafawi",
         "title": "Ikhfa Syafawi",
         "definition": "Ikhfa 'Syafawi, yaitu apabila mim mati bertemu dengan ba'. Cara pengucapannya mim tampak samar disertai dengan ghunnah.",
-        "letters": [
-          "ب"
-        ],
+        "letters": ["ب"],
         "examples": [
           {
             "label": "Tarmihim-Bi (Qs 105:4)",
@@ -391,9 +373,7 @@
         "id": "idgham_mimi",
         "title": "Idgham Mitslain (Mimi)",
         "definition": "Idgham Mitslain, yaitu apabila mim mati bertemu dengan mim. Cara pengucapannya harus disertai dengan ghunnah.",
-        "letters": [
-          "م"
-        ],
+        "letters": ["م"],
         "examples": [
           {
             "label": "Alaihim-Mu'sadah (Qs 104:8)",
@@ -533,58 +513,42 @@
         "id": "qalqalah_kubra",
         "title": "Qalqalah Kubra (Besar)",
         "definition": "Qalqalah Kubra terjadi apabila huruf Qalqalah dimatikan karena waqaf (berhenti) pada akhir ayat atau kata. Cara membacanya dengan pantulan yang kuat dan jelas.",
-        "letters": [
-          "ب",
-          "ج",
-          "د",
-          "ط",
-          "ق"
-        ],
+        "letters": ["ب", "ج", "د", "ط", "ق"],
         "examples": [
           {
             "label": "Ahad (Qs 112:1)",
             "surah": 112,
             "ayah": 1,
             "highlight": "أَحَ{دٌ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/112001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/112001.mp3"]
           },
           {
             "label": "Al-Falaq (Qs 113:1)",
             "surah": 113,
             "ayah": 1,
             "highlight": "ٱلْفَلَ{قِ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/113001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/113001.mp3"]
           },
           {
             "label": "Wa-tabb (Qs 111:1)",
             "surah": 111,
             "ayah": 1,
             "highlight": "وَتَ{بَّ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/111001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/111001.mp3"]
           },
           {
             "label": "Al-Buruuj (Qs 85:1)",
             "surah": 85,
             "ayah": 1,
             "highlight": "ٱلْبُرُو{جِ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/085001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/085001.mp3"]
           },
           {
             "label": "Muhiith (Qs 85:20)",
             "surah": 85,
             "ayah": 20,
             "highlight": "مُّحِي{طٌ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/085020.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/085020.mp3"]
           }
         ]
       },
@@ -592,58 +556,42 @@
         "id": "qalqalah_sugra",
         "title": "Qalqalah Sugra (Kecil)",
         "definition": "Qalqalah Sugra terjadi apabila huruf Qalqalah berharakat sukun asli (bukan karena waqaf) dan posisinya berada di tengah kata. Cara membacanya dengan pantulan yang ringan.",
-        "letters": [
-          "ب",
-          "ج",
-          "د",
-          "ط",
-          "ق"
-        ],
+        "letters": ["ب", "ج", "د", "ط", "ق"],
         "examples": [
           {
             "label": "Fa-ta-wasath-na (Qs 100:5)",
             "surah": 100,
             "ayah": 5,
             "highlight": "فَوَسَ{طْ}نَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/100005.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/100005.mp3"]
           },
           {
             "label": "Laqad Kholaqna (Qs 90:4)",
             "surah": 90,
             "ayah": 4,
             "highlight": "لَقَ{دْ} خَلَ{قْ}نَا",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/090004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/090004.mp3"]
           },
           {
             "label": "Hablum-mim (Qs 111:5)",
             "surah": 111,
             "ayah": 5,
             "highlight": "حَ{بْ}لٌ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/111005.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/111005.mp3"]
           },
           {
             "label": "Alam Yaj'al (Qs 105:2)",
             "surah": 105,
             "ayah": 2,
             "highlight": "أَلَمْ يَ{جْ}عَلْ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/105002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/105002.mp3"]
           },
           {
             "label": "Wama Adrooka (Qs 97:2)",
             "surah": 97,
             "ayah": 2,
             "highlight": "وَمَا أَ{دْ}رَاكَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/097002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/097002.mp3"]
           }
         ]
       }
@@ -658,9 +606,7 @@
         "id": "lam_jalalah",
         "title": "Lam Jalalah (Lafadz Allah)",
         "definition": "Tafkhim (Tebal): Dibaca tebal (bunyi 'O') jika didahului Fathah atau Dhommah.\nTarqiq (Tipis): Dibaca tipis (bunyi 'A/La') jika didahului Kasrah.",
-        "letters": [
-          "ل"
-        ],
+        "letters": ["ل"],
         "examples": [
           {
             "sub_category": "Tafkhim",
@@ -668,9 +614,7 @@
             "surah": 112,
             "ayah": 1,
             "highlight": "قُلْ هُوَ ٱ{للَّ}هُ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/112001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/112001.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -678,9 +622,7 @@
             "surah": 110,
             "ayah": 1,
             "highlight": "نَصْرُ ٱ{للَّ}هِ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/110001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/110001.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -688,9 +630,7 @@
             "surah": 104,
             "ayah": 6,
             "highlight": "نَارُ ٱ{للَّ}هِ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/104006.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/104006.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -698,9 +638,7 @@
             "surah": 91,
             "ayah": 13,
             "highlight": "نَاقَةَ ٱ{للَّ}هِ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/091013.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/091013.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -708,9 +646,7 @@
             "surah": 85,
             "ayah": 9,
             "highlight": "وَٱ{للَّ}هُ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/085009.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/085009.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -718,9 +654,7 @@
             "surah": 1,
             "ayah": 1,
             "highlight": "بِسْمِ ٱ{للَّ}هِ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/001001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/001001.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -728,9 +662,7 @@
             "surah": 110,
             "ayah": 2,
             "highlight": "فِى دِينِ ٱ{للَّ}هِ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/110002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/110002.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -738,9 +670,7 @@
             "surah": 82,
             "ayah": 19,
             "highlight": "لِ{لَّ}هِ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/082019.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/082019.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -768,9 +698,7 @@
         "id": "hukum_ro",
         "title": "Hukum Ro",
         "definition": "Tafkhim (Tebal): Ro berharakat Fathah/Dhommah, atau Sukun didahului Fathah/Dhommah.\nTarqiq (Tipis): Ro berharakat Kasrah, atau Sukun didahului Kasrah.",
-        "letters": [
-          "ر"
-        ],
+        "letters": ["ر"],
         "examples": [
           {
             "sub_category": "Tafkhim",
@@ -778,9 +706,7 @@
             "surah": 108,
             "ayah": 2,
             "highlight": "وَٱنْحَ{رْ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/108002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/108002.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -788,9 +714,7 @@
             "surah": 1,
             "ayah": 3,
             "highlight": "ٱل{رَّ}حْمَٰنِ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/001003.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/001003.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -798,9 +722,7 @@
             "surah": 109,
             "ayah": 1,
             "highlight": "ٱلْكَٰفِ{رُ}ونَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/109001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/109001.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -808,9 +730,7 @@
             "surah": 105,
             "ayah": 1,
             "highlight": "أَلَمْ تَ{رَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/105001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/105001.mp3"]
           },
           {
             "sub_category": "Tafkhim",
@@ -818,9 +738,7 @@
             "surah": 106,
             "ayah": 1,
             "highlight": "قُ{رَ}يْشٍ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/106001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/106001.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -828,9 +746,7 @@
             "surah": 106,
             "ayah": 2,
             "highlight": "{رِ}حْلَةَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/106002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/106002.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -838,9 +754,7 @@
             "surah": 89,
             "ayah": 4,
             "highlight": "يَسْ{رِ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/089004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/089004.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -848,9 +762,7 @@
             "surah": 74,
             "ayah": 7,
             "highlight": "فَٱصْبِ{رْ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/074007.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/074007.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -858,9 +770,7 @@
             "surah": 89,
             "ayah": 10,
             "highlight": "فِ{رْ}عَوْنَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/089010.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/089010.mp3"]
           },
           {
             "sub_category": "Tarqiq",
@@ -868,9 +778,7 @@
             "surah": 97,
             "ayah": 4,
             "highlight": "مِّنْ أَمْ{رٍ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/097004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/097004.mp3"]
           }
         ]
       }
@@ -885,56 +793,42 @@
         "id": "mad_thabii",
         "title": "Mad Thabi'i (Asli)",
         "definition": "Mad Thabi'i terjadi apabila Alif didahului Fathah, Ya Sukun didahului Kasrah, atau Wau Sukun didahului Dhommah. Panjangnya 2 harakat.",
-        "letters": [
-          "ا",
-          "و",
-          "ي"
-        ],
+        "letters": ["ا", "و", "ي"],
         "examples": [
           {
             "label": "Al-Kitaabu (Qs 2:2)",
             "surah": 2,
             "ayah": 2,
             "highlight": "ٱلْكِتَ{ٰ}بُ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002002.mp3"]
           },
           {
             "label": "Nuu-hii-haa (Qs 11:49)",
             "surah": 11,
             "ayah": 49,
             "highlight": "ن{ُو}ح{ِي}ه{َا}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/011049.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/011049.mp3"]
           },
           {
             "label": "Yuuqinuun (Qs 2:4)",
             "surah": 2,
             "ayah": 4,
             "highlight": "ي{ُو}قِنُونَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002004.mp3"]
           },
           {
             "label": "Alladzi (Qs 106:4)",
             "surah": 106,
             "ayah": 4,
             "highlight": "ٱلَّذ{ِى}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/106004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/106004.mp3"]
           },
           {
             "label": "Dii-nukum (Qs 109:6)",
             "surah": 109,
             "ayah": 6,
             "highlight": "د{ِي}نُكُمْ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/109006.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/109006.mp3"]
           }
         ]
       },
@@ -942,56 +836,42 @@
         "id": "mad_wajib_muttashil",
         "title": "Mad Wajib Muttashil",
         "definition": "Mad Thabi'i bertemu Hamzah dalam satu kata. Wajib dibaca panjang 4-5 harakat.",
-        "letters": [
-          "ا",
-          "و",
-          "ي"
-        ],
+        "letters": ["ا", "و", "ي"],
         "examples": [
           {
             "label": "Jaa-a (Qs 110:1)",
             "surah": 110,
             "ayah": 1,
             "highlight": "ج{َآءَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/110001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/110001.mp3"]
           },
           {
             "label": "As-Sufahaa-u (Qs 2:13)",
             "surah": 2,
             "ayah": 13,
             "highlight": "ٱلسُّفَه{َآءُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002013.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002013.mp3"]
           },
           {
             "label": "Yatasaa-aluun (Qs 78:1)",
             "surah": 78,
             "ayah": 1,
             "highlight": "يَتَس{َآءَ}لُونَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/078001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/078001.mp3"]
           },
           {
             "label": "Sii-at (Qs 67:27)",
             "surah": 67,
             "ayah": 27,
             "highlight": "س{ِيٓـَٔ}تْ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/067027.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/067027.mp3"]
           },
           {
             "label": "As-Samaa-u (Qs 84:1)",
             "surah": 84,
             "ayah": 1,
             "highlight": "ٱلسَّم{َآءُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/084001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/084001.mp3"]
           }
         ]
       },
@@ -999,56 +879,42 @@
         "id": "mad_jaiz_munfashil",
         "title": "Mad Jaiz Munfashil",
         "definition": "Mad Thabi'i bertemu Hamzah (bentuk Alif) di lain kata. Dibaca panjang 4-5 harakat (seperti Wajib).",
-        "letters": [
-          "ا",
-          "و",
-          "ي"
-        ],
+        "letters": ["ا", "و", "ي"],
         "examples": [
           {
             "label": "Laa A'budu (Qs 109:2)",
             "surah": 109,
             "ayah": 2,
             "highlight": "ل{َآ أَ}عْبُدُ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/109002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/109002.mp3"]
           },
           {
             "label": "Innaa anzalnaahu (Qs 97:1)",
             "surah": 97,
             "ayah": 1,
             "highlight": "إِن{َّآ أَ}نزَلْنَٰهُ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/097001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/097001.mp3"]
           },
           {
             "label": "Innaa a'thainaaka (Qs 108:1)",
             "surah": 108,
             "ayah": 1,
             "highlight": "إِن{َّآ أَ}عْطَيْنَٰكَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/108001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/108001.mp3"]
           },
           {
             "label": "Bimaa unzila (Qs 2:4)",
             "surah": 2,
             "ayah": 4,
             "highlight": "بِم{َآ أُ}نزِلَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002004.mp3"]
           },
           {
             "label": "Maa aghna (Qs 111:2)",
             "surah": 111,
             "ayah": 2,
             "highlight": "م{َآ أَ}غْنَىٰ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/111002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/111002.mp3"]
           }
         ]
       },
@@ -1056,56 +922,42 @@
         "id": "mad_badal",
         "title": "Mad Badal",
         "definition": "Hamzah bertemu Mad dalam satu kata (posisi Hamzah mendahului Mad). Panjangnya 2 harakat.",
-        "letters": [
-          "ا",
-          "و",
-          "ي"
-        ],
+        "letters": ["ا", "و", "ي"],
         "examples": [
           {
             "label": "Aamanuu (Qs 2:9)",
             "surah": 2,
             "ayah": 9,
             "highlight": "{ءَا}مَنُوا۟",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002009.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002009.mp3"]
           },
           {
             "label": "Iimaana (Qs 3:173)",
             "surah": 3,
             "ayah": 173,
             "highlight": "{إِي}مَٰنًا",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/003173.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/003173.mp3"]
           },
           {
             "label": "Aadama (Qs 2:31)",
             "surah": 2,
             "ayah": 31,
             "highlight": "{ءَا}دَمَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002031.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002031.mp3"]
           },
           {
             "label": "Iilaafihim (Qs 106:2)",
             "surah": 106,
             "ayah": 2,
             "highlight": "{إِي}لَٰفِهِمْ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/106002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/106002.mp3"]
           },
           {
             "label": "Uutiya (Qs 69:19)",
             "surah": 69,
             "ayah": 19,
             "highlight": "{أُ}وتِىَ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/069019.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/069019.mp3"]
           }
         ]
       },
@@ -1113,56 +965,42 @@
         "id": "mad_aridh_lissukun",
         "title": "Mad 'Aridh Lissukun",
         "definition": "Mad Thabi'i bertemu huruf hidup yang dimatikan karena waqaf (berhenti) di akhir kalimat. Boleh dibaca 2, 4, atau 6 harakat.",
-        "letters": [
-          "ا",
-          "و",
-          "ي"
-        ],
+        "letters": ["ا", "و", "ي"],
         "examples": [
           {
             "label": "Al-Aalamiin (Qs 1:2)",
             "surah": 1,
             "ayah": 2,
             "highlight": "ٱلْعَٰلَم{ِينَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/001002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/001002.mp3"]
           },
           {
             "label": "An-Naas (Qs 114:1)",
             "surah": 114,
             "ayah": 1,
             "highlight": "ٱلنّ{َاسِ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/114001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/114001.mp3"]
           },
           {
             "label": "Al-Muflihuun (Qs 2:5)",
             "surah": 2,
             "ayah": 5,
             "highlight": "ٱلْمُفْلِح{ُونَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002005.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002005.mp3"]
           },
           {
             "label": "Al-Haakimiin (Qs 95:8)",
             "surah": 95,
             "ayah": 8,
             "highlight": "ٱلْحَٰكِم{ِينَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/095008.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/095008.mp3"]
           },
           {
             "label": "Al-Kaafiruun (Qs 109:1)",
             "surah": 109,
             "ayah": 1,
             "highlight": "ٱلْكَٰفِر{ُونَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/109001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/109001.mp3"]
           }
         ]
       },
@@ -1170,55 +1008,42 @@
         "id": "mad_lin",
         "title": "Mad Lin (Layyin)",
         "definition": "Huruf Wau atau Ya berharakat Sukun didahului Fathah, dan sesudahnya huruf hidup yang dimatikan (waqaf). Panjangnya 2, 4, atau 6 harakat.",
-        "letters": [
-          "و",
-          "ي"
-        ],
+        "letters": ["و", "ي"],
         "examples": [
           {
             "label": "Quraisy (Qs 106:1)",
             "surah": 106,
             "ayah": 1,
             "highlight": "قُرَ{يْشٍ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/106001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/106001.mp3"]
           },
           {
             "label": "Ash-Shoif (Qs 106:2)",
             "surah": 106,
             "ayah": 2,
             "highlight": "ٱلصّ{َيْفِ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/106002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/106002.mp3"]
           },
           {
             "label": "Laa Raiba (Qs 2:2)",
             "surah": 2,
             "ayah": 2,
             "highlight": "لَا ر{َيْبَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002002.mp3"]
           },
           {
             "label": "Khauf (Qs 106:4)",
             "surah": 106,
             "ayah": 4,
             "highlight": "خ{َوْفٍۭ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/106004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/106004.mp3"]
           },
           {
             "label": "Ainain (Qs 90:8)",
             "surah": 90,
             "ayah": 8,
             "highlight": "عَيْن{َيْنِ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/090008.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/090008.mp3"]
           }
         ]
       },
@@ -1226,54 +1051,42 @@
         "id": "mad_iwadh",
         "title": "Mad 'Iwadh",
         "definition": "Berhenti (waqaf) pada huruf yang berharakat Fathah Tanwin (an) di akhir kalimat. Dibaca panjang 2 harakat.",
-        "letters": [
-          "ا"
-        ],
+        "letters": ["ا"],
         "examples": [
           {
             "label": "Dhab-ha (Qs 100:1)",
             "surah": 100,
             "ayah": 1,
             "highlight": "ضَبْح{ًا}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/100001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/100001.mp3"]
           },
           {
             "label": "Qad-ha (Qs 100:2)",
             "surah": 100,
             "ayah": 2,
             "highlight": "قَدْح{ًا}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/100002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/100002.mp3"]
           },
           {
             "label": "Af-waaja (Qs 110:2)",
             "surah": 110,
             "ayah": 2,
             "highlight": "أَفْوَاج{ًا}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/110002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/110002.mp3"]
           },
           {
             "label": "Mihaada (Qs 78:6)",
             "surah": 78,
             "ayah": 6,
             "highlight": "مِهَٰد{ًا}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/078006.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/078006.mp3"]
           },
           {
             "label": "Iwaja (Qs 18:1)",
             "surah": 18,
             "ayah": 1,
             "highlight": "عِوَج{َا ۜ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/018001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/018001.mp3"]
           }
         ]
       },
@@ -1281,54 +1094,42 @@
         "id": "mad_lazim_muthaqqal_kilmi",
         "title": "Mad Lazim Muthaqqal Kilmi",
         "definition": "Mad bertemu Tasydid dalam satu kata. Wajib dibaca panjang 6 harakat (paling panjang).",
-        "letters": [
-          "ا"
-        ],
+        "letters": ["ا"],
         "examples": [
           {
             "label": "Adh-Dhaallin (Qs 1:7)",
             "surah": 1,
             "ayah": 7,
             "highlight": "ٱلض{َّآلِّينَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/001007.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/001007.mp3"]
           },
           {
             "label": "Al-Haaqqah (Qs 69:1)",
             "surah": 69,
             "ayah": 1,
             "highlight": "ٱلْح{َآقَّةُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/069001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/069001.mp3"]
           },
           {
             "label": "As-Shaakhah (Qs 80:33)",
             "surah": 80,
             "ayah": 33,
             "highlight": "ٱلص{َّآخَّةُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/080033.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/080033.mp3"]
           },
           {
             "label": "At-Thaammatul Kubra (Qs 79:34)",
             "surah": 79,
             "ayah": 34,
             "highlight": "ٱلط{َّآمَّةُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/079034.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/079034.mp3"]
           },
           {
             "label": "At-Haajjuunnii (Qs 6:80)",
             "surah": 6,
             "ayah": 80,
             "highlight": "أَتُح{َٰٓجُّ}وٓنِّى",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/006080.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/006080.mp3"]
           }
         ]
       },
@@ -1336,9 +1137,7 @@
         "id": "mad_shilah",
         "title": "Mad Shilah (Dhamir Ha)",
         "definition": "Ha Kata Ganti (Hu/Hi) yang berada di antara huruf hidup. Terbagi menjadi Qashirah (Pendek-2 harakat) jika bertemu selain Hamzah, dan Kubra (Panjang-4/5 harakat) jika bertemu Hamzah.",
-        "letters": [
-          "ه"
-        ],
+        "letters": ["ه"],
         "examples": [
           {
             "sub_category": "Qashirah",
@@ -1346,9 +1145,7 @@
             "surah": 112,
             "ayah": 4,
             "highlight": "لَ{هُۥ} كُفُوًا",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/112004.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/112004.mp3"]
           },
           {
             "sub_category": "Qashirah",
@@ -1356,9 +1153,7 @@
             "surah": 111,
             "ayah": 2,
             "highlight": "مَالُ{هُۥ} وَمَا",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/111002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/111002.mp3"]
           },
           {
             "sub_category": "Qashirah",
@@ -1366,9 +1161,7 @@
             "surah": 101,
             "ayah": 9,
             "highlight": "فَأُمُّ{هُۥ} هَاوِيَةٌ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/101009.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/101009.mp3"]
           },
           {
             "sub_category": "Qashirah",
@@ -1376,9 +1169,7 @@
             "surah": 80,
             "ayah": 6,
             "highlight": "لَ{هُۥ} تَصَدَّىٰ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/080006.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/080006.mp3"]
           },
           {
             "sub_category": "Kubra",
@@ -1386,9 +1177,7 @@
             "surah": 104,
             "ayah": 3,
             "highlight": "أَنَّ مَال{َهُۥٓ أَ}خْلَدَهُۥ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/104003.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/104003.mp3"]
           },
           {
             "sub_category": "Kubra",
@@ -1396,9 +1185,7 @@
             "surah": 90,
             "ayah": 7,
             "highlight": "أَنْ لَّمْ يَر{َهُۥٓ أَ}حَدٌ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/090007.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/090007.mp3"]
           },
           {
             "sub_category": "Kubra",
@@ -1406,9 +1193,7 @@
             "surah": 83,
             "ayah": 12,
             "highlight": "بِ{هِۦٓ إِ}لَّا",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/083012.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/083012.mp3"]
           },
           {
             "sub_category": "Kubra",
@@ -1416,19 +1201,7 @@
             "surah": 2,
             "ayah": 90,
             "highlight": "بِ{هِۦٓ أَ}نفُسَهُمْ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002090.mp3"
-            ]
-          },
-          {
-            "sub_category": "Kubra",
-            "label": "Bihi laulaa (Qs 12:24)",
-            "surah": 12,
-            "ayah": 24,
-            "highlight": "ب{ِهِۦ} لَوْلَا",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/012024.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002090.mp3"]
           }
         ]
       }
@@ -1443,9 +1216,7 @@
         "id": "mad_lazim_muthaqqal_kilmi",
         "title": "Mad Lazim Muthaqqal Kilmi",
         "definition": "Apabila Mad Thabi'i bertemu dengan huruf bertasydid dalam satu kata. Dibaca berat dan panjang 6 harakat.",
-        "letters": [
-          "ا"
-        ],
+        "letters": ["ا"],
         "examples": [
           {
             "label": "Waladh-Dhaallin (Qs 1:7)",
@@ -1461,27 +1232,21 @@
             "surah": 69,
             "ayah": 1,
             "highlight": "ٱل{ْحَآقَّةُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/069001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/069001.mp3"]
           },
           {
             "label": "As-Shaakhah (Qs 80:33)",
             "surah": 80,
             "ayah": 33,
             "highlight": "ٱل{صَّآخَّةُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/080033.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/080033.mp3"]
           },
           {
             "label": "At-Thaammatul Kubra (Qs 79:34)",
             "surah": 79,
             "ayah": 34,
             "highlight": "ٱل{طَّآمَّةُ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/079034.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/079034.mp3"]
           },
           {
             "label": "Atuhaajjuunnii (Qs 6:80)",
@@ -1498,9 +1263,7 @@
         "id": "mad_lazim_mukhaffaf_kilmi",
         "title": "Mad Lazim Mukhaffaf Kilmi",
         "definition": "Apabila Mad Thabi'i bertemu dengan huruf Sukun (asli) dalam satu kata. Dibaca ringan dan panjang 6 harakat. Hanya ada 2 di Al-Qur'an (Surah Yunus).",
-        "letters": [
-          "ا"
-        ],
+        "letters": ["ا"],
         "examples": [
           {
             "label": "Aaal-aana (Qs 10:51)",
@@ -1526,55 +1289,42 @@
         "id": "mad_lazim_muthaqqal_harfi",
         "title": "Mad Lazim Muthaqqal Harfi",
         "definition": "Terjadi pada huruf awal surah (Muqatta'at) yang dieja 3 huruf, tengahnya Mad, dan akhirnya di-idgham-kan (tasydid). Panjang 6 harakat.",
-        "letters": [
-          "ل",
-          "س"
-        ],
+        "letters": ["ل", "س"],
         "examples": [
           {
             "label": "Alif Laaam-Miim (Qs 2:1)",
             "surah": 2,
             "ayah": 1,
             "highlight": "ال{مٓ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/002001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/002001.mp3"]
           },
           {
             "label": "Alif Laaam-Miim (Qs 3:1)",
             "surah": 3,
             "ayah": 1,
             "highlight": "ال{مٓ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/003001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/003001.mp3"]
           },
           {
             "label": "Thaa-Siiim-Miim (Qs 26:1)",
             "surah": 26,
             "ayah": 1,
             "highlight": "ط{سٓ}مٓ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/026001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/026001.mp3"]
           },
           {
             "label": "Thaa-Siiim-Miim (Qs 28:1)",
             "surah": 28,
             "ayah": 1,
             "highlight": "ط{سٓ}مٓ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/028001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/028001.mp3"]
           },
           {
             "label": "Alif Laaam-Miim-Shaaad (Qs 7:1)",
             "surah": 7,
             "ayah": 1,
             "highlight": "ال{مٓ}صٓ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/007001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/007001.mp3"]
           }
         ]
       },
@@ -1582,16 +1332,7 @@
         "id": "mad_lazim_mukhaffaf_harfi",
         "title": "Mad Lazim Mukhaffaf Harfi",
         "definition": "Terjadi pada huruf awal surah (Muqatta'at) yang dieja 3 huruf, tengahnya Mad, dan akhirnya Sukun (mati) tanpa idgham. Panjang 6 harakat.",
-        "letters": [
-          "ن",
-          "ق",
-          "ص",
-          "ع",
-          "س",
-          "ل",
-          "ك",
-          "م"
-        ],
+        "letters": ["ن", "ق", "ص", "ع", "س", "ل", "ك", "م"],
         "examples": [
           {
             "label": "Qaaaf (Qs 50:1)",
@@ -1625,18 +1366,14 @@
             "surah": 36,
             "ayah": 1,
             "highlight": "ي{سٓ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/036001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/036001.mp3"]
           },
           {
             "label": "Kaaaf... (Qs 19:1)",
             "surah": 19,
             "ayah": 1,
             "highlight": "{كٓ}هيعٓصٓ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/019001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/019001.mp3"]
           }
         ]
       }
@@ -1651,9 +1388,7 @@
         "id": "mad_farq",
         "title": "Mad Farq",
         "definition": "Mad untuk membedakan antara pertanyaan (Istifham) dan berita. Pertemuan Hamzah Istifham dengan Al-Takrif. Panjang 6 harakat.",
-        "letters": [
-          "ا"
-        ],
+        "letters": ["ا"],
         "examples": [
           {
             "label": "Aaal-dzakaraini (Qs 6:143)",
@@ -1697,9 +1432,7 @@
         "id": "mad_tamkin",
         "title": "Mad Tamkin",
         "definition": "Pertemuan dua huruf Ya, yang pertama Kasrah bertasydid dan kedua Sukun. Dibaca 2 harakat dengan penekanan (Tamkin).",
-        "letters": [
-          "ي"
-        ],
+        "letters": ["ي"],
         "examples": [
           {
             "label": "Huyyiitum (Qs 4:86)",
@@ -1759,40 +1492,28 @@
         "id": "mad_thabii_harfi",
         "title": "Mad Thabi'i Harfi (Hayyun Thahura)",
         "definition": "Huruf Muqatta'at yang ejaannya 2 huruf (Ha, Ya, Tha, Ha, Ra). Dibaca panjang 2 harakat.",
-        "letters": [
-          "ح",
-          "ي",
-          "ط",
-          "ه",
-          "ر"
-        ],
+        "letters": ["ح", "ي", "ط", "ه", "ر"],
         "examples": [
           {
             "label": "Tha-Ha (Qs 20:1)",
             "surah": 20,
             "ayah": 1,
             "highlight": "{طَهَ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/020001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/020001.mp3"]
           },
           {
             "label": "Yaa (Qs 36:1)",
             "surah": 36,
             "ayah": 1,
             "highlight": "{ي}سٓ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/036001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/036001.mp3"]
           },
           {
             "label": "Alif Laaam-Raa (Qs 10:1)",
             "surah": 10,
             "ayah": 1,
             "highlight": "ال{ر}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/010001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/010001.mp3"]
           }
         ]
       },
@@ -1800,27 +1521,21 @@
         "id": "ain_khusus",
         "title": "Kekhususan Huruf 'Ain",
         "definition": "Huruf 'Ain pada awal surat Maryam dan Asy-Syura. Boleh dibaca 4 atau 6 harakat (6 lebih utama). Disebut Mad Lin Lazim.",
-        "letters": [
-          "ع"
-        ],
+        "letters": ["ع"],
         "examples": [
           {
             "label": "Kaaaf-Haa-Yaa-‘Aiiin-Shaaad (Qs 19:1)",
             "surah": 19,
             "ayah": 1,
             "highlight": "كهي{عٓ}صٓ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/019001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/019001.mp3"]
           },
           {
             "label": "‘Aiiin-Siiin-Qaaaf (Qs 42:2)",
             "surah": 42,
             "ayah": 2,
             "highlight": "{عٓ}سٓقٓ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/042002.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/042002.mp3"]
           }
         ]
       }
@@ -1835,18 +1550,14 @@
         "id": "saktah",
         "title": "Saktah",
         "definition": "Berhenti sejenak tanpa bernafas selama kira-kira 2 harakat, kemudian melanjutkan bacaan.",
-        "letters": [
-          "س"
-        ],
+        "letters": ["س"],
         "examples": [
           {
             "label": "Iwaja (Qs 18:1)",
             "surah": 18,
             "ayah": 1,
             "highlight": "عِوَج{َا ۜ}",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/018001.mp3"
-            ]
+            "audio_urls": ["https://audio.qurancdn.com/Alafasy/mp3/018001.mp3"]
           }
         ]
       },
@@ -1854,9 +1565,7 @@
         "id": "isymam",
         "title": "Isymam (Mencucu)",
         "definition": "Mengisyaratkan harakat Dhommah yang terbuang dengan memoncongkan bibir (mencucu) tanpa suara, saat membaca ghunnah pada kata 'Laa Ta'manna'.\n\nCara Membaca:\n1. Baca 'Laa Ta'man..' (tahan di huruf Nun bertasydid/Ghunnah).\n2. Saat menahan dengung, moncongkan bibir (isyarat Dhommah) tanpa merubah bunyi 'Nnn'.\n3. Kembali tarik bibir untuk menyelesaikan harakat Fathah (na).",
-        "letters": [
-          "ن"
-        ],
+        "letters": ["ن"],
         "examples": [
           {
             "label": "Laa Ta'manna (Qs 12:11)",
@@ -1873,9 +1582,7 @@
         "id": "imalah",
         "title": "Imalah (Miring)",
         "definition": "Memiringkan bunyi Fathah ke arah Kasrah (seperti bunyi 'e' pada 'Sate'). Hanya satu di Al-Qur'an (Majreeha).\n\nCara Membaca:\nPada kata 'Majraaha', huruf Ra dibaca tipis (Tarqiq) dengan bunyi vokal 'e' (seperti pada kata 'Sate'). Bunyinya menjadi 'Majreeha'.",
-        "letters": [
-          "ر"
-        ],
+        "letters": ["ر"],
         "examples": [
           {
             "label": "Majreeha (Qs 11:41)",
@@ -1892,9 +1599,7 @@
         "id": "tashil",
         "title": "Tashil (Samar)",
         "definition": "Membaca Hamzah kedua dengan suara samar atau lunak (antara Hamzah dan Alif). Bunyinya 'A-ah-jamiyyun'.\n\nCara Membaca:\n1. Hamzah pertama (A) dibaca tegas/jelas.\n2. Hamzah kedua ('a) dibaca samar/ringan, seolah-olah seperti bunyi 'ha' tapi tipis (antara Hamzah dan Alif). Bunyinya: 'A-ah-jamiyyun'.",
-        "letters": [
-          "ء"
-        ],
+        "letters": ["ء"],
         "examples": [
           {
             "label": "A'a'jamiyyun (Qs 41:44)",
@@ -1911,9 +1616,7 @@
         "id": "naql",
         "title": "Naql (Memindah)",
         "definition": "Memindahkan harakat Kasrah pada Hamzah ke huruf Lam sukun sebelumnya. 'Bi'sal-ismu' dibaca 'Bi'salismu'.\n\nCara Membaca:\n1. Huruf Alif (Hamzah washal) pada 'Al-Ismu' tidak dibaca.\n2. Harakat Kasrah (i) pada Hamzah 'Ismu' dipindahkan ke huruf Lam (Al) sebelumnya.\n3. Bunyinya menjadi: 'Bi'salismu'.",
-        "letters": [
-          "ل"
-        ],
+        "letters": ["ل"],
         "examples": [
           {
             "label": "Bi'salismu (Qs 49:11)",
@@ -1938,10 +1641,34 @@
         "title": "Idgham Mutamatsilain",
         "definition": "Pertemuan dua huruf yang SAMA persis makhraj dan sifatnya (hurufnya sama). Huruf pertama sukun, huruf kedua hidup.\n\nCara Membaca:\nMeleburkan huruf pertama ke huruf kedua (seperti bertasydid).",
         "letters": [
+          "ا",
           "ب",
           "ت",
+          "ث",
+          "ج",
+          "ح",
+          "خ",
           "د",
-          "etc"
+          "ذ",
+          "ر",
+          "ز",
+          "س",
+          "ش",
+          "ص",
+          "ض",
+          "ط",
+          "ظ",
+          "ع",
+          "غ",
+          "ف",
+          "ق",
+          "ك",
+          "ل",
+          "م",
+          "ن",
+          "و",
+          "ه",
+          "ي"
         ],
         "examples": [
           {
@@ -1960,13 +1687,7 @@
         "id": "idgham_mutajanisain",
         "title": "Idgham Mutajanisain",
         "definition": "Pertemuan dua huruf yang SAMA makhrajnya namun BEDA sifatnya.\n\nCara Membaca:\nMeleburkan huruf pertama ke huruf kedua.",
-        "letters": [
-          "ت",
-          "ط",
-          "د",
-          "ذ",
-          "ظ"
-        ],
+        "letters": ["ت", "ط", "د", "ذ", "ظ"],
         "examples": [
           {
             "id": "mutajanisain_1",
@@ -2014,12 +1735,7 @@
         "id": "idgham_mutaqaribain",
         "title": "Idgham Mutaqaribain",
         "definition": "Pertemuan dua huruf yang BERDEKATAN makhraj dan sifatnya.\n\nCara Membaca:\nMeleburkan huruf pertama ke huruf kedua.",
-        "letters": [
-          "ل",
-          "ر",
-          "ق",
-          "ك"
-        ],
+        "letters": ["ل", "ر", "ق", "ك"],
         "examples": [
           {
             "id": "mutaqaribain_1",
@@ -2147,9 +1863,7 @@
         "id": "waqaf_lazim",
         "title": "Waqaf Lazim (Mim)",
         "definition": "Tanda (مـ). HARUS berhenti.\n\nArti:\nWaqaf yang sempurna maknanya. Jika dilanjut bisa merusak arti.",
-        "letters": [
-          "م"
-        ],
+        "letters": ["م"],
         "examples": [
           {
             "id": "waqaf_lazim",
@@ -2167,9 +1881,7 @@
         "id": "waqaf_mamnu",
         "title": "Waqaf Mamnu' (Lam Alif)",
         "definition": "Tanda (لا). DILARANG berhenti (jika di tengah kalimat).\n\nArti:\nMakna belum sempurna. Harus dilanjut (Washal).",
-        "letters": [
-          "لا"
-        ],
+        "letters": ["لا"],
         "examples": [
           {
             "id": "waqaf_mamnu",
@@ -2187,9 +1899,7 @@
         "id": "waqaf_jaiz",
         "title": "Waqaf Jaiz (Jim)",
         "definition": "Tanda (ج). BOLEH berhenti, BOLEH lanjut (Setara).",
-        "letters": [
-          "ج"
-        ],
+        "letters": ["ج"],
         "examples": [
           {
             "id": "waqaf_jaiz",
@@ -2207,9 +1917,7 @@
         "id": "waqaf_muanaqah",
         "title": "Waqaf Mu'anaqah",
         "definition": "Tanda titik tiga (∴). Berhenti di SALAH SATU tanda saja.",
-        "letters": [
-          "∴"
-        ],
+        "letters": ["∴"],
         "examples": [
           {
             "id": "waqaf_muanaqah",

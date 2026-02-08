@@ -1419,16 +1419,6 @@
             "audio_urls": [
               "https://audio.qurancdn.com/Alafasy/mp3/002090.mp3"
             ]
-          },
-          {
-            "sub_category": "Kubra",
-            "label": "Bihi laulaa (Surah 12:24)",
-            "surah": 12,
-            "ayah": 24,
-            "highlight": "هَمَّتْ ب{ِهِۦ}ۖ وَهَمَّ",
-            "audio_urls": [
-              "https://audio.qurancdn.com/Alafasy/mp3/012024.mp3"
-            ]
           }
         ]
       }
@@ -1938,10 +1928,34 @@
         "title": "Idgham Mutamatsilain",
         "definition": "Meeting of two letters that are EXACTLY the same in makhraj and characteristics. The first letter is silent (sukun), the second is voweled.\n\nHow to Read:\nMerge the first letter into the second (like a tasydid).",
         "letters": [
+          "ا",
           "ب",
           "ت",
+          "ث",
+          "ج",
+          "ح",
+          "خ",
           "د",
-          "etc"
+          "ذ",
+          "ر",
+          "ز",
+          "س",
+          "ش",
+          "ص",
+          "ض",
+          "ط",
+          "ظ",
+          "ع",
+          "غ",
+          "ف",
+          "ق",
+          "ك",
+          "ل",
+          "م",
+          "ن",
+          "و",
+          "ه",
+          "ي"
         ],
         "examples": [
           {

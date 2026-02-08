@@ -53,7 +53,7 @@ class BackgroundService {
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
-    print("DEBUG: Background Task Execution Started: $task");
+    // print("DEBUG: Background Task Execution Started: $task");
 
     // 1. Initialize DI (Must be separate from main app isolate)
     // We need to configure dependencies slightly differently or ensure plugins work.
@@ -131,9 +131,9 @@ void callbackDispatcher() {
         soundType: 'beep', // Requested by User
       );
 
-      print("DEBUG: Background Task Finished. Progress: $progress/$target");
+      // print("DEBUG: Background Task Finished. Progress: $progress/$target");
     } catch (e) {
-      print("DEBUG: Background Task Error: $e");
+      // print("DEBUG: Background Task Error: $e");
       return Future.value(false);
     }
 

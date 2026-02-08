@@ -13,7 +13,7 @@ class NotificationService {
     tz.initializeTimeZones();
     // Detect and set local time zone
     final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-    print('DEBUG: NotificationService init with timezone: $timeZoneName');
+    // print('DEBUG: NotificationService init with timezone: $timeZoneName');
     tz.setLocalLocation(tz.getLocation(timeZoneName));
 
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -112,20 +112,18 @@ class NotificationService {
   }
 
   Future<void> requestPermissions() async {
-    print('DEBUG: Requesting Notification & Alarm Permissions...');
+    // print('DEBUG: Requesting Notification & Alarm Permissions...');
     final androidImplementation = _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
 
     if (androidImplementation != null) {
-      final bool? resultNotification = await androidImplementation
-          .requestNotificationsPermission();
-      final bool? resultAlarm = await androidImplementation
-          .requestExactAlarmsPermission();
-      print(
-        'DEBUG: Permission Results -> Notification: $resultNotification, ExactAlarm: $resultAlarm',
-      );
+      await androidImplementation.requestNotificationsPermission();
+      await androidImplementation.requestExactAlarmsPermission();
+      // print(
+      // 'DEBUG: Permission Results -> Notification: $resultNotification, ExactAlarm: $resultAlarm',
+      // );
     }
   }
 
@@ -151,12 +149,12 @@ class NotificationService {
     // For test (isRepeating=false), we strictly follow the time (or maybe we allow it to be today).
     if (isRepeating && scheduledTime.isBefore(DateTime.now())) {
       scheduledTime = scheduledTime.add(const Duration(days: 1));
-      print('DEBUG: Time passed. Rescheduling for tomorrow: $scheduledTime');
+      // print('DEBUG: Time passed. Rescheduling for tomorrow: $scheduledTime');
     }
 
-    print(
-      'DEBUG: Scheduling notification ID:$id Title:$title Time:$scheduledTime (Local) Repeating:$isRepeating',
-    );
+    // print(
+    // 'DEBUG: Scheduling notification ID:$id Title:$title Time:$scheduledTime (Local) Repeating:$isRepeating',
+    // );
 
     AndroidNotificationDetails androidDetails;
 
