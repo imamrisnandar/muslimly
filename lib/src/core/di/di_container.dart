@@ -19,8 +19,8 @@ import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 
 // Prayer
-
 import '../../features/prayer/data/repositories/prayer_repository_impl.dart';
+
 import '../../features/prayer/domain/repositories/prayer_repository.dart';
 import '../../features/prayer/domain/usecases/get_prayer_time.dart';
 import '../../features/prayer/domain/usecases/search_city.dart';
@@ -43,6 +43,8 @@ import '../../features/zikir/data/repositories/zikir_local_repository.dart';
 import '../../features/quran/data/repositories/translation_repository_impl.dart';
 import '../../features/tajweed/data/repositories/tajweed_repository.dart'; // Added
 import '../../features/fasting/data/repositories/fasting_repository.dart'; // Added
+import '../../features/wudhu/data/repositories/wudhu_repository.dart'; // Added
+import '../../features/prayer/data/repositories/prayer_guide_repository.dart'; // Added
 import '../../features/quran/domain/repositories/translation_repository.dart';
 import '../../features/quran/presentation/bloc/translation/translation_bloc.dart';
 import '../../features/quran/domain/usecases/search_ayahs.dart'; // Added
@@ -171,6 +173,15 @@ void configureDependencies() {
 
   // --- Fasting Feature ---
   getIt.registerLazySingleton<FastingRepository>(() => FastingRepositoryImpl());
+
+  // --- Wudhu Feature ---
+
+  getIt.registerLazySingleton<WudhuRepository>(() => WudhuRepository());
+
+  // --- Prayer Feature ---
+  getIt.registerLazySingleton<PrayerGuideRepository>(
+    () => PrayerGuideRepository(),
+  );
 }
 
 class _$NetworkModule extends NetworkModule {}

@@ -4,19 +4,19 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../data/models/fasting_model.dart';
-import '../../data/repositories/fasting_repository.dart';
-import 'fasting_detail_page.dart';
+import '../../data/models/wudhu_model.dart';
+import '../../data/repositories/wudhu_repository.dart';
+import 'wudhu_detail_page.dart';
 
-class FastingGuidePage extends StatefulWidget {
-  const FastingGuidePage({super.key});
+class WudhuGuidePage extends StatefulWidget {
+  const WudhuGuidePage({super.key});
 
   @override
-  State<FastingGuidePage> createState() => _FastingGuidePageState();
+  State<WudhuGuidePage> createState() => _WudhuGuidePageState();
 }
 
-class _FastingGuidePageState extends State<FastingGuidePage> {
-  late Future<List<FastingModel>> _dataFuture;
+class _WudhuGuidePageState extends State<WudhuGuidePage> {
+  late Future<List<WudhuModel>> _dataFuture;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _currentLocale;
@@ -27,9 +27,7 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
     final l10n = AppLocalizations.of(context)!;
     if (_currentLocale != l10n.localeName) {
       _currentLocale = l10n.localeName;
-      _dataFuture = getIt<FastingRepository>().getFastingContent(
-        l10n.localeName,
-      );
+      _dataFuture = getIt<WudhuRepository>().getWudhuContent(l10n.localeName);
     }
   }
 
@@ -39,7 +37,7 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
     super.dispose();
   }
 
-  List<FastingModel> _filterData(List<FastingModel> data) {
+  List<WudhuModel> _filterData(List<WudhuModel> data) {
     if (_searchQuery.isEmpty) {
       return data;
     }
@@ -59,10 +57,12 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C2A30), // Dark Theme
+      backgroundColor: const Color(
+        0xFF1C2A30,
+      ), // Dark Theme matching Fasting Guide
       appBar: AppBar(
         title: Text(
-          l10n.fastingGuideTitle,
+          l10n.wudhuGuideTitle,
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -76,7 +76,7 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
           onPressed: () => context.pop(),
         ),
       ),
-      body: FutureBuilder<List<FastingModel>>(
+      body: FutureBuilder<List<WudhuModel>>(
         future: _dataFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -94,12 +94,12 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
             return Center(
               child: Text(
                 l10n.msgNoData,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             );
           }
 
-          final allData = List<FastingModel>.from(snapshot.data!);
+          final allData = List<WudhuModel>.from(snapshot.data!);
           // Sort by order first
           allData.sort((a, b) => a.order.compareTo(b.order));
 
@@ -119,7 +119,7 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
                   },
                   style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   decoration: InputDecoration(
-                    hintText: l10n.searchFastingGuide,
+                    hintText: l10n.searchWudhuGuide,
                     hintStyle: TextStyle(
                       color: Colors.white38,
                       fontSize: 14.sp,
@@ -177,7 +177,7 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
                         ),
                       )
                     : ListView.separated(
-                        key: const PageStorageKey('fasting_guide_list'),
+                        key: const PageStorageKey('wudhu_guide_list'),
                         padding: EdgeInsets.all(16.w),
                         itemCount: filteredData.length,
                         separatorBuilder: (context, index) =>
@@ -197,9 +197,11 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
 
   Widget _buildChapterCard(
     BuildContext context,
-    FastingModel item,
-    List<FastingModel> allItems,
+    WudhuModel item,
+    List<WudhuModel> allItems,
   ) {
+    const accentColor = Color(0xFF00E676); // Green Accent (Matching Fasting)
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
@@ -215,7 +217,7 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    FastingDetailPage(item: item, allItems: allItems),
+                    WudhuDetailPage(item: item, allItems: allItems),
               ),
             );
           },
@@ -228,17 +230,15 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
                   width: 36.w,
                   height: 36.w,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00E676).withOpacity(0.1),
+                    color: accentColor.withOpacity(0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xFF00E676).withOpacity(0.3),
-                    ),
+                    border: Border.all(color: accentColor.withOpacity(0.3)),
                   ),
                   child: Center(
                     child: Text(
                       "${item.order}",
                       style: TextStyle(
-                        color: const Color(0xFF00E676),
+                        color: accentColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
                         fontFamily: GoogleFonts.outfit().fontFamily,

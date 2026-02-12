@@ -4,27 +4,34 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../data/models/fasting_model.dart';
+import '../../data/models/prayer_guide_model.dart';
 
-class FastingDetailPage extends StatelessWidget {
-  final FastingModel item;
-  final List<FastingModel>? allItems;
+class PrayerDetailPage extends StatelessWidget {
+  final PrayerGuideItem prayerModel;
+  final List<PrayerGuideItem> allContent;
 
-  const FastingDetailPage({super.key, required this.item, this.allItems});
+  const PrayerDetailPage({
+    super.key,
+    required this.prayerModel,
+    required this.allContent,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    // Theme Colors from Tajweed Page
+    // Theme Colors matching Fasting and Wudhu Guides
     const backgroundColor = Color(0xFFFFF8E1); // Cream Theme
     const textColor = Color(0xFF4E342E); // Dark Brown
     const accentColor = Color(0xFF1B5E20); // Dark Green
+
+    // Map to store keys for headings
+    final Map<String, GlobalKey> headingKeys = {};
 
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text(
-          item.title,
+          prayerModel.title,
           style: TextStyle(
             color: textColor,
             fontWeight: FontWeight.bold,
@@ -70,8 +77,28 @@ class FastingDetailPage extends StatelessWidget {
                   ),
                 ),
                 child: MarkdownBody(
-                  data: item.contentMarkdown,
+                  data: prayerModel.contentMarkdown ?? '',
+                  selectable: true,
+                  onTapLink: (text, href, title) {
+                    if (href != null && href.startsWith('#')) {
+                      final key = headingKeys[href.substring(1)];
+                      if (key != null && key.currentContext != null) {
+                        Scrollable.ensureVisible(
+                          key.currentContext!,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          alignment: 0.1, // Offset slightly from top
+                        );
+                      }
+                    }
+                  },
                   builders: {
+                    'h1': _HeadingBuilder(headingKeys),
+                    'h2': _HeadingBuilder(headingKeys),
+                    'h3': _HeadingBuilder(headingKeys),
+                    'h4': _HeadingBuilder(headingKeys),
+                    'h5': _HeadingBuilder(headingKeys),
+                    'h6': _HeadingBuilder(headingKeys),
                     'blockquote': _BlockquoteBuilder(textColor, accentColor),
                   },
                   styleSheet: MarkdownStyleSheet(
@@ -129,8 +156,7 @@ class FastingDetailPage extends StatelessWidget {
               SizedBox(height: 24.h),
 
               // Navigation Buttons
-              if (allItems != null && allItems!.isNotEmpty)
-                _buildNavigationSection(context, l10n),
+              if (allContent.isNotEmpty) _buildNavigationSection(context, l10n),
 
               SizedBox(height: 32.h),
             ],
@@ -141,14 +167,16 @@ class FastingDetailPage extends StatelessWidget {
   }
 
   Widget _buildNavigationSection(BuildContext context, AppLocalizations l10n) {
-    if (allItems == null || allItems!.isEmpty) return const SizedBox.shrink();
+    if (allContent.isEmpty) return const SizedBox.shrink();
 
-    final currentIndex = allItems!.indexWhere((l) => l.id == item.id);
+    final currentIndex = allContent.indexWhere(
+      (element) => element.id == prayerModel.id,
+    );
     if (currentIndex == -1) return const SizedBox.shrink();
 
-    final prevItem = currentIndex > 0 ? allItems![currentIndex - 1] : null;
-    final nextItem = currentIndex < allItems!.length - 1
-        ? allItems![currentIndex + 1]
+    final prevItem = currentIndex > 0 ? allContent[currentIndex - 1] : null;
+    final nextItem = currentIndex < allContent.length - 1
+        ? allContent[currentIndex + 1]
         : null;
 
     return Column(
@@ -169,9 +197,9 @@ class FastingDetailPage extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FastingDetailPage(
-                          item: prevItem,
-                          allItems: allItems,
+                        builder: (context) => PrayerDetailPage(
+                          prayerModel: prevItem,
+                          allContent: allContent,
                         ),
                       ),
                     );
@@ -195,9 +223,9 @@ class FastingDetailPage extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FastingDetailPage(
-                          item: nextItem,
-                          allItems: allItems,
+                        builder: (context) => PrayerDetailPage(
+                          prayerModel: nextItem,
+                          allContent: allContent,
                         ),
                       ),
                     );
@@ -219,8 +247,8 @@ class FastingDetailPage extends StatelessWidget {
     required AppLocalizations l10n,
     required VoidCallback onTap,
   }) {
-    const accentColor = Color(0xFF1B5E20);
-    const textColor = Color(0xFF4E342E);
+    const accentColor = Color(0xFF1B5E20); // Dark Green
+    const textColor = Color(0xFF4E342E); // Dark Brown
 
     return InkWell(
       onTap: onTap,
@@ -233,7 +261,7 @@ class FastingDetailPage extends StatelessWidget {
           border: Border.all(color: accentColor.withOpacity(0.1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.brown.withOpacity(0.05),
+              color: Colors.blueGrey.withOpacity(0.05),
               offset: const Offset(0, 2),
               blurRadius: 4,
             ),
@@ -258,10 +286,7 @@ class FastingDetailPage extends StatelessWidget {
                   SizedBox(width: 4.w),
                 ],
                 Text(
-                  isNext
-                      ? l10n
-                            .lblNext // Assuming this key exists from Tajweed
-                      : l10n.lblPrevious, // Assuming this key exists from Tajweed
+                  isNext ? l10n.lblNext : l10n.lblPrevious,
                   style: TextStyle(
                     fontSize: 10.sp,
                     color: Colors.grey[600],
@@ -298,6 +323,41 @@ class FastingDetailPage extends StatelessWidget {
   }
 }
 
+class _HeadingBuilder extends MarkdownElementBuilder {
+  final Map<String, GlobalKey> headingKeys;
+
+  _HeadingBuilder(this.headingKeys);
+
+  @override
+  Widget? visitText(org_text, TextStyle? preferredStyle) {
+    String id = org_text.text.toLowerCase().trim().replaceAll(
+      RegExp(r'[^a-z0-9]+'),
+      '-',
+    );
+    // Remove leading/trailing hyphens
+    id = id.replaceAll(RegExp(r'^-+|-+$'), '');
+
+    // Assign a GlobalKey to this heading ID if not already present
+    // We create a new key every build to ensure context freshness, or reuse if feasible.
+    // However, since visitText is called during build...
+
+    // Better strategy: create unique key based on ID, store in map.
+    // If map already has it, reuse (to keep state matching).
+    GlobalKey key;
+    if (headingKeys.containsKey(id)) {
+      key = headingKeys[id]!;
+    } else {
+      key = GlobalKey();
+      headingKeys[id] = key;
+    }
+
+    return Container(
+      key: key,
+      child: Text(org_text.text, style: preferredStyle),
+    );
+  }
+}
+
 class _BlockquoteBuilder extends MarkdownElementBuilder {
   final Color textColor;
   final Color accentColor;
@@ -305,6 +365,7 @@ class _BlockquoteBuilder extends MarkdownElementBuilder {
   _BlockquoteBuilder(this.textColor, this.accentColor);
 
   bool _hasArabicText(String text) {
+    // Check if text contains Arabic characters (Unicode range 0600-06FF)
     return text.runes.any((rune) => rune >= 0x0600 && rune <= 0x06FF);
   }
 
@@ -323,6 +384,7 @@ class _BlockquoteBuilder extends MarkdownElementBuilder {
       final charCode = char.codeUnitAt(0);
       final isArabicChar = charCode >= 0x0600 && charCode <= 0x06FF;
 
+      // Neutral characters (punctuation, spaces) don't trigger transitions
       final isNeutral =
           char == ' ' ||
           char == '.' ||
@@ -343,6 +405,7 @@ class _BlockquoteBuilder extends MarkdownElementBuilder {
       } else if (isNeutral) {
         currentSegment.write(char);
       } else if (isArabicChar != currentIsArabic) {
+        // Script transition! Save current segment
         if (currentSegment.isNotEmpty) {
           final segmentText = currentSegment.toString().trim();
           if (segmentText.isNotEmpty) {
@@ -380,6 +443,7 @@ class _BlockquoteBuilder extends MarkdownElementBuilder {
       }
     }
 
+    // Add remaining segment
     if (currentSegment.isNotEmpty && currentIsArabic != null) {
       final segmentText = currentSegment.toString().trim();
       if (segmentText.isNotEmpty) {

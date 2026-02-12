@@ -4,18 +4,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../data/models/fasting_model.dart';
+import '../../data/models/wudhu_model.dart';
 
-class FastingDetailPage extends StatelessWidget {
-  final FastingModel item;
-  final List<FastingModel>? allItems;
+class WudhuDetailPage extends StatelessWidget {
+  final WudhuModel item;
+  final List<WudhuModel>? allItems;
 
-  const FastingDetailPage({super.key, required this.item, this.allItems});
+  const WudhuDetailPage({super.key, required this.item, this.allItems});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    // Theme Colors from Tajweed Page
+    // Theme Colors matching Fasting Guide
     const backgroundColor = Color(0xFFFFF8E1); // Cream Theme
     const textColor = Color(0xFF4E342E); // Dark Brown
     const accentColor = Color(0xFF1B5E20); // Dark Green
@@ -169,10 +169,8 @@ class FastingDetailPage extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FastingDetailPage(
-                          item: prevItem,
-                          allItems: allItems,
-                        ),
+                        builder: (context) =>
+                            WudhuDetailPage(item: prevItem, allItems: allItems),
                       ),
                     );
                   },
@@ -195,10 +193,8 @@ class FastingDetailPage extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FastingDetailPage(
-                          item: nextItem,
-                          allItems: allItems,
-                        ),
+                        builder: (context) =>
+                            WudhuDetailPage(item: nextItem, allItems: allItems),
                       ),
                     );
                   },
@@ -219,8 +215,8 @@ class FastingDetailPage extends StatelessWidget {
     required AppLocalizations l10n,
     required VoidCallback onTap,
   }) {
-    const accentColor = Color(0xFF1B5E20);
-    const textColor = Color(0xFF4E342E);
+    const accentColor = Color(0xFF1B5E20); // Dark Green
+    const textColor = Color(0xFF4E342E); // Dark Brown
 
     return InkWell(
       onTap: onTap,
@@ -233,7 +229,7 @@ class FastingDetailPage extends StatelessWidget {
           border: Border.all(color: accentColor.withOpacity(0.1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.brown.withOpacity(0.05),
+              color: Colors.blueGrey.withOpacity(0.05),
               offset: const Offset(0, 2),
               blurRadius: 4,
             ),
@@ -258,10 +254,7 @@ class FastingDetailPage extends StatelessWidget {
                   SizedBox(width: 4.w),
                 ],
                 Text(
-                  isNext
-                      ? l10n
-                            .lblNext // Assuming this key exists from Tajweed
-                      : l10n.lblPrevious, // Assuming this key exists from Tajweed
+                  isNext ? l10n.lblNext : l10n.lblPrevious,
                   style: TextStyle(
                     fontSize: 10.sp,
                     color: Colors.grey[600],

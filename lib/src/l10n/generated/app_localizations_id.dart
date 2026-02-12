@@ -112,7 +112,31 @@ class AppLocalizationsId extends AppLocalizations {
   String get searchCityTitle => 'Cari Kota';
 
   @override
-  String get searchCityHint => 'Masukkan nama kota (cth. Jakarta)';
+  String get searchCityHint => 'Nama kota (cth. Jakarta)';
+
+  @override
+  String get useCurrentLocation => 'Gunakan Lokasi Saat Ini';
+
+  @override
+  String get locationNotFound => 'Lokasi tidak ditemukan';
+
+  @override
+  String get trySearchingWith => 'Coba cari dengan:';
+
+  @override
+  String get searchSuggestionCity => 'Nama kota (cth. Jakarta)';
+
+  @override
+  String get searchSuggestionDistrict => 'Nama kecamatan (cth. Bandung Barat)';
+
+  @override
+  String get searchSuggestionAddress => 'Alamat lengkap';
+
+  @override
+  String get searchForLocation => 'Cari lokasi';
+
+  @override
+  String get popularCities => 'Kota populer:';
 
   @override
   String get close => 'Tutup';
@@ -348,25 +372,25 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get dzikirDoneMessage =>
-      'Anda telah menyelesaikan rangkaian dzikir ini.';
+      'Anda telah menyelesaikan rangkaian zikir ini.';
 
   @override
   String get dzikirSelectCategory => 'Pilih Kategori';
 
   @override
-  String get dzikirMorningTitle => 'Dzikir Pagi';
+  String get dzikirMorningTitle => 'Zikir Pagi';
 
   @override
-  String get dzikirMorningSubtitle => 'Pembuka hari dengan dzikir';
+  String get dzikirMorningSubtitle => 'Pembuka hari dengan zikir';
 
   @override
-  String get dzikirEveningTitle => 'Dzikir Petang';
+  String get dzikirEveningTitle => 'Zikir Petang';
 
   @override
   String get dzikirEveningSubtitle => 'Penutup hari dengan ketenangan';
 
   @override
-  String get dzikirPrayerTitle => 'Dzikir Sholat';
+  String get dzikirPrayerTitle => 'Zikir Sholat';
 
   @override
   String get dzikirPrayerSubtitle => 'Wirid setelah sholat fardhu';
@@ -701,7 +725,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get onboardingDesc2 =>
-      'Jadwal sholat akurat, arah kiblat presisi, dan dzikir harian dalam satu aplikasi.';
+      'Jadwal sholat akurat, arah kiblat presisi, dan zikir harian dalam satu aplikasi.';
 
   @override
   String get onboardingTitle3 => 'Syafaat di Hari Kiamat';
@@ -1000,7 +1024,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get reminderFasting => 'PUASA';
 
   @override
-  String get reminderDzikir => 'DZIKIR';
+  String get reminderDzikir => 'ZIKIR';
 
   @override
   String reminderIftarIn(Object duration) {
@@ -1014,7 +1038,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String reminderDzikirTime(Object type) {
-    return 'Waktunya Dzikir $type';
+    return 'Waktunya zikir $type';
   }
 
   @override
@@ -1111,7 +1135,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get fastingGuideTitle => 'Panduan Puasa';
 
   @override
-  String get fastingGuideSubtitle => 'Fiqih Puasa Lengkap';
+  String get fastingGuideSubtitle => 'Fiqih Puasa';
 
   @override
   String get searchFastingGuide => 'Cari pembahasan puasa...';
@@ -1145,4 +1169,19 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get tafsirNotAvailable => 'Tafsir tidak tersedia untuk ayat ini.';
+
+  @override
+  String get wudhuGuideTitle => 'Panduan Wudhu';
+
+  @override
+  String get wudhuGuideSubtitle => 'Tata Cara Wudhu Praktis & Sesuai Sunnah';
+
+  @override
+  String get searchWudhuGuide => 'Cari topik wudhu...';
+
+  @override
+  String get prayerGuideSubtitle => 'Panduan Sholat Lengkap Sesuai Sunnah';
+
+  @override
+  String get searchPrayerGuide => 'Cari topik sholat...';
 }

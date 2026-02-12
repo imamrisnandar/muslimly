@@ -112,7 +112,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchCityTitle => 'Search City';
 
   @override
-  String get searchCityHint => 'Enter city name (e.g. London)';
+  String get searchCityHint => 'City name (e.g. London)';
+
+  @override
+  String get useCurrentLocation => 'Use Current Location';
+
+  @override
+  String get locationNotFound => 'Location not found';
+
+  @override
+  String get trySearchingWith => 'Try searching with:';
+
+  @override
+  String get searchSuggestionCity => 'City name (e.g., Jakarta)';
+
+  @override
+  String get searchSuggestionDistrict => 'District (e.g., Bandung Barat)';
+
+  @override
+  String get searchSuggestionAddress => 'Full address';
+
+  @override
+  String get searchForLocation => 'Search for a location';
+
+  @override
+  String get popularCities => 'Popular cities:';
 
   @override
   String get close => 'Close';
@@ -1105,7 +1129,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fastingGuideTitle => 'Fasting Guide';
 
   @override
-  String get fastingGuideSubtitle => 'Complete Fasting Fiqh';
+  String get fastingGuideSubtitle => 'Practical Fasting Fiqh';
 
   @override
   String get searchFastingGuide => 'Search fasting topic...';
@@ -1139,4 +1163,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tafsirNotAvailable => 'Tafsir not available for this ayah.';
+
+  @override
+  String get wudhuGuideTitle => 'Wudhu Guide';
+
+  @override
+  String get wudhuGuideSubtitle => 'Practical Wudhu Procedure';
+
+  @override
+  String get searchWudhuGuide => 'Search Wudhu topic...';
+
+  @override
+  String get prayerGuideSubtitle => 'Complete Prayer Guide according to Sunnah';
+
+  @override
+  String get searchPrayerGuide => 'Search Prayer topic...';
 }

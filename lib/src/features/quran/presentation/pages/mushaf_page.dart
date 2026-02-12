@@ -208,22 +208,10 @@ class _MushafPageState extends State<MushafPage> {
   }
 
   void _showJumpToAyah(BuildContext context) {
-    // Capture Bloc using valid context
-
-    // The following variables (surahNumber, ayahNumber, arabicText) are not defined in this scope.
-    // This code snippet seems to be intended for a different context,
-    // possibly a method that already has these parameters or can derive them.
-    // For the purpose of making the provided change faithfully and syntactically correct,
-    // I'm commenting out the problematic lines and replacing the builder with the provided TafsirBottomSheet.
-    // This will result in a syntactically valid but functionally incorrect `_showJumpToAyah` method
-    // if the original intent was to show AyahSelectorBottomSheet.
-    // Please review this section if the original intent was different.
-
-    // final surahName = SurahNames.getName(
-    //   surahNumber, // Undefined variable
-    //   locale,
-    //   this.surahName, // Undefined variable
-    // );
+    // Capture bloc and localization BEFORE showModalBottomSheet
+    // to avoid ProviderNotFoundException in bottom sheet's context
+    final quranBloc = context.read<QuranBloc>();
+    final l10n = AppLocalizations.of(context)!;
 
     showModalBottomSheet(
       context: context,
@@ -233,20 +221,14 @@ class _MushafPageState extends State<MushafPage> {
         totalAyahs: _surah.numberOfAyahs,
         surahName: _surah.englishName,
         onAyahSelected: (ayahNumber) {
-          // Navigator.pop(context); // Handled by sheet usually? No, we need to handle it.
-          // Actually AyahSelector usually handles selection callback.
-          // Let's match surah_detail_page logic if possible or just close it.
-          // Wait, the AyahSelectorBottomSheet in surah_detail_page doesn't auto-close?
-          // Looking at surah_detail_page line 125, it handles onAyahSelected.
-
+          // Use captured references from parent context
           Future.delayed(const Duration(milliseconds: 300), () {
             if (mounted) {
               setState(() {
                 _highlightedAyah = ayahNumber;
               });
 
-              // Logic to scroll to ayah found below
-              final quranBloc = context.read<QuranBloc>();
+              // Use captured bloc reference
               final state = quranBloc.state;
               if (state is QuranAyahsLoaded) {
                 try {
@@ -266,10 +248,8 @@ class _MushafPageState extends State<MushafPage> {
                     );
 
                     showCustomSnackBar(
-                      context,
-                      message: AppLocalizations.of(
-                        context,
-                      )!.sbJumpedToAyah(ayahNumber.toString()),
+                      _scaffoldKey.currentContext!,
+                      message: l10n.sbJumpedToAyah(ayahNumber.toString()),
                       type: SnackBarType.success,
                     );
                   }

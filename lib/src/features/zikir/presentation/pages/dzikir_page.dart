@@ -7,6 +7,8 @@ import '../../data/repositories/zikir_local_repository.dart';
 import 'dzikir_reading_page.dart';
 import 'doa_harian_list_page.dart';
 import '../../../../features/fasting/presentation/pages/fasting_guide_page.dart';
+import '../../../../features/wudhu/presentation/pages/wudhu_guide_page.dart';
+import '../../../../features/prayer/presentation/pages/prayer_guide_page.dart'; // Added
 
 class DzikirPage extends StatelessWidget {
   const DzikirPage({super.key});
@@ -136,18 +138,27 @@ class DzikirPage extends StatelessWidget {
       ),
       _IbadahItem(
         title: l10n.ibadahWudhuTitle,
-        subtitle: l10n.comingSoon,
+        subtitle: l10n.wudhuGuideSubtitle,
         icon: Icons.water_drop_outlined,
-        color: Colors.blueGrey,
-        onTap: null, // Disabled
+        color: Colors.cyan,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const WudhuGuidePage()),
+          );
+        },
       ),
       _IbadahItem(
         title: l10n.ibadahPrayerTitle,
-        subtitle:
-            l10n.comingSoon, // Placeholder subtitle until content is ready
-        icon: Icons.accessibility_new_rounded, // Best fit for prayer movements
-        color: Colors.blueGrey,
-        onTap: null, // Disabled
+        subtitle: l10n.prayerGuideSubtitle,
+        icon: Icons.accessibility_new_rounded,
+        color: const Color(0xFFFFC107), // Amber 700
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const PrayerGuidePage()),
+          );
+        },
       ),
     ];
 

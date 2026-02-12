@@ -299,8 +299,56 @@ abstract class AppLocalizations {
   /// No description provided for @searchCityHint.
   ///
   /// In en, this message translates to:
-  /// **'Enter city name (e.g. London)'**
+  /// **'City name (e.g. London)'**
   String get searchCityHint;
+
+  /// No description provided for @useCurrentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Current Location'**
+  String get useCurrentLocation;
+
+  /// No description provided for @locationNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Location not found'**
+  String get locationNotFound;
+
+  /// No description provided for @trySearchingWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Try searching with:'**
+  String get trySearchingWith;
+
+  /// No description provided for @searchSuggestionCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City name (e.g., Jakarta)'**
+  String get searchSuggestionCity;
+
+  /// No description provided for @searchSuggestionDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'District (e.g., Bandung Barat)'**
+  String get searchSuggestionDistrict;
+
+  /// No description provided for @searchSuggestionAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Full address'**
+  String get searchSuggestionAddress;
+
+  /// No description provided for @searchForLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for a location'**
+  String get searchForLocation;
+
+  /// No description provided for @popularCities.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular cities:'**
+  String get popularCities;
 
   /// No description provided for @close.
   ///
@@ -2087,7 +2135,7 @@ abstract class AppLocalizations {
   /// No description provided for @fastingGuideSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Complete Fasting Fiqh'**
+  /// **'Practical Fasting Fiqh'**
   String get fastingGuideSubtitle;
 
   /// No description provided for @searchFastingGuide.
@@ -2155,6 +2203,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tafsir not available for this ayah.'**
   String get tafsirNotAvailable;
+
+  /// No description provided for @wudhuGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Wudhu Guide'**
+  String get wudhuGuideTitle;
+
+  /// No description provided for @wudhuGuideSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Practical Wudhu Procedure'**
+  String get wudhuGuideSubtitle;
+
+  /// No description provided for @searchWudhuGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Wudhu topic...'**
+  String get searchWudhuGuide;
+
+  /// No description provided for @prayerGuideSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Prayer Guide according to Sunnah'**
+  String get prayerGuideSubtitle;
+
+  /// No description provided for @searchPrayerGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Prayer topic...'**
+  String get searchPrayerGuide;
 }
 
 class _AppLocalizationsDelegate

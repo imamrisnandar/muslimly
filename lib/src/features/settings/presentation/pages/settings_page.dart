@@ -200,7 +200,7 @@ class SettingsPage extends StatelessWidget {
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
         return Dialog(
-          backgroundColor: const Color(0xFF1E1E1E),
+          backgroundColor: const Color(0xFF1E2F36),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
           ),
@@ -313,7 +313,7 @@ class SettingsPage extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF1E2F36),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -598,7 +598,7 @@ class SettingsPage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF1E1E1E),
+          backgroundColor: const Color(0xFF1E2F36),
           title: Text(
             l10n.targetCustomTitle,
             style: const TextStyle(color: Colors.white),

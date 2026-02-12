@@ -1,16 +1,13 @@
 import 'package:adhan/adhan.dart';
 import 'package:dartz/dartz.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:injectable/injectable.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:intl/intl.dart';
+
 import '../../domain/entities/city.dart';
 import '../../domain/entities/prayer_time.dart';
 import '../../domain/repositories/prayer_repository.dart';
 
-@LazySingleton(as: PrayerRepository)
 class PrayerRepositoryImpl implements PrayerRepository {
-  PrayerRepositoryImpl();
-
   @override
   Future<Either<String, PrayerTime>> getPrayerTime(
     double latitude,
@@ -22,28 +19,26 @@ class PrayerRepositoryImpl implements PrayerRepository {
       final params = CalculationMethod.singapore.getParameters();
       params.madhab = Madhab.shafi;
 
-      // Create DateComponents from DateTime
-      final dateComponents = DateComponents(date.year, date.month, date.day);
+      final prayerTimes = PrayerTimes.today(coordinates, params);
 
-      final prayerTimes = PrayerTimes(coordinates, dateComponents, params);
-
-      final formatter = DateFormat("HH:mm");
+      // Format times
+      final formatter = DateFormat('HH:mm');
 
       return Right(
         PrayerTime(
           imsak: formatter.format(
             prayerTimes.fajr.subtract(const Duration(minutes: 10)),
-          ),
+          ), // Approximation
           subuh: formatter.format(prayerTimes.fajr),
           terbit: formatter.format(prayerTimes.sunrise),
           dhuha: formatter.format(
             prayerTimes.sunrise.add(const Duration(minutes: 20)),
-          ),
+          ), // Approximation
           dzuhur: formatter.format(prayerTimes.dhuhr),
           ashar: formatter.format(prayerTimes.asr),
           maghrib: formatter.format(prayerTimes.maghrib),
           isya: formatter.format(prayerTimes.isha),
-          date: DateFormat("d MMM yyyy").format(date),
+          date: DateFormat('yyyy-MM-dd').format(date),
         ),
       );
     } catch (e) {
@@ -54,64 +49,65 @@ class PrayerRepositoryImpl implements PrayerRepository {
   @override
   Future<Either<String, List<City>>> searchCity(String keyword) async {
     try {
-      // Use Geocoding to find coordinates for the city name
-      List<Location> locations = await locationFromAddress(keyword);
+      List<geo.Location> locations = await geo.locationFromAddress(keyword);
 
-      if (locations.isEmpty) {
-        return const Right([]);
-      }
+      // Use Future.wait to perform reverse geocoding for all locations in parallel
+      final cities = await Future.wait(
+        locations.map((loc) async {
+          String cityName = keyword; // Fallback to search query
 
-      final cities = <City>[];
-      final limitedLocations = locations.take(5);
+          try {
+            // Reverse geocode to get proper city name
+            List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
+              loc.latitude,
+              loc.longitude,
+            );
 
-      for (var loc in limitedLocations) {
-        String displayName = keyword;
-        try {
-          // Optional: Try to get placemark for better name
-          List<Placemark> placemarks = await placemarkFromCoordinates(
-            loc.latitude,
-            loc.longitude,
-          );
-          if (placemarks.isNotEmpty) {
-            final p = placemarks.first;
-            // Short Name Logic: City/County + Country Code
-            // Prioritize locality (City) -> subAdmin (County)
-            final mainName = p.locality?.isNotEmpty == true
-                ? p.locality
-                : p.subAdministrativeArea;
-
-            final country = p.isoCountryCode;
-
-            if (mainName != null && mainName.isNotEmpty) {
-              displayName = country != null ? "$mainName, $country" : mainName;
-            } else {
-              // Fallback
-              displayName = [
-                p.subAdministrativeArea,
-                p.country,
-              ].where((e) => e != null).join(", ");
+            if (placemarks.isNotEmpty) {
+              final place = placemarks.first;
+              // Try to get the most specific location name available
+              cityName =
+                  place.locality ??
+                  place.subAdministrativeArea ??
+                  place.administrativeArea ??
+                  keyword;
             }
+          } catch (e) {
+            // If reverse geocoding fails, use the search keyword
+            cityName = _capitalizeWords(keyword);
           }
-        } catch (_) {
-          // Ignore reverse geocoding error, stick to keyword
-        }
 
-        cities.add(
-          City(
-            id: "${loc.latitude}_${loc.longitude}",
-            name: displayName,
+          return City(
+            id: '${loc.latitude}_${loc.longitude}',
+            name: cityName,
             latitude: loc.latitude,
             longitude: loc.longitude,
-          ),
-        );
-      }
+          );
+        }),
+      );
 
       return Right(cities);
     } catch (e) {
-      // Return empty if not found or error (e.g. no internet for geocoding service)
-      return const Right(
-        [],
-      ); // Better to return empty list than error string for search UI
+      // Provide more user-friendly error messages
+      if (e.toString().contains('No results') ||
+          e.toString().contains('not found')) {
+        return const Left('Location not found. Try a different search term.');
+      } else if (e.toString().contains('network') ||
+          e.toString().contains('connection')) {
+        return const Left('Network error. Please check your connection.');
+      }
+      return Left('Failed to search location: ${e.toString()}');
     }
+  }
+
+  // Helper method to capitalize words for fallback display
+  String _capitalizeWords(String text) {
+    return text
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
   }
 }
