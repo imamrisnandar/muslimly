@@ -91,157 +91,10 @@ class _QuranPageState extends State<QuranPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Header & Search
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 8.h),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      AppLocalizations.of(context)!.quranTitle,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20.sp,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    // Global Navigation Button
-                                    PremiumShowcase(
-                                      globalKey: _navigationKey,
-                                      title: "Navigation", // Todo: Localize
-                                      description: AppLocalizations.of(
-                                        context,
-                                      )!.showcaseQuranNavigation,
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.grid_view_rounded,
-                                          color: Colors.white,
-                                        ),
-                                        tooltip: 'Smart Jump',
-                                        onPressed: () {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            isScrollControlled: true,
-                                            backgroundColor: Colors.transparent,
-                                            builder: (_) => BlocProvider.value(
-                                              value: context.read<QuranBloc>(),
-                                              child:
-                                                  const QuranNavigationBottomSheet(),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                    PremiumShowcase(
-                                      globalKey: _bookmarksKey,
-                                      title: 'Bookmarks',
-                                      description: AppLocalizations.of(
-                                        context,
-                                      )!.showcaseQuranBookmarks,
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.bookmarks_outlined,
-                                          color: Colors.white,
-                                        ),
-                                        onPressed: () =>
-                                            context.push('/quran/bookmarks'),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 16.h),
-                                // Search Bar
-                                PremiumShowcase(
-                                  globalKey: _searchKey,
-                                  title: 'Search',
-                                  description: AppLocalizations.of(
-                                    context,
-                                  )!.showcaseQuranSearch,
-                                  child: TextField(
-                                    controller: _searchController,
-                                    style: const TextStyle(color: Colors.white),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _searchQuery = value;
-                                      });
-                                    },
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: Colors.white.withOpacity(0.05),
-                                      hintText: AppLocalizations.of(
-                                        context,
-                                      )!.searchSurahHint,
-                                      hintStyle: const TextStyle(
-                                        color: Colors.white54,
-                                      ),
-                                      prefixIcon: const Icon(
-                                        Icons.search,
-                                        color: Colors.white54,
-                                      ),
-                                      suffixIcon: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          if (_searchQuery.isNotEmpty)
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.clear,
-                                                color: Colors.white54,
-                                              ),
-                                              onPressed: () {
-                                                _searchController.clear();
-                                                setState(() {
-                                                  _searchQuery = '';
-                                                });
-                                              },
-                                            ),
-                                          IconButton(
-                                            onPressed: () {
-                                              final audioBloc = context
-                                                  .read<AudioBloc>();
-                                              showModalBottomSheet(
-                                                context: context,
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                isScrollControlled: true,
-                                                builder: (_) => BlocProvider.value(
-                                                  value: audioBloc,
-                                                  child:
-                                                      const ReciterSelectorBottomSheet(
-                                                        filterSource:
-                                                            AudioSourceType
-                                                                .quranComChapter,
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.headphones,
-                                              color: const Color(0xFF00E676),
-                                              size: 24.sp,
-                                            ),
-                                            tooltip: 'Pilih Qori',
-                                          ),
-                                          SizedBox(width: 8.w),
-                                        ],
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
-                                        borderSide: BorderSide.none,
-                                      ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 16.w,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          MediaQuery.of(context).orientation ==
+                                  Orientation.landscape
+                              ? _buildLandscapeHeader(context)
+                              : _buildPortraitHeader(context),
                           Expanded(
                             child: BlocBuilder<QuranBloc, QuranState>(
                               builder: (context, state) {
@@ -669,6 +522,290 @@ class _QuranPageState extends State<QuranPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPortraitHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 8.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.quranTitle,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              // Global Navigation Button
+              PremiumShowcase(
+                globalKey: _navigationKey,
+                title: "Navigation",
+                description: AppLocalizations.of(
+                  context,
+                )!.showcaseQuranNavigation,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.grid_view_rounded,
+                    color: Colors.white,
+                  ),
+                  tooltip: 'Smart Jump',
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<QuranBloc>(),
+                        child: const QuranNavigationBottomSheet(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              PremiumShowcase(
+                globalKey: _bookmarksKey,
+                title: 'Bookmarks',
+                description: AppLocalizations.of(
+                  context,
+                )!.showcaseQuranBookmarks,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.bookmarks_outlined,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => context.push('/quran/bookmarks'),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+          // Search Bar
+          PremiumShowcase(
+            globalKey: _searchKey,
+            title: 'Search',
+            description: AppLocalizations.of(context)!.showcaseQuranSearch,
+            child: TextField(
+              controller: _searchController,
+              style: const TextStyle(color: Colors.white),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.05),
+                hintText: AppLocalizations.of(context)!.searchSurahHint,
+                hintStyle: const TextStyle(color: Colors.white54),
+                prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_searchQuery.isNotEmpty)
+                      IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.white54),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _searchQuery = '';
+                          });
+                        },
+                      ),
+                    IconButton(
+                      onPressed: () {
+                        final audioBloc = context.read<AudioBloc>();
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (_) => BlocProvider.value(
+                            value: audioBloc,
+                            child: const ReciterSelectorBottomSheet(
+                              filterSource: AudioSourceType.quranComChapter,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.headphones,
+                        color: const Color(0xFF00E676),
+                        size: 18.sp,
+                      ),
+                      tooltip: 'Pilih Qori',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                    SizedBox(width: 8.w),
+                  ],
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLandscapeHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 8.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Compact Title (Icon + Text)
+          Row(
+            children: [
+              Icon(Icons.menu_book_rounded, color: Colors.white, size: 24.sp),
+              SizedBox(width: 8.w),
+              Text(
+                AppLocalizations.of(context)!.quranTitle,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(width: 16.w),
+
+          // Expanded Search Bar
+          Expanded(
+            child: PremiumShowcase(
+              globalKey:
+                  _searchKey, // Reusing key might be tricky in switch, but okay
+              title: 'Search',
+              description: AppLocalizations.of(context)!.showcaseQuranSearch,
+              child: SizedBox(
+                height: 48.h, // Fixed height for alignment
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(color: Colors.white),
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.05),
+                    hintText: AppLocalizations.of(context)!.searchSurahHint,
+                    hintStyle: const TextStyle(color: Colors.white54),
+                    prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (_searchQuery.isNotEmpty)
+                          IconButton(
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.white54,
+                            ),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchQuery = '';
+                              });
+                            },
+                          ),
+                        IconButton(
+                          onPressed: () {
+                            final audioBloc = context.read<AudioBloc>();
+                            showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                              builder: (_) => BlocProvider.value(
+                                value: audioBloc,
+                                child: const ReciterSelectorBottomSheet(
+                                  filterSource: AudioSourceType.quranComChapter,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.headphones,
+                            color: const Color(0xFF00E676),
+                            size: 18.sp, // Reduced size
+                          ),
+                          tooltip: 'Pilih Qori',
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
+                        SizedBox(width: 8.w),
+                      ],
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(width: 16.w),
+
+          // Actions Row
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PremiumShowcase(
+                globalKey: _navigationKey,
+                title: "Navigation",
+                description: AppLocalizations.of(
+                  context,
+                )!.showcaseQuranNavigation,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.grid_view_rounded,
+                    color: Colors.white,
+                  ),
+                  tooltip: 'Smart Jump',
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<QuranBloc>(),
+                        child: const QuranNavigationBottomSheet(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              PremiumShowcase(
+                globalKey: _bookmarksKey,
+                title: 'Bookmarks',
+                description: AppLocalizations.of(
+                  context,
+                )!.showcaseQuranBookmarks,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.bookmarks_outlined,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => context.push('/quran/bookmarks'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

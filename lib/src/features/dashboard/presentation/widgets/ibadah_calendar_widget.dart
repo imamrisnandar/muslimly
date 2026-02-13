@@ -71,9 +71,10 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            SizedBox(height: 4.h), // Added spacing in header
             Text(
               _getHijriMonthYear(_focusedDate),
-              style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+              style: TextStyle(color: Colors.white70, fontSize: 13.sp),
             ),
           ],
         ),
@@ -218,38 +219,45 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
         ),
         // Changed Stack to Column for vertical stacking without overlap
         child: Padding(
-          padding: EdgeInsets.all(1.w), // Minimal padding
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.end, // Align to right
-            children: [
-              // Gregorian Date
-              Text(
-                "${date.day}",
-                style: TextStyle(
-                  color: isSelected ? const Color(0xFF00E676) : Colors.white,
-                  fontSize: daySize,
-                  fontWeight: FontWeight.bold,
-                  height: 0.9,
+          padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.h),
+          child: FittedBox(
+            // Prevent overflow by scaling down if necessary
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Gregorian Date
+                Text(
+                  "${date.day}",
+                  style: TextStyle(
+                    color: isSelected ? const Color(0xFF00E676) : Colors.white,
+                    fontSize: daySize,
+                    fontWeight: FontWeight.bold,
+                    height: 1.0, // Reset height for natural spacing
+                  ),
+                  textAlign: TextAlign.right,
                 ),
-                textAlign: TextAlign.right,
-              ),
-              // Hijri Date
-              Text(
-                "${hijriDate.hDay}",
-                style: TextStyle(
-                  color: Colors.white38,
-                  fontSize: hijriSize,
-                  fontWeight: FontWeight.w300,
-                  height: 0.9,
+                SizedBox(height: 2.h), // Added spacing between dates
+                // Hijri Date
+                Text(
+                  "${hijriDate.hDay}",
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: hijriSize,
+                    fontWeight: FontWeight.w300,
+                    height: 1.0, // Reset height
+                  ),
+                  textAlign: TextAlign.right,
                 ),
-                textAlign: TextAlign.right,
-              ),
-              // Fasting Marker (Dots or Line at bottom)
-              if (fastingType != FastingType.none)
-                _buildFastingDot(fastingType),
-            ],
+                // Fasting Marker
+                if (fastingType != FastingType.none) ...[
+                  SizedBox(height: 2.h),
+                  _buildFastingDot(fastingType),
+                ],
+              ],
+            ),
           ),
         ),
       ),

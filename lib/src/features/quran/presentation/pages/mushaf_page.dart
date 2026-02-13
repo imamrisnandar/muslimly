@@ -1332,24 +1332,15 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
 
     // Dimensions
     final double bubbleWidth = 170.w;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double screenHeight = screenSize.height;
+    final bool isLandscape = screenSize.width > screenSize.height;
 
-    // X Position: Centered horizontally if possible, or clamped
-    double left = _tapPosition!.dx - (bubbleWidth / 2);
-    if (left < 16.w) left = 16.w;
-    if (left + bubbleWidth > screenWidth - 16.w) {
-      left = screenWidth - bubbleWidth - 16.w;
-    }
+    double left;
+    double top;
 
-    // Y Position: Above finger by default
-    double top = _tapPosition!.dy - 280.h; // Increased height
-    if (top < 100.h) {
-      top = _tapPosition!.dy + 30.h;
-    }
-
-    final l10n = AppLocalizations.of(context)!;
-
-    // Get Surah Name
+    // Surah Name Logic
     String surahName = "Surah $_selectedSurah";
     if (_selectedSurah != null) {
       final surahData = surahDetails.firstWhere(
@@ -1361,232 +1352,291 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
       }
     }
 
-    return Positioned(
-      top: top,
-      left: left,
-      child: Material(
-        color: Colors.transparent,
-        elevation: 8,
-        borderRadius: BorderRadius.circular(16.r),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.r),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              width: bubbleWidth,
-              padding: EdgeInsets.symmetric(vertical: 8.h),
-              decoration: BoxDecoration(
-                color: const Color(0xFF263238).withOpacity(0.85),
+    if (isLandscape) {
+      // Landscape Logic: Center Side Bubble
+      bool isLeftTap = _tapPosition!.dx < screenWidth / 2;
+
+      // Position horizontally based on tap
+      if (isLeftTap) {
+        // Tap on Left -> Show on Right
+        left = _tapPosition!.dx + 20.w;
+        // Clamp Right edge
+        if (left + bubbleWidth > screenWidth - 16.w) {
+          left = screenWidth - bubbleWidth - 16.w;
+        }
+      } else {
+        // Tap on Right -> Show on Left
+        left = _tapPosition!.dx - bubbleWidth - 20.w;
+        // Clamp Left edge
+        if (left < 16.w) left = 16.w;
+      }
+
+      // Return Centered Vertical Bubble
+      return Positioned(
+        top: 0,
+        bottom: 0,
+        left: left,
+        width: bubbleWidth,
+        child: Center(
+          child: GestureDetector(
+            onTap: () {}, // Consume tap
+            child: Material(
+              color: Colors.transparent,
+              elevation: 8,
+              borderRadius: BorderRadius.circular(16.r),
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(16.r),
-                border: Border.all(color: Colors.white10),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Header
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 8.h,
-                      horizontal: 12.w,
+                child: BackdropFilter(
+                  filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    width: bubbleWidth,
+                    constraints: BoxConstraints(
+                      maxHeight: screenHeight * 0.9, // Allow nearly full height
                     ),
-                    child: Column(
-                      children: [
-                        Text(
-                          surahName,
-                          style: TextStyle(
-                            color: const Color(0xFF00E676),
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(
-                          "Ayah $_selectedAyah",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12.sp,
-                          ),
-                        ),
-                      ],
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF263238).withOpacity(0.85),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: _buildBubbleContent(surahName, compact: true),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 4.h,
-                    ),
-                    height: 1,
-                    color: Colors.white10,
-                  ),
-                  _buildBubbleItem(
-                    icon: Icons.play_circle_outline,
-                    label: l10n.menuPlay,
-                    onTap: () {
-                      if (_selectedSurah != null) {
-                        context.read<AudioBloc>().add(
-                          PlaySurah(
-                            surahId: _selectedSurah!,
-                            surahName: surahName,
-                            startAyah: _selectedAyah,
-                          ),
-                        );
-                        // Hide bubble
-                        setState(() {
-                          _tapPosition = null;
-                        });
-                      }
-                    },
-                  ),
-                  _buildDivider(),
-                  _buildBubbleItem(
-                    icon: Icons.translate,
-                    label: l10n.menuTranslation,
-                    onTap: () {
-                      // Hide bubble first
-                      setState(() {
-                        _tapPosition = null;
-                      });
-
-                      // Find Ayah Text
-                      // Find Ayah Text
-                      final ayah = widget.ayahs.firstWhere(
-                        (a) => a.numberInSurah == (_selectedAyah ?? 1),
-                        orElse: () => widget.ayahs.first,
-                      );
-
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => TafsirBottomSheet(
-                          surahId: _selectedSurah ?? widget.surahNumber,
-                          surahName: surahName, // from scope
-                          ayahNumber: _selectedAyah ?? 1,
-                          arabicText: ayah.text,
-                          languageCode: Localizations.localeOf(
-                            context,
-                          ).languageCode,
-                        ),
-                      );
-                    },
-                  ),
-                  _buildDivider(),
-                  _buildBubbleItem(
-                    icon: Icons.library_books,
-                    label: l10n.menuTafsir,
-                    onTap: () {
-                      // Hide bubble first
-                      setState(() {
-                        _tapPosition = null;
-                      });
-
-                      // Find Ayah Text
-                      // Find Ayah Text
-                      final ayah = widget.ayahs.firstWhere(
-                        (a) => a.numberInSurah == (_selectedAyah ?? 1),
-                        orElse: () => widget.ayahs.first,
-                      );
-
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => TafsirBottomSheet(
-                          surahId: _selectedSurah ?? widget.surahNumber,
-                          surahName: surahName,
-                          ayahNumber: _selectedAyah ?? 1,
-                          initialTabIndex: 1, // Open directly to Tafsir
-                          arabicText: ayah.text,
-                          languageCode: Localizations.localeOf(
-                            context,
-                          ).languageCode,
-                        ),
-                      );
-                    },
-                  ),
-                  _buildDivider(),
-                  BlocBuilder<BookmarkBloc, BookmarkState>(
-                    builder: (context, state) {
-                      bool isBookmarked = false;
-                      if (state is BookmarkLoaded &&
-                          _selectedSurah != null &&
-                          _selectedAyah != null) {
-                        isBookmarked = state.bookmarks.any(
-                          (b) =>
-                              b.surahNumber == _selectedSurah &&
-                              b.ayahNumber == _selectedAyah &&
-                              b.surahNumber == _selectedSurah &&
-                              b.ayahNumber == _selectedAyah &&
-                              b.mode == 'mushaf',
-                        );
-                      }
-                      return _buildBubbleItem(
-                        icon: isBookmarked
-                            ? Icons.bookmark
-                            : Icons.bookmark_border,
-                        color: isBookmarked
-                            ? const Color(0xFF00E676)
-                            : Colors.white,
-                        label: l10n.menuBookmark,
-                        onTap: () {
-                          if (_selectedSurah != null && _selectedAyah != null) {
-                            final ayah = widget.ayahs.firstWhere(
-                              (element) =>
-                                  element.numberInSurah == _selectedAyah,
-                              orElse: () => widget.ayahs.first,
-                            );
-
-                            final bookmark = QuranBookmark(
-                              surahNumber: _selectedSurah!,
-                              surahName: widget.surahName,
-                              pageNumber: ayah.page,
-                              ayahNumber: _selectedAyah,
-                              createdAt: DateTime.now().millisecondsSinceEpoch,
-                              mode: 'mushaf',
-                            );
-
-                            context.read<BookmarkBloc>().add(
-                              ToggleBookmark(bookmark),
-                            );
-
-                            setState(() {
-                              _tapPosition = null;
-                            });
-                          }
-                        },
-                      );
-                    },
-                  ),
-                  // Close Button (Small at bottom or rely on outside tap)
-                  // Let's add a small divider and Close
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    height: 1,
-                    color: Colors.white10,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        _selectedSurah = null;
-                        _selectedAyah = null;
-                        _tapPosition = null;
-                      });
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Icon(
-                        Icons.keyboard_arrow_up,
-                        color: Colors.white54,
-                        size: 20.sp,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
         ),
-      ),
+      );
+    } else {
+      // Portrait Logic
+      left = _tapPosition!.dx - (bubbleWidth / 2);
+      if (left < 16.w) left = 16.w;
+      if (left + bubbleWidth > screenWidth - 16.w) {
+        left = screenWidth - bubbleWidth - 16.w;
+      }
+
+      top = _tapPosition!.dy - 280.h;
+      if (top < 100.h) {
+        top = _tapPosition!.dy + 30.h;
+      }
+
+      return Positioned(
+        top: top,
+        left: left,
+        child: GestureDetector(
+          onTap: () {}, // Consume tap
+          child: Material(
+            color: Colors.transparent,
+            elevation: 8,
+            borderRadius: BorderRadius.circular(16.r),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16.r),
+              child: BackdropFilter(
+                filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  width: bubbleWidth,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF263238).withOpacity(0.85),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: _buildBubbleContent(surahName),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildBubbleContent(String surahName, {bool compact = false}) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Header
+        // In compact mode, we can hide the header or make it smaller.
+        // Let's keep it but maybe remove the spacing if compact.
+        if (!compact) ...[
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+            child: Column(
+              children: [
+                Text(
+                  surahName,
+                  style: TextStyle(
+                    color: const Color(0xFF00E676),
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "Ayah $_selectedAyah",
+                  style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+            height: 1,
+            color: Colors.white10,
+          ),
+        ],
+        _buildBubbleItem(
+          icon: Icons.play_circle_outline,
+          label: l10n.menuPlay,
+          compact: compact,
+          onTap: () {
+            if (_selectedSurah != null) {
+              context.read<AudioBloc>().add(
+                PlaySurah(
+                  surahId: _selectedSurah!,
+                  surahName: surahName,
+                  startAyah: _selectedAyah,
+                ),
+              );
+              // Hide bubble
+              setState(() {
+                _tapPosition = null;
+              });
+            }
+          },
+        ),
+        _buildDivider(compact: compact),
+        _buildBubbleItem(
+          icon: Icons.translate,
+          label: l10n.menuTranslation,
+          compact: compact,
+          onTap: () {
+            // Hide bubble first
+            setState(() {
+              _tapPosition = null;
+            });
+
+            final ayah = widget.ayahs.firstWhere(
+              (a) => a.numberInSurah == (_selectedAyah ?? 1),
+              orElse: () => widget.ayahs.first,
+            );
+
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => TafsirBottomSheet(
+                surahId: _selectedSurah ?? widget.surahNumber,
+                surahName: surahName,
+                ayahNumber: _selectedAyah ?? 1,
+                arabicText: ayah.text,
+                languageCode: Localizations.localeOf(context).languageCode,
+              ),
+            );
+          },
+        ),
+        _buildDivider(compact: compact),
+        _buildBubbleItem(
+          icon: Icons.library_books,
+          label: l10n.menuTafsir,
+          compact: compact,
+          onTap: () {
+            // Hide bubble first
+            setState(() {
+              _tapPosition = null;
+            });
+
+            final ayah = widget.ayahs.firstWhere(
+              (a) => a.numberInSurah == (_selectedAyah ?? 1),
+              orElse: () => widget.ayahs.first,
+            );
+
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => TafsirBottomSheet(
+                surahId: _selectedSurah ?? widget.surahNumber,
+                surahName: surahName,
+                ayahNumber: _selectedAyah ?? 1,
+                initialTabIndex: 1, // Open directly to Tafsir
+                arabicText: ayah.text,
+                languageCode: Localizations.localeOf(context).languageCode,
+              ),
+            );
+          },
+        ),
+        _buildDivider(compact: compact),
+        BlocBuilder<BookmarkBloc, BookmarkState>(
+          builder: (context, state) {
+            bool isBookmarked = false;
+            if (state is BookmarkLoaded &&
+                _selectedSurah != null &&
+                _selectedAyah != null) {
+              isBookmarked = state.bookmarks.any(
+                (b) =>
+                    b.surahNumber == _selectedSurah &&
+                    b.ayahNumber == _selectedAyah &&
+                    b.mode == 'mushaf',
+              );
+            }
+            return _buildBubbleItem(
+              icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+              color: isBookmarked ? const Color(0xFF00E676) : Colors.white,
+              label: l10n.menuBookmark,
+              compact: compact,
+              onTap: () {
+                if (_selectedSurah != null && _selectedAyah != null) {
+                  final ayah = widget.ayahs.firstWhere(
+                    (element) => element.numberInSurah == _selectedAyah,
+                    orElse: () => widget.ayahs.first,
+                  );
+
+                  final bookmark = QuranBookmark(
+                    surahNumber: _selectedSurah!,
+                    surahName: widget.surahName,
+                    pageNumber: ayah.page,
+                    ayahNumber: _selectedAyah,
+                    createdAt: DateTime.now().millisecondsSinceEpoch,
+                    mode: 'mushaf',
+                  );
+
+                  context.read<BookmarkBloc>().add(ToggleBookmark(bookmark));
+
+                  setState(() {
+                    _tapPosition = null;
+                  });
+                }
+              },
+            );
+          },
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 4.h),
+          height: 1,
+          color: Colors.white10,
+        ),
+        InkWell(
+          onTap: () {
+            setState(() {
+              _selectedSurah = null;
+              _selectedAyah = null;
+              _tapPosition = null;
+            });
+          },
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.h),
+            child: Icon(
+              Icons.keyboard_arrow_up,
+              color: Colors.white54,
+              size: 20.sp,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -1595,12 +1645,16 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
     required String label,
     required VoidCallback onTap,
     Color color = Colors.white,
+    bool compact = false,
   }) {
     return InkWell(
       onTap: onTap,
       splashColor: Colors.white10,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(
+          horizontal: 16.w,
+          vertical: compact ? 8.h : 12.h,
+        ),
         child: Row(
           children: [
             Icon(icon, color: color, size: 20.sp),
@@ -1619,11 +1673,11 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider({bool compact = false}) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       height: 1,
-      color: Colors.white10,
+      color: Colors.white10.withOpacity(compact ? 0.05 : 0.1),
     );
   }
 }

@@ -437,6 +437,8 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       locale,
       widget.surah.englishName,
     );
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
 
     return MultiBlocProvider(
       providers: [
@@ -538,13 +540,22 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                       icon: const Icon(Icons.arrow_back, color: Colors.black87),
                       onPressed: () => context.pop(),
                     ),
-                    title: Text(
-                      surahName,
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    title: isLandscape
+                        ? Text(
+                            '$surahName  •  ${widget.surah.numberOfAyahs} Ayah  •  Juz ${_getJuzNumber(widget.surah.number)}',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : Text(
+                            surahName,
+                            style: const TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                     centerTitle: true,
                     actions: [
                       PremiumShowcase(
@@ -583,98 +594,101 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                   body: Column(
                     children: [
                       // Compact Header Card
-                      Container(
-                        margin: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.w,
-                          vertical: 16.h,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF1B5E20), // Dark Green
-                              Color(0xFF2E7D32),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                      if (!isLandscape)
+                        Container(
+                          margin: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 12.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 16.h,
                           ),
-                          borderRadius: BorderRadius.circular(16.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF1B5E20).withOpacity(0.3),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // Left: Info
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      surahName, // Translation/English
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4.h),
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.menu_book_rounded,
-                                          size: 12.sp,
-                                          color: const Color(0xFF00E676),
-                                        ),
-                                        SizedBox(width: 4.w),
-                                        Text(
-                                          '${widget.surah.numberOfAyahs} Ayah',
-                                          style: TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 11.sp,
-                                          ),
-                                        ),
-                                        SizedBox(width: 8.w),
-                                        Icon(
-                                          Icons.bookmark_outline,
-                                          size: 12.sp,
-                                          color: const Color(0xFF00E676),
-                                        ),
-                                        SizedBox(width: 4.w),
-                                        Text(
-                                          'Juz ${_getJuzNumber(widget.surah.number)}',
-                                          style: TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 11.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                // Right: Arabic Name
-                                Text(
-                                  widget.surah.name,
-                                  style: TextStyle(
-                                    color: const Color(0xFF00E676),
-                                    fontSize: 24.sp,
-                                    fontWeight: FontWeight.bold,
-                                    fontFamily:
-                                        'Amiri', // Use Arabic font if avail
-                                  ),
-                                ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFF1B5E20), // Dark Green
+                                Color(0xFF2E7D32),
                               ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                          ],
+                            borderRadius: BorderRadius.circular(16.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF1B5E20).withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // Left: Info
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        surahName, // Translation/English
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.menu_book_rounded,
+                                            size: 12.sp,
+                                            color: const Color(0xFF00E676),
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            '${widget.surah.numberOfAyahs} Ayah',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 11.sp,
+                                            ),
+                                          ),
+                                          SizedBox(width: 8.w),
+                                          Icon(
+                                            Icons.bookmark_outline,
+                                            size: 12.sp,
+                                            color: const Color(0xFF00E676),
+                                          ),
+                                          SizedBox(width: 4.w),
+                                          Text(
+                                            'Juz ${_getJuzNumber(widget.surah.number)}',
+                                            style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 11.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  // Right: Arabic Name
+                                  Text(
+                                    widget.surah.name,
+                                    style: TextStyle(
+                                      color: const Color(0xFF00E676),
+                                      fontSize: 24.sp,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily:
+                                          'Amiri', // Use Arabic font if avail
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
                       Expanded(
                         child: BlocBuilder<BookmarkBloc, BookmarkState>(
