@@ -43,8 +43,9 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
         _buildDaysOfWeek(),
         SizedBox(height: 16.h),
         _buildCalendarGrid(),
-        SizedBox(height: 24.h),
+        SizedBox(height: 32.h), // Increased spacing
         _buildSelectedDateDetail(),
+        SizedBox(height: 24.h), // Bottom padding to ensure visibility
       ],
     );
   }
@@ -105,16 +106,16 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: days
           .map(
-            (day) => SizedBox(
-              width: 40.w,
+            (day) => Expanded(
               child: Center(
                 child: Text(
                   day,
                   style: TextStyle(
                     color: Colors.white70,
-                    fontSize: 14.sp,
+                    fontSize: 10.sp,
                     fontWeight: FontWeight.w600,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
@@ -143,12 +144,12 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
-        mainAxisSpacing: 8.h, // Space between rows
-        crossAxisSpacing: 8.w, // Space between columns
+        mainAxisSpacing: 2.h, // Further reduced spacing
+        crossAxisSpacing: 2.w, // Further reduced spacing
         childAspectRatio:
             MediaQuery.of(context).orientation == Orientation.landscape
-            ? 1.5
-            : 1.0, // Square cells often look neater with spacing
+            ? 1.2 // Adjusted for better fit
+            : 1.0,
       ),
       itemCount: totalCells,
       itemBuilder: (context, index) {
@@ -167,9 +168,12 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
   Widget _buildDayCell(DateTime date) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    final double daySize = isLandscape ? 12.sp : 14.sp;
-    final double hijriSize = isLandscape ? 8.sp : 10.sp;
-    final double dotSize = isLandscape ? 4.h : 6.h;
+    final double daySize = isLandscape
+        ? 7.5.sp
+        : 12.sp; // Optimized for landscape
+    final double hijriSize = isLandscape
+        ? 5.5.sp
+        : 8.sp; // Optimized for landscape
 
     final isSelected =
         date.year == _selectedDate.year &&
@@ -192,67 +196,77 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
           _selectedDate = date;
         });
       },
-      borderRadius: BorderRadius.circular(8.r),
+      borderRadius: BorderRadius.circular(16.r),
       child: Container(
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF00E676).withOpacity(0.2)
-              : const Color(0xFF141F23), // Darker bg for cells
-          borderRadius: BorderRadius.circular(8.r),
+              : const Color(0xFF1C2A30).withOpacity(0.5),
+          borderRadius: BorderRadius.circular(16.r),
           border: isToday
               ? Border.all(color: const Color(0xFF00E676), width: 1.5)
-              : Border.all(color: Colors.white10, width: 0.5),
+              : Border.all(color: Colors.white.withOpacity(0.05), width: 0.5),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF00E676).withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
-        child: Stack(
-          children: [
-            // Gregorian Date (Top Right)
-            Positioned(
-              top: 4.h,
-              right: 6.w,
-              child: Text(
+        // Changed Stack to Column for vertical stacking without overlap
+        child: Padding(
+          padding: EdgeInsets.all(1.w), // Minimal padding
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end, // Align to right
+            children: [
+              // Gregorian Date
+              Text(
                 "${date.day}",
                 style: TextStyle(
                   color: isSelected ? const Color(0xFF00E676) : Colors.white,
                   fontSize: daySize,
                   fontWeight: FontWeight.bold,
+                  height: 0.9,
                 ),
+                textAlign: TextAlign.right,
               ),
-            ),
-            // Hijri Date (Bottom Right)
-            Positioned(
-              bottom: 4.h,
-              right: 6.w,
-              child: Text(
+              // Hijri Date
+              Text(
                 "${hijriDate.hDay}",
-                style: TextStyle(color: Colors.white38, fontSize: hijriSize),
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: hijriSize,
+                  fontWeight: FontWeight.w300,
+                  height: 0.9,
+                ),
+                textAlign: TextAlign.right,
               ),
-            ),
-            // Fasting Dot (Bottom Left)
-            if (fastingType != FastingType.none)
-              Positioned(
-                bottom: 6.h,
-                left: 6.w,
-                child: _buildFastingDot(fastingType, size: dotSize),
-              ),
-          ],
+              // Fasting Marker (Dots or Line at bottom)
+              if (fastingType != FastingType.none)
+                _buildFastingDot(fastingType),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildFastingDot(FastingType type, {double? size}) {
+  Widget _buildFastingDot(FastingType type) {
     Color? color;
-    if (type == FastingType.wajib) color = const Color(0xFFFFC107); // Gold
-    if (type == FastingType.sunnah) color = const Color(0xFF00E676); // Green
-    if (type == FastingType.haram) color = Colors.redAccent; // Red
+    if (type == FastingType.wajib) color = const Color(0xFFFFC107);
+    if (type == FastingType.sunnah) color = const Color(0xFF00E676);
+    if (type == FastingType.haram) color = Colors.redAccent.withOpacity(0.7);
 
-    if (color == null) {
-      return SizedBox(height: 6.h, width: 6.h);
-    }
+    if (color == null) return const SizedBox.shrink();
 
     return Container(
-      width: 6.h,
-      height: 6.h,
+      width: 3.w, // Reduced size
+      height: 3.w, // Reduced size
       decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }

@@ -44,6 +44,8 @@ import '../../features/quran/data/repositories/translation_repository_impl.dart'
 import '../../features/tajweed/data/repositories/tajweed_repository.dart'; // Added
 import '../../features/fasting/data/repositories/fasting_repository.dart'; // Added
 import '../../features/wudhu/data/repositories/wudhu_repository.dart'; // Added
+import '../../features/prayer/domain/services/fasting_service.dart'; // Added
+import '../../features/dashboard/domain/services/reminder_service.dart'; // Added
 import '../../features/prayer/data/repositories/prayer_guide_repository.dart'; // Added
 import '../../features/quran/domain/repositories/translation_repository.dart';
 import '../../features/quran/presentation/bloc/translation/translation_bloc.dart';
@@ -104,7 +106,8 @@ void configureDependencies() {
       getIt<LocationService>(),
       getIt<NotificationService>(),
       getIt<SettingsRepository>(),
-      getIt<LastReadRepository>(), // Added
+      getIt<LastReadRepository>(),
+      getIt<FastingService>(),
     ),
   );
 
@@ -173,6 +176,12 @@ void configureDependencies() {
 
   // --- Fasting Feature ---
   getIt.registerLazySingleton<FastingRepository>(() => FastingRepositoryImpl());
+  getIt.registerLazySingleton<FastingService>(() => FastingService()); // Added
+
+  // --- Reminder Service ---
+  getIt.registerLazySingleton<ReminderService>(
+    () => ReminderService(getIt<FastingService>()),
+  );
 
   // --- Wudhu Feature ---
 

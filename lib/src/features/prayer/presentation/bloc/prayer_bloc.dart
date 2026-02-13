@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/utils/location_service.dart';
 import '../../../../core/services/notification_service.dart';
+import '../../domain/services/fasting_service.dart';
 import '../../domain/entities/city.dart';
 import '../../domain/entities/prayer_time.dart';
 import '../../domain/usecases/get_prayer_time.dart';
@@ -21,6 +22,7 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
   final NotificationService _notificationService;
   final SettingsRepository _settingsRepository;
   final LastReadRepository _lastReadRepository;
+  final FastingService _fastingService;
 
   PrayerBloc(
     this._getPrayerTime,
@@ -29,6 +31,7 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
     this._notificationService,
     this._settingsRepository,
     this._lastReadRepository,
+    this._fastingService,
   ) : super(const PrayerState()) {
     on<FetchPrayerTime>((event, emit) async {
       emit(state.copyWith(status: PrayerStatus.loading));
@@ -52,17 +55,22 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
         ),
         (prayerTime) {
           // DEBUG: 1 minute for faster testing
-          final testTime = DateTime.now().add(const Duration(minutes: 1));
+          // DEBUG: 1 minute for faster testing
+          final testAdzanTargetTime = DateTime.now().add(
+            const Duration(minutes: 1),
+          );
           emit(
             state.copyWith(
               status: PrayerStatus.success,
               prayerTime: prayerTime,
-              testAdzanTargetTime: testTime,
+              testAdzanTargetTime: testAdzanTargetTime,
+              currentFasting: _fastingService.getFastingEvent(event.date),
+              nextFasting: _fastingService.getNextFastingEvent(event.date),
             ),
           );
 
           // Schedule Notifications
-          _scheduleNotifications(prayerTime, testTime);
+          _scheduleNotifications(prayerTime, testAdzanTargetTime);
         },
       );
     });

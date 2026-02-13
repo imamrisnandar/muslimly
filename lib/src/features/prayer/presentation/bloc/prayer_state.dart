@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/city.dart';
 import '../../domain/entities/prayer_time.dart';
+import '../../domain/services/fasting_service.dart';
 
 enum PrayerStatus { initial, loading, success, failure }
 
@@ -14,6 +15,8 @@ class PrayerState extends Equatable {
   final List<City> searchResults;
   final Map<String, String> notificationSettings;
   final DateTime? testAdzanTargetTime;
+  final FastingEvent? currentFasting;
+  final Map<String, dynamic>? nextFasting;
 
   const PrayerState({
     this.status = PrayerStatus.initial,
@@ -29,6 +32,8 @@ class PrayerState extends Equatable {
     this.searchResults = const [],
     this.notificationSettings = const {},
     this.testAdzanTargetTime,
+    this.currentFasting,
+    this.nextFasting,
   });
 
   PrayerState copyWith({
@@ -40,6 +45,8 @@ class PrayerState extends Equatable {
     List<City>? searchResults,
     Map<String, String>? notificationSettings,
     DateTime? testAdzanTargetTime,
+    FastingEvent? currentFasting,
+    Map<String, dynamic>? nextFasting,
   }) {
     return PrayerState(
       status: status ?? this.status,
@@ -50,6 +57,8 @@ class PrayerState extends Equatable {
       searchResults: searchResults ?? this.searchResults,
       notificationSettings: notificationSettings ?? this.notificationSettings,
       testAdzanTargetTime: testAdzanTargetTime ?? this.testAdzanTargetTime,
+      currentFasting: currentFasting ?? this.currentFasting,
+      nextFasting: nextFasting ?? this.nextFasting,
     );
   }
 
@@ -63,5 +72,7 @@ class PrayerState extends Equatable {
     searchResults,
     notificationSettings,
     testAdzanTargetTime,
+    currentFasting,
+    nextFasting,
   ];
 }

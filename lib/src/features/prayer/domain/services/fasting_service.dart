@@ -95,4 +95,24 @@ class FastingService {
 
     return FastingEvent.none;
   }
+
+  /// Find the next fasting event starting from [date] (inclusive)
+  /// Returns a map with 'event' and 'date' if found, otherwise null
+  Map<String, dynamic>? getNextFastingEvent(DateTime date) {
+    // Search limit: 30 days (approx. 1 month)
+    for (int i = 0; i < 30; i++) {
+      final checkDate = date.add(Duration(days: i));
+      final type = getFastingType(checkDate);
+
+      // Skip None and Haram (obviously we don't 'look forward' to Haram fasting days to fast)
+      if (type == FastingType.wajib || type == FastingType.sunnah) {
+        return {
+          'event': getFastingEvent(checkDate),
+          'date': checkDate,
+          'type': type,
+        };
+      }
+    }
+    return null;
+  }
 }

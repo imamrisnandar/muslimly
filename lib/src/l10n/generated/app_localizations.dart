@@ -728,6 +728,12 @@ abstract class AppLocalizations {
   /// **'Reading even one verse is meaningful.'**
   String get notificationFallbackBody;
 
+  /// No description provided for @prayerHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Approaching, InshaAllah'**
+  String get prayerHeading;
+
   /// No description provided for @nameInputError.
   ///
   /// In en, this message translates to:
@@ -1609,6 +1615,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Jumped to Ayah {ayah}'**
   String sbJumpedToAyah(Object ayah);
+
+  /// No description provided for @markerAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Marker added'**
+  String get markerAdded;
+
+  /// No description provided for @markerRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Marker removed'**
+  String get markerRemoved;
+
+  /// No description provided for @markerLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Marker limit reached'**
+  String get markerLimitReached;
+
+  /// No description provided for @nextFasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Fasting'**
+  String get nextFasting;
+
+  /// No description provided for @todayFasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Fasting'**
+  String get todayFasting;
+
+  /// No description provided for @countdownLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Until Prayer'**
+  String get countdownLabel;
 
   /// No description provided for @sbRecordedAyahs.
   ///

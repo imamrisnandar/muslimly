@@ -12,8 +12,13 @@ import '../../../prayer/presentation/bloc/prayer_state.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../../prayer/domain/entities/prayer_time_extension.dart';
 import '../widgets/ibadah_calendar_widget.dart';
-import '../widgets/prayer_countdown_widget.dart';
+import '../widgets/prayer_header_widget.dart';
+import '../widgets/prayer_card_widget.dart';
+import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../domain/services/reminder_service.dart';
+import '../../domain/models/reminder_models.dart';
+import '../../../../core/di/di_container.dart';
 
 class PrayerPage extends StatefulWidget {
   const PrayerPage({super.key});
@@ -26,6 +31,7 @@ class _PrayerPageState extends State<PrayerPage>
     with SingleTickerProviderStateMixin {
   late FastingService _fastingService;
   late TabController _tabController;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -51,81 +57,209 @@ class _PrayerPageState extends State<PrayerPage>
   @override
   void dispose() {
     _tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: BlocBuilder<PrayerBloc, PrayerState>(
-          builder: (context, state) {
-            return NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
-                final orientation = MediaQuery.of(context).orientation;
-                return [
-                  // 1. Prayer Header (Scrolls away)
-                  SliverToBoxAdapter(child: _buildHeader(context, state)),
+      backgroundColor: const Color(0xFF1C2A30), // Dark Theme
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isLandscape = constraints.maxWidth > constraints.maxHeight;
+          if (isLandscape) {
+            return _buildLandscapeLayout(context);
+          }
+          return _buildPortraitLayout(context);
+        },
+      ),
+    );
+  }
 
-                  // 2. Tab Bar (Sticks to top)
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: _SliverAppBarDelegate(
-                      TabBar(
-                        controller: _tabController,
-                        indicator: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40.r),
-                          color: const Color(0xFF00E676),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFF00E676).withOpacity(0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+  // PORTRAIT LAYOUT: NestedScrollView with Immersive Header
+  Widget _buildPortraitLayout(BuildContext context) {
+    return BlocBuilder<PrayerBloc, PrayerState>(
+      builder: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
+        Map<String, dynamic>? nextPrayer;
+        if (state.prayerTime != null) {
+          nextPrayer = state.prayerTime!.getNextPrayer(l10n);
+        }
+
+        // Get reminder data
+        ReminderCardData? reminderData;
+        if (state.prayerTime != null) {
+          final reminderService = getIt<ReminderService>();
+          reminderData = reminderService.getReminderData(
+            state.prayerTime!,
+            DateTime.now(),
+          );
+        }
+
+        return NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              // Immersive Header
+              SliverAppBar(
+                expandedHeight: 340.h, // Increased from 280.h to fix overflow
+                pinned: true,
+                backgroundColor: const Color(0xFF1C2A30),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: PrayerHeaderWidget(
+                    nextPrayer: nextPrayer,
+                    locationName: state.currentCity.name,
+                    hijriDate: _getFormattedHijriDate(l10n),
+                    nextPrayerTime: nextPrayer?['nextPrayerTime'] as DateTime?,
+                    onLocationTap: () => _showCitySearchDialog(context),
+                    onQiblaTap: () => context.push('/qibla'),
+                    reminderData: reminderData,
+                    onTimerFinished: () {
+                      context.read<PrayerBloc>().add(
+                        FetchPrayerTime(
+                          latitude: state.currentCity.latitude,
+                          longitude: state.currentCity.longitude,
+                          date: DateTime.now(),
                         ),
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        dividerColor: Colors.transparent,
-                        labelColor: const Color(0xFF052025),
-                        unselectedLabelColor: Colors.white70,
-                        labelStyle: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: orientation == Orientation.landscape
-                              ? 12.sp
-                              : 14.sp,
-                          fontFamily: 'Outfit',
-                          letterSpacing: 0.5,
-                        ),
-                        unselectedLabelStyle: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: orientation == Orientation.landscape
-                              ? 12.sp
-                              : 14.sp,
-                          fontFamily: 'Outfit',
-                          letterSpacing: 0.5,
-                        ),
-                        splashBorderRadius: BorderRadius.circular(40.r),
-                        tabs: [
-                          Tab(text: AppLocalizations.of(context)!.lblSchedule),
-                          Tab(text: AppLocalizations.of(context)!.lblCalendar),
-                        ],
-                      ),
-                      isLandscape: orientation == Orientation.landscape,
+                      );
+                    },
+                    currentFasting: state.currentFasting,
+                    nextFasting: state.nextFasting,
+                  ),
+                ),
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(60.h),
+                  child: Container(
+                    height: 60.h,
+                    alignment: Alignment.center,
+                    child: _buildFloatingTabBar(context),
+                  ),
+                ),
+              ),
+            ];
+          },
+          body: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildPrayerTab(context, state),
+              _buildCalendarTab(context),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLandscapeLayout(BuildContext context) {
+    return BlocBuilder<PrayerBloc, PrayerState>(
+      builder: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
+        Map<String, dynamic>? nextPrayer;
+        if (state.prayerTime != null) {
+          nextPrayer = state.prayerTime!.getNextPrayer(l10n);
+        }
+
+        // Get reminder data
+        ReminderCardData? reminderData;
+        if (state.prayerTime != null) {
+          final reminderService = getIt<ReminderService>();
+          reminderData = reminderService.getReminderData(
+            state.prayerTime!,
+            DateTime.now(),
+          );
+        }
+
+        return Row(
+          children: [
+            // Left Panel: Header (Fixed)
+            Expanded(
+              flex: 4,
+              child: PrayerHeaderWidget(
+                nextPrayer: nextPrayer,
+                locationName: state.currentCity.name,
+                hijriDate: _getFormattedHijriDate(l10n),
+                nextPrayerTime: nextPrayer?['nextPrayerTime'] as DateTime?,
+                onLocationTap: () => _showCitySearchDialog(context),
+                onQiblaTap: () => context.push('/qibla'),
+                reminderData: reminderData,
+                onTimerFinished: () {
+                  context.read<PrayerBloc>().add(
+                    FetchPrayerTime(
+                      latitude: state.currentCity.latitude,
+                      longitude: state.currentCity.longitude,
+                      date: DateTime.now(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Right Panel: Content (Tabs + List)
+            Expanded(
+              flex: 6,
+              child: Column(
+                children: [
+                  SizedBox(height: 16.h),
+                  _buildFloatingTabBar(context),
+                  SizedBox(height: 16.h),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildPrayerTab(context, state),
+                        _buildCalendarTab(context),
+                      ],
                     ),
                   ),
-                ];
-              },
-              body: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildPrayerTab(context, state),
-                  _buildCalendarTab(context),
                 ],
               ),
-            );
-          },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFloatingTabBar(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 24.w),
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(30.r),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: TabBar(
+        controller: _tabController,
+        indicator: BoxDecoration(
+          color: const Color(0xFF00E676),
+          borderRadius: BorderRadius.circular(26.r),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF00E676).withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: Colors.transparent,
+        labelColor: const Color(0xFF052025),
+        unselectedLabelColor: Colors.white70,
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14.sp,
+          fontFamily: 'Outfit',
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 14.sp,
+          fontFamily: 'Outfit',
+        ),
+        tabs: [
+          Tab(text: AppLocalizations.of(context)!.lblSchedule),
+          Tab(text: AppLocalizations.of(context)!.lblCalendar),
+        ],
       ),
     );
   }
@@ -142,16 +276,9 @@ class _PrayerPageState extends State<PrayerPage>
           ),
         );
       },
-      // Using CustomScrollView to work nicely with NestedScrollView
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 100.h),
-            sliver: SliverToBoxAdapter(
-              child: _buildPrayerContent(context, state),
-            ),
-          ),
-        ],
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 100.h),
+        children: [_buildPrayerContent(context, state)],
       ),
     );
   }
@@ -162,350 +289,9 @@ class _PrayerPageState extends State<PrayerPage>
       onRefresh: () async {
         await Future.delayed(const Duration(milliseconds: 500));
       },
-      child: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 100.h),
-            sliver: SliverToBoxAdapter(
-              child: Container(
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1C2A30),
-                  borderRadius: BorderRadius.circular(24.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
-                ),
-                child: IbadahCalendarWidget(fastingService: _fastingService),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  LinearGradient _getPrayerGradient(String prayerName) {
-    switch (prayerName) {
-      case 'Subuh':
-      case 'Fajr':
-        return const LinearGradient(
-          colors: [Color(0xFF2C3E50), Color(0xFFE1B12C)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Terbit':
-      case 'Sunrise':
-        return const LinearGradient(
-          colors: [Color(0xFFE1B12C), Color(0xFFF1C40F)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Dzuhur':
-      case 'Dhuhr':
-        return const LinearGradient(
-          colors: [Color(0xFF2980B9), Color(0xFF6DD5FA)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Ashar':
-      case 'Asr':
-        return const LinearGradient(
-          colors: [Color(0xFF6DD5FA), Color(0xFFFF7F50)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Maghrib':
-        return const LinearGradient(
-          colors: [Color(0xFFFF7F50), Color(0xFF8E44AD)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Isya':
-      case 'Isha':
-        return const LinearGradient(
-          colors: [Color(0xFF8E44AD), Color(0xFF2C3E50)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Imsak':
-      default:
-        return const LinearGradient(
-          colors: [Color(0xFF11998e), Color(0xFF38ef7d)], // Default Green
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-    }
-  }
-
-  Widget _buildHeader(BuildContext context, PrayerState state) {
-    Map<String, dynamic>? nextPrayer;
-    final l10n = AppLocalizations.of(context)!;
-    final isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
-
-    if (state.prayerTime != null) {
-      nextPrayer = state.prayerTime!.getNextPrayer(l10n);
-    }
-
-    // Scaling factors
-    // Scaling factors - Further Reduced
-    final double titleSize = isLandscape ? 10.sp : 10.sp;
-    final double iconSize = isLandscape ? 60.sp : 150.sp; // Much smaller icon
-    final double timeSize = isLandscape ? 18.sp : 28.sp; // Smaller time
-    final double smallTimeSize = isLandscape ? 14.sp : 20.sp;
-    final double padding = isLandscape ? 8.w : 24.w; // Minimal padding
-
-    // Fasting Info Logic
-    final today = DateTime.now();
-    final fastingType = _fastingService.getFastingType(today);
-    final fastingEvent = _fastingService.getFastingEvent(today);
-    String? fastingName;
-
-    if (fastingType == FastingType.wajib || fastingType == FastingType.sunnah) {
-      switch (fastingEvent) {
-        case FastingEvent.monday:
-          fastingName = l10n.fastingMonday;
-          break;
-        case FastingEvent.thursday:
-          fastingName = l10n.fastingThursday;
-          break;
-        case FastingEvent.ayyamulBidh:
-          fastingName = l10n.fastingAyyamulBidh;
-          break;
-        case FastingEvent.ramadan:
-          fastingName = l10n.fastingRamadan;
-          break;
-        case FastingEvent.arafah:
-          fastingName = l10n.fastingArafah;
-          break;
-        case FastingEvent.ashura:
-          fastingName = l10n.fastingAshura;
-          break;
-        case FastingEvent.tasua:
-          fastingName = l10n.fastingTasua;
-          break;
-        default:
-          fastingName = null;
-      }
-    }
-
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: padding,
-        vertical: isLandscape ? 0 : 8.h,
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.r),
-          gradient: _getPrayerGradient(nextPrayer?['name'] ?? ''),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            Positioned(
-              right: isLandscape ? -20 : -30,
-              top: isLandscape ? -20 : -30,
-              child: Icon(
-                Icons.mosque,
-                size: iconSize,
-                color: Colors.white.withOpacity(0.1),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(isLandscape ? 12.w : 24.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
-                              vertical: 4.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.black12,
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            child: Text(
-                              l10n.cardNextPrayer,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: titleSize,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          if (fastingName != null) ...[
-                            SizedBox(height: 8.h),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: fastingType == FastingType.wajib
-                                    ? const Color(0xFFFFC107).withOpacity(0.9)
-                                    : const Color(0xFF00E676).withOpacity(0.9),
-                                borderRadius: BorderRadius.circular(20.r),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.event,
-                                    color: Colors.white,
-                                    size: titleSize,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    fastingName,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: titleSize,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              color: Colors.white70,
-                              size: titleSize + 2,
-                            ),
-                            SizedBox(width: 4.w),
-                            Flexible(
-                              child: Text(
-                                state.currentCity.name,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: titleSize + 2,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () => _showCitySearchDialog(context),
-                              icon: Icon(
-                                Icons.edit_location_alt,
-                                color: Colors.white70,
-                                size: isLandscape ? 16.sp : 20.sp,
-                              ),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              style: IconButton.styleFrom(
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                            ),
-                            SizedBox(width: 8.w),
-                            IconButton(
-                              onPressed: () => context.push('/qibla'),
-                              icon: Icon(
-                                Icons.explore,
-                                color: const Color(0xFFFFC107),
-                                size: isLandscape ? 16.sp : 20.sp,
-                              ),
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              style: IconButton.styleFrom(
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 16.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        _getLocalizedName(l10n, nextPrayer?['name'] ?? '-'),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: timeSize,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        nextPrayer?['time'] ?? '--:--',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: smallTimeSize,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 6.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black26,
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: PrayerCountdownWidget(
-                        targetTime:
-                            nextPrayer?['nextPrayerTime'] as DateTime? ??
-                            DateTime.now(),
-                        baseColor: const Color(0xFF00E676),
-                        onFinished: () {
-                          context.read<PrayerBloc>().add(
-                            FetchPrayerTime(
-                              latitude: state.currentCity.latitude,
-                              longitude: state.currentCity.longitude,
-                              date: DateTime.now(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 100.h),
+        children: [IbadahCalendarWidget(fastingService: _fastingService)],
       ),
     );
   }
@@ -552,7 +338,6 @@ class _PrayerPageState extends State<PrayerPage>
       }
 
       final nextPrayerMap = t.getNextPrayer(l10n);
-      final nextPrayerName = nextPrayerMap['name'];
 
       final prayers = [
         {'key': 'Imsak', 'arabic': 'إمساك', 'time': t.imsak},
@@ -565,326 +350,97 @@ class _PrayerPageState extends State<PrayerPage>
       ];
 
       return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: prayers.map((p) {
           final key = p['key']!;
-          final isHighlighted = nextPrayerMap['name'] == key;
-          final displayName = getPrayerName(key);
 
-          return _buildPrayerCard(context, p, key, displayName, isHighlighted);
+          bool isNext = false;
+          if (nextPrayerMap['nextPrayerTime'] != null) {
+            isNext =
+                key == nextPrayerMap['name'] ||
+                getPrayerName(key) == nextPrayerMap['name'];
+          }
+
+          return PrayerCardWidget(
+            name: getPrayerName(key),
+            arabicName: p['arabic']!,
+            time: p['time']!,
+            isCurrent: isNext,
+            isNext: isNext,
+            icon: _getPrayerIcon(key),
+            onTap: () =>
+                _showNotificationSettings(context, getPrayerName(key), key),
+            notificationStatus: (key == 'Imsak' || key == 'Terbit')
+                ? (state.notificationSettings[key] == 'silent'
+                      ? 'silent'
+                      : 'beep')
+                : (state.notificationSettings[key] ?? 'adhan'),
+            onNotificationTap: () {
+              if (key == 'Imsak' || key == 'Terbit') return;
+              _showNotificationSettings(context, getPrayerName(key), key);
+            },
+          );
         }).toList(),
       );
     }
-    return Center(
-      child: Text(
-        "Unknown State:\nStatus: ${state.status}\nData: ${state.prayerTime}",
-        textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.red),
-      ),
+    return const SizedBox.shrink();
+  }
+
+  IconData _getPrayerIcon(String key) {
+    switch (key) {
+      case 'Fajr':
+      case 'Subuh':
+        return Icons.wb_twilight;
+      case 'Terbit':
+        return Icons.wb_sunny;
+      case 'Dzuhur':
+      case 'Dhuhr':
+        return Icons.wb_sunny;
+      case 'Ashar':
+      case 'Asr':
+        return Icons.wb_cloudy;
+      case 'Maghrib':
+        return Icons.wb_twilight;
+      case 'Isya':
+      case 'Isha':
+        return Icons.nightlight_round;
+      case 'Imsak':
+      default:
+        return Icons.access_time;
+    }
+  }
+
+  void _showCitySearchDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return BlocProvider.value(
+          value: context.read<PrayerBloc>(),
+          child: const _CitySearchDialog(),
+        );
+      },
     );
   }
 
-  Widget _buildPrayerCard(
-    BuildContext context,
-    Map<String, String> prayer,
-    String key,
-    String displayName,
-    bool isHighlighted,
-  ) {
-    final currentSetting =
-        context.read<PrayerBloc>().state.notificationSettings[key] ?? 'adhan';
-
-    IconData getNotificationIcon() {
-      // Imsak and Terbit are always beep
-      if (key == 'Imsak' || key == 'Terbit') {
-        return Icons.notifications_none;
-      }
-
-      switch (currentSetting) {
-        case 'silent':
-          return Icons.notifications_off;
-        case 'beep':
-          return Icons.notifications_none;
-        case 'adhan':
-        default:
-          return Icons.notifications_active;
-      }
-    }
-
-    // Prayer-specific icons
-    IconData getPrayerIcon() {
-      switch (key) {
-        case 'Fajr':
-        case 'Subuh':
-          return Icons.wb_twilight; // Dawn
-        case 'Terbit':
-          return Icons.wb_sunny; // Sunrise
-        case 'Dzuhur':
-        case 'Dhuhr':
-          return Icons.wb_sunny; // Noon sun
-        case 'Ashar':
-        case 'Asr':
-          return Icons.wb_cloudy; // Afternoon
-        case 'Maghrib':
-          return Icons.wb_twilight; // Sunset
-        case 'Isya':
-        case 'Isha':
-          return Icons.nightlight_round; // Night
-        case 'Imsak':
-        default:
-          return Icons.access_time; // Default clock
-      }
-    }
-
-    final gradient = _getPrayerGradient(key);
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: InkWell(
-        onTap: (key == 'Imsak' || key == 'Terbit')
-            ? null
-            : () => _showNotificationSettings(
-                context,
-                displayName,
-                key,
-                currentSetting,
-              ),
-        borderRadius: BorderRadius.circular(14.r),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          padding: EdgeInsets.all(8.w),
-          decoration: BoxDecoration(
-            gradient: isHighlighted
-                ? gradient
-                : LinearGradient(
-                    colors: [
-                      const Color(0xFF1C2A30),
-                      const Color(0xFF1C2A30).withOpacity(0.8),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-            borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(
-              color: isHighlighted
-                  ? Colors.white.withOpacity(0.4)
-                  : const Color(0xFF00E676).withOpacity(0.15),
-              width: isHighlighted ? 1.5 : 1,
-            ),
-            boxShadow: isHighlighted
-                ? [
-                    BoxShadow(
-                      color: gradient.colors.last.withOpacity(0.5),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                      spreadRadius: 1,
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-          ),
-          child: Row(
-            children: [
-              // Left: Prayer Icon + Name
-              Expanded(
-                child: Row(
-                  children: [
-                    // Prayer Icon with glow effect
-                    Container(
-                      padding: EdgeInsets.all(6.w),
-                      decoration: BoxDecoration(
-                        gradient: isHighlighted
-                            ? LinearGradient(
-                                colors: [
-                                  Colors.white.withOpacity(0.3),
-                                  Colors.white.withOpacity(0.15),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              )
-                            : LinearGradient(
-                                colors: [
-                                  const Color(0xFF00E676).withOpacity(0.25),
-                                  const Color(0xFF00E676).withOpacity(0.1),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                        borderRadius: BorderRadius.circular(8.r),
-                        boxShadow: isHighlighted
-                            ? [
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.3),
-                                  blurRadius: 8,
-                                  spreadRadius: 1,
-                                ),
-                              ]
-                            : [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF00E676,
-                                  ).withOpacity(0.3),
-                                  blurRadius: 6,
-                                  spreadRadius: 0.5,
-                                ),
-                              ],
-                      ),
-                      child: Icon(
-                        getPrayerIcon(),
-                        color: isHighlighted
-                            ? Colors.white
-                            : const Color(0xFF00E676),
-                        size: 18.sp,
-                      ),
-                    ),
-                    SizedBox(width: 10.w),
-                    // Prayer Name & Arabic
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            displayName,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.3,
-                              shadows: isHighlighted
-                                  ? [
-                                      Shadow(
-                                        color: Colors.black.withOpacity(0.3),
-                                        blurRadius: 4,
-                                      ),
-                                    ]
-                                  : null,
-                            ),
-                          ),
-                          SizedBox(height: 2.h),
-                          Text(
-                            prayer['arabic']!,
-                            style: TextStyle(
-                              color: isHighlighted
-                                  ? Colors.white.withOpacity(0.85)
-                                  : Colors.white.withOpacity(0.6),
-                              fontSize: 11.sp,
-                              fontFamily: 'Amiri',
-                              height: 1.3,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(width: 10.w),
-              // Right: Time + Notification Icon
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Time with gradient background
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: isHighlighted
-                          ? LinearGradient(
-                              colors: [
-                                Colors.white.withOpacity(0.25),
-                                Colors.white.withOpacity(0.15),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            )
-                          : LinearGradient(
-                              colors: [
-                                Colors.black.withOpacity(0.3),
-                                Colors.black.withOpacity(0.2),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                      borderRadius: BorderRadius.circular(6.r),
-                      border: Border.all(
-                        color: isHighlighted
-                            ? Colors.white.withOpacity(0.2)
-                            : Colors.white.withOpacity(0.05),
-                        width: 0.5,
-                      ),
-                    ),
-                    child: Text(
-                      prayer['time']!,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                        shadows: isHighlighted
-                            ? [
-                                Shadow(
-                                  color: Colors.black.withOpacity(0.3),
-                                  blurRadius: 4,
-                                ),
-                              ]
-                            : null,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  // Notification Icon with subtle background
-                  Container(
-                    padding: EdgeInsets.all(2.w),
-                    decoration: BoxDecoration(
-                      color: isHighlighted
-                          ? Colors.white.withOpacity(0.15)
-                          : const Color(0xFF00E676).withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      getNotificationIcon(),
-                      color: isHighlighted
-                          ? Colors.white.withOpacity(0.85)
-                          : const Color(0xFF00E676),
-                      size: 14.sp,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
+  // Restore Notification Settings Dialog
   void _showNotificationSettings(
     BuildContext context,
     String displayName,
     String prayerKey,
-    String currentSetting,
   ) {
+    if (prayerKey == 'Imsak' || prayerKey == 'Terbit')
+      return; // No notification for these
+
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1C2A30), // Dark Theme
+      backgroundColor: const Color(0xFF1C2A30),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       builder: (ctx) {
+        final currentSetting =
+            context.read<PrayerBloc>().state.notificationSettings[prayerKey] ??
+            'adhan';
         return SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(24.w),
@@ -981,37 +537,10 @@ class _PrayerPageState extends State<PrayerPage>
     );
   }
 
-  void _showCitySearchDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return BlocProvider.value(
-          value: context.read<PrayerBloc>(),
-          child: const _CitySearchDialog(),
-        );
-      },
-    );
-  }
-
-  String _getLocalizedName(AppLocalizations l10n, String key) {
-    switch (key) {
-      case 'Imsak':
-        return l10n.prayerImsak;
-      case 'Subuh':
-        return l10n.prayerFajr;
-      case 'Terbit':
-        return l10n.prayerSunrise;
-      case 'Dzuhur':
-        return l10n.prayerDhuhr;
-      case 'Ashar':
-        return l10n.prayerAsr;
-      case 'Maghrib':
-        return l10n.prayerMaghrib;
-      case 'Isya':
-        return l10n.prayerIsha;
-      default:
-        return key;
-    }
+  String _getFormattedHijriDate(AppLocalizations l10n) {
+    final hDate = HijriCalendar.now();
+    // Example: "14 Ramadan 1446 H"
+    return "${hDate.hDay} ${hDate.longMonthName} ${hDate.hYear} H";
   }
 }
 
@@ -1389,55 +918,5 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
         ),
       ),
     );
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar, {required this.isLandscape});
-
-  final TabBar _tabBar;
-  final bool isLandscape;
-
-  @override
-  double get minExtent {
-    // Landscape: tighter fit. Portrait: more padding.
-    final padding = isLandscape ? 26.h : 24.h;
-    return _tabBar.preferredSize.height + padding;
-  }
-
-  @override
-  double get maxExtent => minExtent;
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Container(
-      color: Colors.transparent,
-      // Adjust container padding based on orientation
-      padding: EdgeInsets.symmetric(
-        horizontal: isLandscape ? 100.w : 24.w, // Center it more in landscape
-        vertical: isLandscape ? 4.h : 8.h,
-      ),
-      child: Center(
-        child: Container(
-          padding: EdgeInsets.all(4.w),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.2),
-            borderRadius: BorderRadius.circular(50.r),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: _tabBar,
-        ),
-      ),
-    );
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return oldDelegate.isLandscape != isLandscape ||
-        oldDelegate._tabBar != _tabBar;
   }
 }

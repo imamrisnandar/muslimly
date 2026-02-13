@@ -355,6 +355,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Reading even one verse is meaningful.';
 
   @override
+  String get prayerHeading => 'Approaching, InshaAllah';
+
+  @override
   String get nameInputError => 'Please enter your name';
 
   @override
@@ -836,6 +839,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String sbJumpedToAyah(Object ayah) {
     return 'Jumped to Ayah $ayah';
   }
+
+  @override
+  String get markerAdded => 'Marker added';
+
+  @override
+  String get markerRemoved => 'Marker removed';
+
+  @override
+  String get markerLimitReached => 'Marker limit reached';
+
+  @override
+  String get nextFasting => 'Next Fasting';
+
+  @override
+  String get todayFasting => 'Today\'s Fasting';
+
+  @override
+  String get countdownLabel => 'Time Until Prayer';
 
   @override
   String sbRecordedAyahs(Object count) {

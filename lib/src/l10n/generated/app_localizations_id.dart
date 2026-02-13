@@ -354,6 +354,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get notificationFallbackBody => 'Sempatkan baca satu ayat pun baik.';
 
   @override
+  String get prayerHeading => 'Insya Allah, Menuju';
+
+  @override
   String get nameInputError => 'Mohon masukkan nama Anda';
 
   @override
@@ -840,6 +843,24 @@ class AppLocalizationsId extends AppLocalizations {
   String sbJumpedToAyah(Object ayah) {
     return 'Pindah ke Ayat $ayah';
   }
+
+  @override
+  String get markerAdded => 'Penanda ditambahkan';
+
+  @override
+  String get markerRemoved => 'Penanda dihapus';
+
+  @override
+  String get markerLimitReached => 'Batas penanda tercapai';
+
+  @override
+  String get nextFasting => 'Puasa Berikutnya';
+
+  @override
+  String get todayFasting => 'Puasa Hari Ini';
+
+  @override
+  String get countdownLabel => 'Menuju Waktu Sholat';
 
   @override
   String sbRecordedAyahs(Object count) {
