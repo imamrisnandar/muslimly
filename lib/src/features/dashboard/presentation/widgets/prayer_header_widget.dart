@@ -756,29 +756,27 @@ class PrayerHeaderWidget extends StatelessWidget {
 
 extension on FastingEvent {
   String getLocalizedName(AppLocalizations l10n) {
-    // Ideally: return l10n.fastingName(this.name);
-    // Using hardcoded strings for now as requested/fallback
     switch (this) {
       case FastingEvent.monday:
-        return "Senin";
+        return l10n.fastingMonday;
       case FastingEvent.thursday:
-        return "Kamis";
+        return l10n.fastingThursday;
       case FastingEvent.ayyamulBidh:
-        return "Ayyamul Bidh";
+        return l10n.fastingAyyamulBidh;
       case FastingEvent.ashura:
-        return "Ashura";
+        return l10n.fastingAshura;
       case FastingEvent.tasua:
-        return "Tasua";
+        return l10n.fastingTasua;
       case FastingEvent.arafah:
-        return "Arafah";
+        return l10n.fastingArafah;
       case FastingEvent.ramadan:
-        return "Ramadhan";
+        return l10n.fastingRamadan;
       case FastingEvent.eidFitr:
-        return "Idul Fitri (Haram)";
+        return "${l10n.eidFitr} (${l10n.calendarLegendHaram})";
       case FastingEvent.eidAdha:
-        return "Idul Adha (Haram)";
+        return "${l10n.eidAdha} (${l10n.calendarLegendHaram})";
       case FastingEvent.tasyrik:
-        return "Hari Tasyrik (Haram)";
+        return "${l10n.daysTasyrik} (${l10n.calendarLegendHaram})";
       case FastingEvent.none:
         return "";
     }

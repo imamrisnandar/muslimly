@@ -32,79 +32,81 @@ class SettingsPage extends StatelessWidget {
               ),
             ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle Bar
-              Center(
-                child: Container(
-                  margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    borderRadius: BorderRadius.circular(2.r),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle Bar
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+                    width: 40.w,
+                    height: 4.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2.r),
+                    ),
                   ),
                 ),
-              ),
 
-              Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 32.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.settingsLanguage,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Outfit',
+                Padding(
+                  padding: EdgeInsets.fromLTRB(20.w, 4.h, 20.w, 32.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.settingsLanguage,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Outfit',
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 24.h),
+                      SizedBox(height: 24.h),
 
-                    BlocBuilder<SettingsCubit, SettingsState>(
-                      builder: (context, state) {
-                        final isIndo = state.locale.languageCode == 'id';
-                        return Column(
-                          children: [
-                            _buildLanguageOption(
-                              context,
-                              "English",
-                              "US", // Using iso code or emoji
-                              "🇺🇸",
-                              !isIndo,
-                              () {
-                                context.read<SettingsCubit>().updateLanguage(
-                                  const Locale('en'),
-                                );
-                                Navigator.pop(context);
-                              },
-                            ),
-                            SizedBox(height: 12.h),
-                            _buildLanguageOption(
-                              context,
-                              "Bahasa Indonesia",
-                              "ID",
-                              "🇮🇩",
-                              isIndo,
-                              () {
-                                context.read<SettingsCubit>().updateLanguage(
-                                  const Locale('id'),
-                                );
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+                      BlocBuilder<SettingsCubit, SettingsState>(
+                        builder: (context, state) {
+                          final isIndo = state.locale.languageCode == 'id';
+                          return Column(
+                            children: [
+                              _buildLanguageOption(
+                                context,
+                                "English",
+                                "US", // Using iso code or emoji
+                                "🇺🇸",
+                                !isIndo,
+                                () {
+                                  context.read<SettingsCubit>().updateLanguage(
+                                    const Locale('en'),
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              SizedBox(height: 12.h),
+                              _buildLanguageOption(
+                                context,
+                                "Bahasa Indonesia",
+                                "ID",
+                                "🇮🇩",
+                                isIndo,
+                                () {
+                                  context.read<SettingsCubit>().updateLanguage(
+                                    const Locale('id'),
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 32.h),
-            ],
+                SizedBox(height: 32.h),
+              ],
+            ),
           ),
         );
       },
@@ -206,99 +208,101 @@ class SettingsPage extends StatelessWidget {
           ),
           child: Padding(
             padding: EdgeInsets.all(24.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.settingsName,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.settingsName,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                SizedBox(height: 24.h),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: TextField(
-                    controller: controller,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: l10n.nameInputHint,
-                      hintStyle: TextStyle(
-                        color: Colors.white.withOpacity(0.3),
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      prefixIcon: Icon(
-                        Icons.person_outline,
-                        color: Colors.white54,
-                        size: 20.sp,
+                  SizedBox(height: 24.h),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: TextField(
+                      controller: controller,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: l10n.nameInputHint,
+                        hintStyle: TextStyle(
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 14.h,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.person_outline,
+                          color: Colors.white54,
+                          size: 20.sp,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(height: 32.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
+                  SizedBox(height: 32.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          l10n.cancel,
-                          style: TextStyle(
-                            color: Colors.white54,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (controller.text.isNotEmpty) {
-                            context.read<SettingsCubit>().updateName(
-                              controller.text,
-                            );
-                            Navigator.pop(context);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF00E676),
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                        child: Text(
-                          l10n.settingsSave,
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
+                          child: Text(
+                            l10n.cancel,
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 16.sp,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (controller.text.isNotEmpty) {
+                              context.read<SettingsCubit>().updateName(
+                                controller.text,
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00E676),
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                          child: Text(
+                            l10n.settingsSave,
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

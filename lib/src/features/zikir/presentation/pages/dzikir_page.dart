@@ -193,7 +193,7 @@ class DzikirPage extends StatelessWidget {
                   crossAxisSpacing: 12.w,
                   mainAxisSpacing: 12.h,
                   childAspectRatio: isLandscape
-                      ? 0.9
+                      ? 0.75 // Taller cards in landscape (width/height ratio)
                       : 1.1, // Slightly taller for content
                 ),
                 itemCount: practiceItems.length,
@@ -262,14 +262,14 @@ class DzikirPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(12.r), // Use .r for consistent padding
                 decoration: BoxDecoration(
                   color: item.color.withOpacity(0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(item.icon, color: item.color, size: 28.sp),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h), // Reduced spacing
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Text(

@@ -347,51 +347,62 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                   ),
                 ),
 
-                // Floating Counter Button (Bottom Center)
+                // Floating Counter Button (Landscape: Top Left)
                 if (widget.enableCounter)
                   Positioned(
-                    bottom: 12.h,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: GestureDetector(
-                        onTap: _incrementCounter,
-                        child: Container(
-                          height: 56.w, // Slightly larger touch area
-                          width: 56.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF1B5E20), // Dark Green
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF1B5E20).withOpacity(0.4),
-                                blurRadius: 8,
-                                spreadRadius: 0,
+                    top: 16.h,
+                    left: 16.w,
+                    child: GestureDetector(
+                      onTap: _incrementCounter,
+                      child: Container(
+                        height: 56.w, // Slightly larger touch area
+                        width: 56.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF1B5E20).withOpacity(
+                            isLandscape ? 0.2 : 1.0,
+                          ), // Semi-transparent in landscape
+                          border: isLandscape
+                              ? Border.all(
+                                  color: const Color(0xFF1B5E20),
+                                  width: 2.w,
+                                )
+                              : null,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(
+                                0xFF1B5E20,
+                              ).withOpacity(isLandscape ? 0.1 : 0.4),
+                              blurRadius: isLandscape ? 0 : 8,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              value:
+                                  (currentItem.targetCount - _currentCount) /
+                                  currentItem.targetCount,
+                              valueColor: AlwaysStoppedAnimation(
+                                isLandscape
+                                    ? const Color(0xFF1B5E20)
+                                    : Colors.white,
                               ),
-                            ],
-                          ),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              CircularProgressIndicator(
-                                value:
-                                    (currentItem.targetCount - _currentCount) /
-                                    currentItem.targetCount,
-                                valueColor: const AlwaysStoppedAnimation(
-                                  Colors.white,
-                                ),
-                                strokeWidth: 3,
+                              strokeWidth: 3,
+                            ),
+                            Text(
+                              "${currentItem.targetCount - _currentCount}",
+                              style: TextStyle(
+                                color: isLandscape
+                                    ? const Color(0xFF1B5E20)
+                                    : Colors.white,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Text(
-                                "${currentItem.targetCount - _currentCount}",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

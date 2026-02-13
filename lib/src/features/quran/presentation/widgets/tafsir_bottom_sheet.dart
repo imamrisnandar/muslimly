@@ -68,6 +68,9 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
 
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return BlocProvider(
       create: (context) => getIt<TranslationBloc>()
         ..add(
@@ -78,13 +81,13 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
           ),
         ),
       child: Container(
-        height: 0.85.sh,
+        height: isLandscape ? 0.95.sh : 0.85.sh, // More height in landscape
         decoration: BoxDecoration(
-          color: const Color(0xFF1D3133),
+          color: const Color(0xFFF1EEE5), // Cream Background (Quran Theme)
           borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withOpacity(0.2), // Lighter shadow
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
@@ -99,7 +102,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                 width: 48.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: Colors.white24,
+                  color: Colors.black12, // Darker handle for light bg
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -117,7 +120,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                       Text(
                         '${widget.surahName} : ${widget.ayahNumber}',
                         style: GoogleFonts.outfit(
-                          color: Colors.white,
+                          color: const Color(0xFF2D3436), // Dark Text
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -125,7 +128,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                       Text(
                         'QS. ${widget.surahId}:${widget.ayahNumber}',
                         style: GoogleFonts.outfit(
-                          color: Colors.white54,
+                          color: const Color(0xFF636E72), // Grey Subtitle
                           fontSize: 12.sp,
                         ),
                       ),
@@ -133,14 +136,14 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white54),
+                    icon: const Icon(Icons.close, color: Colors.black54),
                   ),
                 ],
               ),
             ),
 
-            // 3. Custom Tab Bar (Visual Divider)
-            Container(height: 1, color: Colors.white10),
+            // 3. Divider
+            Container(height: 1, color: Colors.black12),
 
             // 4. Content (BlocBuilder)
             Expanded(
@@ -148,7 +151,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                 builder: (context, state) {
                   if (state is TranslationLoading) {
                     return const Center(
-                      child: IslamicLoadingIndicator(size: 64),
+                      child: IslamicLoadingIndicator(size: 64, isDark: false),
                     );
                   } else if (state is TranslationError) {
                     return Center(
@@ -166,7 +169,9 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                             Text(
                               state.message,
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.outfit(color: Colors.white70),
+                              style: GoogleFonts.outfit(
+                                color: const Color(0xFF2D3436),
+                              ),
                             ),
                             SizedBox(height: 16.h),
                             ElevatedButton(
@@ -179,11 +184,12 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF00E676),
+                                backgroundColor: const Color(0xFF00796B),
+                                foregroundColor: Colors.white,
                               ),
                               child: Text(
                                 AppLocalizations.of(context)!.tryAgain,
-                                style: GoogleFonts.outfit(color: Colors.black),
+                                style: GoogleFonts.outfit(),
                               ),
                             ),
                           ],
@@ -227,7 +233,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                 fontFamily: 'UthmanicHafs13',
                 fontSize: 28.sp,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black, // Stark Black for Arabic
                 height: 1.6,
               ),
             ),
@@ -239,22 +245,25 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
             Text(
               AppLocalizations.of(context)!.wordByWord,
               style: GoogleFonts.outfit(
-                color: const Color(0xFF00E676),
+                color: const Color(0xFF00796B), // Teal
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
             ),
             SizedBox(height: 16.h),
-            Wrap(
-              spacing: 8.w,
-              runSpacing: 16.h,
-              alignment: WrapAlignment.end,
+            SizedBox(height: 16.h),
+            Directionality(
               textDirection: TextDirection.rtl,
-              children: state.words.map((w) => _buildWordItem(w)).toList(),
+              child: Wrap(
+                spacing: 8.w,
+                runSpacing: 16.h,
+                alignment: WrapAlignment.start, // Start from Right in RTL
+                children: state.words.map((w) => _buildWordItem(w)).toList(),
+              ),
             ),
             SizedBox(height: 32.h),
-            Divider(color: Colors.white10, height: 1),
+            const Divider(color: Colors.black12, height: 1),
             SizedBox(height: 24.h),
           ],
 
@@ -265,7 +274,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
               Text(
                 AppLocalizations.of(context)!.translation,
                 style: GoogleFonts.outfit(
-                  color: const Color(0xFF00E676),
+                  color: const Color(0xFF00796B),
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
@@ -276,7 +285,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                 height: 30.h,
                 padding: EdgeInsets.all(2.w),
                 decoration: BoxDecoration(
-                  color: Colors.black26,
+                  color: Colors.black.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(15.r),
                 ),
                 child: Row(
@@ -296,7 +305,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
             Text(
               state.translationIndo,
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: const Color(0xFF2D3436),
                 fontSize: 16.sp,
                 height: 1.6,
               ),
@@ -305,7 +314,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
             Text(
               state.translationEng,
               style: GoogleFonts.outfit(
-                color: Colors.white,
+                color: const Color(0xFF2D3436),
                 fontSize: 16.sp,
                 height: 1.6,
                 fontStyle: FontStyle.italic,
@@ -325,23 +334,23 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF00E676)),
+                  border: Border.all(color: const Color(0xFF00796B)),
                   borderRadius: BorderRadius.circular(12.r),
-                  color: const Color(0xFF00E676).withOpacity(0.1),
+                  color: const Color(0xFF00796B).withOpacity(0.1),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.menu_book_rounded,
-                      color: const Color(0xFF00E676),
+                      color: const Color(0xFF00796B),
                       size: 20.sp,
                     ),
                     SizedBox(width: 12.w),
                     Text(
                       AppLocalizations.of(context)!.readTafsirButton,
                       style: GoogleFonts.outfit(
-                        color: const Color(0xFF00E676),
+                        color: const Color(0xFF00796B),
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
                       ),
@@ -361,9 +370,16 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white, // Card look
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: Colors.black12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -374,7 +390,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
             style: TextStyle(
               fontFamily: 'UthmanicHafs13',
               fontSize: 18.sp,
-              color: Colors.white,
+              color: Colors.black,
             ),
           ),
           SizedBox(height: 4.h),
@@ -383,7 +399,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
             word.translation,
             style: GoogleFonts.outfit(
               fontSize: 10.sp,
-              color: const Color(0xFF00E676),
+              color: const Color(0xFF00796B),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -404,13 +420,24 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF00E676) : Colors.transparent,
+          color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(15.r),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
         ),
         child: Text(
           title,
           style: GoogleFonts.outfit(
-            color: isSelected ? const Color(0xFF1D3133) : Colors.white70,
+            color: isSelected
+                ? const Color(0xFF00796B)
+                : const Color(0xFF636E72),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 12.sp,
           ),
@@ -440,7 +467,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                       fontFamily: 'UthmanicHafs13',
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.black,
                       height: 1.6,
                     ),
                   ),
@@ -453,15 +480,18 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                     height: 40.h,
                     padding: EdgeInsets.all(4.w),
                     decoration: BoxDecoration(
-                      color: Colors.black26,
+                      color: Colors.black.withOpacity(0.05),
                       borderRadius: BorderRadius.circular(20.r),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildTafsirSubTabItem("Jalalayn (Indo)", 0),
-                        _buildTafsirSubTabItem("Ibn Kathir (Eng)", 1),
-                      ],
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildTafsirSubTabItem("Jalalayn (Indo)", 0),
+                          _buildTafsirSubTabItem("Ibn Kathir (Eng)", 1),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -471,7 +501,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   Text(
                     "Tafsir Jalalayn",
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: const Color(0xFF2D3436),
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -480,7 +510,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   Text(
                     AppLocalizations.of(context)!.tafsirSourceJalalayn,
                     style: GoogleFonts.outfit(
-                      color: const Color(0xFF00E676),
+                      color: const Color(0xFF00796B),
                       fontSize: 10.sp,
                     ),
                   ),
@@ -490,7 +520,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                         ? state.tafsirJalalayn
                         : AppLocalizations.of(context)!.tafsirNotAvailable,
                     style: GoogleFonts.outfit(
-                      color: Colors.white.withOpacity(0.9),
+                      color: const Color(0xFF2D3436).withOpacity(0.9),
                       fontSize: 16.sp,
                       height: 1.8,
                     ),
@@ -500,7 +530,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   Text(
                     "Tafsir Ibn Kathir",
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
+                      color: const Color(0xFF2D3436),
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -509,7 +539,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                   Text(
                     AppLocalizations.of(context)!.tafsirSourceIbnKathir,
                     style: GoogleFonts.outfit(
-                      color: const Color(0xFF00E676),
+                      color: const Color(0xFF00796B),
                       fontSize: 10.sp,
                     ),
                   ),
@@ -519,7 +549,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                         ? state.tafsirIbnKathir
                         : AppLocalizations.of(context)!.tafsirNotAvailable,
                     style: GoogleFonts.outfit(
-                      color: Colors.white.withOpacity(0.9),
+                      color: const Color(0xFF2D3436).withOpacity(0.9),
                       fontSize: 16.sp,
                       height: 1.8,
                     ),
@@ -532,7 +562,11 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
         ),
 
         // Navigation (Back)
-        Padding(
+        Container(
+          decoration: const BoxDecoration(
+            border: Border(top: BorderSide(color: Colors.black12)),
+            color: Color(0xFFF1EEE5), // Ensure bg color covers bottom
+          ),
           padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
           child: InkWell(
             onTap: () => _mainTabController.animateTo(0),
@@ -542,13 +576,13 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
                 Icon(
                   Icons.arrow_back_ios,
                   size: 14.sp,
-                  color: const Color(0xFF00E676),
+                  color: const Color(0xFF00796B),
                 ),
                 SizedBox(width: 8.w),
                 Text(
                   AppLocalizations.of(context)!.backToTranslation,
                   style: GoogleFonts.outfit(
-                    color: const Color(0xFF00E676),
+                    color: const Color(0xFF00796B),
                     fontSize: 14.sp,
                   ),
                 ),
@@ -571,14 +605,25 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF00E676) : Colors.transparent,
+          color: isSelected ? Colors.white : Colors.transparent,
           borderRadius: BorderRadius.circular(16.r),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
         ),
         alignment: Alignment.center,
         child: Text(
           title,
           style: GoogleFonts.outfit(
-            color: isSelected ? const Color(0xFF1D3133) : Colors.white70,
+            color: isSelected
+                ? const Color(0xFF00796B)
+                : const Color(0xFF636E72),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 12.sp,
           ),

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class IslamicLoadingIndicator extends StatefulWidget {
   final double size;
   final String? logoPath;
+  final bool isDark; // Add this
 
   const IslamicLoadingIndicator({
     super.key,
     this.size = 64.0,
     this.logoPath = 'assets/icon/app_icon.png',
+    this.isDark = true, // Default to dark theme (green accent)
   });
 
   @override
@@ -52,6 +54,11 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
 
   @override
   Widget build(BuildContext context) {
+    // Determine color based on theme
+    final baseColor = widget.isDark
+        ? const Color(0xFF00E676)
+        : const Color(0xFF00796B);
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -66,9 +73,7 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(
-                      0xFF00E676,
-                    ).withOpacity(0.3 * _opacityAnimation.value),
+                    color: baseColor.withOpacity(0.3 * _opacityAnimation.value),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),
