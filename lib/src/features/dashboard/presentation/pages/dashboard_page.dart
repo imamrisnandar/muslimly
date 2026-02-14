@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart'; // Fixed import
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -14,6 +17,7 @@ import '../../../settings/presentation/pages/settings_page.dart';
 import '../../../quran/presentation/pages/quran_page.dart';
 import '../../../quran/presentation/pages/help_guide_page.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
+import '../../../prayer/presentation/pages/qibla_compass_page.dart';
 import '../../../zikir/presentation/pages/dzikir_page.dart';
 import '../../../prayer/presentation/bloc/prayer_bloc.dart';
 import '../../../prayer/presentation/bloc/prayer_event.dart';
@@ -42,7 +46,6 @@ import '../../../../core/services/notification_service.dart';
 
 import '../../../../core/presentation/widgets/premium_showcase.dart'; // Import
 import 'package:showcaseview/showcaseview.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardPage extends StatefulWidget {
   final int initialIndex;
@@ -263,34 +266,86 @@ class _DashboardPageState extends State<DashboardPage> {
     return Column(
       children: [
         // STICKY HEADER
-        Padding(
-          padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+        BlocBuilder<PrayerBloc, PrayerState>(
+          builder: (context, state) {
+            return Padding(
+              padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ClipOval(
-                    child: Image.asset(
-                      'assets/icon/app_icon.png',
-                      height: 32.sp,
-                      width: 32.sp,
-                      fit: BoxFit.cover,
-                    ),
+                  Row(
+                    children: [
+                      ClipOval(
+                        child: Image.asset(
+                          'assets/icon/app_icon.png',
+                          height: 32.sp,
+                          width: 32.sp,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Text(
+                        AppLocalizations.of(context)!.appTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: 12.w),
-                  Text(
-                    AppLocalizations.of(context)!.appTitle,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
+                  // LOCATION DISPLAY
+                  InkWell(
+                    onTap: () => _showCitySearchDialog(context),
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.location_on,
+                            color: const Color(0xFF00E676),
+                            size: 14.sp,
+                          ),
+                          SizedBox(width: 4.w),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 100.w),
+                            child: Text(
+                              state.currentCity.name,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          Icon(
+                            Icons.edit_outlined,
+                            color: const Color(0xFF00E676),
+                            size: 12.sp,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            ],
-          ),
+            );
+          },
         ),
         SizedBox(height: 8.h),
 
@@ -471,72 +526,35 @@ class _DashboardPageState extends State<DashboardPage> {
                                   child: isLandscape
                                       ? Row(
                                           children: [
-                                            // Left: Label & City
+                                            // Left: Label Only
                                             Expanded(
-                                              flex: 3,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 8.w,
-                                                          vertical: 4.h,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black12,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            20.r,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.cardNextPrayer,
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 10.sp,
-                                                        fontWeight:
-                                                            FontWeight.w500,
+                                              flex: 2,
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 8.w,
+                                                  vertical: 4.h,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black12,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        20.r,
                                                       ),
-                                                    ),
+                                                ),
+                                                child: Text(
+                                                  AppLocalizations.of(
+                                                    context,
+                                                  )!.cardNextPrayer,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10.sp,
+                                                    fontWeight: FontWeight.w500,
                                                   ),
-                                                  SizedBox(height: 4.h),
-                                                  Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.location_on,
-                                                        color: Colors.white70,
-                                                        size: 12.sp,
-                                                      ),
-                                                      SizedBox(width: 4.w),
-                                                      Expanded(
-                                                        child: Text(
-                                                          state
-                                                              .currentCity
-                                                              .name,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 12.sp,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                ),
                                               ),
                                             ),
                                             // Middle: Prayer Name & Time
@@ -629,11 +647,13 @@ class _DashboardPageState extends State<DashboardPage> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            // TOP ROW: Label & City
+                                            // ROW 1: Label + Prayer Name
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: [
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
@@ -659,44 +679,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                     ),
                                                   ),
                                                 ),
-                                                Flexible(
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize
-                                                        .min, // Keep closely packed
-                                                    children: [
-                                                      Icon(
-                                                        Icons.location_on,
-                                                        color: Colors.white70,
-                                                        size: 14.sp,
-                                                      ),
-                                                      SizedBox(width: 4.w),
-                                                      Flexible(
-                                                        child: Text(
-                                                          state
-                                                              .currentCity
-                                                              .name,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14.sp,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 12.h),
-                                            // MIDDLE ROW: Prayer Name & Time
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.end,
-                                              children: [
                                                 Text(
                                                   nextPrayer['name'],
                                                   style: TextStyle(
@@ -706,24 +688,25 @@ class _DashboardPageState extends State<DashboardPage> {
                                                     height: 1.0,
                                                   ),
                                                 ),
-                                                SizedBox(width: 12.w),
-                                                Text(
-                                                  nextPrayer['time'],
-                                                  style: TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 20.sp,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
                                               ],
                                             ),
                                             SizedBox(height: 12.h),
-                                            // BOTTOM ROW: Countdown & Hijri Date
+                                            // ROW 2: Time + Countdown
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: [
+                                                Text(
+                                                  nextPrayer['time'],
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 24.sp,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
                                                 Container(
                                                   padding: EdgeInsets.symmetric(
                                                     horizontal: 12.w,
@@ -759,15 +742,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             ),
                                                           );
                                                     },
-                                                  ),
-                                                ),
-                                                Text(
-                                                  state.prayerTime!
-                                                      .getHijriDate(),
-                                                  style: TextStyle(
-                                                    color: Colors.white70,
-                                                    fontSize: 12.sp,
-                                                    fontWeight: FontWeight.w400,
                                                   ),
                                                 ),
                                               ],
@@ -852,7 +826,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   SizedBox(height: 12.h),
 
-                  // QUICK ACCESS GRID
+                  // QUICK ACCESS GRID (2x2)
                   PremiumShowcase(
                     globalKey: _quickAccessKey,
                     title: AppLocalizations.of(
@@ -861,53 +835,87 @@ class _DashboardPageState extends State<DashboardPage> {
                     description: AppLocalizations.of(
                       context,
                     )!.showcaseQuickAccess,
-                    child: IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: BlocBuilder<BookmarkBloc, BookmarkState>(
-                              builder: (context, bookmarkState) {
-                                return _buildQuickAccessGridItem(
+                    child: Column(
+                      children: [
+                        // Row 1
+                        IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: BlocBuilder<BookmarkBloc, BookmarkState>(
+                                  builder: (context, bookmarkState) {
+                                    return _buildQuickAccessGridItem(
+                                      context,
+                                      title: AppLocalizations.of(
+                                        context,
+                                      )!.cardContinueReading,
+                                      icon: Icons.menu_book,
+                                      color: const Color(0xFF1B5E20),
+                                      onTap: () {
+                                        context.push('/quran/bookmarks');
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: _buildQuickAccessGridItem(
                                   context,
                                   title: AppLocalizations.of(
                                     context,
-                                  )!.cardContinueReading,
-                                  icon: Icons.menu_book,
-                                  color: const Color(0xFF1B5E20),
+                                  )!.cardReadingHistory,
+                                  icon: Icons.history,
+                                  color: const Color(0xFF0288D1),
+                                  onTap: () => context.push('/quran/history'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        // Row 2
+                        IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: _buildQuickAccessGridItem(
+                                  context,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.qiblaCompass,
+                                  icon: Icons.explore_outlined,
+                                  color: const Color(0xFF00BCD4),
                                   onTap: () {
-                                    context.push('/quran/bookmarks');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const QiblaCompassPage(),
+                                      ),
+                                    );
                                   },
-                                );
-                              },
-                            ),
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: _buildQuickAccessGridItem(
+                                  context,
+                                  title: AppLocalizations.of(
+                                    context,
+                                  )!.lblInspiration, // Localized
+                                  icon: Icons.lightbulb_outline,
+                                  color: const Color(0xFFE65100),
+                                  onTap: () =>
+                                      context.push('/daily-inspiration'),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: _buildQuickAccessGridItem(
-                              context,
-                              title: AppLocalizations.of(
-                                context,
-                              )!.cardReadingHistory,
-                              icon: Icons.history,
-                              color: const Color(0xFF0288D1),
-                              onTap: () => context.push('/quran/history'),
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: _buildQuickAccessGridItem(
-                              context,
-                              title: AppLocalizations.of(
-                                context,
-                              )!.lblInspiration, // Localized
-                              icon: Icons.lightbulb_outline,
-                              color: const Color(0xFFE65100),
-                              onTap: () => context.push('/daily-inspiration'),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 80.h), // Bottom padding for Nav Bar
@@ -942,6 +950,18 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Center(
         child: Text(msg, style: const TextStyle(color: Colors.white)),
       ),
+    );
+  }
+
+  void _showCitySearchDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return BlocProvider.value(
+          value: context.read<PrayerBloc>(),
+          child: const _CitySearchDialog(),
+        );
+      },
     );
   }
 
@@ -1304,47 +1324,77 @@ class _DashboardPageState extends State<DashboardPage> {
     required Color color,
     VoidCallback? onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        // height removed to avoid overflow, handled by IntrinsicHeight in parent
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1C2A30),
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20.r),
+        splashColor: color.withOpacity(0.3),
+        highlightColor: color.withOpacity(0.1),
+        child: Container(
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF1C2A30),
+                const Color(0xFF1C2A30).withOpacity(0.8),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
-                shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(20.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
               ),
-              child: Icon(icon, color: color.withOpacity(0.9), size: 24.sp),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+              BoxShadow(
+                color: color.withOpacity(0.15),
+                blurRadius: 20,
+                spreadRadius: -5,
+                offset: const Offset(0, 8),
               ),
-            ),
-          ],
+            ],
+            border: Border.all(color: color.withOpacity(0.15), width: 1.5),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [color.withOpacity(0.3), color.withOpacity(0.15)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.4),
+                      blurRadius: 12,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Icon(icon, color: color, size: 28.sp),
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1650,5 +1700,354 @@ class _DashboardPageState extends State<DashboardPage> {
       case FastingEvent.none:
         return null;
     }
+  }
+}
+
+// City Search Dialog Widget
+class _CitySearchDialog extends StatefulWidget {
+  const _CitySearchDialog();
+
+  @override
+  State<_CitySearchDialog> createState() => __CitySearchDialogState();
+}
+
+class __CitySearchDialogState extends State<_CitySearchDialog> {
+  final TextEditingController _controller = TextEditingController();
+  Timer? _debounce;
+  List<String> _recentSearches = [];
+  static const String _recentSearchesKey = 'recent_city_searches';
+  static const int _maxRecentSearches = 5;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onSearchChanged);
+    _loadRecentSearches();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _controller.removeListener(_onSearchChanged);
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadRecentSearches() async {
+    final prefs = await SharedPreferences.getInstance();
+    final searches = prefs.getStringList(_recentSearchesKey) ?? [];
+    if (mounted) {
+      setState(() {
+        _recentSearches = searches;
+      });
+    }
+  }
+
+  Future<void> _saveRecentSearch(String cityName) async {
+    final prefs = await SharedPreferences.getInstance();
+    _recentSearches.remove(cityName);
+    _recentSearches.insert(0, cityName);
+    if (_recentSearches.length > _maxRecentSearches) {
+      _recentSearches = _recentSearches.sublist(0, _maxRecentSearches);
+    }
+    await prefs.setStringList(_recentSearchesKey, _recentSearches);
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    final query = _controller.text.trim();
+    if (query.isEmpty) return;
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        context.read<PrayerBloc>().add(SearchCityEvent(query));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      backgroundColor: const Color(0xFF1E2F36),
+      title: Row(
+        children: [
+          Expanded(
+            child: Text(
+              l10n.searchCityTitle,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              context.read<PrayerBloc>().add(FetchPrayerTimeByLocation());
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.my_location),
+            color: const Color(0xFF00E676),
+            tooltip: l10n.useCurrentLocation,
+            style: IconButton.styleFrom(
+              backgroundColor: const Color(0xFF00E676).withOpacity(0.1),
+            ),
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _controller,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: l10n.searchCityHint,
+                hintStyle: const TextStyle(color: Colors.white54),
+                prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                enabledBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white54),
+                ),
+                focusedBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFF00E676)),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF1B5E20),
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                final query = _controller.text.trim();
+                if (query.isNotEmpty) {
+                  context.read<PrayerBloc>().add(SearchCityEvent(query));
+                }
+              },
+              child: const Text("Search"),
+            ),
+            SizedBox(height: 16.h),
+            Flexible(
+              child: BlocBuilder<PrayerBloc, PrayerState>(
+                builder: (context, state) {
+                  if (state.isSearching) {
+                    return SizedBox(
+                      height: 100.h,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF00E676),
+                        ),
+                      ),
+                    );
+                  }
+                  if (state.searchResults.isNotEmpty) {
+                    return SizedBox(
+                      height: 200.h,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: state.searchResults.length,
+                        itemBuilder: (context, index) {
+                          final city = state.searchResults[index];
+                          return ListTile(
+                            leading: const Icon(
+                              Icons.location_on,
+                              color: Color(0xFF00E676),
+                            ),
+                            title: Text(
+                              city.name,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            subtitle: Text(
+                              "${city.latitude.toStringAsFixed(4)}, ${city.longitude.toStringAsFixed(4)}",
+                              style: const TextStyle(color: Colors.white54),
+                            ),
+                            onTap: () async {
+                              await _saveRecentSearch(city.name);
+                              if (mounted) {
+                                context.read<PrayerBloc>().add(
+                                  SelectCity(city),
+                                );
+                                Navigator.pop(context);
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  } else if (!state.isSearching &&
+                      _controller.text.isNotEmpty) {
+                    return _buildEmptyState();
+                  }
+                  return _buildInitialStateWithRecent();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.location_off, size: 48.sp, color: Colors.white38),
+          SizedBox(height: 12.h),
+          Text(
+            l10n.locationNotFound,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            l10n.trySearchingWith,
+            style: TextStyle(fontSize: 13.sp, color: Colors.white54),
+          ),
+          SizedBox(height: 8.h),
+          _buildSuggestionItem(l10n.searchSuggestionCity),
+          _buildSuggestionItem(l10n.searchSuggestionDistrict),
+          _buildSuggestionItem(l10n.searchSuggestionAddress),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInitialStateWithRecent() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.search, size: 40.sp, color: Colors.white24),
+          SizedBox(height: 12.h),
+          Text(
+            l10n.searchForLocation,
+            style: TextStyle(fontSize: 14.sp, color: Colors.white54),
+          ),
+          if (_recentSearches.isNotEmpty) ...[
+            SizedBox(height: 16.h),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Recent Searches:",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.white38,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: _recentSearches
+                  .map((city) => _buildRecentSearchChip(city))
+                  .toList(),
+            ),
+          ],
+          SizedBox(height: 12.h),
+          Text(
+            l10n.popularCities,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Colors.white38,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: [
+              _buildQuickSearchChip("Jakarta"),
+              _buildQuickSearchChip("Bandung"),
+              _buildQuickSearchChip("Surabaya"),
+              _buildQuickSearchChip("Yogyakarta"),
+              _buildQuickSearchChip("Medan"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecentSearchChip(String cityName) {
+    return InkWell(
+      onTap: () {
+        _controller.text = cityName;
+        context.read<PrayerBloc>().add(SearchCityEvent(cityName));
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFF00E676).withOpacity(0.15),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: const Color(0xFF00E676).withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.history, size: 14.sp, color: const Color(0xFF00E676)),
+            SizedBox(width: 4.w),
+            Text(
+              cityName,
+              style: TextStyle(fontSize: 12.sp, color: const Color(0xFF00E676)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuggestionItem(String text) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2.h),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.arrow_right, size: 16.sp, color: const Color(0xFF00E676)),
+          SizedBox(width: 4.w),
+          Text(
+            text,
+            style: TextStyle(fontSize: 12.sp, color: Colors.white70),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickSearchChip(String cityName) {
+    return InkWell(
+      onTap: () {
+        _controller.text = cityName;
+        context.read<PrayerBloc>().add(SearchCityEvent(cityName));
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
+        ),
+        child: Text(
+          cityName,
+          style: TextStyle(fontSize: 12.sp, color: Colors.white70),
+        ),
+      ),
+    );
   }
 }
