@@ -301,15 +301,18 @@ class _DashboardPageState extends State<DashboardPage> {
               // Reload Data
               context.read<PrayerBloc>().add(FetchPrayerTimeByLocation());
               context.read<ReadingBloc>().add(LoadReadingOverview());
-              context
-                  .read<SettingsCubit>()
-                  .loadSettings(); // Reload settings like name/target
+              context.read<BookmarkBloc>().add(
+                LoadBookmarks(),
+              ); // Add Bookmark Refresh
+              context.read<SettingsCubit>().loadSettings();
 
               // Small delay for visual feedback
               await Future.delayed(const Duration(seconds: 1));
             },
             color: const Color(0xFF00E676),
             child: SingleChildScrollView(
+              physics:
+                  const AlwaysScrollableScrollPhysics(), // Force Scrollable
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -849,16 +852,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   SizedBox(height: 12.h),
 
-                  // QUICK ACCESS
-                  Text(
-                    AppLocalizations.of(context)!.cardQuickAccess,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
                   // QUICK ACCESS GRID
                   PremiumShowcase(
                     globalKey: _quickAccessKey,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import 'prayer_countdown_widget.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
@@ -97,6 +99,32 @@ class PrayerHeaderWidget extends StatelessWidget {
           end: Alignment.bottomRight,
         );
     }
+  }
+
+  // Helper for Short Hijri Month
+  String _getShortHijriMonth(int month) {
+    const months = [
+      'Muh',
+      'Saf',
+      'R.Awl',
+      'R.Akh',
+      'J.Ula',
+      'J.Ukh',
+      'Raj',
+      'Syab',
+      'Ram',
+      'Syaw',
+      'Zulqa',
+      'Zulhi',
+    ];
+    return month >= 1 && month <= 12 ? months[month - 1] : '';
+  }
+
+  // Helper for Date Formatting
+  String _formatFastingDate(DateTime date) {
+    final gregorian = DateFormat('d MMM').format(date);
+    final hijri = HijriCalendar.fromDate(date);
+    return '$gregorian • ${hijri.hDay} ${_getShortHijriMonth(hijri.hMonth)}';
   }
 
   @override
@@ -653,32 +681,28 @@ class PrayerHeaderWidget extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      fasting.event.getLocalizedName(l10n),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ),
-                  // Date badge - hide in very narrow layouts
-                  // Commented out to save space
-                  // SizedBox(width: 4.w),
-                  // Container(...),
-                ],
+              Text(
+                fasting.event.getLocalizedName(l10n),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Outfit',
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                _formatFastingDate(fasting.date),
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ],
           ),
         ),
-        // Countdown - hide to save space in narrow layouts
-        // if (isToday && fasting.timeUntilIftar != null) ...[...],
       ],
     );
   }

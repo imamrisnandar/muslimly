@@ -35,7 +35,7 @@ class PrayerCardWidget extends StatelessWidget {
 
   Widget _buildHighlightedCard(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 6.h),
+      margin: EdgeInsets.symmetric(vertical: 4.h), // Reduced from 6.h
       decoration: BoxDecoration(
         color: const Color(0xFF1C2A30).withOpacity(0.6),
         borderRadius: BorderRadius.circular(20.r),
@@ -58,7 +58,10 @@ class PrayerCardWidget extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(20.r),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 8.h,
+            ), // Reduced vertical from 10.h
             child: Row(
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -130,7 +133,10 @@ class PrayerCardWidget extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 8.w),
+        padding: EdgeInsets.symmetric(
+          vertical: 8.h,
+          horizontal: 8.w,
+        ), // Reduced vertical from 16.h
         child: Row(
           children: [
             Icon(
