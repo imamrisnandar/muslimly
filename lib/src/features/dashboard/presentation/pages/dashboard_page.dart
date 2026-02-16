@@ -497,15 +497,27 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ? null
                                 : null, // Auto height for reminders
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20.r),
+                              borderRadius: BorderRadius.circular(24.r),
                               gradient: gradient,
                               boxShadow: [
                                 BoxShadow(
-                                  color: gradient.colors.last.withOpacity(0.3),
+                                  color: gradient.colors.last.withOpacity(0.4),
                                   blurRadius: 20,
+                                  spreadRadius: -5,
                                   offset: const Offset(0, 10),
                                 ),
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFF000000,
+                                  ).withOpacity(0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
                               ],
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.15),
+                                width: 1.5,
+                              ),
                             ),
                             child: Stack(
                               children: [
@@ -984,21 +996,28 @@ class _DashboardPageState extends State<DashboardPage> {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Container(
-      height: isLandscape ? null : 160.h,
+      height: isLandscape ? null : 170.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
         gradient: const LinearGradient(
-          colors: [Color(0xFF6A11CB), Color(0xFF2575FC)], // Deep Purple to Blue
+          colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)], // Vibrant Purple-Blue
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF2575FC).withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: const Color(0xFF8E2DE2).withOpacity(0.4),
+            blurRadius: 20,
+            spreadRadius: -5,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
+        border: Border.all(color: Colors.white.withOpacity(0.12), width: 1.5),
       ),
       child: GestureDetector(
         onTap: () => context.push('/quran/history'),
@@ -1336,8 +1355,8 @@ class _DashboardPageState extends State<DashboardPage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                const Color(0xFF1C2A30),
-                const Color(0xFF1C2A30).withOpacity(0.8),
+                const Color(0xFF1C2A30).withOpacity(0.95),
+                const Color(0xFF243742).withOpacity(0.85),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -1346,39 +1365,83 @@ class _DashboardPageState extends State<DashboardPage> {
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.3),
-                blurRadius: 12,
+                blurRadius: 15,
                 offset: const Offset(0, 6),
               ),
               BoxShadow(
                 color: color.withOpacity(0.15),
-                blurRadius: 20,
+                blurRadius: 25,
                 spreadRadius: -5,
                 offset: const Offset(0, 8),
               ),
             ],
-            border: Border.all(color: color.withOpacity(0.15), width: 1.5),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
+              width: 1.5,
+            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Icon Container with enhanced glassmorphic styling
               Container(
-                padding: EdgeInsets.all(12.w),
+                width: 64.w,
+                height: 64.w,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [color.withOpacity(0.3), color.withOpacity(0.15)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
                   shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      color.withOpacity(0.25),
+                      color.withOpacity(0.08),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.0, 0.6, 1.0],
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.4),
-                      blurRadius: 12,
-                      spreadRadius: 2,
+                      color: color.withOpacity(0.5),
+                      blurRadius: 20,
+                      spreadRadius: 0,
+                    ),
+                    BoxShadow(
+                      color: color.withOpacity(0.3),
+                      blurRadius: 30,
+                      spreadRadius: -5,
                     ),
                   ],
                 ),
-                child: Icon(icon, color: color, size: 28.sp),
+                child: Container(
+                  margin: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        color.withOpacity(0.35),
+                        color.withOpacity(0.20),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(color: color.withOpacity(0.4), width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 28.sp,
+                      shadows: [
+                        Shadow(color: color.withOpacity(0.8), blurRadius: 10),
+                      ],
+                    ),
+                  ),
+                ),
               ),
               SizedBox(height: 12.h),
               Text(
@@ -1391,6 +1454,14 @@ class _DashboardPageState extends State<DashboardPage> {
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.3,
+                  height: 1.2,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
               ),
             ],
