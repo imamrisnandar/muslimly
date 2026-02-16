@@ -863,7 +863,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                         context,
                                       )!.cardContinueReading,
                                       icon: Icons.menu_book,
-                                      color: const Color(0xFF1B5E20),
+                                      color: const Color(
+                                        0xFF00E676,
+                                      ), // Menu Focus Green
                                       onTap: () {
                                         context.push('/quran/bookmarks');
                                       },
@@ -879,7 +881,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     context,
                                   )!.cardReadingHistory,
                                   icon: Icons.history,
-                                  color: const Color(0xFF0288D1),
+                                  color: const Color(
+                                    0xFF00E676,
+                                  ), // Menu Focus Green
                                   onTap: () => context.push('/quran/history'),
                                 ),
                               ),
@@ -899,7 +903,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     context,
                                   )!.qiblaCompass,
                                   icon: Icons.explore_outlined,
-                                  color: const Color(0xFF00BCD4),
+                                  color: const Color(
+                                    0xFF00E676,
+                                  ), // Menu Focus Green
                                   onTap: () {
                                     Navigator.push(
                                       context,
@@ -919,7 +925,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     context,
                                   )!.lblInspiration, // Localized
                                   icon: Icons.lightbulb_outline,
-                                  color: const Color(0xFFE65100),
+                                  color: const Color(
+                                    0xFF00E676,
+                                  ), // Menu Focus Green
                                   onTap: () =>
                                       context.push('/daily-inspiration'),
                                 ),
@@ -1383,63 +1391,40 @@ class _DashboardPageState extends State<DashboardPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon Container with enhanced glassmorphic styling
+              // Icon Container with Soft styling
               Container(
-                width: 64.w,
-                height: 64.w,
+                width: 60.w,
+                height: 60.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      color.withOpacity(0.25),
-                      color.withOpacity(0.08),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.0, 0.6, 1.0],
+                  // Soft Gradient Background
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
                   ),
+                  // Thin, Subtle Border
+                  border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+                  // Soft, Diffused Shadows
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.5),
-                      blurRadius: 20,
-                      spreadRadius: 0,
+                      color: color.withOpacity(0.2),
+                      blurRadius: 15,
+                      spreadRadius: -2,
+                      offset: const Offset(0, 8),
                     ),
                     BoxShadow(
-                      color: color.withOpacity(0.3),
-                      blurRadius: 30,
-                      spreadRadius: -5,
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
-                child: Container(
-                  margin: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        color.withOpacity(0.35),
-                        color.withOpacity(0.20),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    border: Border.all(color: color.withOpacity(0.4), width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Icon(
-                      icon,
-                      color: color,
-                      size: 28.sp,
-                      shadows: [
-                        Shadow(color: color.withOpacity(0.8), blurRadius: 10),
-                      ],
-                    ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    color: color.withOpacity(0.9), // Slightly softer icon color
+                    size: 28.sp,
                   ),
                 ),
               ),

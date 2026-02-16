@@ -55,3 +55,5 @@ ChangeLog.md
 key.properties
 **/*.jks
 **/*.keystore
+
+analysis.md
