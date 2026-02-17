@@ -57,3 +57,5 @@ key.properties
 **/*.keystore
 
 analysis.md
+smart_notif_strategy.md
+android/app/google-services.json

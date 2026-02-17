@@ -8,12 +8,11 @@ import 'package:flutter/foundation.dart';
 abstract class NetworkModule {
   @lazySingleton
   Dio get dio {
-    // String baseUrl = 'http://localhost:3031';
-    String baseUrl = 'https://api.muslimbiker.id/v1/mbi-be';
+    String baseUrl = 'https://muslimly.my.id/api/v1';
 
     // if (!kIsWeb) {
     //   if (Platform.isAndroid) {
-    //     baseUrl = 'http://10.0.2.2:3031';
+    //     // baseUrl = 'http://10.0.2.2:8080/api/v1'; // Emulator
     //   }
     // }
 

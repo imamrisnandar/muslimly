@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart'; // Core
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'src/l10n/generated/app_localizations.dart'; // Localization
@@ -20,7 +21,13 @@ import 'package:showcaseview/showcaseview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Firebase Init is now handled inside NotificationService.initialize()
+  // OR we can do it here.
+  // Ideally, do it here for global context.
+  await Firebase.initializeApp(); // Ensure we await this before anything else using Firebase
+
   configureDependencies();
+
   await JustAudioBackground.init(
     androidNotificationChannelId:
         'com.muslimly.app.channel.audio', // Use app specific ID
