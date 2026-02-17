@@ -1,13 +1,3 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:injectable/injectable.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:dio/dio.dart'; // Added for API call
-import 'dart:io'; // Platform check
-
 @lazySingleton
 class NotificationService {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
@@ -98,19 +88,11 @@ class NotificationService {
       String? token = await FirebaseMessaging.instance.getToken();
       if (token == null) return;
 
-      // print('DEBUG: FCM Token: $token');
+      // Collect Device Metadata
+      final deviceInfo = await _getDeviceInfo();
 
       // Send to Backend
-      final dio = Dio(); // Create waiting for DI or new instance
-      // Using direct Dio for simplicity as this service is initialized early
-      // Ideally use getIt<Dio>() but network module might not be ready or circular dependency?
-      // NetworkModule is initialized in configureDependencies, so getIt<Dio> is safe?
-      // Safe to use a new Dio instance for this specific call to avoid interceptor complexity
-
-      // Base URL Validation
-      // Use the IP/URL from your network_module logic.
-      // Since we just updated NetworkModule, we should ideally use that, but for this standalone service method
-      // we will use the same hardcoded IP for consistency in this test phase.
+      final dio = Dio();
       String baseUrl = 'https://muslimly.my.id/api/v1';
 
       final Options options = Options(
@@ -121,19 +103,68 @@ class NotificationService {
         },
       );
 
-      print('FCM_TOKEN: $token'); // Important for user to see in logs
+      print('FCM_TOKEN: $token');
+      print('DEVICE_INFO: $deviceInfo');
 
       await dio.post(
         '$baseUrl/notifications/register',
         data: {
           'fcm_token': token,
           'platform': Platform.isAndroid ? 'android' : 'ios',
+          // Device Metadata
+          'device_model': deviceInfo['model'],
+          'device_os_version': deviceInfo['osVersion'],
+          'app_version': deviceInfo['appVersion'],
+          'country_code': deviceInfo['countryCode'],
+          'timezone': deviceInfo['timezone'],
         },
         options: options,
       );
-      // print('DEBUG: Token registered to backend');
+
+      print('✅ FCM Token + Device Metadata registered successfully');
     } catch (e) {
-      // print('Error syncing FCM token: $e');
+      print('❌ Error syncing FCM token: $e');
+    }
+  }
+
+  Future<Map<String, String>> _getDeviceInfo() async {
+    try {
+      final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+      String model = 'Unknown';
+      String osVersion = 'Unknown';
+
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfoPlugin.androidInfo;
+        model = '${androidInfo.manufacturer} ${androidInfo.model}';
+        osVersion = 'Android ${androidInfo.version.release}';
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfoPlugin.iosInfo;
+        model = iosInfo.model;
+        osVersion = 'iOS ${iosInfo.systemVersion}';
+      }
+
+      // Get App Version
+      final packageInfo = await PackageInfo.fromPlatform();
+
+      // Get Timezone
+      final timezone = DateTime.now().timeZoneName;
+
+      return {
+        'model': model,
+        'osVersion': osVersion,
+        'appVersion': packageInfo.version,
+        'countryCode': 'ID', // Default or use geolocator for accurate detection
+        'timezone': timezone,
+      };
+    } catch (e) {
+      print('Error getting device info: $e');
+      return {
+        'model': 'Unknown',
+        'osVersion': 'Unknown',
+        'appVersion': '1.0.0',
+        'countryCode': 'ID',
+        'timezone': 'Asia/Jakarta',
+      };
     }
   }
 
