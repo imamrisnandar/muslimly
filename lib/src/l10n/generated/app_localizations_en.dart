@@ -1214,4 +1214,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchPrayerGuide => 'Search Prayer topic...';
+
+  @override
+  String get lblSkip => 'Skip';
 }

@@ -20,7 +20,7 @@ class SettingsState extends Equatable {
     this.hijriAdjustments = const [],
   });
 
-  factory SettingsState.initial() => const SettingsState();
+  factory SettingsState.initial() => const SettingsState(locale: Locale('id'));
 
   SettingsState copyWith({
     Locale? locale,

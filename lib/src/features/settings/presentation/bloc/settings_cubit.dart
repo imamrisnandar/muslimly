@@ -30,50 +30,71 @@ class SettingsCubit extends Cubit<SettingsState> {
     final target = await _settingsRepository.getDailyReadingTarget();
     final ayahTarget = await _settingsRepository.getDailyAyahTarget();
     final unit = await _settingsRepository.getReadingTargetUnit();
-
-    // Hijri Adjustment Logic
-    // Hijri Adjustment Logic
     List<Map<String, dynamic>> adjustments = await _settingsRepository
         .getHijriAdjustments();
 
-    // Always try to fetch latest from remote to ensure up-to-date
-    try {
-      final remoteAdjustments = await _settingsRepository
-          .fetchRemoteHijriAdjustments();
-      if (remoteAdjustments.isNotEmpty) {
-        adjustments = remoteAdjustments;
-        await _settingsRepository.saveHijriAdjustments(adjustments);
-      }
-    } catch (e) {
-      // Fallback to local if remote fails
-      debugPrint("Failed to fetch remote adjustments: $e");
-    }
+    final locale = langCode != null ? Locale(langCode) : const Locale('id');
 
-    // Update Service
+    // Update Service with local data immediately
     _fastingService.setHijriAdjustments(adjustments);
 
-    // Calculate current month adjustment for UI
-    final now = DateTime.now();
-    final hDate = HijriCalendar.fromDate(now);
-    final currentAdj = adjustments.firstWhere(
-      (element) => element['hijri_month'] == hDate.hMonth,
-      orElse: () => {'adjustment': 0},
-    );
-    final adjustmentValue = currentAdj['adjustment'] as int? ?? 0;
+    // Helper to update state with current adjustments
+    void updateEmit(List<Map<String, dynamic>> currentAdjustments) {
+      final now = DateTime.now();
+      final hDate = HijriCalendar.fromDate(now);
+      final currentAdj = currentAdjustments.firstWhere(
+        (element) => element['hijri_month'] == hDate.hMonth,
+        orElse: () => {'adjustment': 0},
+      );
+      final adjustmentValue = currentAdj['adjustment'] as int? ?? 0;
 
-    final locale = langCode != null ? Locale(langCode) : null;
+      emit(
+        state.copyWith(
+          locale: locale,
+          userName: name,
+          dailyTarget: target,
+          dailyAyahTarget: ayahTarget,
+          targetUnit: unit,
+          hijriAdjustment: adjustmentValue,
+          hijriAdjustments: currentAdjustments,
+        ),
+      );
+    }
 
-    emit(
-      state.copyWith(
-        locale: locale,
-        userName: name,
-        dailyTarget: target,
-        dailyAyahTarget: ayahTarget,
-        targetUnit: unit,
-        hijriAdjustment: adjustmentValue,
-        hijriAdjustments: adjustments,
-      ),
-    );
+    // Emit initial state with local data immediately to avoid lag
+    updateEmit(adjustments);
+
+    // Initial Sync & Background Logic
+    if (adjustments.isEmpty) {
+      // First install: await remote to ensure Ramadan logic (+1) works immediately
+      try {
+        final remoteAdjustments = await _settingsRepository
+            .fetchRemoteHijriAdjustments();
+        if (remoteAdjustments.isNotEmpty) {
+          await _settingsRepository.saveHijriAdjustments(remoteAdjustments);
+          _fastingService.setHijriAdjustments(remoteAdjustments);
+          updateEmit(remoteAdjustments);
+        }
+      } catch (e) {
+        debugPrint("Failed to fetch remote adjustments on first install: $e");
+      }
+    } else {
+      // Already has cache: fetch in background to stay updated
+      _settingsRepository
+          .fetchRemoteHijriAdjustments()
+          .then((remoteAdjustments) async {
+            if (remoteAdjustments.isNotEmpty) {
+              await _settingsRepository.saveHijriAdjustments(remoteAdjustments);
+              _fastingService.setHijriAdjustments(remoteAdjustments);
+              if (!isClosed) {
+                updateEmit(remoteAdjustments);
+              }
+            }
+          })
+          .catchError((e) {
+            debugPrint("Background Hijri sync failed: $e");
+          });
+    }
   }
 
   Future<void> updateLanguage(Locale locale) async {

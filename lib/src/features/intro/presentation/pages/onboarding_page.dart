@@ -137,7 +137,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       TextButton(
                         onPressed: _onSkip,
                         child: Text(
-                          "Skip", // Could be localized if needed
+                          l10n.lblSkip,
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 16.sp,
@@ -205,9 +205,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         elevation: 0,
                       ),
                       child: Text(
-                        _currentPage == 2
-                            ? l10n.getStarted
-                            : "Next", // "Next" could be localized
+                        _currentPage == 2 ? l10n.getStarted : l10n.lblNext,
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,

@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 abstract class NetworkModule {
   @lazySingleton
   Dio get dio {
-    String baseUrl = 'https://muslimly.my.id/api/v1';
+    String baseUrl = 'https://muslimly.my.id/api/v1/';
 
     // if (!kIsWeb) {
     //   if (Platform.isAndroid) {

@@ -2305,6 +2305,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search Prayer topic...'**
   String get searchPrayerGuide;
+
+  /// No description provided for @lblSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get lblSkip;
 }
 
 class _AppLocalizationsDelegate

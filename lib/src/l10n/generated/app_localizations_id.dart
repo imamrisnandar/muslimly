@@ -1220,4 +1220,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get searchPrayerGuide => 'Cari topik sholat...';
+
+  @override
+  String get lblSkip => 'Lewati';
 }
