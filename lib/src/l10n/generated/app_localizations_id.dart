@@ -9,6 +9,21 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get settingsIbadah => 'Ibadah';
+
+  @override
+  String get hijriAdjustment => 'Koreksi Tanggal Hijriyah';
+
+  @override
+  String get hijriAdjustmentSubtitle => 'Sesuaikan jika tanggal berbeda';
+
+  @override
+  String get days => 'Hari';
+
+  @override
+  String get day => 'Hari';
+
+  @override
   String get appTitle => 'Muslimly';
 
   @override

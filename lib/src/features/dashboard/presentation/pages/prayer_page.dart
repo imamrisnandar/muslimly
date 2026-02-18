@@ -14,11 +14,12 @@ import '../../../prayer/domain/entities/prayer_time_extension.dart';
 import '../widgets/ibadah_calendar_widget.dart';
 import '../widgets/prayer_header_widget.dart';
 import '../widgets/prayer_card_widget.dart';
-import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/services/reminder_service.dart';
 import '../../domain/models/reminder_models.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../features/settings/presentation/bloc/settings_cubit.dart';
+import '../../../../features/settings/presentation/bloc/settings_state.dart';
 
 class PrayerPage extends StatefulWidget {
   const PrayerPage({super.key});
@@ -36,7 +37,7 @@ class _PrayerPageState extends State<PrayerPage>
   @override
   void initState() {
     super.initState();
-    _fastingService = FastingService();
+    _fastingService = getIt<FastingService>();
     _tabController = TabController(length: 2, vsync: this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -63,17 +64,21 @@ class _PrayerPageState extends State<PrayerPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1C2A30), // Dark Theme
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isLandscape = constraints.maxWidth > constraints.maxHeight;
-          if (isLandscape) {
-            return _buildLandscapeLayout(context);
-          }
-          return _buildPortraitLayout(context);
-        },
-      ),
+    return BlocBuilder<SettingsCubit, SettingsState>(
+      builder: (context, settingsState) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF1C2A30), // Dark Theme
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              final isLandscape = constraints.maxWidth > constraints.maxHeight;
+              if (isLandscape) {
+                return _buildLandscapeLayout(context);
+              }
+              return _buildPortraitLayout(context);
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -538,7 +543,7 @@ class _PrayerPageState extends State<PrayerPage>
   }
 
   String _getFormattedHijriDate(AppLocalizations l10n) {
-    final hDate = HijriCalendar.now();
+    final hDate = _fastingService.getAdjustedHijriDate(DateTime.now());
     // Example: "14 Ramadan 1446 H"
     return "${hDate.hDay} ${hDate.longMonthName} ${hDate.hYear} H";
   }

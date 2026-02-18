@@ -1,5 +1,10 @@
 {
     "@@locale": "id",
+  "settingsIbadah": "Ibadah",
+  "hijriAdjustment": "Koreksi Tanggal Hijriyah",
+  "hijriAdjustmentSubtitle": "Sesuaikan jika tanggal berbeda",
+  "days": "Hari",
+  "day": "Hari",
     "appTitle": "Muslimly",
     "dashboardGreeting": "Assalamu'alaikum, {name}",
     "settingsTitle": "Pengaturan",

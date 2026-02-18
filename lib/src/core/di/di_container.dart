@@ -87,7 +87,7 @@ void configureDependencies() {
     () => NameRepositoryImpl(getIt<DatabaseService>()),
   );
   getIt.registerLazySingleton<SettingsRepository>(
-    () => SettingsRepositoryImpl(getIt<DatabaseService>()),
+    () => SettingsRepositoryImpl(getIt<DatabaseService>(), getIt<Dio>()),
   );
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
 
@@ -96,6 +96,7 @@ void configureDependencies() {
       getIt<SettingsRepository>(),
       getIt<NameRepository>(),
       getIt<NotificationService>(),
+      getIt<FastingService>(),
     ),
   );
 

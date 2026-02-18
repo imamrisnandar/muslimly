@@ -98,6 +98,36 @@ abstract class AppLocalizations {
     Locale('id'),
   ];
 
+  /// No description provided for @settingsIbadah.
+  ///
+  /// In en, this message translates to:
+  /// **'Worship'**
+  String get settingsIbadah;
+
+  /// No description provided for @hijriAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri Date Adjustment'**
+  String get hijriAdjustment;
+
+  /// No description provided for @hijriAdjustmentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust date if sighting varies'**
+  String get hijriAdjustmentSubtitle;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get days;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get day;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

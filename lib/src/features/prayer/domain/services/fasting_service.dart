@@ -22,6 +22,36 @@ enum FastingEvent {
 }
 
 class FastingService {
+  List<Map<String, dynamic>> _hijriAdjustments = [];
+
+  void setHijriAdjustments(List<Map<String, dynamic>> adjustments) {
+    _hijriAdjustments = adjustments;
+  }
+
+  int _getAdjustment(int month) {
+    if (_hijriAdjustments.isEmpty) return 0;
+    try {
+      final adj = _hijriAdjustments.firstWhere(
+        (element) => element['hijri_month'] == month,
+        orElse: () => {'adjustment': 0},
+      );
+      return adj['adjustment'] as int? ?? 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  /// Get Hijri date with adjustment applied
+  HijriCalendar getAdjustedHijriDate(DateTime date) {
+    // 1. Get standard Hijri date to find the applicable adjustment
+    final standardHijri = HijriCalendar.fromDate(date);
+    final adjustment = _getAdjustment(standardHijri.hMonth);
+
+    // 2. Apply adjustment
+    final adjustedDate = date.subtract(Duration(days: adjustment));
+    return HijriCalendar.fromDate(adjustedDate);
+  }
+
   /// Determine the fasting type for a given Gregorian date
   FastingType getFastingType(DateTime date) {
     final event = getFastingEvent(date);
@@ -46,7 +76,13 @@ class FastingService {
 
   /// Get the specific fasting event for a date
   FastingEvent getFastingEvent(DateTime date) {
-    final hijri = HijriCalendar.fromDate(date);
+    // 1. Get standard Hijri date to find the applicable adjustment
+    final standardHijri = HijriCalendar.fromDate(date);
+    final adjustment = _getAdjustment(standardHijri.hMonth);
+
+    // 2. Apply adjustment
+    final adjustedDate = date.subtract(Duration(days: adjustment));
+    final hijri = HijriCalendar.fromDate(adjustedDate);
 
     // 1. Check Haram Days first (Forbidden to fast)
     // Eid Al-Fitr: 1 Syawal (Month 10, Day 1)

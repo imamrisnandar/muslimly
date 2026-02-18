@@ -9,6 +9,21 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get settingsIbadah => 'Worship';
+
+  @override
+  String get hijriAdjustment => 'Hijri Date Adjustment';
+
+  @override
+  String get hijriAdjustmentSubtitle => 'Adjust date if sighting varies';
+
+  @override
+  String get days => 'Days';
+
+  @override
+  String get day => 'Day';
+
+  @override
   String get appTitle => 'Muslimly';
 
   @override

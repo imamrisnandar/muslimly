@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
 
@@ -25,6 +27,10 @@ abstract class SettingsRepository {
 
   Future<bool> hasShownPlayerShowcase();
   Future<void> setPlayerShowcaseShown(bool shown);
+
+  Future<List<Map<String, dynamic>>> getHijriAdjustments();
+  Future<void> saveHijriAdjustments(List<Map<String, dynamic>> adjustments);
+  Future<List<Map<String, dynamic>>> fetchRemoteHijriAdjustments();
 }
 
 @LazySingleton(as: SettingsRepository)
@@ -36,10 +42,12 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyTargetUnit = 'quran_target_unit';
   static const String _keyUserName = 'user_name';
   static const String _keyPlayerShowcase = 'player_showcase_shown_v3';
+  static const String _keyHijriAdjustments = 'hijri_adjustments_list';
 
   final DatabaseService _databaseService;
+  final Dio _dio;
 
-  SettingsRepositoryImpl(this._databaseService);
+  SettingsRepositoryImpl(this._databaseService, this._dio);
 
   @override
   Future<String?> getLanguage() async {
@@ -136,5 +144,47 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> setPlayerShowcaseShown(bool shown) async {
     await _databaseService.saveSetting(_keyPlayerShowcase, shown.toString());
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getHijriAdjustments() async {
+    final val = await _databaseService.getSetting(_keyHijriAdjustments);
+    if (val == null) return [];
+    try {
+      // Assuming stored as JSON string "
+      // Actually DatabaseService.saveSetting takes String.
+      // So we need to encode/decode json.
+      // But wait, DatabaseService might not have json support visible here.
+      // Let's assume we import dart:convert
+      return List<Map<String, dynamic>>.from(json.decode(val));
+    } catch (e) {
+      return [];
+    }
+  }
+
+  @override
+  Future<void> saveHijriAdjustments(
+    List<Map<String, dynamic>> adjustments,
+  ) async {
+    await _databaseService.saveSetting(
+      _keyHijriAdjustments,
+      json.encode(adjustments),
+    );
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> fetchRemoteHijriAdjustments() async {
+    try {
+      final response = await _dio.get('config-hijri-adjust');
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['hijri_adjustments'] != null) {
+          return List<Map<String, dynamic>>.from(data['hijri_adjustments']);
+        }
+      }
+    } catch (e) {
+      // Ignore error
+    }
+    return [];
   }
 }

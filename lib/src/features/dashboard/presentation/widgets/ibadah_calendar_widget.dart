@@ -87,7 +87,7 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
   }
 
   String _getHijriMonthYear(DateTime date) {
-    final hijri = HijriCalendar.fromDate(date);
+    final hijri = widget.fastingService.getAdjustedHijriDate(date);
     return "${hijri.longMonthName} ${hijri.hYear} H";
   }
 
@@ -189,7 +189,7 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
     final fastingType = widget.fastingService.getFastingType(date);
 
     // Hijri Day Calculation
-    final hijriDate = HijriCalendar.fromDate(date);
+    final hijriDate = widget.fastingService.getAdjustedHijriDate(date);
 
     return InkWell(
       onTap: () {
@@ -281,7 +281,7 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
 
   Widget _buildSelectedDateDetail() {
     final l10n = AppLocalizations.of(context)!;
-    final hijri = HijriCalendar.fromDate(_selectedDate);
+    final hijri = widget.fastingService.getAdjustedHijriDate(_selectedDate);
     final eventName = _getLocalizedEventName(
       l10n,
       widget.fastingService.getFastingEvent(_selectedDate),

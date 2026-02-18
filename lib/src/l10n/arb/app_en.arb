@@ -1,5 +1,10 @@
 {
     "@@locale": "en",
+  "settingsIbadah": "Worship",
+  "hijriAdjustment": "Hijri Date Adjustment",
+  "hijriAdjustmentSubtitle": "Adjust date if sighting varies",
+  "days": "Days",
+  "day": "Day",
     "appTitle": "Muslimly",
     "dashboardGreeting": "Assalamu'alaikum, {name}",
     "settingsTitle": "Settings",

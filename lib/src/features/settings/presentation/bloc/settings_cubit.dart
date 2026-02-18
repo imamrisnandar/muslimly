@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:injectable/injectable.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../../intro/data/repositories/name_repository.dart';
 import '../../../../core/services/notification_service.dart';
+import '../../../../features/prayer/domain/services/fasting_service.dart';
 import 'settings_state.dart';
 
 @injectable
@@ -11,11 +13,13 @@ class SettingsCubit extends Cubit<SettingsState> {
   final SettingsRepository _settingsRepository;
   final NameRepository _nameRepository;
   final NotificationService _notificationService;
+  final FastingService _fastingService;
 
   SettingsCubit(
     this._settingsRepository,
     this._nameRepository,
     this._notificationService,
+    this._fastingService,
   ) : super(SettingsState.initial()) {
     loadSettings();
   }
@@ -27,6 +31,36 @@ class SettingsCubit extends Cubit<SettingsState> {
     final ayahTarget = await _settingsRepository.getDailyAyahTarget();
     final unit = await _settingsRepository.getReadingTargetUnit();
 
+    // Hijri Adjustment Logic
+    // Hijri Adjustment Logic
+    List<Map<String, dynamic>> adjustments = await _settingsRepository
+        .getHijriAdjustments();
+
+    // Always try to fetch latest from remote to ensure up-to-date
+    try {
+      final remoteAdjustments = await _settingsRepository
+          .fetchRemoteHijriAdjustments();
+      if (remoteAdjustments.isNotEmpty) {
+        adjustments = remoteAdjustments;
+        await _settingsRepository.saveHijriAdjustments(adjustments);
+      }
+    } catch (e) {
+      // Fallback to local if remote fails
+      debugPrint("Failed to fetch remote adjustments: $e");
+    }
+
+    // Update Service
+    _fastingService.setHijriAdjustments(adjustments);
+
+    // Calculate current month adjustment for UI
+    final now = DateTime.now();
+    final hDate = HijriCalendar.fromDate(now);
+    final currentAdj = adjustments.firstWhere(
+      (element) => element['hijri_month'] == hDate.hMonth,
+      orElse: () => {'adjustment': 0},
+    );
+    final adjustmentValue = currentAdj['adjustment'] as int? ?? 0;
+
     final locale = langCode != null ? Locale(langCode) : null;
 
     emit(
@@ -36,6 +70,8 @@ class SettingsCubit extends Cubit<SettingsState> {
         dailyTarget: target,
         dailyAyahTarget: ayahTarget,
         targetUnit: unit,
+        hijriAdjustment: adjustmentValue,
+        hijriAdjustments: adjustments,
       ),
     );
   }
@@ -63,6 +99,37 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> updateTargetUnit(String unit) async {
     await _settingsRepository.saveReadingTargetUnit(unit);
     emit(state.copyWith(targetUnit: unit));
+  }
+
+  Future<void> updateHijriAdjustment(int month, int days) async {
+    final List<Map<String, dynamic>> newAdjustments = List.from(
+      state.hijriAdjustments,
+    );
+    final index = newAdjustments.indexWhere(
+      (element) => element['hijri_month'] == month,
+    );
+
+    if (index != -1) {
+      newAdjustments[index] = {'hijri_month': month, 'adjustment': days};
+    } else {
+      newAdjustments.add({'hijri_month': month, 'adjustment': days});
+    }
+
+    await _settingsRepository.saveHijriAdjustments(newAdjustments);
+    _fastingService.setHijriAdjustments(newAdjustments);
+
+    // Recalculate current month adjustment for UI state if needed
+    // But since we are moving to list view, we might not need single `hijriAdjustment` state as much
+    // For compatibility, let's update it if the modified month is current month
+    final now = DateTime.now();
+    final hDate = HijriCalendar.fromDate(now);
+    if (month == hDate.hMonth) {
+      emit(
+        state.copyWith(hijriAdjustment: days, hijriAdjustments: newAdjustments),
+      );
+    } else {
+      emit(state.copyWith(hijriAdjustments: newAdjustments));
+    }
   }
 
   Future<void> testNotification() async {

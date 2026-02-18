@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import 'prayer_countdown_widget.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../domain/models/reminder_models.dart';
+import '../../../../core/di/di_container.dart';
 
 class PrayerHeaderWidget extends StatelessWidget {
   final Map<String, dynamic>? nextPrayer;
@@ -123,7 +123,8 @@ class PrayerHeaderWidget extends StatelessWidget {
   // Helper for Date Formatting
   String _formatFastingDate(DateTime date) {
     final gregorian = DateFormat('d MMM').format(date);
-    final hijri = HijriCalendar.fromDate(date);
+    // Use FastingService to get ADJUSTED Hijri date
+    final hijri = getIt<FastingService>().getAdjustedHijriDate(date);
     return '$gregorian • ${hijri.hDay} ${_getShortHijriMonth(hijri.hMonth)}';
   }
 

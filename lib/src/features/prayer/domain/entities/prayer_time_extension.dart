@@ -1,11 +1,12 @@
-import 'package:hijri/hijri_calendar.dart';
+import '../../../../core/di/di_container.dart';
+import '../services/fasting_service.dart';
 import 'prayer_time.dart';
 
 extension PrayerTimeX on PrayerTime {
   String getHijriDate() {
     try {
       final now = DateTime.now();
-      final hijri = HijriCalendar.fromDate(now);
+      final hijri = getIt<FastingService>().getAdjustedHijriDate(now);
       return "${hijri.hDay} ${hijri.longMonthName} ${hijri.hYear} H";
     } catch (e) {
       return "-";

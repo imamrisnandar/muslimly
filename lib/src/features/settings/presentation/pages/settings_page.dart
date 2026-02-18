@@ -67,7 +67,7 @@ class SettingsPage extends StatelessWidget {
 
                       BlocBuilder<SettingsCubit, SettingsState>(
                         builder: (context, state) {
-                          final isIndo = state.locale.languageCode == 'id';
+                          final isIndo = state.locale?.languageCode == 'id';
                           return Column(
                             children: [
                               _buildLanguageOption(
@@ -550,6 +550,232 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
+  String _getAdjustmentText(int adjustment, AppLocalizations l10n) {
+    if (adjustment == 0) return "0 ${l10n.days ?? 'Days'}";
+    final sign = adjustment > 0 ? "+" : "";
+    return "$sign$adjustment ${l10n.days ?? 'Days'}";
+  }
+
+  void _showHijriAdjustmentBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E2F36),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        // Helper to get month name
+        String getMonthName(int i) {
+          return _getHijriMonthName(context, i);
+        }
+
+        return Container(
+          height: 600.h,
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+          child: Column(
+            children: [
+              Text(
+                l10n.hijriAdjustment ?? 'Hijri Adjustment',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                l10n.hijriAdjustmentSubtitle ??
+                    'Adjust date per month if sighting varies',
+                style: TextStyle(color: Colors.white54, fontSize: 14.sp),
+              ),
+              SizedBox(height: 24.h),
+              Expanded(
+                child: BlocBuilder<SettingsCubit, SettingsState>(
+                  builder: (context, state) {
+                    return ListView.separated(
+                      itemCount: 12,
+                      separatorBuilder: (c, i) =>
+                          Divider(color: Colors.white.withOpacity(0.05)),
+                      itemBuilder: (context, index) {
+                        final monthIndex = index + 1;
+                        final monthName = getMonthName(monthIndex);
+
+                        final adjMap = state.hijriAdjustments.firstWhere(
+                          (e) => e['hijri_month'] == monthIndex,
+                          orElse: () => {'adjustment': 0},
+                        );
+                        final currentVal = adjMap['adjustment'] as int? ?? 0;
+
+                        return ListTile(
+                          title: Text(
+                            monthName,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          trailing: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12.w,
+                              vertical: 6.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: currentVal != 0
+                                  ? const Color(0xFF00E676).withOpacity(0.2)
+                                  : Colors.white10,
+                              borderRadius: BorderRadius.circular(8.r),
+                              border: Border.all(
+                                color: currentVal != 0
+                                    ? const Color(0xFF00E676)
+                                    : Colors.transparent,
+                              ),
+                            ),
+                            child: Text(
+                              _getAdjustmentText(currentVal, l10n),
+                              style: TextStyle(
+                                color: currentVal != 0
+                                    ? const Color(0xFF00E676)
+                                    : Colors.white70,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          onTap: () => _showAdjustmentSelector(
+                            context,
+                            monthIndex,
+                            currentVal,
+                            monthName,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _getHijriMonthName(BuildContext context, int month) {
+    final locale = Localizations.localeOf(context).languageCode;
+    if (locale == 'id') {
+      const months = [
+        "Muharram",
+        "Safar",
+        "Rabiul Awal",
+        "Rabiul Akhir",
+        "Jumadil Awal",
+        "Jumadil Akhir",
+        "Rajab",
+        "Sya'ban",
+        "Ramadhan",
+        "Syawal",
+        "Dzulqa'idah",
+        "Dzulhijjah",
+      ];
+      if (month >= 1 && month <= 12) return months[month - 1];
+    } else {
+      const months = [
+        "Muharram",
+        "Safar",
+        "Rabi' al-awwal",
+        "Rabi' al-thani",
+        "Jumada al-awwal",
+        "Jumada al-thani",
+        "Rajab",
+        "Sha'ban",
+        "Ramadan",
+        "Shawwal",
+        "Dhu al-Qi'dah",
+        "Dhu al-Hijjah",
+      ];
+      if (month >= 1 && month <= 12) return months[month - 1];
+    }
+    return "Month $month";
+  }
+
+  void _showAdjustmentSelector(
+    BuildContext context,
+    int monthIndex,
+    int currentAdjustment,
+    String monthName,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1E2F36),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "$monthName Adjustment",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  for (int i = -2; i <= 2; i++)
+                    _buildAdjustmentOption(
+                      context,
+                      monthIndex,
+                      i,
+                      currentAdjustment,
+                    ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAdjustmentOption(
+    BuildContext context,
+    int monthIndex,
+    int value,
+    int groupValue,
+  ) {
+    final isSelected = value == groupValue;
+    return GestureDetector(
+      onTap: () {
+        context.read<SettingsCubit>().updateHijriAdjustment(monthIndex, value);
+        Navigator.pop(context);
+      },
+      child: Container(
+        width: 50.w,
+        height: 50.w,
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF00E676) : Colors.white10,
+          shape: BoxShape.circle,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          value > 0 ? "+$value" : "$value",
+          style: TextStyle(
+            color: isSelected ? Colors.black : Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16.sp,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildModeButton(
     BuildContext context,
     String label,
@@ -717,18 +943,29 @@ class SettingsPage extends StatelessWidget {
               _buildListTile(
                 icon: Icons.person_outline,
                 title: l10n.settingsName,
-                subtitle: state.userName ?? 'Friend',
-                onTap: () => _showNameDialog(context, state.userName ?? ''),
+                subtitle: state.userName.isEmpty ? 'Friend' : state.userName,
+                onTap: () => _showNameDialog(context, state.userName),
               ),
               SizedBox(height: 24.h),
               _buildSectionHeader(context, l10n.settingsLanguage),
               _buildListTile(
                 icon: Icons.language,
                 title: l10n.settingsLanguage,
-                subtitle: state.locale.languageCode == 'id'
+                subtitle: state.locale?.languageCode == 'id'
                     ? l10n.settingsLanguageIndonesian
                     : l10n.settingsLanguageEnglish,
                 onTap: () => _showLanguageBottomSheet(context),
+              ),
+              SizedBox(height: 12.h),
+              _buildSectionHeader(
+                context,
+                l10n.settingsIbadah ?? 'Ibadah',
+              ), // Use fallback if key not generated yet
+              _buildListTile(
+                icon: Icons.calendar_today,
+                title: l10n.hijriAdjustment ?? 'Hijri Adjustment',
+                subtitle: l10n.hijriAdjustmentSubtitle,
+                onTap: () => _showHijriAdjustmentBottomSheet(context),
               ),
               SizedBox(height: 24.h),
               _buildSectionHeader(context, l10n.settingsQuran),
