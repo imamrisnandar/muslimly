@@ -2,6 +2,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/intro/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/di/di_container.dart';
+import '../../features/article/presentation/bloc/article_bloc.dart';
 import '../../features/quran/domain/entities/surah.dart';
 import '../../features/quran/presentation/pages/surah_detail_page.dart';
 import '../../features/quran/presentation/pages/mushaf_page.dart';
@@ -15,6 +18,10 @@ import '../../features/dashboard/presentation/pages/daily_inspiration_page.dart'
 import '../../core/utils/quran_constants.dart';
 import '../../features/quran/presentation/pages/search_results_page.dart';
 import '../../features/prayer/presentation/pages/qibla_compass_page.dart';
+import '../../features/article/domain/entities/article.dart';
+import '../../features/article/presentation/pages/article_list_page.dart';
+import '../../features/article/presentation/pages/article_detail_page.dart';
+import '../../features/article/presentation/pages/article_search_page.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -127,6 +134,24 @@ final appRouter = GoRouter(
       builder: (context, state) {
         final query = state.uri.queryParameters['q'] ?? '';
         return SearchResultsPage(initialQuery: query);
+      },
+    ),
+    GoRoute(
+      path: '/article-list',
+      builder: (context, state) => BlocProvider(
+        create: (context) => getIt<ArticleBloc>(),
+        child: const ArticleListPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/article-search',
+      builder: (context, state) => const ArticleSearchPage(),
+    ),
+    GoRoute(
+      path: '/article-detail',
+      builder: (context, state) {
+        final article = state.extra as Article;
+        return ArticleDetailPage(article: article);
       },
     ),
   ],

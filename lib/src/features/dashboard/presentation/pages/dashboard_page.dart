@@ -46,6 +46,9 @@ import '../../../../core/services/notification_service.dart';
 import '../../../../core/presentation/widgets/premium_showcase.dart'; // Import
 import 'package:showcaseview/showcaseview.dart';
 
+import '../../../article/presentation/bloc/article_bloc.dart';
+import '../../../article/presentation/widgets/article_carousel_widget.dart';
+
 class DashboardPage extends StatefulWidget {
   final int initialIndex;
   const DashboardPage({super.key, this.initialIndex = 0});
@@ -127,6 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
         BlocProvider(
           create: (context) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
         ),
+        BlocProvider(create: (context) => getIt<ArticleBloc>()),
       ],
       child: Builder(
         builder: (context) {
@@ -219,17 +223,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 body: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFF0F2027),
-                        Color(0xFF203A43),
-                        Color(0xFF2C5364),
-                      ],
-                    ),
-                  ),
+                  decoration: const BoxDecoration(color: Color(0xFF0F2027)),
                   child: SafeArea(
                     child: Stack(
                       children: [
@@ -479,9 +473,9 @@ class _DashboardPageState extends State<DashboardPage> {
                           );
                           final l10n = AppLocalizations.of(context)!;
 
-                          final gradient = _getPrayerGradient(
-                            nextPrayer['name'],
-                          );
+                          // final gradient = _getPrayerGradient(
+                          //   nextPrayer['name'],
+                          // ); // Unused now
                           final isLandscape =
                               MediaQuery.of(context).orientation ==
                               Orientation.landscape;
@@ -502,27 +496,32 @@ class _DashboardPageState extends State<DashboardPage> {
                                     : null, // Auto height for reminders
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(24.r),
-                                  gradient: gradient,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      const Color(
+                                        0xFF1DE9B6,
+                                      ).withOpacity(0.2), // Teal Accent as Base
+                                      const Color(0xFF1DE9B6).withOpacity(0.05),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
                                   boxShadow: [
-                                    BoxShadow(
-                                      color: gradient.colors.last.withOpacity(
-                                        0.4,
-                                      ),
-                                      blurRadius: 20,
-                                      spreadRadius: -5,
-                                      offset: const Offset(0, 10),
-                                    ),
+                                    // Soft Teal Glow
                                     BoxShadow(
                                       color: const Color(
-                                        0xFF000000,
-                                      ).withOpacity(0.2),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
+                                        0xFF1DE9B6,
+                                      ).withOpacity(0.1),
+                                      blurRadius: 20,
+                                      spreadRadius: -5,
+                                      offset: const Offset(0, 8),
                                     ),
                                   ],
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.15),
-                                    width: 1.5,
+                                    color: const Color(
+                                      0xFFFFC107,
+                                    ).withOpacity(0.3), // Clearer Gold Border
+                                    width: 1,
                                   ),
                                 ),
                                 child: Stack(
@@ -534,7 +533,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                       child: Icon(
                                         Icons.mosque,
                                         size: isLandscape ? 80.sp : 120.sp,
-                                        color: Colors.white.withOpacity(0.1),
+                                        color: const Color(
+                                          0xFFFFC107,
+                                        ).withOpacity(0.1), // Gold Icon Tint
                                       ),
                                     ),
                                     Padding(
@@ -636,13 +637,28 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             BorderRadius.circular(
                                                               12.r,
                                                             ),
+                                                        border: Border.all(
+                                                          color: const Color(
+                                                            0xFFFFC107,
+                                                          ).withOpacity(0.3),
+                                                          width: 1,
+                                                        ),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: const Color(
+                                                              0xFFFFC107,
+                                                            ).withOpacity(0.15),
+                                                            blurRadius: 10,
+                                                            spreadRadius: -2,
+                                                          ),
+                                                        ],
                                                       ),
                                                       child: PrayerCountdownWidget(
                                                         targetTime:
                                                             nextPrayer['nextPrayerTime']
                                                                 as DateTime,
                                                         baseColor: const Color(
-                                                          0xFF00E676,
+                                                          0xFFFFC107, // Gold Countdown Progress
                                                         ),
                                                         onFinished: () {
                                                           context.read<PrayerBloc>().add(
@@ -744,13 +760,28 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             BorderRadius.circular(
                                                               12.r,
                                                             ),
+                                                        border: Border.all(
+                                                          color: const Color(
+                                                            0xFFFFC107,
+                                                          ).withOpacity(0.3),
+                                                          width: 1,
+                                                        ),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: const Color(
+                                                              0xFFFFC107,
+                                                            ).withOpacity(0.15),
+                                                            blurRadius: 10,
+                                                            spreadRadius: -2,
+                                                          ),
+                                                        ],
                                                       ),
                                                       child: PrayerCountdownWidget(
                                                         targetTime:
                                                             nextPrayer['nextPrayerTime']
                                                                 as DateTime,
                                                         baseColor: const Color(
-                                                          0xFF00E676,
+                                                          0xFFFFC107, // Gold Countdown Progress
                                                         ),
                                                         onFinished: () {
                                                           context.read<PrayerBloc>().add(
@@ -854,6 +885,10 @@ class _DashboardPageState extends State<DashboardPage> {
                       );
                     },
                   ),
+                  SizedBox(height: 12.h),
+
+                  // ARTICLE CAROUSEL (Hidden for release)
+                  const ArticleCarouselWidget(),
                   SizedBox(height: 12.h),
 
                   // QUICK ACCESS GRID (2x2)
@@ -1025,25 +1060,27 @@ class _DashboardPageState extends State<DashboardPage> {
       height: isLandscape ? null : 170.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF4A00E0), Color(0xFF8E2DE2)], // Vibrant Purple-Blue
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF1DE9B6).withOpacity(0.2), // Teal Accent as Base
+            const Color(0xFF1DE9B6).withOpacity(0.05),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
+          // Soft Teal Glow
           BoxShadow(
-            color: const Color(0xFF8E2DE2).withOpacity(0.4),
+            color: const Color(0xFF1DE9B6).withOpacity(0.1),
             blurRadius: 20,
             spreadRadius: -5,
-            offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            offset: const Offset(0, 8),
           ),
         ],
-        border: Border.all(color: Colors.white.withOpacity(0.12), width: 1.5),
+        border: Border.all(
+          color: const Color(0xFFFFC107).withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: GestureDetector(
         onTap: () => context.push('/quran/history'),
@@ -1057,7 +1094,9 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Icon(
                 Icons.auto_stories,
                 size: isLandscape ? 80.sp : 140.sp,
-                color: Colors.white.withOpacity(0.08),
+                color: const Color(
+                  0xFFFFC107,
+                ).withOpacity(0.1), // Gold Icon Tint
               ),
             ),
 
@@ -1075,7 +1114,9 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                           child: Icon(
                             Icons.flag_rounded,
-                            color: Colors.white,
+                            color: const Color(
+                              0xFF00E676,
+                            ), // Green Icon for Goal
                             size: 16.sp,
                           ),
                         ),
@@ -1084,7 +1125,9 @@ class _DashboardPageState extends State<DashboardPage> {
                         Text(
                           l10n.cardDailyGoal,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: const Color(
+                              0xFFFFC107,
+                            ), // Gold Title for Goal
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w600,
                           ),
@@ -1147,9 +1190,21 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         SizedBox(width: 12.w),
                         // Circular Progress
-                        SizedBox(
+                        Container(
                           width: 40.w,
                           height: 40.w,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(
+                                  0xFFFFC107,
+                                ).withOpacity(0.2), // Gold Glow
+                                blurRadius: 10,
+                                spreadRadius: -2,
+                              ),
+                            ],
+                          ),
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
@@ -1165,7 +1220,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 strokeWidth: 4.w,
                                 strokeCap: StrokeCap.round,
                                 valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF00E676),
+                                  Color(0xFFFFC107), // Gold Progress
                                 ),
                                 backgroundColor: Colors.transparent,
                               ),
@@ -1192,7 +1247,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     ),
                                     child: Icon(
                                       Icons.flag_rounded,
-                                      color: Colors.white,
+                                      color: const Color(
+                                        0xFF00E676,
+                                      ), // Green Icon for Goal
                                       size: 20.sp,
                                     ),
                                   ),
@@ -1201,7 +1258,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     child: Text(
                                       l10n.cardDailyGoal,
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: const Color(
+                                          0xFFFFC107,
+                                        ), // Gold Title for Goal
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -1238,7 +1297,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                         vertical: 4.h,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF00E676),
+                                        color: const Color(
+                                          0xFFFFC107,
+                                        ), // Gold Completed Badge
                                         borderRadius: BorderRadius.circular(
                                           8.r,
                                         ),
@@ -1311,16 +1372,28 @@ class _DashboardPageState extends State<DashboardPage> {
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                Container(
                                   width: 80.w,
                                   height: 80.w,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(
+                                          0xFFFFC107,
+                                        ).withOpacity(0.2), // Gold Glow
+                                        blurRadius: 15,
+                                        spreadRadius: -2,
+                                      ),
+                                    ],
+                                  ),
                                   child: CircularProgressIndicator(
                                     value: percentage,
                                     strokeWidth: 8.w,
                                     strokeCap: StrokeCap.round,
                                     valueColor:
                                         const AlwaysStoppedAnimation<Color>(
-                                          Color(0xFF00E676),
+                                          Color(0xFFFFC107), // Gold Progress
                                         ),
                                     backgroundColor: Colors.transparent,
                                   ),
@@ -1474,53 +1547,53 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  LinearGradient _getPrayerGradient(String prayerName) {
-    switch (prayerName) {
-      case 'Subuh':
-        return const LinearGradient(
-          colors: [Color(0xFF2C3E50), Color(0xFFE1B12C)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Terbit':
-        return const LinearGradient(
-          colors: [Color(0xFFE1B12C), Color(0xFFF1C40F)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Dzuhur':
-        return const LinearGradient(
-          colors: [Color(0xFF2980B9), Color(0xFF6DD5FA)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Ashar':
-        return const LinearGradient(
-          colors: [Color(0xFF6DD5FA), Color(0xFFFF7F50)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Maghrib':
-        return const LinearGradient(
-          colors: [Color(0xFFFF7F50), Color(0xFF8E44AD)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Isya':
-        return const LinearGradient(
-          colors: [Color(0xFF8E44AD), Color(0xFF2C3E50)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-      case 'Imsak':
-      default:
-        return const LinearGradient(
-          colors: [Color(0xFF11998e), Color(0xFF38ef7d)], // Default Green
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        );
-    }
-  }
+  // LinearGradient _getPrayerGradient(String prayerName) {
+  //   switch (prayerName) {
+  //     case 'Subuh':
+  //       return const LinearGradient(
+  //         colors: [Color(0xFF2C3E50), Color(0xFFE1B12C)],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       );
+  //     case 'Terbit':
+  //       return const LinearGradient(
+  //         colors: [Color(0xFFE1B12C), Color(0xFFF1C40F)],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       );
+  //     case 'Dzuhur':
+  //       return const LinearGradient(
+  //         colors: [Color(0xFF2980B9), Color(0xFF6DD5FA)],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       );
+  //     case 'Ashar':
+  //       return const LinearGradient(
+  //         colors: [Color(0xFF6DD5FA), Color(0xFFFF7F50)],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       );
+  //     case 'Maghrib':
+  //       return const LinearGradient(
+  //         colors: [Color(0xFFFF7F50), Color(0xFF8E44AD)],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       );
+  //     case 'Isya':
+  //       return const LinearGradient(
+  //         colors: [Color(0xFF8E44AD), Color(0xFF2C3E50)],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       );
+  //     case 'Imsak':
+  //     default:
+  //       return const LinearGradient(
+  //         colors: [Color(0xFF11998e), Color(0xFF38ef7d)], // Default Green
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       );
+  //   }
+  // }
 
   // Compact fasting info for prayer card
   Widget _buildCompactFastingInfo(
@@ -1536,7 +1609,7 @@ class _DashboardPageState extends State<DashboardPage> {
           children: [
             Icon(
               Icons.nightlight_round,
-              color: const Color(0xFF00E676),
+              color: const Color(0xFFFFC107), // Gold Fasting Icon
               size: 12.sp,
             ),
             SizedBox(width: 4.w),

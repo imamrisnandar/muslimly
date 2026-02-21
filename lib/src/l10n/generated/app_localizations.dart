@@ -2311,6 +2311,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip'**
   String get lblSkip;
+
+  /// No description provided for @articleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Articles & News'**
+  String get articleTitle;
+
+  /// No description provided for @articleSeeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get articleSeeAll;
+
+  /// No description provided for @articleReadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Read More'**
+  String get articleReadMore;
+
+  /// No description provided for @articleSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search articles...'**
+  String get articleSearchHint;
+
+  /// No description provided for @articleSearchStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start searching...'**
+  String get articleSearchStart;
+
+  /// No description provided for @articleNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No articles found.'**
+  String get articleNoData;
+
+  /// No description provided for @articleErrorLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load articles'**
+  String get articleErrorLoad;
+
+  /// No description provided for @articleErrorSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to search articles'**
+  String get articleErrorSearch;
+
+  /// No description provided for @articleListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamic Articles'**
+  String get articleListTitle;
+
+  /// No description provided for @articleListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No articles yet.'**
+  String get articleListEmpty;
 }
 
 class _AppLocalizationsDelegate

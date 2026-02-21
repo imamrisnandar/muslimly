@@ -372,5 +372,15 @@
     "ibadahPrayerTitle": "Prayer Guide",
     "prayerGuideSubtitle": "Complete Prayer Guide according to Sunnah",
     "searchPrayerGuide": "Search Prayer topic...",
-    "lblSkip": "Skip"
+    "lblSkip": "Skip",
+    "articleTitle": "Articles & News",
+    "articleSeeAll": "See All",
+    "articleReadMore": "Read More",
+    "articleSearchHint": "Search articles...",
+    "articleSearchStart": "Start searching...",
+    "articleNoData": "No articles found.",
+    "articleErrorLoad": "Failed to load articles",
+    "articleErrorSearch": "Failed to search articles",
+    "articleListTitle": "Islamic Articles",
+    "articleListEmpty": "No articles yet."
 }

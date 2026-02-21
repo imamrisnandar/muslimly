@@ -1217,4 +1217,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lblSkip => 'Skip';
+
+  @override
+  String get articleTitle => 'Articles & News';
+
+  @override
+  String get articleSeeAll => 'See All';
+
+  @override
+  String get articleReadMore => 'Read More';
+
+  @override
+  String get articleSearchHint => 'Search articles...';
+
+  @override
+  String get articleSearchStart => 'Start searching...';
+
+  @override
+  String get articleNoData => 'No articles found.';
+
+  @override
+  String get articleErrorLoad => 'Failed to load articles';
+
+  @override
+  String get articleErrorSearch => 'Failed to search articles';
+
+  @override
+  String get articleListTitle => 'Islamic Articles';
+
+  @override
+  String get articleListEmpty => 'No articles yet.';
 }

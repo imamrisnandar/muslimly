@@ -1223,4 +1223,34 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get lblSkip => 'Lewati';
+
+  @override
+  String get articleTitle => 'Kabar & Ilmiah';
+
+  @override
+  String get articleSeeAll => 'Lihat Semua';
+
+  @override
+  String get articleReadMore => 'Baca Selengkapnya';
+
+  @override
+  String get articleSearchHint => 'Cari artikel...';
+
+  @override
+  String get articleSearchStart => 'Mulai pencarian...';
+
+  @override
+  String get articleNoData => 'Tidak ada artikel ditemukan.';
+
+  @override
+  String get articleErrorLoad => 'Gagal memuat artikel';
+
+  @override
+  String get articleErrorSearch => 'Gagal mencari artikel';
+
+  @override
+  String get articleListTitle => 'Artikel Islami';
+
+  @override
+  String get articleListEmpty => 'Belum ada artikel.';
 }

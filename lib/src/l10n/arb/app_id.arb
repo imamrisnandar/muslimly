@@ -372,6 +372,16 @@
     "ibadahPrayerTitle": "Panduan Sholat",
     "prayerGuideSubtitle": "Panduan Sholat Lengkap Sesuai Sunnah",
     "searchPrayerGuide": "Cari topik sholat...",
-    "lblSkip": "Lewati"
+    "lblSkip": "Lewati",
+    "articleTitle": "Kabar & Ilmiah",
+    "articleSeeAll": "Lihat Semua",
+    "articleReadMore": "Baca Selengkapnya",
+    "articleSearchHint": "Cari artikel...",
+    "articleSearchStart": "Mulai pencarian...",
+    "articleNoData": "Tidak ada artikel ditemukan.",
+    "articleErrorLoad": "Gagal memuat artikel",
+    "articleErrorSearch": "Gagal mencari artikel",
+    "articleListTitle": "Artikel Islami",
+    "articleListEmpty": "Belum ada artikel."
 }
 

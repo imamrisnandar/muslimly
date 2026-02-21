@@ -2,6 +2,14 @@ import 'package:just_audio/just_audio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import '../utils/location_service.dart';
+
+// Article Feature
+import '../../features/article/data/datasources/article_local_data_source.dart';
+import '../../features/article/data/datasources/article_remote_data_source.dart';
+import '../../features/article/data/repositories/article_repository_impl.dart';
+import '../../features/article/domain/repositories/article_repository.dart';
+import '../../features/article/presentation/bloc/article_bloc.dart';
+
 import '../../features/intro/data/repositories/name_repository.dart';
 import '../../features/settings/data/repositories/settings_repository.dart'; // Settings Repo
 import '../../features/settings/presentation/bloc/settings_cubit.dart'; // Settings Cubit
@@ -191,6 +199,23 @@ void configureDependencies() {
   // --- Prayer Feature ---
   getIt.registerLazySingleton<PrayerGuideRepository>(
     () => PrayerGuideRepository(),
+  );
+
+  // --- Article Feature ---
+  getIt.registerLazySingleton<ArticleLocalDataSource>(
+    () => ArticleLocalDataSourceImpl(getIt<DatabaseService>()),
+  );
+  getIt.registerLazySingleton<ArticleRemoteDataSource>(
+    () => ArticleRemoteDataSourceImpl(getIt<Dio>()),
+  );
+  getIt.registerLazySingleton<ArticleRepository>(
+    () => ArticleRepositoryImpl(
+      localDataSource: getIt<ArticleLocalDataSource>(),
+      remoteDataSource: getIt<ArticleRemoteDataSource>(),
+    ),
+  );
+  getIt.registerFactory<ArticleBloc>(
+    () => ArticleBloc(repository: getIt<ArticleRepository>()),
   );
 }
 

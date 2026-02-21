@@ -23,7 +23,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 8, // Upgraded for Bookmark Mode
+      version: 9, // Upgraded for Article Feature
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -79,6 +79,9 @@ class DatabaseService {
 
     // Tajweed Cache
     await _createTajweedTable(db);
+
+    // Article Cache
+    await _createArticlesTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -129,6 +132,10 @@ class DatabaseService {
       await db.execute(
         "UPDATE bookmarks SET mode = 'mushaf' WHERE ayah_number IS NULL",
       );
+    }
+    if (oldVersion < 9) {
+      // Create Articles Table
+      await _createArticlesTable(db);
     }
   }
 
@@ -181,6 +188,50 @@ class DatabaseService {
         UNIQUE(surah_number, ayah_number)
       )
     ''');
+  }
+
+  Future<void> _createArticlesTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE articles (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        summary TEXT NOT NULL,
+        category TEXT NOT NULL,
+        author TEXT NOT NULL,
+        published_at TEXT NOT NULL,
+        order_priority INTEGER NOT NULL
+      )
+    ''');
+  }
+
+  // --- CRUD for Articles ---
+
+  Future<void> cacheArticles(List<Map<String, dynamic>> articles) async {
+    final db = await database;
+    final batch = db.batch();
+
+    // Clear oldcache? Maybe simpler to just replace
+    // Or we could execute a delete all first if we want full sync
+    // Let's assume full sync strategy
+    await db.delete('articles');
+
+    for (var article in articles) {
+      batch.insert(
+        'articles',
+        article,
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+    await batch.commit(noResult: true);
+  }
+
+  Future<List<Map<String, dynamic>>> getCachedArticles() async {
+    final db = await database;
+    return await db.query(
+      'articles',
+      orderBy: 'order_priority DESC, published_at DESC',
+    );
   }
 
   // --- Settings Methods ---
