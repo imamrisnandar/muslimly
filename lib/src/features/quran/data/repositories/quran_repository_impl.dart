@@ -5,6 +5,9 @@ import '../../domain/entities/surah.dart';
 import '../../domain/repositories/quran_repository.dart';
 import '../datasources/quran_local_data_source.dart';
 
+import '../datasources/remote/sync_api_service.dart';
+import '../../domain/entities/last_read.dart';
+
 import 'package:dio/dio.dart';
 import '../../../../core/database/database_service.dart';
 import '../../domain/entities/search_result.dart'; // Import SearchResult entity
@@ -15,8 +18,14 @@ class QuranRepositoryImpl implements QuranRepository {
   final QuranLocalDataSource _localDataSource;
   final DatabaseService _databaseService;
   final Dio _dio;
+  final SyncApiService _syncApiService;
 
-  QuranRepositoryImpl(this._localDataSource, this._databaseService, this._dio);
+  QuranRepositoryImpl(
+    this._localDataSource,
+    this._databaseService,
+    this._dio,
+    this._syncApiService,
+  );
 
   @override
   Future<Either<String, List<Surah>>> getSurahs() async {
@@ -170,6 +179,81 @@ class QuranRepositoryImpl implements QuranRepository {
       return const Left('Search failed');
     } catch (e) {
       return Left('Search error: $e');
+    }
+  }
+
+  @override
+  Future<Either<String, void>> syncLastReadPosition(
+    LastRead lastRead,
+    String? token, {
+    String? deviceId,
+  }) async {
+    try {
+      final payload = <String, dynamic>{
+        'surah_id': lastRead.surahNumber,
+        'ayah_number': lastRead.ayahNumber,
+        'page_number': lastRead.pageNumber,
+        'mode': lastRead.mode,
+      };
+      if (deviceId != null && deviceId.isNotEmpty) {
+        payload['device_id'] = deviceId;
+      }
+
+      await _syncApiService.upsertReadingHistory(payload, token);
+      return const Right(null);
+    } catch (e) {
+      return Left('Sync failed: $e');
+    }
+  }
+
+  @override
+  Future<Either<String, void>> syncUnsyncedActivities(
+    String? token, {
+    String? deviceId,
+  }) async {
+    try {
+      // 1. Get all unsynced activities from local database
+      final unsynced = await _databaseService.getUnsyncedActivities();
+
+      if (unsynced.isEmpty) {
+        return const Right(null); // Nothing to sync
+      }
+
+      // 2. Map to backend DTO payload format
+      final payload = unsynced
+          .map((activity) => activity.toJsonSync())
+          .toList();
+
+      // 3. Send bulk insert request
+      await _syncApiService.bulkInsertActivities(
+        payload,
+        token,
+        deviceId: deviceId,
+      );
+
+      // 4. If successful, mark them as synced in local DB
+      final idsToMark = unsynced.map((a) => a.id!).toList();
+      await _databaseService.markActivitiesAsSynced(idsToMark);
+
+      return const Right(null);
+    } catch (e) {
+      return Left('Bulk sync failed: $e');
+    }
+  }
+
+  @override
+  Future<Either<String, List<dynamic>>> getReadingHistory(
+    String? token, {
+    String? deviceId,
+  }) async {
+    try {
+      final history = await _syncApiService.getReadingHistory(
+        token,
+        deviceId: deviceId,
+      );
+      return Right(history);
+    } catch (e) {
+      return Left('Failed to fetch remote history: $e');
     }
   }
 }

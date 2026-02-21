@@ -1,7 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/database/database_service.dart';
+import '../../../../../core/services/notification_service.dart';
 import '../../../../settings/data/repositories/settings_repository.dart';
+import '../../../../auth/domain/repositories/auth_repository.dart';
+import '../../../domain/repositories/quran_repository.dart';
+import '../../../domain/entities/last_read.dart';
 import '../../../domain/entities/reading_activity.dart';
 import 'reading_event.dart';
 import 'reading_state.dart';
@@ -9,9 +13,15 @@ import 'reading_state.dart';
 class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
   final DatabaseService _databaseService;
   final SettingsRepository _settingsRepository;
+  final AuthRepository _authRepository;
+  final QuranRepository _quranRepository;
 
-  ReadingBloc(this._databaseService, this._settingsRepository)
-    : super(const ReadingState()) {
+  ReadingBloc(
+    this._databaseService,
+    this._settingsRepository,
+    this._authRepository,
+    this._quranRepository,
+  ) : super(const ReadingState()) {
     on<LoadReadingOverview>(_onLoadOverview);
     on<LoadReadingHistory>(_onLoadReadingHistory);
     on<LogPageRead>(_onLogPageRead);
@@ -20,6 +30,8 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
     on<NavigateWeeklyChart>(_onNavigateWeeklyChart);
     on<ToggleChartView>(_onToggleChartView);
     on<LoadMoreHistory>(_onLoadMoreHistory);
+    on<SyncReadingData>(_onSyncReadingData);
+    on<SyncLastRead>(_onSyncLastRead);
   }
 
   void _onToggleChartView(ToggleChartView event, Emitter<ReadingState> emit) {
@@ -437,6 +449,71 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
       emit(state.copyWith(dailyTarget: event.newTarget));
     } catch (e) {
       emit(state.copyWith(errorMessage: "Failed to update target"));
+    }
+  }
+
+  Future<void> _onSyncReadingData(
+    SyncReadingData event,
+    Emitter<ReadingState> emit,
+  ) async {
+    try {
+      // Try to get auth token
+      String? token;
+      final tokenEither = await _authRepository.getToken();
+      tokenEither.fold((failure) {}, (t) {
+        token = t;
+      });
+
+      // Get device_id as fallback
+      final deviceId = await NotificationService.getDeviceId();
+
+      // Sync if we have either token or device_id
+      if ((token != null && token!.isNotEmpty) ||
+          (deviceId != null && deviceId.isNotEmpty)) {
+        await _quranRepository.syncUnsyncedActivities(
+          token,
+          deviceId: deviceId,
+        );
+      }
+    } catch (e) {
+      // Ignore sync errors for now to not disrupt UX
+    }
+  }
+
+  Future<void> _onSyncLastRead(
+    SyncLastRead event,
+    Emitter<ReadingState> emit,
+  ) async {
+    try {
+      // Try to get auth token
+      String? token;
+      final tokenEither = await _authRepository.getToken();
+      tokenEither.fold((failure) {}, (t) {
+        token = t;
+      });
+
+      // Get device_id as fallback
+      final deviceId = await NotificationService.getDeviceId();
+
+      // Sync if we have either token or device_id
+      if ((token != null && token!.isNotEmpty) ||
+          (deviceId != null && deviceId.isNotEmpty)) {
+        final lastRead = LastRead(
+          pageNumber: event.pageNumber,
+          surahName: event.surahName,
+          surahNumber: event.surahNumber,
+          ayahNumber: event.ayahNumber,
+          timestamp: DateTime.now().millisecondsSinceEpoch,
+          mode: event.mode,
+        );
+        await _quranRepository.syncLastReadPosition(
+          lastRead,
+          token,
+          deviceId: deviceId,
+        );
+      }
+    } catch (e) {
+      // Ignore explicitly to not disrupt UX on background sync
     }
   }
 }

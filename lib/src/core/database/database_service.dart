@@ -23,7 +23,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 9, // Upgraded for Article Feature
+      version: 10, // Upgraded for Sync Feature
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -50,7 +50,8 @@ class DatabaseService {
         start_ayah INTEGER,
         end_ayah INTEGER,
         total_ayahs INTEGER,
-        mode TEXT DEFAULT 'page'
+        mode TEXT DEFAULT 'page',
+        is_synced INTEGER DEFAULT 0
       )
     ''');
 
@@ -136,6 +137,11 @@ class DatabaseService {
     if (oldVersion < 9) {
       // Create Articles Table
       await _createArticlesTable(db);
+    }
+    if (oldVersion < 10) {
+      await db.execute(
+        'ALTER TABLE reading_activity ADD COLUMN is_synced INTEGER DEFAULT 0',
+      );
     }
   }
 
@@ -299,6 +305,33 @@ class DatabaseService {
       orderBy: 'timestamp DESC',
     );
     return maps.map((e) => ReadingActivity.fromMap(e)).toList();
+  }
+
+  /// Get all unsynced activities
+  Future<List<ReadingActivity>> getUnsyncedActivities() async {
+    final db = await database;
+    final maps = await db.query(
+      'reading_activity',
+      where: 'is_synced = ?',
+      whereArgs: [0],
+      orderBy: 'timestamp ASC', // Sync older ones first
+    );
+    return maps.map((e) => ReadingActivity.fromMap(e)).toList();
+  }
+
+  /// Mark specific activities as synced using their local IDs
+  Future<void> markActivitiesAsSynced(List<int> ids) async {
+    if (ids.isEmpty) return;
+
+    final db = await database;
+    final placeholders = List.filled(ids.length, '?').join(',');
+
+    await db.update(
+      'reading_activity',
+      {'is_synced': 1},
+      where: 'id IN ($placeholders)',
+      whereArgs: ids,
+    );
   }
 
   /// Get generic history with pagination

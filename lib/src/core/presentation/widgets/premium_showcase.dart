@@ -24,10 +24,15 @@ class PremiumShowcase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if ShowCaseWidget ancestor exists to avoid scope errors during navigation
+    final showcaseAncestor = context
+        .findAncestorWidgetOfExactType<ShowCaseWidget>();
+    if (showcaseAncestor == null) {
+      return child;
+    }
+
     return Showcase.withWidget(
       key: globalKey,
-      // height: 200, // Removed invalid param
-      // width: 280.w, // Removed invalid param
       targetShapeBorder: targetShapeBorder ?? const CircleBorder(),
       targetPadding: targetPadding ?? EdgeInsets.zero,
       overlayColor: Colors.black.withOpacity(0.85),

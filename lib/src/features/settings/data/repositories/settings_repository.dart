@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
+import '../../../../core/services/notification_service.dart';
+import '../../../auth/domain/repositories/auth_repository.dart';
+import '../../../quran/data/datasources/remote/sync_api_service.dart';
 
 abstract class SettingsRepository {
   Future<String?> getLanguage();
@@ -31,6 +34,8 @@ abstract class SettingsRepository {
   Future<List<Map<String, dynamic>>> getHijriAdjustments();
   Future<void> saveHijriAdjustments(List<Map<String, dynamic>> adjustments);
   Future<List<Map<String, dynamic>>> fetchRemoteHijriAdjustments();
+
+  Future<void> syncSettingsFromRemote();
 }
 
 @LazySingleton(as: SettingsRepository)
@@ -46,8 +51,40 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   final DatabaseService _databaseService;
   final Dio _dio;
+  final AuthRepository _authRepository;
+  final SyncApiService _syncApiService;
 
-  SettingsRepositoryImpl(this._databaseService, this._dio);
+  SettingsRepositoryImpl(
+    this._databaseService,
+    this._dio,
+    this._authRepository,
+    this._syncApiService,
+  );
+
+  // Helper method to sync a changed setting to the backend in the background
+  Future<void> _syncSettingChanges(String key, String value) async {
+    try {
+      String? token;
+      final tokenEither = await _authRepository.getToken();
+      tokenEither.fold((_) {}, (t) => token = t);
+
+      final deviceId = await NotificationService.getDeviceId();
+
+      if ((token != null && token!.isNotEmpty) ||
+          (deviceId != null && deviceId.isNotEmpty)) {
+        await _syncApiService.upsertSettings(
+          [
+            {'key': key, 'value': value},
+          ],
+          token,
+          deviceId: deviceId,
+        );
+      }
+    } catch (e) {
+      // Ignore background sync errors
+      print('❌ [Sync Settings] Failed to sync setting $key: $e');
+    }
+  }
 
   @override
   Future<String?> getLanguage() async {
@@ -57,6 +94,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> saveLanguage(String languageCode) async {
     await _databaseService.saveSetting(_keyLanguage, languageCode);
+    _syncSettingChanges(_keyLanguage, languageCode);
   }
 
   @override
@@ -99,7 +137,9 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<void> saveDailyReadingTarget(int pages) async {
-    await _databaseService.saveSetting(_keyDailyTarget, pages.toString());
+    final value = pages.toString();
+    await _databaseService.saveSetting(_keyDailyTarget, value);
+    _syncSettingChanges(_keyDailyTarget, value);
   }
 
   @override
@@ -111,6 +151,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> saveReadingTargetUnit(String unit) async {
     await _databaseService.saveSetting(_keyTargetUnit, unit);
+    _syncSettingChanges(_keyTargetUnit, unit);
   }
 
   @override
@@ -122,7 +163,9 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
   @override
   Future<void> saveDailyAyahTarget(int ayahs) async {
-    await _databaseService.saveSetting(_keyDailyAyahTarget, ayahs.toString());
+    final value = ayahs.toString();
+    await _databaseService.saveSetting(_keyDailyAyahTarget, value);
+    _syncSettingChanges(_keyDailyAyahTarget, value);
   }
 
   @override
@@ -133,6 +176,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> saveUserName(String name) async {
     await _databaseService.saveSetting(_keyUserName, name);
+    _syncSettingChanges(_keyUserName, name);
   }
 
   @override
@@ -186,5 +230,58 @@ class SettingsRepositoryImpl implements SettingsRepository {
       // Ignore error
     }
     return [];
+  }
+
+  @override
+  Future<void> syncSettingsFromRemote() async {
+    try {
+      String? token;
+      final tokenEither = await _authRepository.getToken();
+      tokenEither.fold((_) {}, (t) => token = t);
+
+      final deviceId = await NotificationService.getDeviceId();
+
+      if ((token != null && token!.isNotEmpty) ||
+          (deviceId != null && deviceId.isNotEmpty)) {
+        final remoteSettings = await _syncApiService.getSettings(
+          token,
+          deviceId: deviceId,
+        );
+
+        if (remoteSettings.isNotEmpty) {
+          // If server has settings, we overwrite local
+          print(
+            '🔄 [Sync Settings] Found ${remoteSettings.length} settings on remote to pull.',
+          );
+          for (final item in remoteSettings) {
+            if (item is Map &&
+                item.containsKey('key') &&
+                item.containsKey('value')) {
+              await _databaseService.saveSetting(item['key'], item['value']);
+            }
+          }
+        } else {
+          // If server is empty, let's push our current key local targets to establish baseline
+          print(
+            '🔄 [Sync Settings] Remote is empty, pushing local baseline settings.',
+          );
+          final pageTarget = await getDailyReadingTarget();
+          final ayahTarget = await getDailyAyahTarget();
+          final unit = await getReadingTargetUnit();
+
+          await _syncApiService.upsertSettings(
+            [
+              {'key': _keyDailyTarget, 'value': pageTarget.toString()},
+              {'key': _keyDailyAyahTarget, 'value': ayahTarget.toString()},
+              {'key': _keyTargetUnit, 'value': unit},
+            ],
+            token,
+            deviceId: deviceId,
+          );
+        }
+      }
+    } catch (e) {
+      print('❌ [Sync Settings] Failed to sync settings from remote: $e');
+    }
   }
 }

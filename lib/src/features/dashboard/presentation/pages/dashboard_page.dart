@@ -61,6 +61,7 @@ class _DashboardPageState extends State<DashboardPage> {
   late int _currentIndex;
 
   // Showcase Keys
+  final GlobalKey _showCaseWidgetKey = GlobalKey();
   final GlobalKey _dailyGoalKey = GlobalKey();
   final GlobalKey _settingsTabKey = GlobalKey();
   final GlobalKey _prayerCardKey = GlobalKey();
@@ -124,7 +125,9 @@ class _DashboardPageState extends State<DashboardPage> {
               getIt<PrayerBloc>()..add(FetchPrayerTimeByLocation()),
         ),
         BlocProvider(
-          create: (context) => getIt<ReadingBloc>()..add(LoadReadingOverview()),
+          create: (context) => getIt<ReadingBloc>()
+            ..add(LoadReadingOverview())
+            ..add(SyncReadingData()),
         ),
         BlocProvider(create: (context) => getIt<AudioBloc>()..add(InitAudio())),
         BlocProvider(
@@ -135,6 +138,7 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Builder(
         builder: (context) {
           return ShowCaseWidget(
+            key: _showCaseWidgetKey,
             builder: (context) {
               return Scaffold(
                 extendBody: true,
@@ -349,6 +353,7 @@ class _DashboardPageState extends State<DashboardPage> {
               // Reload Data
               context.read<PrayerBloc>().add(FetchPrayerTimeByLocation());
               context.read<ReadingBloc>().add(LoadReadingOverview());
+              context.read<ReadingBloc>().add(SyncReadingData());
               context.read<BookmarkBloc>().add(
                 LoadBookmarks(),
               ); // Add Bookmark Refresh

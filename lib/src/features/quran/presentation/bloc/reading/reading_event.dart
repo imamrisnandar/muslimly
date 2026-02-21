@@ -71,3 +71,30 @@ class ToggleChartView extends ReadingEvent {
 }
 
 class LoadMoreHistory extends ReadingEvent {}
+
+class SyncReadingData extends ReadingEvent {}
+
+class SyncLastRead extends ReadingEvent {
+  final int pageNumber;
+  final String surahName;
+  final int surahNumber;
+  final int ayahNumber;
+  final String mode;
+
+  const SyncLastRead({
+    required this.pageNumber,
+    required this.surahName,
+    required this.surahNumber,
+    this.ayahNumber = 1,
+    this.mode = 'mushaf',
+  });
+
+  @override
+  List<Object?> get props => [
+    pageNumber,
+    surahName,
+    surahNumber,
+    ayahNumber,
+    mode,
+  ];
+}

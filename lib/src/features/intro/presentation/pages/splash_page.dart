@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../settings/data/repositories/settings_repository.dart';
 import '../../data/repositories/name_repository.dart';
 
 class SplashPage extends StatefulWidget {
@@ -43,6 +44,9 @@ class _SplashPageState extends State<SplashPage>
     if (mounted) {
       final repo = getIt<NameRepository>();
       final name = await repo.getName();
+
+      // Trigger background settings sync on app start
+      getIt<SettingsRepository>().syncSettingsFromRemote();
 
       if (mounted) {
         if (name == null || name.isEmpty) {

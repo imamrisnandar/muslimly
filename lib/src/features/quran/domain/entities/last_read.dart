@@ -3,6 +3,7 @@ class LastRead {
   final String surahName;
   final int surahNumber;
   final int ayahNumber; // Optional, defaults to 1 for page start
+  final String mode; // 'mushaf' or 'list'
   final int timestamp; // To track recency
 
   LastRead({
@@ -10,6 +11,7 @@ class LastRead {
     required this.surahName,
     required this.surahNumber,
     this.ayahNumber = 1,
+    this.mode = 'mushaf',
     int? timestamp,
   }) : timestamp = timestamp ?? DateTime.now().millisecondsSinceEpoch;
 
@@ -19,6 +21,7 @@ class LastRead {
       'surahName': surahName,
       'surahNumber': surahNumber,
       'ayahNumber': ayahNumber,
+      'mode': mode,
       'timestamp': timestamp,
     };
   }
@@ -29,6 +32,7 @@ class LastRead {
       surahName: json['surahName'] as String,
       surahNumber: json['surahNumber'] as int,
       ayahNumber: json['ayahNumber'] as int? ?? 1,
+      mode: json['mode'] as String? ?? 'mushaf',
       timestamp: json['timestamp'] as int?,
     );
   }

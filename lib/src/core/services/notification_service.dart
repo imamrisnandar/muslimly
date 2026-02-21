@@ -9,6 +9,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @lazySingleton
 class NotificationService {
@@ -118,7 +119,7 @@ class NotificationService {
       print('FCM_TOKEN: $token');
       print('DEVICE_INFO: $deviceInfo');
 
-      await dio.post(
+      final response = await dio.post(
         '$baseUrl/notifications/register',
         data: {
           'fcm_token': token,
@@ -133,10 +134,26 @@ class NotificationService {
         options: options,
       );
 
+      // Store device_id from response for sync operations
+      if (response.data != null && response.data['data'] != null) {
+        final deviceId = response.data['data']['device_id'];
+        if (deviceId != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('device_id', deviceId);
+          print('✅ Device ID stored: $deviceId');
+        }
+      }
+
       print('✅ FCM Token + Device Metadata registered successfully');
     } catch (e) {
       print('❌ Error syncing FCM token: $e');
     }
+  }
+
+  /// Get the stored device_id from SharedPreferences
+  static Future<String?> getDeviceId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('device_id');
   }
 
   Future<Map<String, String>> _getDeviceInfo() async {

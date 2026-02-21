@@ -184,6 +184,9 @@ class _MushafPageState extends State<MushafPage> {
         ),
       );
 
+      // Trigger background sync
+      context.read<ReadingBloc>().add(SyncReadingData());
+
       String durationStr;
       if (duration < 60) {
         durationStr = "${duration}s";
@@ -585,6 +588,17 @@ class _MushafPageState extends State<MushafPage> {
                                       );
                                       context.read<BookmarkBloc>().add(
                                         SaveLastRead(lastRead),
+                                      );
+
+                                      // Trigger background sync for Last Read
+                                      context.read<ReadingBloc>().add(
+                                        SyncLastRead(
+                                          pageNumber: lastRead.pageNumber,
+                                          surahNumber: lastRead.surahNumber,
+                                          surahName: lastRead.surahName,
+                                          ayahNumber: lastRead.ayahNumber,
+                                          mode: 'mushaf',
+                                        ),
                                       );
 
                                       setState(() {

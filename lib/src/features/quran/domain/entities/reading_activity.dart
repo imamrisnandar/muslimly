@@ -9,6 +9,7 @@ class ReadingActivity {
   final int? endAyah;
   final int? totalAyahs;
   final String mode; // 'page' or 'ayah'
+  final int isSynced; // 0 for false, 1 for true
 
   ReadingActivity({
     this.id,
@@ -21,6 +22,7 @@ class ReadingActivity {
     this.endAyah,
     this.totalAyahs,
     this.mode = 'page',
+    this.isSynced = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -35,6 +37,7 @@ class ReadingActivity {
       'end_ayah': endAyah,
       'total_ayahs': totalAyahs,
       'mode': mode,
+      'is_synced': isSynced,
     };
   }
 
@@ -50,6 +53,22 @@ class ReadingActivity {
       endAyah: map['end_ayah'],
       totalAyahs: map['total_ayahs'],
       mode: map['mode'] ?? 'page',
+      isSynced: map['is_synced'] ?? 0,
     );
+  }
+
+  // Used only for sending data to the backend API
+  Map<String, dynamic> toJsonSync() {
+    return {
+      'date': date,
+      'duration_seconds': durationSeconds,
+      'page_number': pageNumber,
+      'surah_number': surahNumber,
+      'start_ayah': startAyah,
+      'end_ayah': endAyah,
+      'total_ayahs': totalAyahs,
+      'mode': mode,
+      'timestamp': timestamp,
+    };
   }
 }

@@ -36,6 +36,7 @@ import '../../features/prayer/presentation/bloc/prayer_bloc.dart';
 
 // Quran
 import '../../features/quran/data/datasources/quran_local_data_source.dart';
+import '../../features/quran/data/datasources/remote/sync_api_service.dart'; // Added SyncApiService
 // import '../../features/quran/data/datasources/quran_remote_data_source.dart';
 import '../../features/quran/data/repositories/quran_repository_impl.dart';
 import '../../features/quran/data/repositories/last_read_repository.dart'; // Added
@@ -92,10 +93,19 @@ void configureDependencies() {
   // --- Utils ---
   getIt.registerLazySingleton<LocationService>(() => LocationService());
   getIt.registerLazySingleton<NameRepository>(
-    () => NameRepositoryImpl(getIt<DatabaseService>()),
+    () => NameRepositoryImpl(
+      getIt<DatabaseService>(),
+      getIt<AuthRepository>(),
+      getIt<SyncApiService>(),
+    ),
   );
   getIt.registerLazySingleton<SettingsRepository>(
-    () => SettingsRepositoryImpl(getIt<DatabaseService>(), getIt<Dio>()),
+    () => SettingsRepositoryImpl(
+      getIt<DatabaseService>(),
+      getIt<Dio>(),
+      getIt<AuthRepository>(),
+      getIt<SyncApiService>(),
+    ),
   );
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
 
@@ -127,11 +137,15 @@ void configureDependencies() {
   getIt.registerLazySingleton<QuranLocalDataSource>(
     () => QuranLocalDataSourceImpl(),
   );
+  getIt.registerLazySingleton<SyncApiService>(
+    () => SyncApiService(getIt<Dio>()),
+  );
   getIt.registerLazySingleton<QuranRepository>(
     () => QuranRepositoryImpl(
       getIt<QuranLocalDataSource>(),
       getIt<DatabaseService>(),
       getIt<Dio>(),
+      getIt<SyncApiService>(),
     ),
   );
   getIt.registerLazySingleton<LastReadRepository>(() => LastReadRepository());
@@ -142,7 +156,12 @@ void configureDependencies() {
     () => QuranBloc(getIt<GetSurahs>(), getIt<GetAyahs>()),
   );
   getIt.registerFactory<ReadingBloc>(
-    () => ReadingBloc(getIt<DatabaseService>(), getIt<SettingsRepository>()),
+    () => ReadingBloc(
+      getIt<DatabaseService>(),
+      getIt<SettingsRepository>(),
+      getIt<AuthRepository>(),
+      getIt<QuranRepository>(),
+    ),
   );
   getIt.registerFactory<BookmarkBloc>(
     () => BookmarkBloc(getIt<DatabaseService>(), getIt<LastReadRepository>()),
