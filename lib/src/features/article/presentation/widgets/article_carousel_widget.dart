@@ -1,3 +1,4 @@
+import 'dart:ui' as dart_ui;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -133,7 +134,7 @@ class _ArticleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconData = _getCategoryIcon(article.category);
-    final categoryColor = _getCategoryColor(article.category);
+    final categoryColor = const Color(0xFF1DE9B6); // Fresh Teal
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -141,163 +142,245 @@ class _ArticleCard extends StatelessWidget {
       onTap: () => context.push('/article-detail', extra: article),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        margin: EdgeInsets.symmetric(horizontal: 4.w),
+        margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24.r),
-          gradient: _getCategoryGradient(article.category), // Custom Gradient
-          border: Border.all(
-            color: categoryColor.withOpacity(0.3), // Colored Border
-            width: 1,
-          ),
+          borderRadius: BorderRadius.circular(
+            20.r,
+          ), // Flyer-like slightly sharper corners
           boxShadow: [
             BoxShadow(
-              color: categoryColor.withOpacity(0.05), // Richer Shadow Glow
-              blurRadius: 20,
+              color: categoryColor.withOpacity(0.1),
+              blurRadius: 30,
               spreadRadius: -5,
-              offset: const Offset(0, 8),
+              offset: const Offset(0, 15),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(20.r),
           child: Stack(
             children: [
-              // Background Icon - Category Tint
-              Positioned(
-                right: -16.w,
-                bottom: -16.w,
-                child: Transform.rotate(
-                  angle: -0.2,
-                  child: Icon(
-                    iconData,
-                    size: 120.sp,
-                    color: categoryColor.withOpacity(0.1),
+              // 1. Frosted Glass Base Layer
+              Positioned.fill(
+                child: BackdropFilter(
+                  // Increased blur for a thicker glass feel
+                  filter: dart_ui.ImageFilter.blur(sigmaX: 25.0, sigmaY: 25.0),
+                  child: Container(
+                    // Lighter tint so more background colors bleed through
+                    color: const Color(0xFF0F2027).withOpacity(0.35),
                   ),
                 ),
               ),
 
-              // Content with LayoutBuilder for safety
+              // 2. Glass Surface Reflections & Border
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.r),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        categoryColor.withOpacity(
+                          0.25,
+                        ), // Stronger Teal highlight on top-left edge
+                        Colors.white.withOpacity(
+                          0.12,
+                        ), // Stronger white reflection
+                        Colors.black.withOpacity(0.1),
+                      ],
+                      stops: const [0.0, 0.35, 1.0],
+                    ),
+                    border: Border.all(
+                      // Stronger white border to emphasize the glass edge
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+
+              // 3. Artistic Watermark (Moved to top-right like a flyer graphic)
+              Positioned(
+                right: -30.w,
+                top: -20.h,
+                child: Transform.rotate(
+                  angle: 0.15,
+                  child: Icon(
+                    iconData,
+                    size: 150.sp,
+                    color: categoryColor.withOpacity(
+                      0.05,
+                    ), // Very subtle embedded graphic
+                  ),
+                ),
+              ),
+
+              // 4. Content Layout (Poster/Flyer style)
               LayoutBuilder(
                 builder: (context, constraints) {
                   final height = constraints.maxHeight;
-                  // If height is surprisingly constrained (< 160), hide summary
-                  final showSummary = height > 160;
-                  final compactMode = height < 200;
+                  final compactMode = height < 200 || isLandscape;
 
                   return Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: compactMode
-                          ? 12.h
-                          : 16.h, // Reduce vertical padding
+                      horizontal: 16.w,
+                      vertical: 14.h,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween, // Use available space
                       children: [
-                        // Header
+                        // --- TOP ROW: Category Ribbon & Date ---
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Flyer Category Ribbon (Solid frosted glass)
                             Container(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 10.w,
                                 vertical: 4.h,
                               ),
                               decoration: BoxDecoration(
-                                color: categoryColor.withOpacity(0.15),
-                                borderRadius: BorderRadius.circular(8.r),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    categoryColor.withOpacity(0.3),
+                                    categoryColor.withOpacity(0.1),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(6.r),
                                 border: Border.all(
-                                  color: categoryColor.withOpacity(0.5),
-                                  width: 0.5,
+                                  color: categoryColor.withOpacity(0.4),
+                                  width: 1,
                                 ),
                               ),
                               child: Text(
                                 article.category.toUpperCase(),
                                 style: GoogleFonts.inter(
                                   fontSize: isLandscape ? 8.sp : 10.sp,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.5,
-                                  color: categoryColor, // Category Text
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.0,
+                                  color: categoryColor,
                                 ),
                               ),
                             ),
-                            const Spacer(),
-                            Icon(
-                              Icons.calendar_today_rounded,
-                              size: isLandscape ? 10.sp : 12.sp,
-                              color: Colors.white54,
-                            ),
-                            SizedBox(width: 6.w),
-                            Text(
-                              "${article.publishedAt.day}/${article.publishedAt.month}/${article.publishedAt.year}",
-                              style: GoogleFonts.inter(
-                                fontSize: isLandscape ? 10.sp : 12.sp,
-                                color: Colors.white54,
-                                fontWeight: FontWeight.w500,
+
+                            // Date Tag
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 4.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              child: Text(
+                                "${article.publishedAt.day} ${_getMonthName(article.publishedAt.month)} ${article.publishedAt.year}",
+                                style: GoogleFonts.inter(
+                                  fontSize: isLandscape ? 8.sp : 9.sp,
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ],
                         ),
 
-                        // Title (Flexible to avoid overflow)
-                        Flexible(
-                          child: Text(
-                            article.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.outfit(
-                              fontSize: isLandscape ? 16.sp : 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFFFFC107), // Gold Title
-                              height: 1.2,
-                              letterSpacing: 0.2,
-                              shadows: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.5),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
+                        // --- MAIN CONTENT: Flyer Typography ---
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.h),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Flyer Title (Big, Bold, Gold)
+                                Text(
+                                  article.title,
+                                  maxLines: compactMode ? 2 : 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: isLandscape ? 15.sp : 18.sp,
+                                    fontWeight: FontWeight.w800,
+                                    color: const Color(0xFFFFC107), // Pop Gold
+                                    height: 1.15,
+                                    letterSpacing: 0.5,
+                                    shadows: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.8),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
                                 ),
+
+                                if (!compactMode && height > 180) ...[
+                                  SizedBox(height: 8.h),
+                                  // Subtitle / Summary
+                                  Flexible(
+                                    child: Text(
+                                      article.summary,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.inter(
+                                        fontSize: 12.sp,
+                                        color: Colors.white.withOpacity(0.75),
+                                        height: 1.4,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                           ),
                         ),
 
-                        if (showSummary) ...[
-                          Flexible(
-                            child: Text(
-                              article.summary,
-                              maxLines: compactMode ? 2 : 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(
-                                fontSize: isLandscape ? 11.sp : 12.sp,
-                                color: Colors.white70,
-                                height: 1.4,
+                        // --- BOTTOM ROW: Call to Action Pill ---
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 14.w,
+                              vertical: 6.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(
+                                0.1,
+                              ), // Glass Pill
+                              borderRadius: BorderRadius.circular(16.r),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
+                                width: 0.5,
                               ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.articleReadMore.toUpperCase(),
+                                  style: GoogleFonts.inter(
+                                    fontSize: isLandscape ? 8.sp : 9.sp,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                SizedBox(width: 6.w),
+                                Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 13.sp,
+                                  color: const Color(0xFFFFC107), // Gold arrow
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-
-                        // Footer
-                        Row(
-                          children: [
-                            Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.articleReadMore, // "Baca Selengkapnya"
-                              style: GoogleFonts.inter(
-                                fontSize: isLandscape ? 10.sp : 12.sp,
-                                color: categoryColor, // Category Link
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(width: 4.w),
-                            Icon(
-                              Icons.arrow_forward_rounded,
-                              size: 16.sp,
-                              color: categoryColor, // Category Icon
-                            ),
-                          ],
                         ),
                       ],
                     ),
@@ -311,21 +394,23 @@ class _ArticleCard extends StatelessWidget {
     );
   }
 
-  Color _getCategoryColor(String category) {
-    // All categories use "Fresh Teal" (0xFF1DE9B6) as requested
-    return const Color(0xFF1DE9B6);
-  }
-
-  LinearGradient _getCategoryGradient(String category) {
-    final color = _getCategoryColor(category);
-    return LinearGradient(
-      colors: [
-        color.withOpacity(0.15), // Reduced from 0.25 (Subtler Glow)
-        Colors.black.withOpacity(0.9), // Increased from 0.3 (Darker Background)
-      ],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-    );
+  String _getMonthName(int month) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    if (month >= 1 && month <= 12) return months[month - 1];
+    return '';
   }
 
   IconData _getCategoryIcon(String category) {
