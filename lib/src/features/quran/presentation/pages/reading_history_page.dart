@@ -340,243 +340,157 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         .take(displayedWeeksCount)
         .toList();
 
-    return ListView(
+    return CustomScrollView(
       controller: _scrollController,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      children: [
-        // --- Lifetime Stats Cards ---
-        _buildLifetimeStatsCards(
-          context,
-          lifetimeTotal,
-          currentStreak,
-          thirtyDayAverage,
-          isListMode,
-        ),
-        SizedBox(height: 16.h),
-
-        // --- Reading Insight ---
-        _buildInsightCard(
-          context,
-          weeklyProgress,
-          target,
-          currentStreak,
-          lifetimeTotal,
-          isListMode, // Pass mode to determine unit
-        ),
-
-        // --- View Toggle ---
-        _buildViewToggle(context, isWeeklyView),
-        SizedBox(height: 12.h),
-
-        // --- Weekly/Monthly Graph ---
-        _buildWeeklySummary(
-          context,
-          isWeeklyView ? weeklyProgress : monthlyProgress,
-          chartRefDate,
-          target,
-          isWeeklyView,
-        ),
-
-        // --- History List Title ---
-        Padding(
-          padding: EdgeInsets.only(bottom: 12.h),
-          child: Text(
-            AppLocalizations.of(context)!.historyTitle ?? "Reading History",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Outfit',
-            ),
-          ),
-        ),
-
-        // --- Empty State ---
-        if (history.isEmpty) ...[
-          SizedBox(height: 20.h),
-          Center(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+          sliver: SliverToBoxAdapter(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.history_toggle_off,
-                    size: 28.sp,
-                    color: Colors.white24,
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                Text(
-                  AppLocalizations.of(context)!.emptyHistorySubtitle ??
-                      "Start reading to track your progress",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  AppLocalizations.of(context)!.emptyBookmarkSubtitle ??
-                      "Calculated automatically as you read pages",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white54, fontSize: 12.sp),
-                ),
+                _buildLifetimeStatsCards(context, lifetimeTotal, currentStreak, thirtyDayAverage, isListMode),
                 SizedBox(height: 16.h),
-                ElevatedButton(
-                  onPressed: () {
-                    context.go('/dashboard?index=2');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00E676),
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 10.h,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                  ),
+                _buildInsightCard(context, weeklyProgress, target, currentStreak, lifetimeTotal, isListMode),
+                _buildViewToggle(context, isWeeklyView),
+                SizedBox(height: 12.h),
+                _buildWeeklySummary(context, isWeeklyView ? weeklyProgress : monthlyProgress, chartRefDate, target, isWeeklyView),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12.h),
                   child: Text(
-                    AppLocalizations.of(context)!.btnGoToQuran ?? "Read Quran",
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    AppLocalizations.of(context)!.historyTitle ?? "Reading History",
+                    style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
                   ),
                 ),
+                if (history.isEmpty) ...[
+                  SizedBox(height: 20.h),
+                  Center(
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(16.w),
+                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), shape: BoxShape.circle),
+                          child: Icon(Icons.history_toggle_off, size: 28.sp, color: Colors.white24),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          AppLocalizations.of(context)!.emptyHistorySubtitle ?? "Start reading to track your progress",
+                          style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          AppLocalizations.of(context)!.emptyBookmarkSubtitle ?? "Calculated automatically as you read pages",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+                        ),
+                        SizedBox(height: 16.h),
+                        ElevatedButton(
+                          onPressed: () => context.go('/dashboard?index=2'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF00E676),
+                            foregroundColor: Colors.black,
+                            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.btnGoToQuran ?? "Read Quran",
+                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
-        ] else ...[
-          // --- Grouped List View ---
-          ...limitedHistory.asMap().entries.map((mapEntry) {
-            final index = mapEntry.key;
-            final entry = mapEntry.value;
+        ),
+        if (history.isNotEmpty) ...[
+          SliverPadding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            sliver: SliverList.builder(
+              itemCount: limitedHistory.length,
+              itemBuilder: (context, index) {
+                final entry = limitedHistory[index];
+                final shouldExpand = index < 2;
+                final l10n = AppLocalizations.of(context)!;
 
-            // Auto-expand only first 2 weeks
-            final shouldExpand = index < 2;
+                int weeklyTotal = 0;
+                int totalDuration = 0;
+                if (isListMode) {
+                  weeklyTotal = entry.value.fold(0, (sum, item) => sum + (item.totalAyahs ?? 0));
+                } else {
+                  weeklyTotal = entry.value.map((e) => e.pageNumber).toSet().length;
+                }
+                totalDuration = entry.value.fold(0, (sum, item) => sum + item.durationSeconds);
 
-            // Calculate Weekly Total
-            int weeklyTotal = 0;
-            int totalDuration = 0; // Sum duration
+                final unit = isListMode ? (l10n.lblAyahs ?? 'Ayahs') : (l10n.lblPages ?? 'Pages');
+                final durationStr = _formatDuration(totalDuration);
 
-            if (isListMode) {
-              weeklyTotal = entry.value.fold(
-                0,
-                (sum, item) => sum + (item.totalAyahs ?? 0),
-              );
-            } else {
-              // Count unique pages
-              weeklyTotal = entry.value.map((e) => e.pageNumber).toSet().length;
-            }
-            totalDuration = entry.value.fold(
-              0,
-              (sum, item) => sum + item.durationSeconds,
-            );
-
-            final l10n = AppLocalizations.of(context)!;
-            final unit = isListMode
-                ? (l10n.lblAyahs ?? 'Ayahs')
-                : (l10n.lblPages ?? 'Pages');
-            final durationStr = _formatDuration(
-              totalDuration,
-            ); // Format duration
-
-            return Theme(
-              data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-                expansionTileTheme: ExpansionTileThemeData(
-                  iconColor: const Color(0xFF00E676),
-                  collapsedIconColor: Colors.white54,
-                  textColor: Colors.white,
-                  collapsedTextColor: Colors.white,
-                ),
-              ),
-              child: ExpansionTile(
-                initiallyExpanded: shouldExpand,
-                tilePadding: EdgeInsets.zero,
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      isWeeklyView
-                          ? "${l10n.lblWeek ?? 'Week'}: ${entry.key}"
-                          : entry.key, // For monthly, just show "January 2026"
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Outfit',
-                      ),
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent,
+                    expansionTileTheme: ExpansionTileThemeData(
+                      iconColor: const Color(0xFF00E676),
+                      collapsedIconColor: Colors.white54,
+                      textColor: Colors.white,
+                      collapsedTextColor: Colors.white,
                     ),
-                    Row(
+                  ),
+                  child: ExpansionTile(
+                    initiallyExpanded: shouldExpand,
+                    tilePadding: EdgeInsets.zero,
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "$weeklyTotal $unit", // Show Total
-                          style: TextStyle(
-                            color: const Color(0xFF00E676),
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: 'Outfit',
-                          ),
+                          isWeeklyView ? "${l10n.lblWeek ?? 'Week'}: ${entry.key}" : entry.key,
+                          style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.bold, fontFamily: 'Outfit'),
                         ),
-                        if (totalDuration > 0) ...[
-                          SizedBox(width: 8.w),
-                          Icon(
-                            Icons.access_time,
-                            size: 12.sp,
-                            color: Colors.white54,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            durationStr,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12.sp,
-                              fontFamily: 'Outfit',
+                        Row(
+                          children: [
+                            Text(
+                              "$weeklyTotal $unit",
+                              style: TextStyle(color: const Color(0xFF00E676), fontSize: 12.sp, fontWeight: FontWeight.w600, fontFamily: 'Outfit'),
                             ),
-                          ),
-                        ],
+                            if (totalDuration > 0) ...[
+                              SizedBox(width: 8.w),
+                              Icon(Icons.access_time, size: 12.sp, color: Colors.white54),
+                              SizedBox(width: 4.w),
+                              Text(durationStr, style: TextStyle(color: Colors.white70, fontSize: 12.sp, fontFamily: 'Outfit')),
+                            ],
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
-                children: entry.value.map((activity) {
-                  return _buildHistoryItem(context, activity, isListMode);
-                }).toList(),
-              ),
-            );
-          }),
-
-          // --- Loading Indicator ---
-          if (isLoadingMore)
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              child: const Center(child: IslamicLoadingIndicator(size: 32)),
-            ),
-
-          // --- End of History Message ---
-          if (!hasMoreHistory && limitedHistory.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              child: Center(
-                child: Text(
-                  AppLocalizations.of(context)!.msgEndOfHistory ??
-                      "You've reached the end of your history",
-                  style: TextStyle(
-                    color: Colors.white54,
-                    fontSize: 12.sp,
-                    fontStyle: FontStyle.italic,
+                    children: entry.value.map((activity) => _buildHistoryItem(context, activity, isListMode)).toList(),
                   ),
-                ),
-              ),
+                );
+              },
             ),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                if (isLoadingMore)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    child: const Center(child: IslamicLoadingIndicator(size: 32)),
+                  ),
+                if (!hasMoreHistory && limitedHistory.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    child: Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.msgEndOfHistory ?? "You've reached the end of your history",
+                        style: TextStyle(color: Colors.white54, fontSize: 12.sp, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ),
+              ]),
+            ),
+          ),
         ],
       ],
     );

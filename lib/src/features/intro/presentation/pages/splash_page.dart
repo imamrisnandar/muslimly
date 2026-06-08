@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../settings/data/repositories/settings_repository.dart';
-import '../../data/repositories/name_repository.dart';
+import '../../domain/repositories/name_repository.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});

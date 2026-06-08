@@ -1,13 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../quran/data/datasources/remote/sync_api_service.dart';
-
-abstract class NameRepository {
-  Future<void> saveName(String name);
-  Future<String?> getName();
-}
+import '../../domain/repositories/name_repository.dart';
 
 @LazySingleton(as: NameRepository)
 class NameRepositoryImpl implements NameRepository {
@@ -53,7 +50,7 @@ class NameRepositoryImpl implements NameRepository {
         );
       }
     } catch (e) {
-      print('\u274c [Sync Settings] Failed to sync name: $e');
+      debugPrint('\u274c [Sync Settings] Failed to sync name: $e');
     }
   }
 }

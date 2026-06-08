@@ -1,6 +1,10 @@
+import 'package:injectable/injectable.dart';
+import '../../domain/repositories/wudhu_repository.dart';
 import '../models/wudhu_model.dart';
 
-class WudhuRepository {
+@LazySingleton(as: WudhuRepository)
+class WudhuRepositoryImpl implements WudhuRepository {
+  @override
   Future<List<WudhuModel>> getWudhuContent(String locale) async {
     if (locale == 'id') {
       return _wudhuContentId;

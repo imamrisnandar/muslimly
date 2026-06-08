@@ -1,4 +1,5 @@
-import 'package:dartz/dartz.dart';
+import '../../../../core/config/app_urls.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import '../../domain/entities/ayah.dart';
 import '../../domain/entities/surah.dart';
@@ -17,13 +18,15 @@ import '../../domain/entities/search_response.dart';
 class QuranRepositoryImpl implements QuranRepository {
   final QuranLocalDataSource _localDataSource;
   final DatabaseService _databaseService;
-  final Dio _dio;
   final SyncApiService _syncApiService;
+
+  final Dio _quranComDio = Dio(
+    BaseOptions(baseUrl: '${AppUrls.quranComApi}/'),
+  );
 
   QuranRepositoryImpl(
     this._localDataSource,
     this._databaseService,
-    this._dio,
     this._syncApiService,
   );
 
@@ -54,8 +57,8 @@ class QuranRepositoryImpl implements QuranRepository {
       // 3. Fetch Online if Cache Incomplete
       try {
         final url =
-            'https://api.quran.com/api/v4/quran/verses/uthmani_tajweed?chapter_number=$surahId';
-        final response = await _dio.get(url);
+            '/quran/verses/uthmani_tajweed?chapter_number=$surahId';
+        final response = await _quranComDio.get(url);
 
         if (response.statusCode == 200) {
           final verses = response.data['verses'] as List;
@@ -124,8 +127,8 @@ class QuranRepositoryImpl implements QuranRepository {
   }) async {
     try {
       final url =
-          'https://api.quran.com/api/v4/search?q=$query&size=20&page=$page&language=$languageCode';
-      final response = await _dio.get(url);
+          '/search?q=$query&size=20&page=$page&language=$languageCode';
+      final response = await _quranComDio.get(url);
 
       if (response.statusCode == 200) {
         final data = response.data;

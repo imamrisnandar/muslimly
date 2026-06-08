@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -15,17 +16,18 @@ class ArticleDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateStr = DateFormat('d MMMM yyyy').format(article.publishedAt);
+    final backgroundColor = const Color(0xFF0F2027);
     final categoryColor = const Color(0xFF1DE9B6);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: backgroundColor,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 200.h,
             floating: false,
             pinned: true,
-            backgroundColor: const Color(0xFF0F2027),
+            backgroundColor: backgroundColor,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
               onPressed: () => context.pop(),
@@ -40,21 +42,11 @@ class ArticleDetailPage extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: [
                           categoryColor.withOpacity(0.3),
-                          const Color(0xFF0F2027),
+                          backgroundColor,
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                       ),
-                    ),
-                  ),
-                  // Background Pattern Icon
-                  Positioned(
-                    right: -40,
-                    top: -40,
-                    child: Icon(
-                      _getCategoryIcon(article.category),
-                      size: 250.sp,
-                      color: categoryColor.withOpacity(0.05),
                     ),
                   ),
                   // Bottom Fade
@@ -66,7 +58,7 @@ class ArticleDetailPage extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Colors.transparent, const Color(0xFF0F2027)],
+                          colors: [Colors.transparent, backgroundColor],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                         ),
@@ -164,15 +156,127 @@ class ArticleDetailPage extends StatelessWidget {
                     article.content,
                     textStyle: GoogleFonts.inter(
                       fontSize: 16.sp,
-                      color: Colors.white.withOpacity(
-                        0.9,
-                      ), // Slightly reduced white for reading comfort
+                      color: Colors.white.withOpacity(0.9),
                       height: 1.6,
                     ),
+                    customWidgetBuilder: (element) {
+                      final text = element.text;
+                      final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+
+                      // Only handle leaf-like text nodes. Avoid blockquote so
+                      // HtmlWidget can preserve the quote container and line breaks.
+                      final isLeaf = [
+                        'p',
+                        'h1',
+                        'h2',
+                        'h3',
+                        'h4',
+                        'h5',
+                        'h6',
+                        'li',
+                        'span'
+                      ].contains(element.localName);
+
+                      if (hasArabic && isLeaf) {
+                        List<TextSpan> spans = [];
+                        StringBuffer currentSegment = StringBuffer();
+                        bool? currentIsArabic;
+
+                        for (int i = 0; i < text.length; i++) {
+                          final char = text[i];
+                          final charCode = char.codeUnitAt(0);
+                          final isArabicChar =
+                              charCode >= 0x0600 && charCode <= 0x06FF;
+
+                          final isNeutral = char == ' ' ||
+                              char == '.' ||
+                              char == ',' ||
+                              char == '!' ||
+                              char == '?' ||
+                              char == ':' ||
+                              char == ';' ||
+                              char == '"' ||
+                              char == '\'' ||
+                              char == '(' ||
+                              char == ')' ||
+                              char == '[' ||
+                              char == ']' ||
+                              char == '{' ||
+                              char == '}' ||
+                              char == '*' ||
+                              (charCode >= 0x30 && charCode <= 0x39);
+
+                          if (currentIsArabic == null) {
+                            currentIsArabic = isArabicChar;
+                            currentSegment.write(char);
+                          } else if (isNeutral) {
+                            currentSegment.write(char);
+                          } else if (isArabicChar != currentIsArabic) {
+                            if (currentSegment.isNotEmpty) {
+                              spans.add(
+                                TextSpan(
+                                  text: currentSegment.toString(),
+                                  style: currentIsArabic
+                                      ? GoogleFonts.amiriQuran(
+                                          fontSize: 22.sp,
+                                          height: 1.8,
+                                          color: const Color(0xFFFFC107), // Gold for Arabic
+                                        )
+                                      : GoogleFonts.inter(
+                                          fontSize: 14.sp,
+                                          color: Colors.white.withOpacity(0.7),
+                                        ),
+                                ),
+                              );
+                            }
+                            currentSegment.clear();
+                            currentSegment.write(char);
+                            currentIsArabic = isArabicChar;
+                          } else {
+                            currentSegment.write(char);
+                          }
+                        }
+
+                        if (currentSegment.isNotEmpty && currentIsArabic != null) {
+                          spans.add(
+                            TextSpan(
+                              text: currentSegment.toString(),
+                              style: currentIsArabic
+                                  ? GoogleFonts.amiriQuran(
+                                      fontSize: 22.sp,
+                                      height: 1.8,
+                                      color: const Color(0xFFFFC107),
+                                    )
+                                  : GoogleFonts.inter(
+                                      fontSize: 14.sp,
+                                      color: Colors.white.withOpacity(0.7),
+                                    ),
+                            ),
+                          );
+                        }
+
+                        return Container(
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(vertical: 4.h),
+                          child: Text.rich(
+                            TextSpan(children: spans),
+                            textAlign:
+                                hasArabic ? TextAlign.right : TextAlign.left,
+                            textDirection: hasArabic
+                                ? ui.TextDirection.rtl
+                                : ui.TextDirection.ltr,
+                          ),
+                        );
+                      }
+                      return null;
+                    },
                     customStylesBuilder: (element) {
+                      final hasArabic =
+                          RegExp(r'[\u0600-\u06FF]').hasMatch(element.text);
+
                       if (element.localName == 'h3') {
                         return {
-                          'color': '#1DE9B6', // Teal headings
+                          'color': '#1DE9B6',
                           'font-family': 'Outfit',
                           'font-weight': 'bold',
                           'margin-top': '24px',
@@ -181,28 +285,17 @@ class ArticleDetailPage extends StatelessWidget {
                       }
                       if (element.localName == 'blockquote') {
                         return {
-                          'background-color':
-                              'rgba(255, 193, 7, 0.1)', // Gold tint
+                          'background-color': 'rgba(255, 193, 7, 0.1)',
                           'border-left': '4px solid #FFC107',
                           'padding': '12px',
                           'margin': '16px 0',
-                          'font-style': 'italic',
                           'color': '#FFFFFF',
                         };
                       }
-                      if (element.localName == 'li') {
-                        return {'margin-bottom': '8px'};
-                      }
-                      // Arabic text styling class
-                      if (element.classes.contains('arabic')) {
+                      if (hasArabic) {
                         return {
-                          'font-family':
-                              'UthmanicHafs13', // Use app's Arabic font
-                          'font-size': '24px',
+                          'direction': 'rtl',
                           'text-align': 'right',
-                          'color': '#FFC107',
-                          'margin': '16px 0',
-                          'line-height': '2.0',
                         };
                       }
                       return null;
@@ -217,20 +310,5 @@ class ArticleDetailPage extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category.toLowerCase()) {
-      case 'kajian':
-        return Icons.menu_book_rounded;
-      case 'news':
-        return Icons.newspaper_rounded;
-      case 'tips':
-        return Icons.health_and_safety_rounded;
-      case 'doa':
-        return Icons.volunteer_activism_rounded;
-      default:
-        return Icons.article_rounded;
-    }
   }
 }

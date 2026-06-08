@@ -144,6 +144,7 @@ class ArticleBloc extends Bloc<ArticleEvent, ArticleState> {
             ),
           );
         } else {
+          // It's an initial load (or refresh). Overwrite the cache completely.
           emit(
             ArticleLoaded(
               newArticles,

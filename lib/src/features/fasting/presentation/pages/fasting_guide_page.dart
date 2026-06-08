@@ -1,35 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/models/fasting_model.dart';
-import '../../data/repositories/fasting_repository.dart';
+import '../bloc/fasting_cubit.dart';
+import '../bloc/fasting_state.dart';
 import 'fasting_detail_page.dart';
 
-class FastingGuidePage extends StatefulWidget {
+class FastingGuidePage extends StatelessWidget {
   const FastingGuidePage({super.key});
 
   @override
-  State<FastingGuidePage> createState() => _FastingGuidePageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<FastingCubit>()
+        ..loadContent(AppLocalizations.of(context)!.localeName),
+      child: const _FastingGuideView(),
+    );
+  }
 }
 
-class _FastingGuidePageState extends State<FastingGuidePage> {
-  late Future<List<FastingModel>> _dataFuture;
+class _FastingGuideView extends StatefulWidget {
+  const _FastingGuideView();
+
+  @override
+  State<_FastingGuideView> createState() => _FastingGuideViewState();
+}
+
+class _FastingGuideViewState extends State<_FastingGuideView> {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
   String? _currentLocale;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final l10n = AppLocalizations.of(context)!;
-    if (_currentLocale != l10n.localeName) {
-      _currentLocale = l10n.localeName;
-      _dataFuture = getIt<FastingRepository>().getFastingContent(
-        l10n.localeName,
-      );
+    final locale = AppLocalizations.of(context)!.localeName;
+    if (_currentLocale != locale) {
+      _currentLocale = locale;
+      context.read<FastingCubit>().loadContent(locale);
     }
   }
 
@@ -39,112 +50,62 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
     super.dispose();
   }
 
-  List<FastingModel> _filterData(List<FastingModel> data) {
-    if (_searchQuery.isEmpty) {
-      return data;
-    }
-    return data.where((item) {
-      final titleMatch = item.title.toLowerCase().contains(
-        _searchQuery.toLowerCase(),
-      );
-      final descMatch = item.description.toLowerCase().contains(
-        _searchQuery.toLowerCase(),
-      );
-      return titleMatch || descMatch;
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C2A30), // Dark Theme
-      appBar: AppBar(
-        title: Text(
-          l10n.fastingGuideTitle,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontFamily: GoogleFonts.outfit().fontFamily,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: FutureBuilder<List<FastingModel>>(
-        future: _dataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      backgroundColor: const Color(0xFF1C2A30),
+      appBar: AppTransparentAppBar(title: l10n.fastingGuideTitle),
+      body: BlocBuilder<FastingCubit, FastingState>(
+        builder: (context, state) {
+          if (state.status == FastingStatus.loading ||
+              state.status == FastingStatus.initial) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError) {
+          if (state.status == FastingStatus.error) {
             return Center(
               child: Text(
-                'Error: ${snapshot.error}',
+                'Error: ${state.errorMessage}',
                 style: const TextStyle(color: Colors.white),
               ),
             );
           }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          if (state.items.isEmpty) {
             return Center(
               child: Text(
                 l10n.msgNoData,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             );
           }
 
-          final allData = List<FastingModel>.from(snapshot.data!);
-          // Sort by order first
-          allData.sort((a, b) => a.order.compareTo(b.order));
-
-          final filteredData = _filterData(allData);
+          final filteredData = state.filteredItems;
 
           return Column(
             children: [
-              // Search Bar
               Padding(
                 padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
                 child: TextField(
                   controller: _searchController,
-                  onChanged: (val) {
-                    setState(() {
-                      _searchQuery = val;
-                    });
-                  },
+                  onChanged: context.read<FastingCubit>().onSearchChanged,
                   style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   decoration: InputDecoration(
                     hintText: l10n.searchFastingGuide,
-                    hintStyle: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 14.sp,
-                    ),
+                    hintStyle: TextStyle(color: Colors.white38, fontSize: 14.sp),
                     prefixIcon: const Icon(Icons.search, color: Colors.white54),
-                    suffixIcon: _searchQuery.isNotEmpty
+                    suffixIcon: state.query.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(
-                              Icons.clear,
-                              color: Colors.white54,
-                            ),
+                            icon: const Icon(Icons.clear, color: Colors.white54),
                             onPressed: () {
                               _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
+                              context.read<FastingCubit>().onSearchChanged('');
                             },
                           )
                         : null,
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.05),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
                       borderSide: BorderSide.none,
@@ -152,19 +113,13 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
                   ),
                 ),
               ),
-
-              // Content List
               Expanded(
                 child: filteredData.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 48.sp,
-                              color: Colors.white24,
-                            ),
+                            Icon(Icons.search_off, size: 48.sp, color: Colors.white24),
                             SizedBox(height: 16.h),
                             Text(
                               l10n.msgNoResults,
@@ -180,11 +135,9 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
                         key: const PageStorageKey('fasting_guide_list'),
                         padding: EdgeInsets.all(16.w),
                         itemCount: filteredData.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 12.h),
+                        separatorBuilder: (_, __) => SizedBox(height: 12.h),
                         itemBuilder: (context, index) {
-                          final item = filteredData[index];
-                          return _buildChapterCard(context, item, allData);
+                          return _buildChapterCard(context, filteredData[index], state.items);
                         },
                       ),
               ),
@@ -195,11 +148,7 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
     );
   }
 
-  Widget _buildChapterCard(
-    BuildContext context,
-    FastingModel item,
-    List<FastingModel> allItems,
-  ) {
+  Widget _buildChapterCard(BuildContext context, FastingModel item, List<FastingModel> allItems) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.05),
@@ -210,29 +159,23 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12.r),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    FastingDetailPage(item: item, allItems: allItems),
-              ),
-            );
-          },
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => FastingDetailPage(item: item, allItems: allItems),
+            ),
+          ),
           child: Padding(
             padding: EdgeInsets.all(16.w),
             child: Row(
               children: [
-                // Number Badge
                 Container(
                   width: 36.w,
                   height: 36.w,
                   decoration: BoxDecoration(
                     color: const Color(0xFF00E676).withOpacity(0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xFF00E676).withOpacity(0.3),
-                    ),
+                    border: Border.all(color: const Color(0xFF00E676).withOpacity(0.3)),
                   ),
                   child: Center(
                     child: Text(
@@ -247,8 +190,6 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
                   ),
                 ),
                 SizedBox(width: 16.w),
-
-                // Content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,13 +217,8 @@ class _FastingGuidePageState extends State<FastingGuidePage> {
                     ],
                   ),
                 ),
-
                 SizedBox(width: 8.w),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white38,
-                  size: 16.sp,
-                ),
+                Icon(Icons.arrow_forward_ios_rounded, color: Colors.white38, size: 16.sp),
               ],
             ),
           ),

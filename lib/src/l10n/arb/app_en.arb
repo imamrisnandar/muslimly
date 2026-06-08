@@ -373,7 +373,7 @@
     "prayerGuideSubtitle": "Complete Prayer Guide according to Sunnah",
     "searchPrayerGuide": "Search Prayer topic...",
     "lblSkip": "Skip",
-    "articleTitle": "Articles & News",
+    "articleTitle": "Articles",
     "articleSeeAll": "See All",
     "articleReadMore": "Read More",
     "articleSearchHint": "Search articles...",
@@ -382,5 +382,10 @@
     "articleErrorLoad": "Failed to load articles",
     "articleErrorSearch": "Failed to search articles",
     "articleListTitle": "Islamic Articles",
-    "articleListEmpty": "No articles yet."
+    "articleListEmpty": "No articles yet.",
+    "modeHafalanTitle": "Memorization Mode",
+    "modeHafalanSubtitle": "Test your memorization with voice",
+    "hafalanAccuracy": "Completed! Accuracy: {percent}%",
+    "hafalanProgressAyat": "{completed}/{total} Ayahs",
+    "hafalanProgressKata": "{matched}/{total} Words"
 }

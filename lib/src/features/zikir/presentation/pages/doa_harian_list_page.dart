@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../data/repositories/zikir_local_repository.dart';
+import '../../domain/repositories/zikir_repository.dart';
 import '../../domain/entities/zikir_item.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
@@ -34,7 +34,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
 
   Future<void> _loadData() async {
     final locale = Localizations.localeOf(context);
-    final items = await getIt<ZikirLocalRepository>().getDailyDzikir(locale);
+    final items = await getIt<ZikirRepository>().getDailyDzikir(locale);
     if (mounted) {
       setState(() {
         _allItems = items;

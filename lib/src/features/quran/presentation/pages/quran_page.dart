@@ -17,10 +17,6 @@ import '../bloc/audio_state.dart';
 import '../widgets/reciter_selector_bottom_sheet.dart';
 import '../widgets/quran_navigation_bottom_sheet.dart';
 
-import '../../../../core/presentation/widgets/premium_showcase.dart';
-import 'package:showcaseview/showcaseview.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class QuranPage extends StatefulWidget {
   final bool isVisible;
   const QuranPage({super.key, this.isVisible = false});
@@ -32,25 +28,10 @@ class QuranPage extends StatefulWidget {
 class _QuranPageState extends State<QuranPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  final GlobalKey _searchKey = GlobalKey();
-  final GlobalKey _bookmarksKey = GlobalKey();
-  final GlobalKey _surahItemKey = GlobalKey();
-  final GlobalKey _playButtonKey = GlobalKey();
-  final GlobalKey _navigationKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void didUpdateWidget(QuranPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.isVisible && !oldWidget.isVisible) {
-      // We rely on BlocBuilder/Listener to trigger showcase
-      // when the widget becomes visible and state is loaded.
-      setState(() {}); // Trigger rebuild to hit the builder check
-    }
   }
 
   @override
@@ -61,27 +42,10 @@ class _QuranPageState extends State<QuranPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ShowCaseWidget(
-      builder: (context) {
-        return BlocProvider(
+    return BlocProvider(
           create: (context) => getIt<QuranBloc>()..add(QuranFetchSurahs()),
-          child: BlocConsumer<QuranBloc, QuranState>(
-            listener: (context, state) {
-              if (widget.isVisible &&
-                  state is QuranSurahsLoaded &&
-                  state.surahs.isNotEmpty) {
-                _checkAndShowShowcase(context);
-              }
-            },
+          child: BlocBuilder<QuranBloc, QuranState>(
             builder: (context, state) {
-              // Fallback: If state is already loaded, listener might miss it.
-              if (widget.isVisible &&
-                  state is QuranSurahsLoaded &&
-                  state.surahs.isNotEmpty) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _checkAndShowShowcase(context);
-                });
-              }
               return Scaffold(
                 backgroundColor: Colors.transparent,
                 body: Stack(
@@ -237,7 +201,6 @@ class _QuranPageState extends State<QuranPage> {
                                       }
 
                                       final surah = filteredSurahs[index];
-                                      final isFirst = index == 0;
 
                                       return BlocBuilder<AudioBloc, AudioState>(
                                         builder: (context, audioState) {
@@ -428,40 +391,7 @@ class _QuranPageState extends State<QuranPage> {
                                                         ),
                                                         size: 24.sp,
                                                       ),
-                                                    ] else if (isFirst)
-                                                      PremiumShowcase(
-                                                        globalKey:
-                                                            _playButtonKey,
-                                                        title: 'Play Audio',
-                                                        description:
-                                                            AppLocalizations.of(
-                                                              context,
-                                                            )!.showcaseQuranPlay,
-                                                        child: IconButton(
-                                                          onPressed: () {
-                                                            context.read<AudioBloc>().add(
-                                                              PlaySurah(
-                                                                surahId: surah
-                                                                    .number,
-                                                                surahName: surah
-                                                                    .englishName,
-                                                              ),
-                                                            );
-                                                          },
-                                                          icon: const Icon(
-                                                            Icons
-                                                                .play_circle_outline,
-                                                            color: Color(
-                                                              0xFF00E676,
-                                                            ),
-                                                          ),
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          constraints:
-                                                              const BoxConstraints(),
-                                                        ),
-                                                      )
-                                                    else
+                                                    ] else
                                                       IconButton(
                                                         onPressed: () {
                                                           context
@@ -492,17 +422,7 @@ class _QuranPageState extends State<QuranPage> {
                                               ),
                                             ),
                                           );
-                                          return isFirst
-                                              ? PremiumShowcase(
-                                                  globalKey: _surahItemKey,
-                                                  title: 'Read Surah',
-                                                  description:
-                                                      AppLocalizations.of(
-                                                        context,
-                                                      )!.showcaseQuranItem,
-                                                  child: item,
-                                                )
-                                              : item;
+                                          return item;
                                         },
                                       );
                                     },
@@ -521,8 +441,6 @@ class _QuranPageState extends State<QuranPage> {
             },
           ),
         );
-      },
-    );
   }
 
   Widget _buildPortraitHeader(BuildContext context) {
@@ -543,54 +461,36 @@ class _QuranPageState extends State<QuranPage> {
                 ),
               ),
               // Global Navigation Button
-              PremiumShowcase(
-                globalKey: _navigationKey,
-                title: "Navigation",
-                description: AppLocalizations.of(
-                  context,
-                )!.showcaseQuranNavigation,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.grid_view_rounded,
-                    color: Colors.white,
-                  ),
-                  tooltip: 'Smart Jump',
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<QuranBloc>(),
-                        child: const QuranNavigationBottomSheet(),
-                      ),
-                    );
-                  },
+              IconButton(
+                icon: const Icon(
+                  Icons.grid_view_rounded,
+                  color: Colors.white,
                 ),
+                tooltip: 'Smart Jump',
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<QuranBloc>(),
+                      child: const QuranNavigationBottomSheet(),
+                    ),
+                  );
+                },
               ),
-              PremiumShowcase(
-                globalKey: _bookmarksKey,
-                title: 'Bookmarks',
-                description: AppLocalizations.of(
-                  context,
-                )!.showcaseQuranBookmarks,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.bookmarks_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => context.push('/quran/bookmarks'),
+              IconButton(
+                icon: const Icon(
+                  Icons.bookmarks_outlined,
+                  color: Colors.white,
                 ),
+                onPressed: () => context.push('/quran/bookmarks'),
               ),
             ],
           ),
           SizedBox(height: 16.h),
           // Search Bar
-          PremiumShowcase(
-            globalKey: _searchKey,
-            title: 'Search',
-            description: AppLocalizations.of(context)!.showcaseQuranSearch,
-            child: TextField(
+          TextField(
               controller: _searchController,
               style: const TextStyle(color: Colors.white),
               onChanged: (value) {
@@ -651,7 +551,6 @@ class _QuranPageState extends State<QuranPage> {
                 contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -682,14 +581,9 @@ class _QuranPageState extends State<QuranPage> {
 
           // Expanded Search Bar
           Expanded(
-            child: PremiumShowcase(
-              globalKey:
-                  _searchKey, // Reusing key might be tricky in switch, but okay
-              title: 'Search',
-              description: AppLocalizations.of(context)!.showcaseQuranSearch,
-              child: SizedBox(
-                height: 48.h, // Fixed height for alignment
-                child: TextField(
+            child: SizedBox(
+              height: 48.h, // Fixed height for alignment
+              child: TextField(
                   controller: _searchController,
                   style: const TextStyle(color: Colors.white),
                   onChanged: (value) {
@@ -753,7 +647,6 @@ class _QuranPageState extends State<QuranPage> {
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
                   ),
                 ),
-              ),
             ),
           ),
 
@@ -763,44 +656,30 @@ class _QuranPageState extends State<QuranPage> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              PremiumShowcase(
-                globalKey: _navigationKey,
-                title: "Navigation",
-                description: AppLocalizations.of(
-                  context,
-                )!.showcaseQuranNavigation,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.grid_view_rounded,
-                    color: Colors.white,
-                  ),
-                  tooltip: 'Smart Jump',
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<QuranBloc>(),
-                        child: const QuranNavigationBottomSheet(),
-                      ),
-                    );
-                  },
+              IconButton(
+                icon: const Icon(
+                  Icons.grid_view_rounded,
+                  color: Colors.white,
                 ),
+                tooltip: 'Smart Jump',
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (_) => BlocProvider.value(
+                      value: context.read<QuranBloc>(),
+                      child: const QuranNavigationBottomSheet(),
+                    ),
+                  );
+                },
               ),
-              PremiumShowcase(
-                globalKey: _bookmarksKey,
-                title: 'Bookmarks',
-                description: AppLocalizations.of(
-                  context,
-                )!.showcaseQuranBookmarks,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.bookmarks_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => context.push('/quran/bookmarks'),
+              IconButton(
+                icon: const Icon(
+                  Icons.bookmarks_outlined,
+                  color: Colors.white,
                 ),
+                onPressed: () => context.push('/quran/bookmarks'),
               ),
             ],
           ),
@@ -852,6 +731,17 @@ class _QuranPageState extends State<QuranPage> {
                 onTap: () {
                   context.pop(); // Close sheet
                   context.push('/quran/mushaf/${surah.number}', extra: surah);
+                },
+              ),
+              SizedBox(height: 16.h),
+              _buildModeTile(
+                context,
+                icon: Icons.mic,
+                title: '${AppLocalizations.of(context)!.modeHafalanTitle} (Beta)',
+                subtitle: AppLocalizations.of(context)!.modeHafalanSubtitle,
+                onTap: () {
+                  context.pop(); // Close sheet
+                  context.push('/quran/hafalan/${surah.number}', extra: surah);
                 },
               ),
               SizedBox(height: 16.h),
@@ -914,36 +804,4 @@ class _QuranPageState extends State<QuranPage> {
     );
   }
 
-  Future<void> _checkAndShowShowcase(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasShown = prefs.getBool('hasShownQuranListShowcase') ?? false;
-
-    if (hasShown) return;
-
-    // Retry logic: Try up to 3 times to find the keys
-    int attempts = 0;
-    while (attempts < 3) {
-      if (!context.mounted) return;
-
-      // Wait increasing duration (500ms, 1000ms, 1500ms)
-      await Future.delayed(Duration(milliseconds: 500 * (attempts + 1)));
-
-      if (context.mounted) {
-        try {
-          ShowCaseWidget.of(context).startShowCase([
-            _searchKey,
-            _navigationKey,
-            _bookmarksKey,
-            _surahItemKey,
-            _playButtonKey,
-          ]);
-          await prefs.setBool('hasShownQuranListShowcase', true);
-          return; // Success, exit
-        } catch (e) {
-          // Ignore error and retry
-        }
-      }
-      attempts++;
-    }
-  }
 }

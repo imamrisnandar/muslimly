@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+import '../config/app_urls.dart';
+import '../utils/app_logger.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -22,12 +25,12 @@ class NotificationService {
       await Firebase.initializeApp();
       // print('DEBUG: Firebase Initialized');
     } catch (e) {
-      // print('ERROR: Firebase Init Failed: $e');
+      AppLogger.error('Firebase initialization failed', e);
     }
 
     tz.initializeTimeZones();
     // Detect and set local time zone
-    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+    final String timeZoneName = (await FlutterTimezone.getLocalTimezone()).identifier;
     // print('DEBUG: NotificationService init with timezone: $timeZoneName');
     tz.setLocalLocation(tz.getLocation(timeZoneName));
 
@@ -52,7 +55,7 @@ class NotificationService {
     await _createChannels();
 
     await _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (details) {
         // Handle notification tap
       },
@@ -106,7 +109,7 @@ class NotificationService {
 
       // Send to Backend
       final dio = Dio();
-      String baseUrl = 'https://muslimly.my.id/api/v1';
+      final baseUrl = AppUrls.baseApi;
 
       final Options options = Options(
         headers: {
@@ -115,9 +118,6 @@ class NotificationService {
           if (authToken != null) 'Authorization': 'Bearer $authToken',
         },
       );
-
-      print('FCM_TOKEN: $token');
-      print('DEVICE_INFO: $deviceInfo');
 
       final response = await dio.post(
         '$baseUrl/notifications/register',
@@ -140,13 +140,12 @@ class NotificationService {
         if (deviceId != null) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('device_id', deviceId);
-          print('✅ Device ID stored: $deviceId');
+          debugPrint('✅ Device ID stored');
         }
       }
 
-      print('✅ FCM Token + Device Metadata registered successfully');
     } catch (e) {
-      print('❌ Error syncing FCM token: $e');
+      debugPrint('❌ Error syncing FCM token: $e');
     }
   }
 
@@ -186,7 +185,7 @@ class NotificationService {
         'timezone': timezone,
       };
     } catch (e) {
-      print('Error getting device info: $e');
+      debugPrint('Error getting device info: $e');
       return {
         'model': 'Unknown',
         'osVersion': 'Unknown',
@@ -291,20 +290,19 @@ class NotificationService {
 
     try {
       await _flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tzDateTime,
-        NotificationDetails(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tzDateTime,
+        notificationDetails: NotificationDetails(
           android: androidDetails,
           iOS: const DarwinNotificationDetails(),
         ),
-        // Use exactAllowWhileIdle as alarmClock might be restricted on some devices
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         matchDateTimeComponents: isRepeating ? DateTimeComponents.time : null,
       );
-    } catch (e) {
-      // Handle error gracefully
+    } catch (e, s) {
+      AppLogger.error('Failed to schedule prayer notification id=$id', e, s);
     }
   }
 
@@ -356,10 +354,10 @@ class NotificationService {
       iOS: const DarwinNotificationDetails(),
     );
     await _flutterLocalNotificationsPlugin.show(
-      999,
-      title,
-      body,
-      notificationDetails,
+      id: 999,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
     );
   }
 

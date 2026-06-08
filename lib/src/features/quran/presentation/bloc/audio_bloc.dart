@@ -1,3 +1,4 @@
+import '../../../../core/config/app_urls.dart';
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -294,7 +295,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
             title: event.surahName,
             artist: reciter.name,
             artUri: Uri.parse(
-              "https://static.quran.com/images/quran/surah/${event.surahId}.png",
+              "/${event.surahId}.png",
             ),
           ),
         );
@@ -315,7 +316,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
                 title: "${event.surahName} : Ayah $ayahNumber",
                 artist: reciter.name,
                 artUri: Uri.parse(
-                  "https://static.quran.com/images/quran/surah/${event.surahId}.png",
+                  "/${event.surahId}.png",
                 ),
               ),
             );

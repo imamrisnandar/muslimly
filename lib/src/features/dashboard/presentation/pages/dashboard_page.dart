@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart'; // Fixed import
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart';
 import '../../../settings/presentation/bloc/settings_state.dart';
@@ -29,6 +28,8 @@ import '../../../quran/presentation/bloc/bookmark/bookmark_event.dart';
 import '../../../quran/presentation/bloc/bookmark/bookmark_state.dart';
 
 import '../widgets/prayer_countdown_widget.dart';
+import '../widgets/fasting_reminder_section.dart';
+import '../widgets/dzikir_reminder_section.dart';
 import '../../../quran/presentation/bloc/audio_bloc.dart';
 import '../../../quran/presentation/bloc/audio_event.dart';
 import '../../../quran/presentation/bloc/audio_state.dart';
@@ -36,15 +37,12 @@ import '../../../quran/presentation/widgets/draggable_audio_player.dart';
 import '../../domain/services/reminder_service.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../domain/models/reminder_models.dart';
-import '../../../zikir/data/repositories/zikir_local_repository.dart';
+import '../../../zikir/domain/repositories/zikir_repository.dart';
 import '../../../zikir/presentation/pages/dzikir_reading_page.dart';
 
 import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
 import '../../../../core/di/di_container.dart';
 import '../../../../core/services/notification_service.dart';
-
-import '../../../../core/presentation/widgets/premium_showcase.dart'; // Import
-import 'package:showcaseview/showcaseview.dart';
 
 import '../../../article/presentation/bloc/article_bloc.dart';
 import '../../../article/presentation/widgets/article_carousel_widget.dart';
@@ -60,42 +58,17 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   late int _currentIndex;
 
-  // Showcase Keys
-  final GlobalKey _showCaseWidgetKey = GlobalKey();
-  final GlobalKey _dailyGoalKey = GlobalKey();
-  final GlobalKey _settingsTabKey = GlobalKey();
-  final GlobalKey _prayerCardKey = GlobalKey();
-  final GlobalKey _quickAccessKey = GlobalKey();
-  final GlobalKey _dzikirTabKey = GlobalKey();
-  final GlobalKey _quranTabKey = GlobalKey();
-
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
     context.read<SettingsCubit>().loadSettings();
     _requestAllPermissions();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _checkShowcase());
   }
 
-  Future<void> _checkShowcase() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasShown = prefs.getBool('hasShownDashboardShowcase') ?? false;
-
-    if (!hasShown && mounted) {
-      await Future.delayed(const Duration(milliseconds: 1000));
-      if (mounted) {
-        ShowCaseWidget.of(context).startShowCase([
-          _dailyGoalKey,
-          _settingsTabKey,
-          _prayerCardKey,
-          _quickAccessKey,
-          _dzikirTabKey,
-          _quranTabKey,
-        ]);
-        prefs.setBool('hasShownDashboardShowcase', true);
-      }
-    }
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -137,10 +110,7 @@ class _DashboardPageState extends State<DashboardPage> {
       ],
       child: Builder(
         builder: (context) {
-          return ShowCaseWidget(
-            key: _showCaseWidgetKey,
-            builder: (context) {
-              return Scaffold(
+          return Scaffold(
                 extendBody: true,
                 bottomNavigationBar: Container(
                   decoration: BoxDecoration(
@@ -154,7 +124,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   child: BottomNavigationBar(
                     currentIndex: _currentIndex,
-                    onTap: (index) => context.go('/dashboard?index=$index'),
+                    onTap: (index) => setState(() => _currentIndex = index),
                     backgroundColor: const Color(0xFF1C2A30),
                     selectedItemColor: const Color(0xFF00E676),
                     unselectedItemColor: Colors.white54,
@@ -179,48 +149,18 @@ class _DashboardPageState extends State<DashboardPage> {
                         label: AppLocalizations.of(context)!.bottomNavPrayer,
                       ),
                       BottomNavigationBarItem(
-                        icon: PremiumShowcase(
-                          globalKey: _quranTabKey,
-                          title: AppLocalizations.of(
-                            context,
-                          )!.showcaseQuranTabTitle,
-                          description: AppLocalizations.of(
-                            context,
-                          )!.showcaseQuranTab,
-                          targetShapeBorder: const CircleBorder(),
-                          child: const Icon(
-                            Icons.menu_book_rounded,
-                            color: Color(0xFFFFC107),
-                          ),
+                        icon: const Icon(
+                          Icons.menu_book_rounded,
+                          color: Color(0xFFFFC107),
                         ),
                         label: AppLocalizations.of(context)!.bottomNavQuran,
                       ),
                       BottomNavigationBarItem(
-                        icon: PremiumShowcase(
-                          globalKey: _dzikirTabKey,
-                          title: AppLocalizations.of(
-                            context,
-                          )!.showcaseDzikirTitle,
-                          description: AppLocalizations.of(
-                            context,
-                          )!.showcaseDzikir,
-                          targetShapeBorder: const CircleBorder(),
-                          child: const Icon(Icons.spa),
-                        ),
+                        icon: const Icon(Icons.spa),
                         label: AppLocalizations.of(context)!.bottomNavDzikir,
                       ),
                       BottomNavigationBarItem(
-                        icon: PremiumShowcase(
-                          globalKey: _settingsTabKey,
-                          title: AppLocalizations.of(
-                            context,
-                          )!.showcaseSettingsTitle,
-                          description: AppLocalizations.of(
-                            context,
-                          )!.showcaseSettingsGoal,
-                          targetShapeBorder: const CircleBorder(),
-                          child: const Icon(Icons.settings),
-                        ),
+                        icon: const Icon(Icons.settings),
                         label: AppLocalizations.of(context)!.bottomNavSettings,
                       ),
                     ],
@@ -252,8 +192,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
               );
-            },
-          );
         },
       ),
     );
@@ -350,6 +288,9 @@ class _DashboardPageState extends State<DashboardPage> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
+              // Get current language code
+              final lang = Localizations.localeOf(context).languageCode;
+
               // Reload Data
               context.read<PrayerBloc>().add(FetchPrayerTimeByLocation());
               context.read<ReadingBloc>().add(LoadReadingOverview());
@@ -358,6 +299,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 LoadBookmarks(),
               ); // Add Bookmark Refresh
               context.read<SettingsCubit>().loadSettings();
+
+              // Refresh Article Carousel
+              context.read<ArticleBloc>().add(LoadArticles(lang: lang, limit: 5));
 
               // Small delay for visual feedback
               await Future.delayed(const Duration(seconds: 1));
@@ -432,21 +376,12 @@ class _DashboardPageState extends State<DashboardPage> {
                           ? "Ayahs"
                           : l10n.lblPages; // Todo: Add localized "Ayahs"
 
-                      return PremiumShowcase(
-                        globalKey: _dailyGoalKey,
-                        title: AppLocalizations.of(
-                          context,
-                        )!.showcaseDailyGoalTitle, // Localized
-                        description: AppLocalizations.of(
-                          context,
-                        )!.showcaseDailyGoal,
-                        child: _buildDailyGoalCard(
-                          context,
-                          progress,
-                          target,
-                          label,
-                          l10n,
-                        ),
+                      return _buildDailyGoalCard(
+                        context,
+                        progress,
+                        target,
+                        label,
+                        l10n,
                       );
                     },
                   ),
@@ -485,16 +420,8 @@ class _DashboardPageState extends State<DashboardPage> {
                               MediaQuery.of(context).orientation ==
                               Orientation.landscape;
 
-                          return PremiumShowcase(
-                            globalKey: _prayerCardKey,
-                            title: AppLocalizations.of(
-                              context,
-                            )!.showcasePrayerTitle, // Localized
-                            description: AppLocalizations.of(
-                              context,
-                            )!.showcasePrayerCard,
-                            child: GestureDetector(
-                              onTap: () => context.go('/dashboard?index=1'),
+                          return GestureDetector(
+                              onTap: () => setState(() => _currentIndex = 1),
                               child: Container(
                                 height: isLandscape
                                     ? null
@@ -834,44 +761,37 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        // Fasting info
-                                                        if (reminderData
-                                                                    .todayFasting !=
-                                                                null ||
-                                                            reminderData
-                                                                    .nextFasting !=
-                                                                null)
-                                                          _buildCompactFastingInfo(
-                                                            reminderData,
-                                                            l10n.localeName,
-                                                          ),
-
-                                                        if (reminderData
-                                                            .hasAnyActiveDzikir) ...[
-                                                          if (reminderData
-                                                                      .todayFasting !=
-                                                                  null ||
-                                                              reminderData
-                                                                      .nextFasting !=
-                                                                  null)
+                                                        FastingReminderSection(
+                                                          todayFasting: reminderData.todayFasting,
+                                                          nextFasting: reminderData.nextFasting,
+                                                          locale: l10n.localeName,
+                                                        ),
+                                                        if (reminderData.hasAnyActiveDzikir) ...[
+                                                          if (reminderData.todayFasting != null || reminderData.nextFasting != null)
                                                             Padding(
-                                                              padding:
-                                                                  EdgeInsets.symmetric(
-                                                                    vertical:
-                                                                        6.h,
-                                                                  ),
+                                                              padding: EdgeInsets.symmetric(vertical: 6.h),
                                                               child: Divider(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                      0.1,
-                                                                    ),
+                                                                color: Colors.white.withOpacity(0.1),
                                                                 height: 1,
                                                               ),
                                                             ),
-                                                          _buildCompactDzikirInfo(
-                                                            context,
-                                                            reminderData,
+                                                          DzikirReminderSection(
+                                                            morningDzikir: reminderData.morningDzikir,
+                                                            eveningDzikir: reminderData.eveningDzikir,
+                                                            onDzikirTap: (dzikir) async {
+                                                              final locale = Localizations.localeOf(context);
+                                                              final items = dzikir.type == DzikirType.morning
+                                                                  ? await getIt<ZikirRepository>().getMorningZikir(locale)
+                                                                  : await getIt<ZikirRepository>().getEveningZikir(locale);
+                                                              final title = dzikir.type == DzikirType.morning
+                                                                  ? l10n.dzikirMorningTitle
+                                                                  : l10n.dzikirEveningTitle;
+                                                              if (context.mounted) {
+                                                                Navigator.push(context, MaterialPageRoute(
+                                                                  builder: (_) => DzikirReadingPage(title: title, items: items),
+                                                                ));
+                                                              }
+                                                            },
                                                           ),
                                                         ],
                                                       ],
@@ -884,7 +804,6 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ],
                                 ),
                               ),
-                            ),
                           );
                         },
                       );
@@ -897,15 +816,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   SizedBox(height: 12.h),
 
                   // QUICK ACCESS GRID (2x2)
-                  PremiumShowcase(
-                    globalKey: _quickAccessKey,
-                    title: AppLocalizations.of(
-                      context,
-                    )!.showcaseQuickAccessTitle, // Localized
-                    description: AppLocalizations.of(
-                      context,
-                    )!.showcaseQuickAccess,
-                    child: Column(
+                  Column(
                       children: [
                         // Row 1
                         IntrinsicHeight(
@@ -995,7 +906,6 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                       ],
                     ),
-                  ),
                   SizedBox(height: 80.h), // Bottom padding for Nav Bar
                 ],
               ),
@@ -1599,261 +1509,6 @@ class _DashboardPageState extends State<DashboardPage> {
   //       );
   //   }
   // }
-
-  // Compact fasting info for prayer card
-  Widget _buildCompactFastingInfo(
-    ReminderCardData reminderData,
-    String locale,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.nightlight_round,
-              color: const Color(0xFFFFC107), // Gold Fasting Icon
-              size: 12.sp,
-            ),
-            SizedBox(width: 4.w),
-            Text(
-              l10n.reminderFasting,
-              style: TextStyle(
-                color: const Color(0xFF00E676),
-                fontSize: 10.sp,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 6.h),
-        if (reminderData.todayFasting != null)
-          _buildCompactFastingItem(
-            context,
-            reminderData.todayFasting!,
-            'Hari ini',
-            showCountdown: true,
-          ),
-        if (reminderData.todayFasting != null &&
-            reminderData.nextFasting != null)
-          SizedBox(height: 4.h),
-        if (reminderData.nextFasting != null)
-          _buildCompactFastingItem(
-            context,
-            reminderData.nextFasting!,
-            'Berikutnya',
-            showCountdown: false,
-          ),
-      ],
-    );
-  }
-
-  Widget _buildCompactFastingItem(
-    BuildContext context,
-    FastingReminder fasting,
-    String label, {
-    required bool showCountdown,
-  }) {
-    final l10n = AppLocalizations.of(context)!;
-    return Row(
-      children: [
-        Icon(
-          showCountdown ? Icons.restaurant : Icons.event,
-          color: fasting.color.withOpacity(0.8),
-          size: 12.sp,
-        ),
-        SizedBox(width: 6.w),
-        Expanded(
-          child: RichText(
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: showCountdown && fasting.timeUntilIftar != null
-                      ? l10n.reminderIftarIn(
-                          ReminderService.formatDuration(
-                            fasting.timeUntilIftar!,
-                          ),
-                        )
-                      : _getLocalizedEventName(context, fasting.event) ??
-                            fasting.type,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                TextSpan(
-                  text: ' • ${_formatFastingDate(fasting.date)}',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
-                    fontSize: 9.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Format fasting date with Gregorian and Hijri
-  String _formatFastingDate(DateTime date) {
-    final gregorian = DateFormat('d MMM').format(date);
-    // Use FastingService to get ADJUSTED Hijri date
-    final hijri = getIt<FastingService>().getAdjustedHijriDate(date);
-    return '$gregorian • ${hijri.hDay} ${_getShortHijriMonth(hijri.hMonth)}';
-  }
-
-  // Get short Hijri month name
-  String _getShortHijriMonth(int month) {
-    const months = [
-      'Muh',
-      'Saf',
-      'R.Awl',
-      'R.Akh',
-      'J.Ula',
-      'J.Ukh',
-      'Raj',
-      'Syab',
-      'Ram',
-      'Syaw',
-      'Zulqa',
-      'Zulhi',
-    ];
-    return month >= 1 && month <= 12 ? months[month - 1] : '';
-  }
-
-  // Compact dzikir info for prayer card
-  Widget _buildCompactDzikirInfo(
-    BuildContext context,
-    ReminderCardData reminderData,
-  ) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.menu_book_rounded,
-              color: const Color(0xFFFFC107),
-              size: 12.sp,
-            ),
-            SizedBox(width: 4.w),
-            Text(
-              l10n.reminderDzikir,
-              style: TextStyle(
-                color: const Color(0xFFFFC107),
-                fontSize: 10.sp,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 6.h),
-        if (reminderData.morningDzikir.isActiveNow)
-          _buildCompactDzikirItem(context, reminderData.morningDzikir),
-        if (reminderData.morningDzikir.isActiveNow &&
-            reminderData.eveningDzikir.isActiveNow)
-          SizedBox(height: 4.h),
-        if (reminderData.eveningDzikir.isActiveNow)
-          _buildCompactDzikirItem(context, reminderData.eveningDzikir),
-      ],
-    );
-  }
-
-  Widget _buildCompactDzikirItem(BuildContext context, DzikirReminder dzikir) {
-    final l10n = AppLocalizations.of(context)!;
-    return InkWell(
-      onTap: () async {
-        // Navigate to specific dzikir page
-        final locale = Localizations.localeOf(context);
-        final items = dzikir.type == DzikirType.morning
-            ? await getIt<ZikirLocalRepository>().getMorningZikir(locale)
-            : await getIt<ZikirLocalRepository>().getEveningZikir(locale);
-
-        final title = dzikir.type == DzikirType.morning
-            ? l10n.dzikirMorningTitle
-            : l10n.dzikirEveningTitle;
-
-        if (context.mounted) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  DzikirReadingPage(title: title, items: items),
-            ),
-          );
-        }
-      },
-      borderRadius: BorderRadius.circular(8.r),
-      child: Row(
-        children: [
-          Icon(
-            Icons.notifications_active,
-            color: const Color(0xFFFFC107).withOpacity(0.8),
-            size: 12.sp,
-          ),
-          SizedBox(width: 6.w),
-          Expanded(
-            child: Text(
-              l10n.reminderDzikirTime(dzikir.displayName),
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w500,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Icon(
-            Icons.arrow_forward_ios,
-            color: const Color(0xFFFFC107).withOpacity(0.5),
-            size: 10.sp,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Helper for localized fasting name
-  String? _getLocalizedEventName(BuildContext context, FastingEvent event) {
-    final l10n = AppLocalizations.of(context)!;
-    switch (event) {
-      case FastingEvent.eidFitr:
-        return l10n.eidFitr;
-      case FastingEvent.eidAdha:
-        return l10n.eidAdha;
-      case FastingEvent.tasyrik:
-        return l10n.daysTasyrik;
-      case FastingEvent.ramadan:
-        return l10n.fastingRamadan;
-      case FastingEvent.arafah:
-        return l10n.fastingArafah;
-      case FastingEvent.ashura:
-        return l10n.fastingAshura;
-      case FastingEvent.tasua:
-        return l10n.fastingTasua;
-      case FastingEvent.ayyamulBidh:
-        return l10n.fastingAyyamulBidh;
-      case FastingEvent.monday:
-        return l10n.fastingMonday;
-      case FastingEvent.thursday:
-        return l10n.fastingThursday;
-      case FastingEvent.none:
-        return null;
-    }
-  }
 }
 
 // City Search Dialog Widget

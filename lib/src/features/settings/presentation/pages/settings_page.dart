@@ -8,8 +8,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../bloc/settings_cubit.dart';
 import '../bloc/settings_state.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import '../../../quran/presentation/pages/help_guide_page.dart';
+import '../../../../core/di/di_container.dart';
+import '../../../../core/services/showcase_preferences_service.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -1046,7 +1048,7 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 24.h),
-              if (kDebugMode) ...[
+              if (!kReleaseMode) ...[
                 SizedBox(height: 24.h),
                 _buildSectionHeader(context, "Developer Mode"),
                 _buildListTile(
@@ -1055,13 +1057,7 @@ class SettingsPage extends StatelessWidget {
                   subtitle: "Clear showcase history for testing",
                   iconColor: Colors.orangeAccent,
                   onTap: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    final keys = prefs.getKeys();
-                    for (final key in keys) {
-                      if (key.startsWith('hasShown')) {
-                        await prefs.remove(key);
-                      }
-                    }
+                    await getIt<ShowcasePreferencesService>().clearAll();
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -1072,6 +1068,39 @@ class SettingsPage extends StatelessWidget {
                         ),
                       );
                     }
+                  },
+                ),
+                SizedBox(height: 8.h),
+                _buildListTile(
+                  icon: Icons.bug_report_outlined,
+                  title: "Test Crashlytics",
+                  subtitle: "Force crash to verify Firebase reporting",
+                  iconColor: Colors.redAccent,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        backgroundColor: const Color(0xFF1C2A30),
+                        title: const Text(
+                          'Test Crashlytics',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        content: const Text(
+                          'App akan crash sekarang. Buka ulang app, lalu cek Firebase Console dalam 1-2 menit.',
+                          style: TextStyle(color: Colors.white70),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: const Text('Batal', style: TextStyle(color: Colors.white54)),
+                          ),
+                          TextButton(
+                            onPressed: () => FirebaseCrashlytics.instance.crash(),
+                            child: const Text('Crash Sekarang', style: TextStyle(color: Colors.redAccent)),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               ],
@@ -1124,12 +1153,11 @@ class SettingsPage extends StatelessWidget {
     required VoidCallback onTap,
     Color? iconColor,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+    return Material(
+      color: Colors.white.withOpacity(0.05),
+      borderRadius: BorderRadius.circular(12.r),
       child: ListTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
         leading: Icon(icon, color: iconColor ?? const Color(0xFF00E676)),
         title: Text(
           title,

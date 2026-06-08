@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import '../utils/app_logger.dart';
 import '../../features/quran/domain/entities/reading_activity.dart';
 import '../../features/quran/domain/entities/quran_bookmark.dart';
 
@@ -600,7 +601,7 @@ class DatabaseService {
       }
       return result;
     } catch (e) {
-      // print('DEBUG: Error querying tajweed: $e');
+      AppLogger.warning('Failed to query tajweed data', e);
       return {};
     }
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/prayer_guide_model.dart';
@@ -20,7 +21,7 @@ class PrayerGuideRepository {
     } catch (e) {
       // Fallback or rethrow
       // For safety during dev if file missing, return empty or throw
-      print('Error loading prayer guide: $e');
+      debugPrint('Error loading prayer guide: $e');
       return [];
     }
   }

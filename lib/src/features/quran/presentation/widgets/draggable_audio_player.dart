@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
+import '../../../../core/di/di_container.dart';
+import '../../../../core/services/showcase_preferences_service.dart';
 import '../bloc/audio_bloc.dart';
 import '../bloc/audio_state.dart';
 import 'audio_player_widget.dart';
@@ -146,20 +147,15 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
   }
 
   Future<void> _checkShowcase() async {
-    // Check SharedPreferences first
-    final prefs = await SharedPreferences.getInstance();
-    final key = widget.showcasePrefsKey ?? 'hasShownPlayerShowcase';
-    final hasShown = prefs.getBool(key) ?? false;
+    final showcaseService = getIt<ShowcasePreferencesService>();
+    final key = widget.showcasePrefsKey ?? ShowcaseKeys.audioPlayer;
+    final hasShown = await showcaseService.hasShown(key);
 
-    // Only show if we are in Full Mode (which is default now) AND showcase is enabled
-    // AND we are the current top-most route (prevent hidden dashboard player from showing)
     if (ModalRoute.of(context)?.isCurrent != true) return;
 
     if (widget.enableShowcase && !hasShown && mounted && _top != null) {
-      ShowCaseWidget.of(
-        context,
-      ).startShowCase([_dragKey, _qoriKey, _speedKey, _repeatKey]);
-      await prefs.setBool(key, true);
+      ShowcaseView.get().startShowCase([_dragKey, _qoriKey, _speedKey, _repeatKey]);
+      await showcaseService.markShown(key);
     }
   }
 }

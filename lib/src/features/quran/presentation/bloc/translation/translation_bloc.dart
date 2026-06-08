@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 import '../../../domain/repositories/translation_repository.dart';
 import '../../../domain/entities/word.dart';
 import 'translation_event.dart';

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
@@ -12,7 +13,7 @@ class SyncApiService {
     String? token,
   ) async {
     try {
-      print('🌐 [API] POST /api/v1/sync/reading - Payload: $lastReadPayload');
+      debugPrint('🌐 [API] POST /api/v1/sync/reading - Payload: $lastReadPayload');
       final response = await _dio.post(
         '/sync/reading',
         data: lastReadPayload,
@@ -23,7 +24,7 @@ class SyncApiService {
           },
         ),
       );
-      print(
+      debugPrint(
         '🌐 [API] POST /api/v1/sync/reading - Success: ${response.statusCode}',
       );
 
@@ -31,7 +32,7 @@ class SyncApiService {
         throw Exception('Failed to upsert reading history');
       }
     } on DioException catch (e) {
-      print(
+      debugPrint(
         '❌ [API] POST /sync/reading Error: ${e.message} - ${e.response?.data}',
       );
       throw Exception('Network error: ${e.message}');
@@ -82,7 +83,7 @@ class SyncApiService {
         payload['device_id'] = deviceId;
       }
 
-      print(
+      debugPrint(
         '🌐 [API] POST /api/v1/sync/activity - Activities count: ${activities.length}, DeviceID: $deviceId',
       );
       final response = await _dio.post(
@@ -95,7 +96,7 @@ class SyncApiService {
           },
         ),
       );
-      print(
+      debugPrint(
         '🌐 [API] POST /api/v1/sync/activity - Success: ${response.statusCode}',
       );
 
@@ -103,7 +104,7 @@ class SyncApiService {
         throw Exception('Failed to bulk insert activities');
       }
     } on DioException catch (e) {
-      print(
+      debugPrint(
         '❌ [API] POST /sync/activity Error: ${e.message} - ${e.response?.data}',
       );
       throw Exception('Network error: ${e.message}');
@@ -123,7 +124,7 @@ class SyncApiService {
         payload['device_id'] = deviceId;
       }
 
-      print(
+      debugPrint(
         '🌐 [API] POST /sync/settings - Settings count: ${settings.length}, DeviceID: $deviceId',
       );
       final response = await _dio.post(
@@ -136,13 +137,13 @@ class SyncApiService {
           },
         ),
       );
-      print('🌐 [API] POST /sync/settings - Success: ${response.statusCode}');
+      debugPrint('🌐 [API] POST /sync/settings - Success: ${response.statusCode}');
 
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw Exception('Failed to upsert settings');
       }
     } on DioException catch (e) {
-      print(
+      debugPrint(
         '❌ [API] POST /sync/settings Error: ${e.message} - ${e.response?.data}',
       );
       throw Exception('Network error: ${e.message}');

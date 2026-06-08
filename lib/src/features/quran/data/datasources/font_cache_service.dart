@@ -2,12 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import '../../../../core/config/app_urls.dart';
 
 class FontCacheService {
   final Dio _dio;
   // jsDelivr CDN for qpc-fonts
-  final String _cdnBaseUrl =
-      'https://cdn.jsdelivr.net/gh/nuqayah/qpc-fonts@master/mushaf-v2';
+  final String _cdnBaseUrl = AppUrls.qpcFontsCdn;
 
   FontCacheService(this._dio);
 

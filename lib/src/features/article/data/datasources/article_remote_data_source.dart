@@ -34,6 +34,9 @@ class ArticleRemoteDataSourceImpl implements ArticleRemoteDataSource {
       queryParameters: queryParams.isNotEmpty ? queryParams : null,
     );
     if (response.statusCode == 200) {
+      if (response.data == null) {
+        return [];
+      }
       final List<dynamic> jsonList = response.data;
       return jsonList.map((json) => ArticleModel.fromJson(json)).toList();
     } else {

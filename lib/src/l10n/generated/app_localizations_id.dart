@@ -1225,7 +1225,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get lblSkip => 'Lewati';
 
   @override
-  String get articleTitle => 'Kabar & Ilmiah';
+  String get articleTitle => 'Artikel';
 
   @override
   String get articleSeeAll => 'Lihat Semua';
@@ -1253,4 +1253,25 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get articleListEmpty => 'Belum ada artikel.';
+
+  @override
+  String get modeHafalanTitle => 'Mode Hafalan';
+
+  @override
+  String get modeHafalanSubtitle => 'Uji hafalan dengan membaca suara';
+
+  @override
+  String hafalanAccuracy(Object percent) {
+    return 'Selesai! Akurasi: $percent%';
+  }
+
+  @override
+  String hafalanProgressAyat(Object completed, Object total) {
+    return '$completed/$total ayat';
+  }
+
+  @override
+  String hafalanProgressKata(Object matched, Object total) {
+    return '$matched/$total kata';
+  }
 }

@@ -310,65 +310,66 @@ class BookmarksPage extends StatelessWidget {
       );
     }
 
-    return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      children: [
-        // --- LAST READ HERO CARD ---
-        if (lastRead != null) ...[
-          Padding(
-            padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.history,
-                  color: const Color(0xFF00E676),
-                  size: 18.sp,
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  AppLocalizations.of(context)!.cardContinueReading,
-                  style: TextStyle(
-                    color: const Color(0xFF00E676),
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0,
-                    fontFamily: 'Outfit',
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
+          sliver: SliverList(
+            delegate: SliverChildListDelegate([
+              // --- LAST READ HERO CARD ---
+              if (lastRead != null) ...[
+                Padding(
+                  padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
+                  child: Row(
+                    children: [
+                      Icon(Icons.history, color: const Color(0xFF00E676), size: 18.sp),
+                      SizedBox(width: 8.w),
+                      Text(
+                        AppLocalizations.of(context)!.cardContinueReading,
+                        style: TextStyle(
+                          color: const Color(0xFF00E676),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
+                          fontFamily: 'Outfit',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                _buildLastReadCard(context, lastRead, isListMode: isListMode),
+                SizedBox(height: 32.h),
               ],
-            ),
-          ),
-          _buildLastReadCard(context, lastRead, isListMode: isListMode),
-          SizedBox(height: 32.h),
-        ],
-
-        // --- BOOKMARKS LIST ---
-        if (bookmarks.isNotEmpty)
-          Padding(
-            padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.bookmark_outline,
-                  color: Colors.white70,
-                  size: 18.sp,
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  AppLocalizations.of(context)!.lblSavedBookmarks,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0,
-                    fontFamily: 'Outfit',
+              // --- BOOKMARKS HEADER ---
+              if (bookmarks.isNotEmpty)
+                Padding(
+                  padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
+                  child: Row(
+                    children: [
+                      Icon(Icons.bookmark_outline, color: Colors.white70, size: 18.sp),
+                      SizedBox(width: 8.w),
+                      Text(
+                        AppLocalizations.of(context)!.lblSavedBookmarks,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.0,
+                          fontFamily: 'Outfit',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+            ]),
           ),
-
-        ...bookmarks.map((bookmark) {
+        ),
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+          sliver: SliverList.builder(
+            itemCount: bookmarks.length,
+            itemBuilder: (context, i) {
+              final bookmark = bookmarks[i];
           final surahName =
               (bookmark.surahNumber >= 1 && bookmark.surahNumber <= 114)
               ? SurahNames.indonesianNames[bookmark.surahNumber - 1]
@@ -523,7 +524,9 @@ class BookmarksPage extends StatelessWidget {
               ),
             ),
           );
-        }),
+            },
+          ),
+        ),
       ],
     );
   }

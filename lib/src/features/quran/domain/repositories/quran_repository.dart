@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 import '../entities/ayah.dart';
 import '../entities/last_read.dart';
 import '../entities/surah.dart';

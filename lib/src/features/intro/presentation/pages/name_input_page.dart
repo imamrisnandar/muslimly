@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart'; // Import L10n
 import '../../../../core/di/di_container.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
-import '../../data/repositories/name_repository.dart';
+import '../../domain/repositories/name_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart'; // Import SettingsCubit
 

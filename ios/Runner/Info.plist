@@ -64,6 +64,12 @@
 	
 	<!-- Notification (Optional explicit permission rationale, usually checked at runtime) -->
 	
+	<!-- Microphone & Speech: Needed for Hafalan (Voice Recognition) -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Muslimly membutuhkan akses mikrofon untuk fitur Hafalan, mengenali bacaan Al-Quran Anda.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Muslimly membutuhkan akses pengenalan suara untuk mencocokkan bacaan Al-Quran Anda dengan teks yang benar.</string>
+	
 	<!-- App Transport Security (Allow HTTP for some likely audio sources if needed) -->
 	<key>NSAppTransportSecurity</key>
 	<dict>

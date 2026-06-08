@@ -24,10 +24,10 @@ class PremiumShowcase extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Check if ShowCaseWidget ancestor exists to avoid scope errors during navigation
-    final showcaseAncestor = context
-        .findAncestorWidgetOfExactType<ShowCaseWidget>();
-    if (showcaseAncestor == null) {
+    // Guard: only render Showcase if a ShowcaseView is registered in this scope
+    try {
+      ShowcaseView.get();
+    } catch (_) {
       return child;
     }
 
@@ -116,7 +116,7 @@ class PremiumShowcase extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: GestureDetector(
               onTap: () {
-                ShowCaseWidget.of(context).next();
+                ShowcaseView.get().next();
                 if (onNext != null) onNext!();
               },
               child: Container(

@@ -1,4 +1,5 @@
-import 'package:dartz/dartz.dart';
+import '../../../../core/config/app_urls.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
@@ -7,10 +8,16 @@ import '../../domain/repositories/translation_repository.dart';
 
 @LazySingleton(as: TranslationRepository)
 class TranslationRepositoryImpl implements TranslationRepository {
-  final Dio _dio;
   final DatabaseService _databaseService;
 
-  TranslationRepositoryImpl(this._dio, this._databaseService);
+  final Dio _quranComDio = Dio(
+    BaseOptions(baseUrl: '${AppUrls.quranComApi}/'),
+  );
+  final Dio _alQuranCloudDio = Dio(
+    BaseOptions(baseUrl: '${AppUrls.alQuranCloudApi}/'),
+  );
+
+  TranslationRepositoryImpl(this._databaseService);
 
   @override
   Future<Either<String, String>> getTranslation(
@@ -36,9 +43,9 @@ class TranslationRepositoryImpl implements TranslationRepository {
       // 2. Fetch API (Quran.com)
       final resourceId = languageCode == 'id' ? 33 : 20;
       final url =
-          'https://api.quran.com/api/v4/verses/by_key/$surahId:$ayahId?translations=$resourceId';
+          '/verses/by_key/$surahId:$ayahId?translations=$resourceId';
 
-      final response = await _dio.get(url);
+      final response = await _quranComDio.get(url);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -88,16 +95,16 @@ class TranslationRepositoryImpl implements TranslationRepository {
         // Use Verified Quran.com Endpoint for Ibn Kathir
         // Pattern: /api/v4/tafsirs/{resource_id}/by_ayah/{verse_key}
         url =
-            'https://api.quran.com/api/v4/tafsirs/169/by_ayah/$surahId:$ayahId';
+            '/tafsirs/169/by_ayah/$surahId:$ayahId';
         isQuranCom = true;
         // print('DEBUG: Fetching Ibn Kathir from $url');
       } else {
         // Use Al Quran Cloud (id.jalalayn)
         url =
-            'http://api.alquran.cloud/v1/ayah/$surahId:$ayahId/editions/$tafsirId';
+            '/ayah/$surahId:$ayahId/editions/$tafsirId';
       }
 
-      final response = await _dio.get(url);
+      final response = await (isQuranCom ? _quranComDio : _alQuranCloudDio).get(url);
       // print('DEBUG: Response code ${response.statusCode}');
 
       if (response.statusCode == 200) {
@@ -145,9 +152,9 @@ class TranslationRepositoryImpl implements TranslationRepository {
       // Use language=id for Indonesian
       // Request text_uthmani explicitly to get standard arabic text instead of V1 codes
       final url =
-          'https://api.quran.com/api/v4/verses/by_key/$surahId:$ayahId?language=$languageCode&words=true&word_fields=text_uthmani';
+          '/verses/by_key/$surahId:$ayahId?language=$languageCode&words=true&word_fields=text_uthmani';
 
-      final response = await _dio.get(url);
+      final response = await _quranComDio.get(url);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -194,9 +201,9 @@ class TranslationRepositoryImpl implements TranslationRepository {
       // 2. Fetch API (Bulk)
       final resourceId = languageCode == 'id' ? 33 : 20;
       final url =
-          'https://api.quran.com/api/v4/quran/translations/$resourceId?chapter_number=$surahId';
+          '/quran/translations/$resourceId?chapter_number=$surahId';
 
-      final response = await _dio.get(url);
+      final response = await _quranComDio.get(url);
 
       if (response.statusCode == 200) {
         final data = response.data;

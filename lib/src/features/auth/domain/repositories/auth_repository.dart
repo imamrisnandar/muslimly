@@ -4,4 +4,6 @@ import '../entities/auth_entity.dart';
 abstract class AuthRepository {
   Future<Either<String, User>> login(String email, String password);
   Future<Either<String, String?>> getToken();
+  Future<void> saveToken(String token);
+  Future<void> deleteToken();
 }

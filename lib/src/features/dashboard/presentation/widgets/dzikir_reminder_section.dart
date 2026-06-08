@@ -7,12 +7,14 @@ class DzikirReminderSection extends StatelessWidget {
   final DzikirReminder morningDzikir;
   final DzikirReminder eveningDzikir;
   final VoidCallback? onTap;
+  final void Function(DzikirReminder)? onDzikirTap;
 
   const DzikirReminderSection({
     super.key,
     required this.morningDzikir,
     required this.eveningDzikir,
     this.onTap,
+    this.onDzikirTap,
   });
 
   @override
@@ -58,7 +60,7 @@ class DzikirReminderSection extends StatelessWidget {
 
   Widget _buildDzikirItem(DzikirReminder dzikir) {
     return InkWell(
-      onTap: onTap,
+      onTap: onDzikirTap != null ? () => onDzikirTap!(dzikir) : onTap,
       borderRadius: BorderRadius.circular(8.r),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),

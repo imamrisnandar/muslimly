@@ -1,3 +1,4 @@
+import '../../../../core/config/app_urls.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
@@ -13,14 +14,20 @@ abstract class AudioRepository {
 
 @LazySingleton(as: AudioRepository)
 class AudioRepositoryImpl implements AudioRepository {
-  final Dio _dio;
   final DatabaseService _databaseService;
 
   static const String _keyLastAudioSurah = 'last_audio_surah';
   static const String _keyLastAudioReciter = 'last_audio_reciter';
   static const String _keyLastAudioPos = 'last_audio_pos';
 
-  AudioRepositoryImpl(this._dio, this._databaseService);
+  final Dio _quranComDio = Dio(
+    BaseOptions(baseUrl: '${AppUrls.quranComApi}/'),
+  );
+  final Dio _alQuranCloudDio = Dio(
+    BaseOptions(baseUrl: '${AppUrls.alQuranCloudApi}/'),
+  );
+
+  AudioRepositoryImpl(this._databaseService);
 
   @override
   Future<List<Reciter>> fetchReciters() async {
@@ -38,8 +45,8 @@ class AudioRepositoryImpl implements AudioRepository {
 
   Future<List<Reciter>> _fetchQuranComReciters() async {
     try {
-      final response = await _dio.get(
-        'https://api.quran.com/api/v4/resources/recitations',
+      final response = await _quranComDio.get(
+        '/resources/recitations',
       );
       if (response.statusCode == 200) {
         final data = response.data;
@@ -56,8 +63,8 @@ class AudioRepositoryImpl implements AudioRepository {
 
   Future<List<Reciter>> _fetchAlQuranCloudReciters() async {
     try {
-      final response = await _dio.get(
-        'https://api.alquran.cloud/v1/edition/format/audio',
+      final response = await _alQuranCloudDio.get(
+        '/edition/format/audio',
       );
       if (response.statusCode == 200) {
         final data = response.data;
@@ -80,10 +87,10 @@ class AudioRepositoryImpl implements AudioRepository {
     if (reciterId.startsWith('quran_com_')) {
       // Quran.com (Full Surah)
       final id = reciterId.replaceFirst('quran_com_', '');
-      final url = 'https://api.quran.com/api/v4/chapter_recitations/$id';
+      final url = '/chapter_recitations/$id';
 
       try {
-        final response = await _dio.get(
+        final response = await _quranComDio.get(
           url,
           queryParameters: {'chapter_number': surahId},
         );
@@ -101,8 +108,8 @@ class AudioRepositoryImpl implements AudioRepository {
     } else {
       // Al Quran Cloud (Verse by Verse)
       try {
-        final response = await _dio.get(
-          'https://api.alquran.cloud/v1/surah/$surahId/$reciterId',
+        final response = await _alQuranCloudDio.get(
+          '/surah/$surahId/$reciterId',
         );
         if (response.statusCode == 200) {
           final data = response.data;
@@ -130,8 +137,8 @@ class AudioRepositoryImpl implements AudioRepository {
     }
 
     try {
-      final response = await _dio.get(
-        'https://api.alquran.cloud/v1/ayah/$surahId:$ayahId/$reciterId',
+      final response = await _alQuranCloudDio.get(
+        '/ayah/$surahId:$ayahId/$reciterId',
       );
       if (response.statusCode == 200) {
         final data = response.data;

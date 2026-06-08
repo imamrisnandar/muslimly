@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muslimly/src/core/di/di_container.dart';
+import '../../../../core/services/showcase_preferences_service.dart';
 import 'package:muslimly/src/core/widgets/islamic_loading_indicator.dart';
 import 'package:muslimly/src/features/quran/domain/entities/surah.dart';
 import 'package:muslimly/src/features/quran/domain/entities/ayah.dart';
@@ -42,7 +43,6 @@ import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_state.dart';
 import 'package:showcaseview/showcaseview.dart';
 import '../../../../core/presentation/widgets/premium_showcase.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:muslimly/src/features/quran/presentation/widgets/ayah_selector_bottom_sheet.dart';
 import 'package:muslimly/src/core/utils/quran_constants.dart';
@@ -82,10 +82,12 @@ class _MushafPageState extends State<MushafPage> {
   final GlobalKey _completionKey = GlobalKey();
   final GlobalKey _jumpToAyahKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late ShowcaseView _showcaseView;
 
   @override
   void initState() {
     super.initState();
+    _showcaseView = ShowcaseView.register();
     // Initialize Surah
     _initializeSurah();
 
@@ -104,14 +106,12 @@ class _MushafPageState extends State<MushafPage> {
   }
 
   Future<void> _checkAndShowShowcase() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasShown = prefs.getBool('hasShownMushafShowcase') ?? false;
+    final showcaseService = getIt<ShowcasePreferencesService>();
+    final hasShown = await showcaseService.hasShown(ShowcaseKeys.mushaf);
 
     if (!hasShown && mounted) {
-      ShowCaseWidget.of(
-        context,
-      ).startShowCase([_swipeKey, _bookmarkKey, _completionKey]);
-      await prefs.setBool('hasShownMushafShowcase', true);
+      _showcaseView.startShowCase([_swipeKey, _bookmarkKey, _completionKey]);
+      await showcaseService.markShown(ShowcaseKeys.mushaf);
     }
   }
 
@@ -163,11 +163,9 @@ class _MushafPageState extends State<MushafPage> {
 
   @override
   void dispose() {
+    _showcaseView.unregister();
     _pageController?.dispose();
     _readStopwatch.stop();
-    // note: difficult to log on dispose because context might be invalid,
-    // but usually BlocProvider closes the bloc.
-    // Ideally we assume the last page session might be short or we try to log if possible.
     super.dispose();
   }
 
@@ -270,6 +268,8 @@ class _MushafPageState extends State<MushafPage> {
   // ... (Previous methods: _goToPreviousSurah, _goToNextSurah)
 
   void _goToPreviousSurah(BuildContext context) {
+    if (_isNavigating) return; // Prevent multiple calls
+
     if (_surah.number > 1) {
       // Can go back if > 1 (Al-Fatihah is 1)
       _isNavigating = true;
@@ -292,24 +292,16 @@ class _MushafPageState extends State<MushafPage> {
           revelationType: prevSurahData['revelationType'],
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(
-                context,
-              )!.sbOpeningSurah(prevSurah.englishName),
-            ),
-            duration: const Duration(seconds: 1),
-          ),
+        showCustomSnackBar(
+          context,
+          message: AppLocalizations.of(context)!.sbOpeningSurah(prevSurah.englishName),
+          type: SnackBarType.info,
+          duration: const Duration(milliseconds: 800),
         );
 
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) {
-            // To open at the END of the previous Surah, we might need logic in MushafPage to scroll to end?
-            // For now, standard open (starts at page 1 of that Surah) is standard behavior unless requested specifically "End of Page".
-            // User said "arahkan ke surat sebelumnya pada akhir halaman" -> "Direct to previous surah at the end page".
-            // This is complex because we calculate pages dynamically.
-            // We'll stick to opening the Surah for now, as passing "JumpToEnd" param requires more refactoring.
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
             context.pushReplacement(
               '/quran/mushaf/${prevSurah.number}?startAtEnd=true',
               extra: prevSurah,
@@ -321,8 +313,10 @@ class _MushafPageState extends State<MushafPage> {
       }
     } else {
       // Start of Quran
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.sbStartOfQuran)),
+      showCustomSnackBar(
+        context,
+        message: AppLocalizations.of(context)!.sbStartOfQuran,
+        type: SnackBarType.info,
       );
     }
   }
@@ -355,20 +349,17 @@ class _MushafPageState extends State<MushafPage> {
           revelationType: nextSurahData['revelationType'],
         );
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(
-                context,
-              )!.sbOpeningSurah(nextSurah.englishName),
-            ),
-            duration: const Duration(seconds: 1),
-          ),
+        showCustomSnackBar(
+          context,
+          message: AppLocalizations.of(context)!.sbOpeningSurah(nextSurah.englishName),
+          type: SnackBarType.info,
+          duration: const Duration(milliseconds: 800),
         );
 
         // Delay slightly for visual feedback then navigate
         Future.delayed(const Duration(milliseconds: 300), () {
           if (mounted) {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
             context.pushReplacement(
               '/quran/mushaf/${nextSurah.number}', // Corrected route with ID
               extra: nextSurah,
@@ -377,15 +368,17 @@ class _MushafPageState extends State<MushafPage> {
         });
       } else {
         _isNavigating = false; // Reset if failed
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.sbNextSurahNotFound),
-          ),
+        showCustomSnackBar(
+          context,
+          message: AppLocalizations.of(context)!.sbNextSurahNotFound,
+          type: SnackBarType.error,
         );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.sbEndOfQuran)),
+      showCustomSnackBar(
+        context,
+        message: AppLocalizations.of(context)!.sbEndOfQuran,
+        type: SnackBarType.info,
       );
     }
   }
@@ -403,9 +396,7 @@ class _MushafPageState extends State<MushafPage> {
         BlocProvider(create: (context) => getIt<ReadingBloc>()),
         BlocProvider(create: (context) => getIt<BookmarkBloc>()),
       ],
-      child: ShowCaseWidget(
-        builder: (context) {
-          return Scaffold(
+      child: Scaffold(
             key: _scaffoldKey,
             backgroundColor: const Color(
               0xFFFFF8E1,
@@ -792,8 +783,6 @@ class _MushafPageState extends State<MushafPage> {
                 ],
               ),
             ),
-          );
-        },
       ),
     );
   }

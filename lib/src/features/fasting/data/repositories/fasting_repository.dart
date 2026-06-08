@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:injectable/injectable.dart';
+import '../../domain/repositories/fasting_repository.dart';
 import '../models/fasting_model.dart';
 
-abstract class FastingRepository {
-  Future<List<FastingModel>> getFastingContent(String locale);
-}
-
+@LazySingleton(as: FastingRepository)
 class FastingRepositoryImpl implements FastingRepository {
   @override
   Future<List<FastingModel>> getFastingContent(String locale) async {
@@ -13,9 +12,7 @@ class FastingRepositoryImpl implements FastingRepository {
       final String fileName = locale == 'id'
           ? 'assets/quran/json/fasting_data_id.json'
           : 'assets/quran/json/fasting_data_en.json';
-
       final String jsonString = await rootBundle.loadString(fileName);
-
       final List<dynamic> jsonList = json.decode(jsonString);
       return jsonList.map((json) => FastingModel.fromJson(json)).toList();
     } catch (e) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // Core
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'src/l10n/generated/app_localizations.dart'; // Localization
@@ -17,26 +19,32 @@ import 'src/features/quran/presentation/bloc/audio_event.dart'; // Init audio if
 
 import 'package:just_audio_background/just_audio_background.dart';
 
-import 'package:showcaseview/showcaseview.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Firebase Init is now handled inside NotificationService.initialize()
-  // OR we can do it here.
-  // Ideally, do it here for global context.
-  await Firebase.initializeApp(); // Ensure we await this before anything else using Firebase
+  await Firebase.initializeApp();
+
+  // Crashlytics — capture Flutter framework errors
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
+  // Crashlytics — capture async/platform errors outside Flutter's zone
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
+  // Disable Crashlytics collection in debug to avoid polluting reports
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
 
   configureDependencies();
 
   await JustAudioBackground.init(
-    androidNotificationChannelId:
-        'com.muslimly.app.channel.audio', // Use app specific ID
+    androidNotificationChannelId: 'com.muslimly.app.channel.audio',
     androidNotificationChannelName: 'Audio Playback',
     androidNotificationOngoing: true,
     androidNotificationIcon: 'mipmap/ic_launcher',
   );
   await getIt<NotificationService>().initialize();
-  // Initialize Background Service (Workmanager)
   getIt.registerLazySingleton<BackgroundService>(() => BackgroundService());
   getIt<BackgroundService>().initialize();
 
@@ -61,23 +69,21 @@ class MyApp extends StatelessWidget {
           ],
           child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (context, state) {
-              return ShowCaseWidget(
-                builder: (context) => MaterialApp.router(
-                  title: 'Muslimly',
-                  debugShowCheckedModeBanner: false,
-                  locale: state.locale,
-                  localizationsDelegates:
-                      AppLocalizations.localizationsDelegates,
-                  supportedLocales: AppLocalizations.supportedLocales,
-                  theme: ThemeData(
-                    useMaterial3: true,
-                    colorScheme: ColorScheme.fromSeed(
-                      seedColor: const Color(0xFF00E676),
-                      primary: const Color(0xFF00E676),
-                    ),
+              return MaterialApp.router(
+                title: 'Muslimly',
+                debugShowCheckedModeBanner: false,
+                locale: state.locale,
+                localizationsDelegates:
+                    AppLocalizations.localizationsDelegates,
+                supportedLocales: AppLocalizations.supportedLocales,
+                theme: ThemeData(
+                  useMaterial3: true,
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: const Color(0xFF00E676),
+                    primary: const Color(0xFF00E676),
                   ),
-                  routerConfig: appRouter,
                 ),
+                routerConfig: appRouter,
               );
             },
           ),

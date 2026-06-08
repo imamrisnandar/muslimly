@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../tajweed/presentation/pages/tajweed_page.dart';
-import '../../data/repositories/zikir_local_repository.dart';
+import '../../domain/repositories/zikir_repository.dart';
 import 'dzikir_reading_page.dart';
 import 'doa_harian_list_page.dart';
 import '../../../../features/fasting/presentation/pages/fasting_guide_page.dart';
@@ -32,7 +32,7 @@ class DzikirPage extends StatelessWidget {
         color: Colors.orangeAccent,
         onTap: () async {
           final locale = Localizations.localeOf(context);
-          final items = await getIt<ZikirLocalRepository>().getMorningZikir(
+          final items = await getIt<ZikirRepository>().getMorningZikir(
             locale,
           );
           if (context.mounted) {
@@ -55,7 +55,7 @@ class DzikirPage extends StatelessWidget {
         color: Colors.indigoAccent,
         onTap: () async {
           final locale = Localizations.localeOf(context);
-          final items = await getIt<ZikirLocalRepository>().getEveningZikir(
+          final items = await getIt<ZikirRepository>().getEveningZikir(
             locale,
           );
           if (context.mounted) {
@@ -78,7 +78,7 @@ class DzikirPage extends StatelessWidget {
         color: const Color(0xFF00E676),
         onTap: () async {
           final locale = Localizations.localeOf(context);
-          final items = await getIt<ZikirLocalRepository>().getPrayerZikir(
+          final items = await getIt<ZikirRepository>().getPrayerZikir(
             locale,
           );
           if (context.mounted) {

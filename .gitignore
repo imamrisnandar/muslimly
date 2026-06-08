@@ -48,6 +48,9 @@ app.*.map.json
 *.txt
 *.py
 
+# Dev/scratch test scripts (local only)
+test/scratch/
+
 ChangeLog.md
 
 
@@ -59,3 +62,5 @@ key.properties
 analysis.md
 smart_notif_strategy.md
 android/app/google-services.json
+SSL_CERT_RENEWAL.md
+TASK_HISTORY.md

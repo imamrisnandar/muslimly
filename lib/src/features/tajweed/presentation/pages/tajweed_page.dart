@@ -334,12 +334,16 @@ class _TajweedPageState extends State<TajweedPage> {
 
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1C2A30), // Match Scaffold
+      child: Material(
+        color: const Color(0xFF1C2A30),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
-      child: Theme(
+        clipBehavior: Clip.antiAlias,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           key: key,
@@ -384,6 +388,8 @@ class _TajweedPageState extends State<TajweedPage> {
               ),
             ),
           ],
+        ),
+          ),
         ),
       ),
     );

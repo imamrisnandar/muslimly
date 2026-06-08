@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import '../../../../core/utils/app_logger.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
@@ -82,7 +84,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
       }
     } catch (e) {
       // Ignore background sync errors
-      print('❌ [Sync Settings] Failed to sync setting $key: $e');
+      debugPrint('❌ [Sync Settings] Failed to sync setting $key: $e');
     }
   }
 
@@ -227,7 +229,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
         }
       }
     } catch (e) {
-      // Ignore error
+      AppLogger.warning('Failed to read hijri adjustments from DB', e);
     }
     return [];
   }
@@ -250,7 +252,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
 
         if (remoteSettings.isNotEmpty) {
           // If server has settings, we overwrite local
-          print(
+          debugPrint(
             '🔄 [Sync Settings] Found ${remoteSettings.length} settings on remote to pull.',
           );
           for (final item in remoteSettings) {
@@ -262,7 +264,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
           }
         } else {
           // If server is empty, let's push our current key local targets to establish baseline
-          print(
+          debugPrint(
             '🔄 [Sync Settings] Remote is empty, pushing local baseline settings.',
           );
           final pageTarget = await getDailyReadingTarget();
@@ -281,7 +283,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
         }
       }
     } catch (e) {
-      print('❌ [Sync Settings] Failed to sync settings from remote: $e');
+      debugPrint('❌ [Sync Settings] Failed to sync settings from remote: $e');
     }
   }
 }

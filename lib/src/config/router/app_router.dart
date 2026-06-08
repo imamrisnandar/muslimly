@@ -8,6 +8,7 @@ import '../../features/article/presentation/bloc/article_bloc.dart';
 import '../../features/quran/domain/entities/surah.dart';
 import '../../features/quran/presentation/pages/surah_detail_page.dart';
 import '../../features/quran/presentation/pages/mushaf_page.dart';
+import '../../features/quran/presentation/pages/hafalan_page.dart';
 import '../../features/intro/presentation/pages/splash_page.dart';
 import '../../features/intro/presentation/pages/name_input_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
@@ -88,6 +89,23 @@ final appRouter = GoRouter(
           initialPage: initialPage,
           initialAyah: initialAyah,
         );
+      },
+    ),
+    GoRoute(
+      path: '/quran/hafalan/:number',
+      builder: (context, state) {
+        final extra = state.extra;
+        Surah? surah;
+        int? initialPage;
+
+        if (extra is Surah) {
+          surah = extra;
+        } else if (extra is Map) {
+          surah = extra['surah'] as Surah?;
+          initialPage = extra['initialPage'] as int?;
+        }
+
+        return HafalanPage(surah: surah, initialPage: initialPage);
       },
     ),
     GoRoute(

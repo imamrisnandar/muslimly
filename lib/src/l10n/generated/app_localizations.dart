@@ -2315,7 +2315,7 @@ abstract class AppLocalizations {
   /// No description provided for @articleTitle.
   ///
   /// In en, this message translates to:
-  /// **'Articles & News'**
+  /// **'Articles'**
   String get articleTitle;
 
   /// No description provided for @articleSeeAll.
@@ -2371,6 +2371,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No articles yet.'**
   String get articleListEmpty;
+
+  /// No description provided for @modeHafalanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Memorization Mode'**
+  String get modeHafalanTitle;
+
+  /// No description provided for @modeHafalanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Test your memorization with voice'**
+  String get modeHafalanSubtitle;
+
+  /// No description provided for @hafalanAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed! Accuracy: {percent}%'**
+  String hafalanAccuracy(Object percent);
+
+  /// No description provided for @hafalanProgressAyat.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed}/{total} Ayahs'**
+  String hafalanProgressAyat(Object completed, Object total);
+
+  /// No description provided for @hafalanProgressKata.
+  ///
+  /// In en, this message translates to:
+  /// **'{matched}/{total} Words'**
+  String hafalanProgressKata(Object matched, Object total);
 }
 
 class _AppLocalizationsDelegate

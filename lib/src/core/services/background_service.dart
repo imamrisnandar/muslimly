@@ -1,6 +1,7 @@
 import 'package:workmanager/workmanager.dart';
 import 'package:injectable/injectable.dart';
 import 'package:flutter/foundation.dart';
+import '../utils/app_logger.dart';
 import 'dart:ui'; // for Locale
 import '../../core/di/di_container.dart';
 import '../../features/settings/data/repositories/settings_repository.dart';
@@ -132,8 +133,8 @@ void callbackDispatcher() {
       );
 
       // print("DEBUG: Background Task Finished. Progress: $progress/$target");
-    } catch (e) {
-      // print("DEBUG: Background Task Error: $e");
+    } catch (e, s) {
+      AppLogger.error('Background task failed', e, s);
       return Future.value(false);
     }
 

@@ -373,7 +373,7 @@
     "prayerGuideSubtitle": "Panduan Sholat Lengkap Sesuai Sunnah",
     "searchPrayerGuide": "Cari topik sholat...",
     "lblSkip": "Lewati",
-    "articleTitle": "Kabar & Ilmiah",
+    "articleTitle": "Artikel",
     "articleSeeAll": "Lihat Semua",
     "articleReadMore": "Baca Selengkapnya",
     "articleSearchHint": "Cari artikel...",
@@ -382,6 +382,11 @@
     "articleErrorLoad": "Gagal memuat artikel",
     "articleErrorSearch": "Gagal mencari artikel",
     "articleListTitle": "Artikel Islami",
-    "articleListEmpty": "Belum ada artikel."
+    "articleListEmpty": "Belum ada artikel.",
+    "modeHafalanTitle": "Mode Hafalan",
+    "modeHafalanSubtitle": "Uji hafalan dengan membaca suara",
+    "hafalanAccuracy": "Selesai! Akurasi: {percent}%",
+    "hafalanProgressAyat": "{completed}/{total} ayat",
+    "hafalanProgressKata": "{matched}/{total} kata"
 }
 

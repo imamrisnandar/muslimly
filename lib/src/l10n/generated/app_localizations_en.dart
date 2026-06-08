@@ -1219,7 +1219,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lblSkip => 'Skip';
 
   @override
-  String get articleTitle => 'Articles & News';
+  String get articleTitle => 'Articles';
 
   @override
   String get articleSeeAll => 'See All';
@@ -1247,4 +1247,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get articleListEmpty => 'No articles yet.';
+
+  @override
+  String get modeHafalanTitle => 'Memorization Mode';
+
+  @override
+  String get modeHafalanSubtitle => 'Test your memorization with voice';
+
+  @override
+  String hafalanAccuracy(Object percent) {
+    return 'Completed! Accuracy: $percent%';
+  }
+
+  @override
+  String hafalanProgressAyat(Object completed, Object total) {
+    return '$completed/$total Ayahs';
+  }
+
+  @override
+  String hafalanProgressKata(Object matched, Object total) {
+    return '$matched/$total Words';
+  }
 }

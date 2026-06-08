@@ -155,8 +155,7 @@ class _PageTabState extends State<_PageTab> {
     if (page < 1) page = 1;
     if (page > 604) page = 604;
 
-    context.pop();
-    context.push('/mushaf', extra: {'pageNumber': page});
+    _showReadingModeSelection(context, pageNumber: page);
   }
 
   @override
@@ -348,12 +347,16 @@ class _JuzTab extends StatelessWidget {
 
         return Container(
           margin: EdgeInsets.only(bottom: 12.h),
-          decoration: BoxDecoration(
+          child: Material(
             color: Colors.white.withOpacity(0.03),
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
-          ),
-          child: Theme(
+            clipBehavior: Clip.antiAlias,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white.withOpacity(0.05)),
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
               tilePadding: EdgeInsets.symmetric(
@@ -470,6 +473,8 @@ class _JuzTab extends StatelessWidget {
                 ),
               ],
             ),
+              ),
+            ),
           ),
         );
       },
@@ -484,8 +489,7 @@ class _JuzTab extends StatelessWidget {
   }) {
     return InkWell(
       onTap: () {
-        context.pop();
-        context.push('/mushaf', extra: {'pageNumber': page});
+        _showReadingModeSelection(context, pageNumber: page);
       },
       borderRadius: BorderRadius.circular(8.r),
       child: Padding(
@@ -706,14 +710,11 @@ class _SurahTabState extends State<_SurahTab> {
                   );
 
                   if (context.mounted) {
-                    context.pop();
-                    context.push(
-                      '/mushaf',
-                      extra: {
-                        'pageNumber': page,
-                        'surahNumber': surahNumber,
-                        'ayahNumber': ayahNum,
-                      },
+                    _showReadingModeSelection(
+                      context,
+                      pageNumber: page,
+                      surahNumber: surahNumber,
+                      ayahNumber: ayahNum,
                     );
                   }
                 },
@@ -741,4 +742,128 @@ class _SurahTabState extends State<_SurahTab> {
       ],
     );
   }
+}
+
+// -----------------------------------------------------------------------------
+// HELPER: Reading Mode Selection
+// -----------------------------------------------------------------------------
+void _showReadingModeSelection(
+  BuildContext context, {
+  required int pageNumber,
+  int? surahNumber,
+  int? ayahNumber,
+}) {
+  final l10n = AppLocalizations.of(context)!;
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: const Color(0xFF0F2027),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+    ),
+    builder: (sheetContext) => Padding(
+      padding: EdgeInsets.all(24.w),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.readingModeTitle, // "Reading Mode"
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 24.h),
+          _buildModeTile(
+            context: sheetContext,
+            icon: Icons.menu_book,
+            title: l10n.modeMushafTitle,
+            subtitle: l10n.modeMushafSubtitle,
+            onTap: () {
+              sheetContext.pop(); // Close Mode Selection
+              context.pop(); // Close Navigation Bottom Sheet
+              context.push(
+                '/mushaf',
+                extra: {
+                  'pageNumber': pageNumber,
+                  'surahNumber': surahNumber,
+                  'ayahNumber': ayahNumber,
+                },
+              );
+            },
+          ),
+          SizedBox(height: 16.h),
+          _buildModeTile(
+            context: sheetContext,
+            icon: Icons.mic,
+            title: l10n.modeHafalanTitle,
+            subtitle: l10n.modeHafalanSubtitle,
+            onTap: () {
+              sheetContext.pop(); // Close Mode Selection
+              context.pop(); // Close Navigation Bottom Sheet
+              // For Hafalan, if we don't have surahNumber yet we assume 1 as a placeholder
+              // because HafalanPage init logic resolves the correct Surah object based on initialPage.
+              final String sNum = surahNumber != null
+                  ? surahNumber.toString()
+                  : '1';
+              context.push(
+                '/quran/hafalan/$sNum',
+                extra: {'initialPage': pageNumber},
+              );
+            },
+          ),
+          SizedBox(height: 16.h),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildModeTile({
+  required BuildContext context,
+  required IconData icon,
+  required String title,
+  required String subtitle,
+  required VoidCallback onTap,
+}) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(12.r),
+    child: Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: const Color(0xFF00E676), size: 28.sp),
+          SizedBox(width: 16.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  subtitle,
+                  style: TextStyle(color: Colors.white54, fontSize: 13.sp),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

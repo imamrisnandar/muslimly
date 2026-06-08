@@ -281,9 +281,9 @@ class _PrayerPageState extends State<PrayerPage>
           ),
         );
       },
-      child: ListView(
+      child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 100.h),
-        children: [_buildPrayerContent(context, state)],
+        child: _buildPrayerContent(context, state),
       ),
     );
   }
@@ -294,9 +294,9 @@ class _PrayerPageState extends State<PrayerPage>
       onRefresh: () async {
         await Future.delayed(const Duration(milliseconds: 500));
       },
-      child: ListView(
+      child: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 100.h),
-        children: [IbadahCalendarWidget(fastingService: _fastingService)],
+        child: IbadahCalendarWidget(fastingService: _fastingService),
       ),
     );
   }

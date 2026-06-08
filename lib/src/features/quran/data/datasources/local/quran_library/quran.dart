@@ -1,5 +1,6 @@
 library;
 
+import '../../../../../../core/config/app_urls.dart';
 import 'reciters.dart';
 // import 'tafseers/jalalayn.dart';
 // import 'tafseers/muyassar.dart';
@@ -351,7 +352,7 @@ List<String> getVersesTextByPage(
 
 ///Takes [surahNumber] and returns audio URL of that surah
 String getAudioURLBySurah(int surahNumber, reciterIdentifier) {
-  return "https://cdn.islamic.network/quran/audio-surah/64/$reciterIdentifier/$surahNumber.mp3";
+  return "${AppUrls.islamicNetworkAudio}-surah/64/$reciterIdentifier/$surahNumber.mp3";
 }
 
 List<dynamic> getReciters() {
@@ -372,12 +373,12 @@ String getAudioURLByVerse(int surahNumber, int verseNumber, reciterIdentifier) {
       reciterIdentifier == "ar.muhammadayyoub" ||
       reciterIdentifier == "ar.ibrahimakhbar" ||
       reciterIdentifier == "ar.minshawi") {
-    return "https://cdn.islamic.network/quran/audio/128/$reciterIdentifier/$verseNum.mp3";
+    return "${AppUrls.islamicNetworkAudio}/128/$reciterIdentifier/$verseNum.mp3";
   } else {
-    return "https://cdn.islamic.network/quran/audio/64/$reciterIdentifier/$verseNum.mp3";
+    return "${AppUrls.islamicNetworkAudio}/64/$reciterIdentifier/$verseNum.mp3";
   }
   // if(reciters.where((element) => element["reciterIdentifier"]==reciterIdentifier).first["bit"]==128){
-  //     return "https://cdn.islamic.network/quran/audio/64/$reciterIdentifier/$verseNum.mp3";
+  //     return "/64/$reciterIdentifier/$verseNum.mp3";
 
   // }
 }
@@ -388,7 +389,7 @@ bool isSajdahVerse(int surahNumber, int verseNumber) =>
 
 ///Takes [verseNumber] and returns audio URL of that verse
 String getAudioURLByVerseNumber(int verseNumber, reciterIdentifier) {
-  return "https://cdn.islamic.network/quran/audio/64/$reciterIdentifier/$verseNumber.mp3";
+  return "${AppUrls.islamicNetworkAudio}/64/$reciterIdentifier/$verseNumber.mp3";
 }
 
 enum Translation {

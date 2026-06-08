@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/utils/surah_names.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/services/showcase_preferences_service.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../core/utils/tajweed_parser.dart';
@@ -32,7 +33,6 @@ import '../../domain/entities/quran_bookmark.dart';
 import '../../domain/entities/ayah.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/entities/last_read.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
@@ -69,27 +69,32 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   final GlobalKey _shareKey = GlobalKey();
   final GlobalKey _bookmarkKey = GlobalKey();
   bool _showcaseChecked = false;
+  late ShowcaseView _showcaseView;
+
+  @override
+  void initState() {
+    super.initState();
+    _showcaseView = ShowcaseView.register();
+  }
 
   Future<void> _checkShowcase() async {
     if (_showcaseChecked) return;
     _showcaseChecked = true;
 
-    final prefs = await SharedPreferences.getInstance();
-    final hasShown = prefs.getBool('hasShownSurahDetailShowcase') ?? false;
+    final showcaseService = getIt<ShowcasePreferencesService>();
+    final hasShown = await showcaseService.hasShown(ShowcaseKeys.surahDetail);
 
     if (!hasShown && mounted) {
-      // Small delay to ensure item is rendered after jump
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) {
-          // Attempt to ensure the specific button is visible
           if (_markReadKey.currentContext != null) {
             Scrollable.ensureVisible(
               _markReadKey.currentContext!,
-              alignment: 0.5, // Center the buttons in view
+              alignment: 0.5,
               duration: const Duration(milliseconds: 300),
             ).then((_) {
               if (mounted) {
-                ShowCaseWidget.of(context).startShowCase([
+                _showcaseView.startShowCase([
                   _jumpToAyahKey,
                   _markReadKey,
                   _tafsirKey,
@@ -97,11 +102,10 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                   _shareKey,
                   _bookmarkKey,
                 ]);
-                prefs.setBool('hasShownSurahDetailShowcase', true);
+                showcaseService.markShown(ShowcaseKeys.surahDetail);
               }
             });
           } else {
-            // Fallback if key context not found (e.g. still rendering)
             ShowCaseWidget.of(context).startShowCase([
               _jumpToAyahKey,
               _markReadKey,
@@ -110,7 +114,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
               _shareKey,
               _bookmarkKey,
             ]);
-            prefs.setBool('hasShownSurahDetailShowcase', true);
+            showcaseService.markShown(ShowcaseKeys.surahDetail);
           }
         }
       });
@@ -149,7 +153,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
 
   @override
   void dispose() {
-    // _scrollController.dispose();
+    _showcaseView.unregister();
     super.dispose();
   }
 
@@ -316,7 +320,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     textToShare += '($surahName: $ayahNumber)';
     textToShare += '\n\nShared from Muslimly App';
 
-    Share.share(textToShare);
+    SharePlus.instance.share(ShareParams(text: textToShare));
   }
 
   void _handleMarkAsRead(BuildContext context, Ayah ayah) {
@@ -451,9 +455,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
           create: (context) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
         ),
       ],
-      child: ShowCaseWidget(
-        builder: (context) {
-          return MultiBlocListener(
+      child: MultiBlocListener(
             listeners: [
               BlocListener<AudioBloc, AudioState>(
                 listener: (context, state) {
@@ -1244,8 +1246,6 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                 const DraggableAudioPlayer(enableShowcase: false),
               ],
             ),
-          );
-        },
       ),
     );
   }

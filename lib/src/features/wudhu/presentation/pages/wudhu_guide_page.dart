@@ -1,33 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/models/wudhu_model.dart';
-import '../../data/repositories/wudhu_repository.dart';
+import '../bloc/wudhu_cubit.dart';
+import '../bloc/wudhu_state.dart';
 import 'wudhu_detail_page.dart';
 
-class WudhuGuidePage extends StatefulWidget {
+class WudhuGuidePage extends StatelessWidget {
   const WudhuGuidePage({super.key});
 
   @override
-  State<WudhuGuidePage> createState() => _WudhuGuidePageState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<WudhuCubit>()
+        ..loadContent(AppLocalizations.of(context)!.localeName),
+      child: const _WudhuGuideView(),
+    );
+  }
 }
 
-class _WudhuGuidePageState extends State<WudhuGuidePage> {
-  late Future<List<WudhuModel>> _dataFuture;
+class _WudhuGuideView extends StatefulWidget {
+  const _WudhuGuideView();
+
+  @override
+  State<_WudhuGuideView> createState() => _WudhuGuideViewState();
+}
+
+class _WudhuGuideViewState extends State<_WudhuGuideView> {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
   String? _currentLocale;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final l10n = AppLocalizations.of(context)!;
-    if (_currentLocale != l10n.localeName) {
-      _currentLocale = l10n.localeName;
-      _dataFuture = getIt<WudhuRepository>().getWudhuContent(l10n.localeName);
+    final locale = AppLocalizations.of(context)!.localeName;
+    if (_currentLocale != locale) {
+      _currentLocale = locale;
+      context.read<WudhuCubit>().loadContent(locale);
     }
   }
 
@@ -37,114 +50,59 @@ class _WudhuGuidePageState extends State<WudhuGuidePage> {
     super.dispose();
   }
 
-  List<WudhuModel> _filterData(List<WudhuModel> data) {
-    if (_searchQuery.isEmpty) {
-      return data;
-    }
-    return data.where((item) {
-      final titleMatch = item.title.toLowerCase().contains(
-        _searchQuery.toLowerCase(),
-      );
-      final descMatch = item.description.toLowerCase().contains(
-        _searchQuery.toLowerCase(),
-      );
-      return titleMatch || descMatch;
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(
-        0xFF1C2A30,
-      ), // Dark Theme matching Fasting Guide
-      appBar: AppBar(
-        title: Text(
-          l10n.wudhuGuideTitle,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontFamily: GoogleFonts.outfit().fontFamily,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: FutureBuilder<List<WudhuModel>>(
-        future: _dataFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      backgroundColor: const Color(0xFF1C2A30),
+      appBar: AppTransparentAppBar(title: l10n.wudhuGuideTitle),
+      body: BlocBuilder<WudhuCubit, WudhuState>(
+        builder: (context, state) {
+          if (state.status == WudhuStatus.loading ||
+              state.status == WudhuStatus.initial) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError) {
+          if (state.status == WudhuStatus.error) {
             return Center(
               child: Text(
-                'Error: ${snapshot.error}',
+                'Error: ${state.errorMessage}',
                 style: const TextStyle(color: Colors.white),
               ),
             );
           }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          if (state.items.isEmpty) {
             return Center(
-              child: Text(
-                l10n.msgNoData,
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: Text(l10n.msgNoData, style: const TextStyle(color: Colors.white)),
             );
           }
 
-          final allData = List<WudhuModel>.from(snapshot.data!);
-          // Sort by order first
-          allData.sort((a, b) => a.order.compareTo(b.order));
-
-          final filteredData = _filterData(allData);
+          final filteredData = state.filteredItems;
 
           return Column(
             children: [
-              // Search Bar
               Padding(
                 padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
                 child: TextField(
                   controller: _searchController,
-                  onChanged: (val) {
-                    setState(() {
-                      _searchQuery = val;
-                    });
-                  },
+                  onChanged: context.read<WudhuCubit>().onSearchChanged,
                   style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   decoration: InputDecoration(
                     hintText: l10n.searchWudhuGuide,
-                    hintStyle: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 14.sp,
-                    ),
+                    hintStyle: TextStyle(color: Colors.white38, fontSize: 14.sp),
                     prefixIcon: const Icon(Icons.search, color: Colors.white54),
-                    suffixIcon: _searchQuery.isNotEmpty
+                    suffixIcon: state.query.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(
-                              Icons.clear,
-                              color: Colors.white54,
-                            ),
+                            icon: const Icon(Icons.clear, color: Colors.white54),
                             onPressed: () {
                               _searchController.clear();
-                              setState(() {
-                                _searchQuery = '';
-                              });
+                              context.read<WudhuCubit>().onSearchChanged('');
                             },
                           )
                         : null,
                     filled: true,
                     fillColor: Colors.white.withOpacity(0.05),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
                       borderSide: BorderSide.none,
@@ -152,19 +110,13 @@ class _WudhuGuidePageState extends State<WudhuGuidePage> {
                   ),
                 ),
               ),
-
-              // Content List
               Expanded(
                 child: filteredData.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.search_off,
-                              size: 48.sp,
-                              color: Colors.white24,
-                            ),
+                            Icon(Icons.search_off, size: 48.sp, color: Colors.white24),
                             SizedBox(height: 16.h),
                             Text(
                               l10n.msgNoResults,
@@ -180,11 +132,9 @@ class _WudhuGuidePageState extends State<WudhuGuidePage> {
                         key: const PageStorageKey('wudhu_guide_list'),
                         padding: EdgeInsets.all(16.w),
                         itemCount: filteredData.length,
-                        separatorBuilder: (context, index) =>
-                            SizedBox(height: 12.h),
+                        separatorBuilder: (_, __) => SizedBox(height: 12.h),
                         itemBuilder: (context, index) {
-                          final item = filteredData[index];
-                          return _buildChapterCard(context, item, allData);
+                          return _buildChapterCard(context, filteredData[index], state.items);
                         },
                       ),
               ),
@@ -195,12 +145,8 @@ class _WudhuGuidePageState extends State<WudhuGuidePage> {
     );
   }
 
-  Widget _buildChapterCard(
-    BuildContext context,
-    WudhuModel item,
-    List<WudhuModel> allItems,
-  ) {
-    const accentColor = Color(0xFF00E676); // Green Accent (Matching Fasting)
+  Widget _buildChapterCard(BuildContext context, WudhuModel item, List<WudhuModel> allItems) {
+    const accentColor = Color(0xFF00E676);
 
     return Container(
       decoration: BoxDecoration(
@@ -212,20 +158,16 @@ class _WudhuGuidePageState extends State<WudhuGuidePage> {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(12.r),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    WudhuDetailPage(item: item, allItems: allItems),
-              ),
-            );
-          },
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => WudhuDetailPage(item: item, allItems: allItems),
+            ),
+          ),
           child: Padding(
             padding: EdgeInsets.all(16.w),
             child: Row(
               children: [
-                // Number Badge
                 Container(
                   width: 36.w,
                   height: 36.w,
@@ -247,8 +189,6 @@ class _WudhuGuidePageState extends State<WudhuGuidePage> {
                   ),
                 ),
                 SizedBox(width: 16.w),
-
-                // Content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,13 +216,8 @@ class _WudhuGuidePageState extends State<WudhuGuidePage> {
                     ],
                   ),
                 ),
-
                 SizedBox(width: 8.w),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Colors.white38,
-                  size: 16.sp,
-                ),
+                Icon(Icons.arrow_forward_ios_rounded, color: Colors.white38, size: 16.sp),
               ],
             ),
           ),
