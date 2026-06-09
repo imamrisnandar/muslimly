@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 import '../bloc/article_bloc.dart';
@@ -170,7 +169,7 @@ class _ArticleListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateStr = DateFormat('d MMM yyyy').format(article.publishedAt);
+    // final dateStr = DateFormat('d MMM yyyy').format(article.publishedAt);
     final categoryColor = const Color(
       0xFF00E676,
     ); // Matches BottomNavigationBar
@@ -259,14 +258,14 @@ class _ArticleListItem extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Spacer(),
-                      Text(
-                        dateStr,
-                        style: GoogleFonts.inter(
-                          fontSize: 10.sp,
-                          color: Colors.white54,
-                        ),
-                      ),
+                      // const Spacer(),
+                      // Text(
+                      //   dateStr,
+                      //   style: GoogleFonts.inter(
+                      //     fontSize: 10.sp,
+                      //     color: Colors.white54,
+                      //   ),
+                      // ),
                     ],
                   ),
                   SizedBox(height: 8.h),

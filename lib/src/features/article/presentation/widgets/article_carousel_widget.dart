@@ -267,25 +267,25 @@ class _ArticleCard extends StatelessWidget {
                               ),
                             ),
 
-                            // Date Tag
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              child: Text(
-                                "${article.publishedAt.day} ${_getMonthName(article.publishedAt.month)} ${article.publishedAt.year}",
-                                style: GoogleFonts.inter(
-                                  fontSize: isLandscape ? 8.sp : 9.sp,
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
+                            // Date Tag (Hidden for now)
+                            // Container(
+                            //   padding: EdgeInsets.symmetric(
+                            //     horizontal: 8.w,
+                            //     vertical: 4.h,
+                            //   ),
+                            //   decoration: BoxDecoration(
+                            //     color: Colors.white.withOpacity(0.1),
+                            //     borderRadius: BorderRadius.circular(10.r),
+                            //   ),
+                            //   child: Text(
+                            //     "${article.publishedAt.day} ${_getMonthName(article.publishedAt.month)} ${article.publishedAt.year}",
+                            //     style: GoogleFonts.inter(
+                            //       fontSize: isLandscape ? 8.sp : 9.sp,
+                            //       color: Colors.white.withOpacity(0.9),
+                            //       fontWeight: FontWeight.w600,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
 
@@ -394,24 +394,24 @@ class _ArticleCard extends StatelessWidget {
     );
   }
 
-  String _getMonthName(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    if (month >= 1 && month <= 12) return months[month - 1];
-    return '';
-  }
+  // String _getMonthName(int month) {
+  //   const months = [
+  //     'Jan',
+  //     'Feb',
+  //     'Mar',
+  //     'Apr',
+  //     'May',
+  //     'Jun',
+  //     'Jul',
+  //     'Aug',
+  //     'Sep',
+  //     'Oct',
+  //     'Nov',
+  //     'Dec',
+  //   ];
+  //   if (month >= 1 && month <= 12) return months[month - 1];
+  //   return '';
+  // }
 
   IconData _getCategoryIcon(String category) {
     switch (category.toLowerCase()) {

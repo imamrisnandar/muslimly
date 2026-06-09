@@ -64,3 +64,7 @@ smart_notif_strategy.md
 android/app/google-services.json
 SSL_CERT_RENEWAL.md
 TASK_HISTORY.md
+build_aab_production.sh
+build_aab_production.bat
+build_aab.bat
+build_apk.bat

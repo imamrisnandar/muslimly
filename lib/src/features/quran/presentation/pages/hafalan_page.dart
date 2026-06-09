@@ -989,11 +989,8 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
       final Set<int> mismatchedWordSet = mismatchedWords[ayah] ?? {};
       final int totalTextWords = ayahWordCounts[ayah] ?? 1;
       final int totalQcfChars = ayahQcfCharCounts[compositeKey] ?? 1;
-      final int visualGuardWords = isCurrent && !isAyahCompleted
-          ? (totalTextWords > 20 ? 2 : 1)
-          : 0;
       final int visualRevealLimit = isCurrent && !isAyahCompleted
-          ? hafalanState.currentMatchedWordCount - visualGuardWords
+          ? hafalanState.currentMatchedWordCount
           : totalTextWords;
       final List<int> wordUnitCumulativeEnds = _buildWordUnitCumulativeEnds(
         wordLengths: ayahWordLengths[ayah] ?? const [1],

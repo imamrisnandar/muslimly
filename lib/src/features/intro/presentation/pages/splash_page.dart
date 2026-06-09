@@ -22,7 +22,7 @@ class _SplashPageState extends State<SplashPage>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 500),
     )..repeat(reverse: true);
 
     _animation = Tween<double>(
@@ -40,7 +40,7 @@ class _SplashPageState extends State<SplashPage>
   }
 
   Future<void> _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
     if (mounted) {
       final repo = getIt<NameRepository>();
       final name = await repo.getName();
