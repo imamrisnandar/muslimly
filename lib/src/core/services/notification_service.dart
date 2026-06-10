@@ -8,7 +8,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:injectable/injectable.dart';
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -29,10 +29,12 @@ class NotificationService {
     }
 
     tz.initializeTimeZones();
-    // Detect and set local time zone
     final String timeZoneName = (await FlutterTimezone.getLocalTimezone()).identifier;
-    // print('DEBUG: NotificationService init with timezone: $timeZoneName');
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
+    try {
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+    } catch (_) {
+      tz.setLocalLocation(tz.UTC);
+    }
 
     // ... (Existing Local Notification Init) ...
     const AndroidInitializationSettings initializationSettingsAndroid =
