@@ -21,6 +21,9 @@ class AudioPlayerWidget extends StatelessWidget {
   final VoidCallback? onMaximize;
   final VoidCallback? onMinimize;
 
+  /// Named ShowcaseView scope of the hosting page (see ShowcaseScopes).
+  final String? showcaseScope;
+
   const AudioPlayerWidget({
     super.key,
     this.qoriShowcaseKey,
@@ -30,6 +33,7 @@ class AudioPlayerWidget extends StatelessWidget {
     this.isMini = false,
     this.onMaximize,
     this.onMinimize,
+    this.showcaseScope,
   });
 
   @override
@@ -164,6 +168,7 @@ class AudioPlayerWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         child: PremiumShowcase(
           globalKey: dragShowcaseKey ?? GlobalKey(),
+          scope: showcaseScope,
           title: AppLocalizations.of(context)!.showcaseMiniPlayerTitle,
           description: AppLocalizations.of(context)!.showcaseMiniPlayerDesc,
           child: Container(
@@ -214,6 +219,7 @@ class AudioPlayerWidget extends StatelessWidget {
                     Expanded(
                       child: PremiumShowcase(
                         globalKey: qoriShowcaseKey ?? GlobalKey(),
+                        scope: showcaseScope,
                         title: AppLocalizations.of(
                           context,
                         )!.showcaseChangeQoriTitle,
@@ -299,6 +305,7 @@ class AudioPlayerWidget extends StatelessWidget {
                     // Repeat Button
                     PremiumShowcase(
                       globalKey: repeatShowcaseKey ?? GlobalKey(),
+                      scope: showcaseScope,
                       title: AppLocalizations.of(context)!.showcaseRepeatTitle,
                       description: AppLocalizations.of(
                         context,
@@ -358,6 +365,7 @@ class AudioPlayerWidget extends StatelessWidget {
                     // Speed Button
                     PremiumShowcase(
                       globalKey: speedShowcaseKey ?? GlobalKey(),
+                      scope: showcaseScope,
                       title: AppLocalizations.of(context)!.showcaseSpeedTitle,
                       description: AppLocalizations.of(
                         context,

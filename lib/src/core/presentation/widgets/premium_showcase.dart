@@ -11,6 +11,13 @@ class PremiumShowcase extends StatelessWidget {
   final ShapeBorder? targetShapeBorder;
   final EdgeInsets? targetPadding;
 
+  /// Named ShowcaseView scope this showcase belongs to (see ShowcaseScopes).
+  /// When null, the showcase is disabled and only [child] is rendered. There
+  /// is deliberately no fallback to the current active scope: a long-lived
+  /// widget (e.g. the dashboard mini player) would otherwise bind to whatever
+  /// page scope happens to be on top and crash once that scope is replaced.
+  final String? scope;
+
   const PremiumShowcase({
     super.key,
     required this.globalKey,
@@ -20,19 +27,26 @@ class PremiumShowcase extends StatelessWidget {
     this.onNext,
     this.targetShapeBorder,
     this.targetPadding,
+    this.scope,
   });
+
+  ShowcaseView? get _showcaseView {
+    if (scope == null) return null;
+    try {
+      return ShowcaseView.getNamed(scope!);
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // Guard: only render Showcase if a ShowcaseView is registered in this scope
-    try {
-      ShowcaseView.get();
-    } catch (_) {
-      return child;
-    }
+    if (_showcaseView == null) return child;
 
     return Showcase.withWidget(
       key: globalKey,
+      scope: scope,
       targetShapeBorder: targetShapeBorder ?? const CircleBorder(),
       targetPadding: targetPadding ?? EdgeInsets.zero,
       overlayColor: Colors.black.withOpacity(0.85),
@@ -116,7 +130,9 @@ class PremiumShowcase extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: GestureDetector(
               onTap: () {
-                ShowcaseView.get().next();
+                // Guard: scope may have been unregistered while the
+                // showcase overlay was still visible
+                _showcaseView?.next();
                 if (onNext != null) onNext!();
               },
               child: Container(

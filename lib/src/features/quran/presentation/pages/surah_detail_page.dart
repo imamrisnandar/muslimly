@@ -70,11 +70,12 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   final GlobalKey _bookmarkKey = GlobalKey();
   bool _showcaseChecked = false;
   late ShowcaseView _showcaseView;
+  final String _showcaseScope = ShowcaseScopes.surahDetail();
 
   @override
   void initState() {
     super.initState();
-    _showcaseView = ShowcaseView.register();
+    _showcaseView = ShowcaseView.register(scope: _showcaseScope);
   }
 
   Future<void> _checkShowcase() async {
@@ -106,7 +107,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
               }
             });
           } else {
-            ShowCaseWidget.of(context).startShowCase([
+            _showcaseView.startShowCase([
               _jumpToAyahKey,
               _markReadKey,
               _tafsirKey,
@@ -164,7 +165,9 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
 
     // Use a slight delay to ensure the widget is fully rendered
     Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
+      // isAttached guards against the list not being built yet (e.g. ayahs
+      // still loading when the AudioBloc listener fires)
+      if (mounted && _itemScrollController.isAttached) {
         _itemScrollController.jumpTo(
           index: index,
           alignment: 0.1, // Near top
@@ -424,6 +427,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     if (enableShowcase && showcaseKey != null) {
       return PremiumShowcase(
         globalKey: showcaseKey,
+        scope: _showcaseScope,
         title: showcaseTitle ?? '',
         description: showcaseDesc ?? '',
         child: button,
@@ -562,6 +566,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                     actions: [
                       PremiumShowcase(
                         globalKey: _jumpToAyahKey,
+                        scope: _showcaseScope,
                         title: AppLocalizations.of(context)!.jumpToAyah,
                         description: AppLocalizations.of(
                           context,
@@ -1243,7 +1248,10 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                   ),
                 ),
                 // Audio Player
-                const DraggableAudioPlayer(enableShowcase: false),
+                DraggableAudioPlayer(
+                  enableShowcase: false,
+                  showcaseScope: _showcaseScope,
+                ),
               ],
             ),
       ),

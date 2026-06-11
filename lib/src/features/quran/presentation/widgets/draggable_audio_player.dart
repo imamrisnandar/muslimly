@@ -11,10 +11,16 @@ class DraggableAudioPlayer extends StatefulWidget {
   final String? showcasePrefsKey;
   final bool enableShowcase;
 
+  /// Named ShowcaseView scope of the hosting page (see ShowcaseScopes).
+  /// Null when the host has no registered ShowcaseView (e.g. DashboardPage);
+  /// showcases are then skipped.
+  final String? showcaseScope;
+
   const DraggableAudioPlayer({
     super.key,
     this.showcasePrefsKey,
     this.enableShowcase = true,
+    this.showcaseScope,
   });
 
   @override
@@ -127,6 +133,7 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
           ? Matrix4.diagonal3Values(1.0, 1.0, 1.0)
           : Matrix4.identity(),
       child: AudioPlayerWidget(
+        showcaseScope: widget.showcaseScope,
         dragShowcaseKey: _dragKey,
         qoriShowcaseKey: _qoriKey,
         speedShowcaseKey: _speedKey,
@@ -154,7 +161,18 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
     if (ModalRoute.of(context)?.isCurrent != true) return;
 
     if (widget.enableShowcase && !hasShown && mounted && _top != null) {
-      ShowcaseView.get().startShowCase([_dragKey, _qoriKey, _speedKey, _repeatKey]);
+      // No fallback to the current active scope: without an explicit scope
+      // (e.g. mini player on DashboardPage) the showcase is skipped entirely.
+      // The scope may also already be unregistered if the hosting page was
+      // disposed before this delayed check ran.
+      if (widget.showcaseScope == null) return;
+      final ShowcaseView showcaseView;
+      try {
+        showcaseView = ShowcaseView.getNamed(widget.showcaseScope!);
+      } catch (_) {
+        return;
+      }
+      showcaseView.startShowCase([_dragKey, _qoriKey, _speedKey, _repeatKey]);
       await showcaseService.markShown(key);
     }
   }

@@ -83,11 +83,12 @@ class _MushafPageState extends State<MushafPage> {
   final GlobalKey _jumpToAyahKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late ShowcaseView _showcaseView;
+  final String _showcaseScope = ShowcaseScopes.mushaf();
 
   @override
   void initState() {
     super.initState();
-    _showcaseView = ShowcaseView.register();
+    _showcaseView = ShowcaseView.register(scope: _showcaseScope);
     // Initialize Surah
     _initializeSurah();
 
@@ -547,6 +548,7 @@ class _MushafPageState extends State<MushafPage> {
                                 },
                                 child: PremiumShowcase(
                                   globalKey: _swipeKey,
+                                  scope: _showcaseScope,
                                   title: AppLocalizations.of(
                                     context,
                                   )!.quranNavigationTitle,
@@ -611,6 +613,7 @@ class _MushafPageState extends State<MushafPage> {
                                             _showJumpToAyah(context),
                                         jumpKey: _jumpToAyahKey,
                                         highlightedAyah: _highlightedAyah,
+                                        showcaseScope: _showcaseScope,
                                       );
                                     },
                                   ),
@@ -681,6 +684,7 @@ class _MushafPageState extends State<MushafPage> {
                                 ), // Transparent
                                 child: PremiumShowcase(
                                   globalKey: _bookmarkKey,
+                                  scope: _showcaseScope,
                                   title: AppLocalizations.of(
                                     context,
                                   )!.menuBookmark,
@@ -737,6 +741,7 @@ class _MushafPageState extends State<MushafPage> {
                                 backgroundColor: const Color(0xFF00E676),
                                 child: PremiumShowcase(
                                   globalKey: _completionKey,
+                                  scope: _showcaseScope,
                                   title: AppLocalizations.of(
                                     context,
                                   )!.markAsRead,
@@ -776,9 +781,10 @@ class _MushafPageState extends State<MushafPage> {
                   ),
                   // Audio Player (Moved outside SafeArea)
                   // Audio Player (Moved outside SafeArea)
-                  const DraggableAudioPlayer(
+                  DraggableAudioPlayer(
                     showcasePrefsKey: 'hasShownMushafPlayerShowcase',
                     enableShowcase: false,
+                    showcaseScope: _showcaseScope,
                   ),
                 ],
               ),
@@ -798,6 +804,7 @@ class MushafSinglePage extends StatefulWidget {
   final VoidCallback? onJumpTap;
   final GlobalKey? jumpKey;
   final int? highlightedAyah;
+  final String? showcaseScope;
 
   const MushafSinglePage({
     super.key,
@@ -810,6 +817,7 @@ class MushafSinglePage extends StatefulWidget {
     this.onJumpTap,
     this.jumpKey,
     this.highlightedAyah,
+    this.showcaseScope,
   });
 
   @override
@@ -972,6 +980,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                     if (widget.onJumpTap != null && widget.jumpKey != null)
                       PremiumShowcase(
                         globalKey: widget.jumpKey!,
+                        scope: widget.showcaseScope,
                         title: AppLocalizations.of(context)!.jumpToAyah,
                         description: AppLocalizations.of(
                           context,
