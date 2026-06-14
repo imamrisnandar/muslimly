@@ -158,6 +158,10 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
     final key = widget.showcasePrefsKey ?? ShowcaseKeys.audioPlayer;
     final hasShown = await showcaseService.hasShown(key);
 
+    // mounted must be checked before touching context: this State may have
+    // been disposed while awaiting, and ModalRoute.of on a defunct element
+    // crashes in release builds
+    if (!mounted) return;
     if (ModalRoute.of(context)?.isCurrent != true) return;
 
     if (widget.enableShowcase && !hasShown && mounted && _top != null) {

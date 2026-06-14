@@ -112,6 +112,8 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
         }
       });
     } catch (e) {
+      // The error may surface after this page was disposed (async playback)
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _isPlaying = false;

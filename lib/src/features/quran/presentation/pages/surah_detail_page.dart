@@ -72,6 +72,12 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   late ShowcaseView _showcaseView;
   final String _showcaseScope = ShowcaseScopes.surahDetail();
 
+  // Tracks the surah the audio player was on during the previous AudioState
+  // emission, so auto-navigation only triggers when the audio *moves away
+  // from this page's surah* — not when this page is opened while another
+  // surah is already playing.
+  int? _lastAudioSurahId;
+
   @override
   void initState() {
     super.initState();
@@ -154,6 +160,13 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
 
   @override
   void dispose() {
+    // Dismiss before unregister: unregister() only removes the overlay entry
+    // when currentScope still matches this page's scope, so a showcase left
+    // running while another scope took over would leak its overlay and crash
+    // on a later rebuild once no scope is registered.
+    if (_showcaseView.isShowcaseRunning) {
+      _showcaseView.dismiss();
+    }
     _showcaseView.unregister();
     super.dispose();
   }
@@ -463,6 +476,10 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
             listeners: [
               BlocListener<AudioBloc, AudioState>(
                 listener: (context, state) {
+                  final cameFromThisSurah =
+                      _lastAudioSurahId == widget.surah.number;
+                  _lastAudioSurahId = state.currentSurahId;
+
                   // SAME SURAH: Highlight/Scroll
                   if (state.currentSurahId == widget.surah.number &&
                       state.currentAyahNumber != null) {
@@ -473,8 +490,11 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                       _scrollToAyah(state.currentAyahNumber!);
                     }
                   }
-                  // SURAH CHANGED: Navigate
-                  else if (state.status == AudioStatus.playing &&
+                  // SURAH CHANGED: Navigate — only when the audio actually
+                  // moved away from this page's surah, so opening another
+                  // surah while audio is playing doesn't hijack navigation
+                  else if (cameFromThisSurah &&
+                      state.status == AudioStatus.playing &&
                       state.currentSurahId != null &&
                       state.currentSurahId != widget.surah.number) {
                     // Logic to navigate to new Surah Page (List View)

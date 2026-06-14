@@ -1676,7 +1676,9 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
                             ),
                             onTap: () async {
                               await _saveRecentSearch(city.name);
-                              if (mounted) {
+                              // context belongs to the bottom sheet, so check
+                              // its own mounted flag, not the State's
+                              if (context.mounted) {
                                 context.read<PrayerBloc>().add(
                                   SelectCity(city),
                                 );

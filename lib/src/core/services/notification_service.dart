@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import '../config/app_urls.dart';
 import '../utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -19,7 +20,10 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> initialize() async {
+  /// [requestPermission] must be false when called from a headless context
+  /// (e.g. the WorkManager background isolate): permission requests need a
+  /// foreground Activity, and crash with a native NPE without one.
+  Future<void> initialize({bool requestPermission = true}) async {
     // 0. Initialize Firebase
     try {
       await Firebase.initializeApp();
@@ -63,27 +67,28 @@ class NotificationService {
       },
     );
 
-    // 1. Request Permission (iOS/Android 13+)
-    await requestPermissions();
+    // 1–3 below require a foreground Activity — skip entirely in background isolates
+    if (requestPermission) {
+      await requestPermissions();
 
-    // 2. FCM Listener
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
+      // 2. FCM Listener
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        RemoteNotification? notification = message.notification;
+        AndroidNotification? android = message.notification?.android;
 
-      if (notification != null && android != null) {
-        showImmediateNotification(
-          title: notification.title ?? 'Notification',
-          body: notification.body ?? '',
-          soundType:
-              'adhan', // Defaulting to adhan for visibility, or parse from data
-        );
-      }
-    });
+        if (notification != null && android != null) {
+          showImmediateNotification(
+            title: notification.title ?? 'Notification',
+            body: notification.body ?? '',
+            soundType: 'adhan',
+          );
+        }
+      });
 
-    // 3. Register Token (Initial Guest Registration)
-    // We do this silently. If user logs in later, AuthBloc should call this again with token.
-    await syncFCMToken(null);
+      // 3. Register Token (Initial Guest Registration)
+      // If user logs in later, AuthBloc should call this again with token.
+      await syncFCMToken(null);
+    }
   }
 
   Future<void> _createChannels() async {
@@ -199,20 +204,24 @@ class NotificationService {
   }
 
   Future<void> requestPermissions() async {
-    // ... (Existing implementation) ...
-    // Add Firebase permission request
-    NotificationSettings settings = await FirebaseMessaging.instance
-        .requestPermission(alert: true, badge: true, sound: true);
-    // print('User granted permission: ${settings.authorizationStatus}');
+    // Guard against headless contexts: the plugin needs a foreground Activity
+    // and otherwise throws a PlatformException from a native NPE
+    try {
+      // Add Firebase permission request
+      await FirebaseMessaging.instance
+          .requestPermission(alert: true, badge: true, sound: true);
 
-    final androidImplementation = _flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >();
+      final androidImplementation = _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
 
-    if (androidImplementation != null) {
-      await androidImplementation.requestNotificationsPermission();
-      await androidImplementation.requestExactAlarmsPermission();
+      if (androidImplementation != null) {
+        await androidImplementation.requestNotificationsPermission();
+        await androidImplementation.requestExactAlarmsPermission();
+      }
+    } on PlatformException catch (e) {
+      AppLogger.error('Notification permission request failed', e);
     }
   }
 

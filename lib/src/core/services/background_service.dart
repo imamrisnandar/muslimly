@@ -72,7 +72,9 @@ void callbackDispatcher() {
       final settingsRepo = getIt<SettingsRepository>();
       final notificationService = getIt<NotificationService>();
 
-      await notificationService.initialize();
+      // Headless isolate: never request permissions here — there is no
+      // Activity, and the plugin crashes with a native NPE without one
+      await notificationService.initialize(requestPermission: false);
 
       // 1. Refresh Logic
       // Real implementation would re-fetch city coordinates or sync data.

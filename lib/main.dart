@@ -18,18 +18,36 @@ import 'src/features/quran/presentation/bloc/audio_bloc.dart';
 import 'src/features/quran/presentation/bloc/audio_event.dart'; // Init audio if needed
 
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
+  // Fonts are bundled in assets/google_fonts — never fetch from the network,
+  // so offline devices get the real fonts instead of a fatal-looking error
+  GoogleFonts.config.allowRuntimeFetching = false;
+
   // Crashlytics — capture Flutter framework errors
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
   // Crashlytics — capture async/platform errors outside Flutter's zone
   PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    // Font loading failures don't crash the app (text falls back to the
+    // default font) — record them as non-fatal so they don't skew the
+    // crash-free rate. Covers both google_fonts messages: network fetch
+    // ("Failed to load font with url") and missing bundled asset
+    // ("GoogleFonts.config.allowRuntimeFetching is false but font ...").
+    final errorText = error.toString();
+    final isFontLoadError = error is Exception &&
+        (errorText.contains('Failed to load font') ||
+            errorText.contains('GoogleFonts.config.allowRuntimeFetching'));
+    FirebaseCrashlytics.instance.recordError(
+      error,
+      stack,
+      fatal: !isFontLoadError,
+    );
     return true;
   };
 
