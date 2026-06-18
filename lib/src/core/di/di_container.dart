@@ -28,6 +28,7 @@ import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/auth/presentation/bloc/forgot_password_bloc.dart';
 
 // Prayer
 import '../../features/prayer/data/repositories/prayer_repository_impl.dart';
@@ -100,7 +101,19 @@ void configureDependencies() {
   getIt.registerFactory<LoginUseCase>(
     () => LoginUseCase(getIt<AuthRepository>()),
   );
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<LoginUseCase>()));
+  getIt.registerFactory<AuthBloc>(
+    () => AuthBloc(
+      getIt<LoginUseCase>(),
+      getIt<AuthRepository>(),
+      getIt<NotificationService>(),
+      getIt<DatabaseService>(),
+      getIt<LastReadRepository>(),
+      getIt<SyncApiService>(),
+    ),
+  );
+  getIt.registerFactory<ForgotPasswordBloc>(
+    () => ForgotPasswordBloc(getIt<AuthRepository>()),
+  );
 
   // --- Prayer Feature ---
 
@@ -184,7 +197,12 @@ void configureDependencies() {
     ),
   );
   getIt.registerFactory<BookmarkBloc>(
-    () => BookmarkBloc(getIt<DatabaseService>(), getIt<LastReadRepository>()),
+    () => BookmarkBloc(
+      getIt<DatabaseService>(),
+      getIt<LastReadRepository>(),
+      getIt<SyncApiService>(),
+      getIt<AuthRepository>(),
+    ),
   );
 
   // --- Translation & Tafsir ---

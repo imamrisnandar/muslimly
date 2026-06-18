@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../l10n/generated/app_localizations.dart'; // Import L10n
-import '../../../../core/di/di_container.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
-import '../../domain/repositories/name_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../settings/presentation/bloc/settings_cubit.dart'; // Import SettingsCubit
+import '../../../settings/presentation/bloc/settings_cubit.dart';
 
 class NameInputPage extends StatefulWidget {
   const NameInputPage({super.key});
@@ -28,43 +26,26 @@ class _NameInputPageState extends State<NameInputPage> {
 
   Future<void> _submitName() async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
+      setState(() => _isLoading = true);
       final name = _nameController.text.trim();
-
-      // Save Name
-      final repo = getIt<NameRepository>();
-      await repo.saveName(name);
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (mounted) {
-        context.go('/dashboard');
-      }
+      // Goes through Cubit: saves to repo + updates state immediately
+      await context.read<SettingsCubit>().updateName(name);
+      if (mounted) context.go('/dashboard');
     }
   }
 
   Widget _buildLanguageOption(BuildContext context, String label, String code) {
     final currentLocale = context.watch<SettingsCubit>().state.locale;
-    final selectedCode = currentLocale?.languageCode ?? 'id';
-    final isActive = selectedCode == code;
+    final isActive = (currentLocale?.languageCode ?? 'id') == code;
 
     return GestureDetector(
-      onTap: () {
-        context.read<SettingsCubit>().updateLanguage(Locale(code));
-      },
+      onTap: () => context.read<SettingsCubit>().updateLanguage(Locale(code)),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: isActive ? const Color(0xFF00E676) : Colors.transparent,
           borderRadius: BorderRadius.circular(20.r),
-          border: isActive
-              ? null
-              : Border.all(color: Colors.white.withOpacity(0.3)),
+          border: isActive ? null : Border.all(color: Colors.white.withValues(alpha: 0.3)),
         ),
         child: Text(
           label,
@@ -81,19 +62,23 @@ class _NameInputPageState extends State<NameInputPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Language Selector (Top Right)
-                Row(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Language toggle — pinned to top
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     _buildLanguageOption(context, 'ID', 'id'),
@@ -101,73 +86,91 @@ class _NameInputPageState extends State<NameInputPage> {
                     _buildLanguageOption(context, 'EN', 'en'),
                   ],
                 ),
-                SizedBox(height: 24.h),
-                Text(
-                  "Assalamu'alaikum! 👋",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                Text(
-                  l10n.nameInputTitle, // Localized
-                  style: TextStyle(color: Colors.white70, fontSize: 16.sp),
-                ),
-                SizedBox(height: 32.h),
-                TextFormField(
-                  controller: _nameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: l10n.nameInputHint, // Localized
-                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.1),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      borderSide: const BorderSide(color: Color(0xFF00E676)),
-                    ),
-                    prefixIcon: const Icon(Icons.person, color: Colors.white54),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return l10n.nameInputError; // Localized
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 32.h),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50.h,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _submitName,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00E676),
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: _isLoading
-                        ? const IslamicLoadingIndicator(size: 24)
-                        : Text(
-                            l10n.nameInputButton, // Localized
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
+              ),
+
+              // Form content — centered in remaining space
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 32.h),
+                        Text(
+                          "Assalamu'alaikum! 👋",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          l10n.nameInputTitle,
+                          style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+                        ),
+                        SizedBox(height: 32.h),
+                        TextFormField(
+                          controller: _nameController,
+                          style: const TextStyle(color: Colors.white),
+                          textInputAction: TextInputAction.done,
+                          onFieldSubmitted: (_) => _submitName(),
+                          decoration: InputDecoration(
+                            hintText: l10n.nameInputHint,
+                            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                            filled: true,
+                            fillColor: Colors.white.withValues(alpha: 0.1),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: const BorderSide(color: Color(0xFF00E676)),
+                            ),
+                            prefixIcon: const Icon(Icons.person, color: Colors.white54),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return l10n.nameInputError;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 32.h),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50.h,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _submitName,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF00E676),
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: _isLoading
+                                ? const IslamicLoadingIndicator(size: 24)
+                                : Text(
+                                    l10n.nameInputButton,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

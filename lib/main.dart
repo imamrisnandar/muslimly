@@ -85,7 +85,13 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (_) => getIt<SettingsCubit>()),
             BlocProvider(create: (_) => getIt<AudioBloc>()..add(InitAudio())),
           ],
-          child: BlocBuilder<SettingsCubit, SettingsState>(
+          child: BlocListener<AuthBloc, AuthState>(
+            listener: (context, authState) {
+              if (authState is AuthAuthenticated) {
+                context.read<SettingsCubit>().updateName(authState.user.name);
+              }
+            },
+            child: BlocBuilder<SettingsCubit, SettingsState>(
             builder: (context, state) {
               return MaterialApp.router(
                 title: 'Muslimly',
@@ -105,6 +111,7 @@ class MyApp extends StatelessWidget {
               );
             },
           ),
+        ),
         );
       },
     );

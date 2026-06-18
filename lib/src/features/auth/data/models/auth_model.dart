@@ -21,7 +21,7 @@ class AuthModel extends Equatable {
         ? json['data'] as Map<String, dynamic>
         : json;
 
-    final token = data['accessToken'] as String?;
+    final token = data['access_token'] as String?;
 
     if (token == null) {
       throw const FormatException('Token not found in response');
@@ -41,7 +41,7 @@ class AuthModel extends Equatable {
     return AuthModel(
       id: payloadMap['user_id'] as String? ?? 'unknown_id',
       email: payloadMap['email'] as String? ?? 'unknown_email',
-      name: payloadMap['role_name'] as String? ?? 'User',
+      name: payloadMap['username'] as String? ?? 'User',
       token: token,
     );
   }
@@ -54,4 +54,16 @@ class AuthModel extends Equatable {
 
   @override
   List<Object?> get props => [id, email, name, token];
+}
+
+class VerifyOTPModel {
+  final String resetToken;
+  const VerifyOTPModel({required this.resetToken});
+
+  factory VerifyOTPModel.fromJson(Map<String, dynamic> json) {
+    final data = json.containsKey('data')
+        ? json['data'] as Map<String, dynamic>
+        : json;
+    return VerifyOTPModel(resetToken: data['reset_token'] as String);
+  }
 }

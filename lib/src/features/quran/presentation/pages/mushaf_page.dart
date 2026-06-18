@@ -693,7 +693,6 @@ class _MushafPageState extends State<MushafPage> {
                                 isBookmarked = state.bookmarks.any(
                                   (b) =>
                                       b.pageNumber == _lastPageNumber &&
-                                      b.pageNumber == _lastPageNumber &&
                                       b.mode == 'mushaf' &&
                                       b.ayahNumber == null,
                                 );

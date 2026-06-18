@@ -31,7 +31,6 @@ import '../widgets/prayer_countdown_widget.dart';
 import '../widgets/fasting_reminder_section.dart';
 import '../widgets/dzikir_reminder_section.dart';
 import '../../../quran/presentation/bloc/audio_bloc.dart';
-import '../../../quran/presentation/bloc/audio_event.dart';
 import '../../../quran/presentation/bloc/audio_state.dart';
 import '../../../quran/presentation/widgets/draggable_audio_player.dart';
 import '../../domain/services/reminder_service.dart';
@@ -91,26 +90,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) =>
-              getIt<PrayerBloc>()..add(FetchPrayerTimeByLocation()),
-        ),
-        BlocProvider(
-          create: (context) => getIt<ReadingBloc>()
-            ..add(LoadReadingOverview())
-            ..add(SyncReadingData()),
-        ),
-        BlocProvider(create: (context) => getIt<AudioBloc>()..add(InitAudio())),
-        BlocProvider(
-          create: (context) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
-        ),
-        BlocProvider(create: (context) => getIt<ArticleBloc>()),
-      ],
-      child: Builder(
-        builder: (context) {
-          return Scaffold(
+    return Scaffold(
                 extendBody: true,
                 bottomNavigationBar: Container(
                   decoration: BoxDecoration(
@@ -192,9 +172,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
               );
-        },
-      ),
-    );
   }
 
   Widget _buildHomeContent(BuildContext context) {

@@ -24,7 +24,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 10, // Upgraded for Sync Feature
+      version: 12, // v12: pending_bookmark_deletes queue
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -70,6 +70,15 @@ class DatabaseService {
         created_at INTEGER NOT NULL,
         ayah_number INTEGER,
         mode TEXT DEFAULT 'list'
+      )
+    ''');
+
+    // Pending bookmark deletes queue (offline support)
+    await db.execute('''
+      CREATE TABLE pending_bookmark_deletes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        server_id TEXT NOT NULL UNIQUE,
+        created_at INTEGER NOT NULL
       )
     ''');
 
@@ -143,6 +152,21 @@ class DatabaseService {
       await db.execute(
         'ALTER TABLE reading_activity ADD COLUMN is_synced INTEGER DEFAULT 0',
       );
+    }
+    if (oldVersion < 11) {
+      await db.execute('ALTER TABLE bookmarks ADD COLUMN server_id TEXT');
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_bookmarks_server_id ON bookmarks(server_id)',
+      );
+    }
+    if (oldVersion < 12) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS pending_bookmark_deletes (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          server_id TEXT NOT NULL UNIQUE,
+          created_at INTEGER NOT NULL
+        )
+      ''');
     }
   }
 
@@ -335,6 +359,33 @@ class DatabaseService {
     );
   }
 
+  Future<void> mergeRemoteActivities(List<Map<String, dynamic>> remoteActivities) async {
+    final db = await database;
+    for (final a in remoteActivities) {
+      final timestamp = a['timestamp'] as int?;
+      if (timestamp == null) continue;
+      final existing = await db.query(
+        'reading_activity',
+        where: 'timestamp = ?',
+        whereArgs: [timestamp],
+        limit: 1,
+      );
+      if (existing.isNotEmpty) continue;
+      await db.insert('reading_activity', {
+        'date': a['date'] as String? ?? '',
+        'page_number': a['page_number'] as int? ?? 0,
+        'surah_number': a['surah_number'] as int? ?? 0,
+        'duration_seconds': a['duration_seconds'] as int? ?? 0,
+        'timestamp': timestamp,
+        'start_ayah': a['start_ayah'] as int? ?? 0,
+        'end_ayah': a['end_ayah'] as int? ?? 0,
+        'total_ayahs': a['total_ayahs'] as int? ?? 0,
+        'mode': a['mode'] as String? ?? 'page',
+        'is_synced': 1,
+      });
+    }
+  }
+
   /// Get generic history with pagination
   Future<List<ReadingActivity>> getReadingHistory({
     int limit = 50,
@@ -407,6 +458,97 @@ class DatabaseService {
   Future<int> deleteBookmark(int id) async {
     final db = await database;
     return await db.delete('bookmarks', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> clearAllBookmarks() async {
+    final db = await database;
+    await db.delete('bookmarks');
+    await db.delete('pending_bookmark_deletes');
+  }
+
+  Future<void> addPendingBookmarkDelete(String serverId) async {
+    final db = await database;
+    await db.insert(
+      'pending_bookmark_deletes',
+      {'server_id': serverId, 'created_at': DateTime.now().millisecondsSinceEpoch},
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
+
+  Future<List<String>> getPendingBookmarkDeletes() async {
+    final db = await database;
+    final rows = await db.query('pending_bookmark_deletes', columns: ['server_id']);
+    return rows.map((r) => r['server_id'] as String).toList();
+  }
+
+  Future<void> removePendingBookmarkDelete(String serverId) async {
+    final db = await database;
+    await db.delete('pending_bookmark_deletes', where: 'server_id = ?', whereArgs: [serverId]);
+  }
+
+  Future<void> updateServerIdForBookmark(int localId, String serverId) async {
+    final db = await database;
+    await db.update(
+      'bookmarks',
+      {'server_id': serverId},
+      where: 'id = ?',
+      whereArgs: [localId],
+    );
+  }
+
+  // Merge server bookmarks into local — inserts missing, updates server_id for existing
+  Future<void> mergeRemoteBookmarks(List<Map<String, dynamic>> remoteBookmarks) async {
+    final db = await database;
+    for (final remote in remoteBookmarks) {
+      final serverId = remote['id'] as String?;
+      if (serverId == null) continue;
+
+      final mode = remote['mode'] as String? ?? 'list';
+      final surahNumber = remote['surah_number'] as int? ?? 0;
+      final ayahNumber = remote['ayah_number'] as int?;
+      final pageNumber = remote['page_number'] as int? ?? 0;
+
+      // Build where clause by type
+      String whereClause;
+      List<dynamic> whereArgs;
+      if (mode == 'list') {
+        whereClause = 'surah_number = ? AND ayah_number = ? AND mode = ?';
+        whereArgs = [surahNumber, ayahNumber, 'list'];
+      } else if (ayahNumber != null) {
+        whereClause = 'surah_number = ? AND ayah_number = ? AND mode = ?';
+        whereArgs = [surahNumber, ayahNumber, 'mushaf'];
+      } else {
+        whereClause = 'page_number = ? AND ayah_number IS NULL AND mode = ?';
+        whereArgs = [pageNumber, 'mushaf'];
+      }
+
+      final existing = await db.query(
+        'bookmarks',
+        where: whereClause,
+        whereArgs: whereArgs,
+      );
+
+      if (existing.isNotEmpty) {
+        // Update server_id for existing local bookmark
+        await db.update(
+          'bookmarks',
+          {'server_id': serverId},
+          where: 'id = ?',
+          whereArgs: [existing.first['id']],
+        );
+      } else {
+        // Insert new bookmark from server
+        await db.insert('bookmarks', {
+          'surah_number': surahNumber,
+          'surah_name': remote['surah_name'] ?? '',
+          'page_number': pageNumber,
+          'ayah_number': ayahNumber,
+          'mode': mode,
+          'server_id': serverId,
+          'created_at': DateTime.now().millisecondsSinceEpoch,
+        });
+      }
+    }
   }
 
   Future<bool> isBookmarked({

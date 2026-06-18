@@ -1,16 +1,28 @@
 import 'package:go_router/go_router.dart';
 import '../../features/intro/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/di/di_container.dart';
 import '../../features/article/presentation/bloc/article_bloc.dart';
+import '../../features/prayer/presentation/bloc/prayer_bloc.dart';
+import '../../features/prayer/presentation/bloc/prayer_event.dart';
+import '../../features/quran/presentation/bloc/reading/reading_bloc.dart';
+import '../../features/quran/presentation/bloc/reading/reading_event.dart';
+import '../../features/quran/presentation/bloc/bookmark/bookmark_bloc.dart';
+import '../../features/quran/presentation/bloc/bookmark/bookmark_event.dart';
 import '../../features/quran/domain/entities/surah.dart';
 import '../../features/quran/presentation/pages/surah_detail_page.dart';
 import '../../features/quran/presentation/pages/mushaf_page.dart';
 import '../../features/quran/presentation/pages/hafalan_page.dart';
 import '../../features/intro/presentation/pages/splash_page.dart';
 import '../../features/intro/presentation/pages/name_input_page.dart';
+import '../../features/auth/presentation/pages/auth_choice_page.dart';
+import '../../features/auth/presentation/pages/forgot_password_page.dart';
+import '../../features/auth/presentation/pages/otp_verify_page.dart';
+import '../../features/auth/presentation/pages/new_password_page.dart';
+import '../../features/auth/presentation/bloc/forgot_password_bloc.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/quran/presentation/pages/bookmarks_page.dart';
 
@@ -36,13 +48,58 @@ final appRouter = GoRouter(
       path: '/name-input',
       builder: (context, state) => const NameInputPage(),
     ),
+    GoRoute(path: '/auth-choice', builder: (context, state) => const AuthChoicePage()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+    GoRoute(path: '/register', builder: (context, state) => const RegisterPage()),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => BlocProvider(
+        create: (_) => getIt<ForgotPasswordBloc>(),
+        child: const ForgotPasswordPage(),
+      ),
+    ),
+    GoRoute(
+      path: '/otp-verify',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return BlocProvider.value(
+          value: extra['bloc'] as ForgotPasswordBloc,
+          child: OtpVerifyPage(email: extra['email'] as String),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/new-password',
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return BlocProvider.value(
+          value: extra['bloc'] as ForgotPasswordBloc,
+          child: NewPasswordPage(resetToken: extra['reset_token'] as String),
+        );
+      },
+    ),
     GoRoute(
       path: '/dashboard',
       builder: (context, state) {
         final index =
             int.tryParse(state.uri.queryParameters['index'] ?? '0') ?? 0;
-        return DashboardPage(initialIndex: index);
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => getIt<PrayerBloc>()..add(FetchPrayerTimeByLocation()),
+            ),
+            BlocProvider(
+              create: (_) => getIt<ReadingBloc>()
+                ..add(LoadReadingOverview())
+                ..add(SyncReadingData()),
+            ),
+            BlocProvider(
+              create: (_) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
+            ),
+            BlocProvider(create: (_) => getIt<ArticleBloc>()),
+          ],
+          child: DashboardPage(initialIndex: index),
+        );
       },
     ),
     GoRoute(

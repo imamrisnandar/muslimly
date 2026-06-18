@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../bloc/auth_bloc.dart';
 import '../../../../core/utils/custom_snackbar.dart';
 
@@ -14,8 +15,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _emailController = TextEditingController(text: 'admin@mbi.co.id');
-  final _passwordController = TextEditingController(text: 'P@ssw0rd');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
   @override
@@ -27,26 +28,19 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Custom Colors
-    final primaryGreen = const Color(
-      0xFF1B5E20,
-    ); // Darker green for background base
-    final accentGreen = const Color(0xFF00E676); // Bright green for buttons
-    final cardColor = const Color(
-      0xFF1E2830,
-    ).withOpacity(0.85); // Dark semi-transparent
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              const Color(0xFF0F2027),
-              const Color(0xFF203A43),
-              const Color(0xFF2C5364),
+              Color(0xFF0F2027),
+              Color(0xFF203A43),
+              Color(0xFF2C5364),
             ],
           ),
         ),
@@ -55,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
             if (state is AuthAuthenticated) {
               showCustomSnackBar(
                 context,
-                message: 'Welcome back, ${state.user.name}!',
+                message: l10n.loginWelcomeBack(state.user.name),
                 type: SnackBarType.success,
               );
               context.go('/dashboard');
@@ -76,14 +70,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   padding: EdgeInsets.all(24.w),
                   decoration: BoxDecoration(
-                    color: const Color(
-                      0xFF1C2A30,
-                    ).withOpacity(0.9), // Glassy dark effect
+                    color: const Color(0xFF1C2A30).withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -94,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Welcome Back',
+                        l10n.loginWelcome,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 28.sp,
@@ -104,18 +96,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        'Sign in to your daily worship space.',
+                        l10n.loginSubtitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.white70,
-                        ),
+                        style: TextStyle(fontSize: 14.sp, color: Colors.white70),
                       ),
                       SizedBox(height: 32.h),
 
-                      // EMAIL INPUT
+                      // EMAIL
                       Text(
-                        'EMAIL',
+                        l10n.registerLabelEmail.toUpperCase(),
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
@@ -130,12 +119,9 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
-                          hintText: 'Enter your email',
+                          hintText: l10n.registerHintEmail,
                           hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon: Icon(
-                            Icons.email_outlined,
-                            color: Colors.green[200],
-                          ),
+                          prefixIcon: Icon(Icons.email_outlined, color: Colors.green[200]),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
                             borderSide: BorderSide.none,
@@ -146,9 +132,9 @@ class _LoginPageState extends State<LoginPage> {
 
                       SizedBox(height: 20.h),
 
-                      // PASSWORD INPUT
+                      // PASSWORD
                       Text(
-                        'PASSWORD',
+                        l10n.registerLabelPassword.toUpperCase(),
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
@@ -164,24 +150,15 @@ class _LoginPageState extends State<LoginPage> {
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
-                          hintText: 'Enter your password',
+                          hintText: l10n.loginHintPassword,
                           hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon: Icon(
-                            Icons.lock_outline,
-                            color: Colors.green[200],
-                          ),
+                          prefixIcon: Icon(Icons.lock_outline, color: Colors.green[200]),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _isPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                               color: Colors.green[200],
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
+                            onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -194,17 +171,15 @@ class _LoginPageState extends State<LoginPage> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {},
+                          onPressed: () => context.go('/forgot-password'),
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
                             minimumSize: Size.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
-                          child: const Text(
-                            'Forgot Password?',
-                            style: TextStyle(
-                              color: Color(0xFF00E676),
-                            ), // Accent Green
+                          child: Text(
+                            l10n.loginForgotPassword,
+                            style: const TextStyle(color: Color(0xFF00E676)),
                           ),
                         ),
                       ),
@@ -227,9 +202,7 @@ class _LoginPageState extends State<LoginPage> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(
-                                0xFF00E676,
-                              ), // Bright Green
+                              backgroundColor: const Color(0xFF00E676),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),
@@ -237,11 +210,8 @@ class _LoginPageState extends State<LoginPage> {
                               elevation: 0,
                             ),
                             child: Text(
-                              'Log In',
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              l10n.registerLogIn,
+                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
@@ -254,11 +224,8 @@ class _LoginPageState extends State<LoginPage> {
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             child: Text(
-                              'OR',
-                              style: TextStyle(
-                                color: Colors.white54,
-                                fontSize: 12.sp,
-                              ),
+                              l10n.loginOr,
+                              style: TextStyle(color: Colors.white54, fontSize: 12.sp),
                             ),
                           ),
                           const Expanded(child: Divider(color: Colors.white24)),
@@ -271,32 +238,26 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(
                         height: 50.h,
                         child: OutlinedButton(
-                          onPressed: () {
-                            // Guest logic
-                          },
+                          onPressed: () => context.go('/dashboard'),
                           style: OutlinedButton.styleFrom(
                             side: const BorderSide(color: Colors.white24),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),
-                            backgroundColor: Colors.white.withOpacity(0.05),
+                            backgroundColor: Colors.white.withValues(alpha: 0.05),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
-                                'Continue as Guest',
-                                style: TextStyle(
+                              Text(
+                                l10n.loginContinueAsGuest,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               SizedBox(width: 8.w),
-                              const Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white70,
-                                size: 20,
-                              ),
+                              const Icon(Icons.arrow_forward, color: Colors.white70, size: 20),
                             ],
                           ),
                         ),
@@ -307,17 +268,15 @@ class _LoginPageState extends State<LoginPage> {
                       // CREATE ACCOUNT
                       Center(
                         child: GestureDetector(
-                          onTap: () {
-                            // Register logic
-                          },
+                          onTap: () => context.go('/register'),
                           child: RichText(
-                            text: const TextSpan(
-                              text: 'New here? ',
-                              style: TextStyle(color: Colors.white60),
+                            text: TextSpan(
+                              text: '${l10n.loginNewHere} ',
+                              style: const TextStyle(color: Colors.white60),
                               children: [
                                 TextSpan(
-                                  text: 'Create Account',
-                                  style: TextStyle(
+                                  text: l10n.settingsCreateAccount,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     decoration: TextDecoration.underline,

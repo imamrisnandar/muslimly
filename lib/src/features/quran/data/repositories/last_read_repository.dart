@@ -16,6 +16,12 @@ class LastReadRepository {
     await prefs.setString(key, jsonString);
   }
 
+  Future<void> clearAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyMushaf);
+    await prefs.remove(_keyList);
+  }
+
   Future<LastRead?> getLastRead({String mode = 'mushaf'}) async {
     final prefs = await SharedPreferences.getInstance();
     final key = mode == 'list' ? _keyList : _keyMushaf;

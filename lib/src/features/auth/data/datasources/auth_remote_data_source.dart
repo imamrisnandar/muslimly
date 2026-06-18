@@ -14,4 +14,13 @@ abstract class AuthRemoteDataSource {
   @POST('/auth/login')
   @Headers({'X-Device-ID': 'web'})
   Future<AuthModel> login(@Body() Map<String, dynamic> body);
+
+  @POST('/auth/forgot-password')
+  Future<void> forgotPassword(@Body() Map<String, dynamic> body);
+
+  @POST('/auth/verify-otp')
+  Future<VerifyOTPModel> verifyOTP(@Body() Map<String, dynamic> body);
+
+  @POST('/auth/reset-password')
+  Future<void> resetPassword(@Body() Map<String, dynamic> body);
 }

@@ -1274,4 +1274,265 @@ class AppLocalizationsId extends AppLocalizations {
   String hafalanProgressKata(Object matched, Object total) {
     return '$matched/$total kata';
   }
+
+  @override
+  String get authChoiceTitle => 'Mulai Sekarang';
+
+  @override
+  String get authChoiceSubtitle => 'Pilih cara untuk melanjutkan';
+
+  @override
+  String get authChoiceLogin => 'Masuk dengan Akun';
+
+  @override
+  String get authChoiceLoginSubtitle => 'Sinkronkan data di semua perangkat';
+
+  @override
+  String get authChoiceRegister => 'Buat Akun Baru';
+
+  @override
+  String get authChoiceRegisterSubtitle => 'Bergabung dengan Muslimly gratis';
+
+  @override
+  String get authChoiceGuest => 'Lanjut Tanpa Akun';
+
+  @override
+  String get authChoiceGuestNote =>
+      'Kamu bisa masuk nanti kapan saja melalui Pengaturan';
+
+  @override
+  String get loginWelcome => 'Selamat Datang';
+
+  @override
+  String get loginSubtitle => 'Masuk ke ruang ibadah harianmu.';
+
+  @override
+  String get loginHintPassword => 'Masukkan kata sandi';
+
+  @override
+  String get loginForgotPassword => 'Lupa Kata Sandi?';
+
+  @override
+  String get loginOr => 'ATAU';
+
+  @override
+  String get loginContinueAsGuest => 'Lanjut Tanpa Akun';
+
+  @override
+  String get loginNewHere => 'Baru di sini?';
+
+  @override
+  String loginWelcomeBack(Object name) {
+    return 'Selamat datang kembali, $name!';
+  }
+
+  @override
+  String get registerSubtitle => 'Bergabung dan sinkronkan progresmu.';
+
+  @override
+  String get registerLabelUsername => 'Nama Pengguna';
+
+  @override
+  String get registerHintUsername => 'Masukkan nama pengguna';
+
+  @override
+  String get registerLabelEmail => 'Email';
+
+  @override
+  String get registerHintEmail => 'Masukkan email Anda';
+
+  @override
+  String get registerLabelPassword => 'Kata Sandi';
+
+  @override
+  String get registerHintPassword => 'Minimal 6 karakter';
+
+  @override
+  String get registerErrorAllFields => 'Semua kolom wajib diisi.';
+
+  @override
+  String get registerErrorPasswordLength => 'Kata sandi minimal 6 karakter.';
+
+  @override
+  String get registerSuccess => 'Akun berhasil dibuat! Silakan masuk.';
+
+  @override
+  String get registerErrorFallback => 'Pendaftaran gagal.';
+
+  @override
+  String get registerHaveAccount => 'Sudah punya akun?';
+
+  @override
+  String get registerLogIn => 'Masuk';
+
+  @override
+  String get settingsSecurity => 'Keamanan';
+
+  @override
+  String get settingsAccount => 'Akun';
+
+  @override
+  String get settingsLogout => 'Keluar';
+
+  @override
+  String get settingsLogoutConfirm => 'Yakin ingin keluar dari akun?';
+
+  @override
+  String get settingsLogin => 'Masuk';
+
+  @override
+  String get settingsLoginSubtitle =>
+      'Masuk untuk sinkronisasi data di semua perangkat';
+
+  @override
+  String get settingsCreateAccount => 'Buat Akun';
+
+  @override
+  String get settingsCreateAccountSubtitle =>
+      'Baru di Muslimly? Daftar di sini';
+
+  @override
+  String get targetChooseTarget => 'Pilih Target';
+
+  @override
+  String settingsMonthAdjustment(Object month) {
+    return 'Koreksi $month';
+  }
+
+  @override
+  String get settingsEmail => 'Email';
+
+  @override
+  String get settingsEmailCopied => 'Email disalin ke clipboard';
+
+  @override
+  String get forgotPasswordTitle => 'Lupa Password';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Masukkan email untuk menerima kode verifikasi';
+
+  @override
+  String get forgotPasswordSendCode => 'Kirim Kode';
+
+  @override
+  String get forgotPasswordBackToLogin => 'Kembali ke Login';
+
+  @override
+  String get otpVerifyTitle => 'Masukkan Kode OTP';
+
+  @override
+  String otpVerifySubtitle(String email) {
+    return 'Kami mengirim kode 6 digit ke $email';
+  }
+
+  @override
+  String get otpVerifyHint => 'Kode 6 digit';
+
+  @override
+  String get otpVerifyButton => 'Verifikasi';
+
+  @override
+  String get otpVerifyResend => 'Kirim Ulang';
+
+  @override
+  String get newPasswordTitle => 'Password Baru';
+
+  @override
+  String get newPasswordSubtitle => 'Masukkan password baru Anda di bawah';
+
+  @override
+  String get newPasswordLabel => 'PASSWORD BARU';
+
+  @override
+  String get newPasswordConfirmLabel => 'KONFIRMASI PASSWORD';
+
+  @override
+  String get newPasswordHint => 'Min. 8 karakter';
+
+  @override
+  String get newPasswordConfirmHint => 'Ulangi password baru';
+
+  @override
+  String get newPasswordButton => 'Reset Password';
+
+  @override
+  String get newPasswordMismatch => 'Password tidak cocok';
+
+  @override
+  String get newPasswordSuccess => 'Password berhasil direset! Silakan login.';
+
+  @override
+  String get settingsUsername => 'Username';
+
+  @override
+  String get settingsEditUsername => 'Edit Username';
+
+  @override
+  String get settingsChangePassword => 'Ganti Password';
+
+  @override
+  String get settingsCurrentPassword => 'Password Saat Ini';
+
+  @override
+  String get settingsCurrentPasswordHint => 'Masukkan password saat ini';
+
+  @override
+  String get settingsPasswordChanged => 'Password berhasil diubah';
+
+  @override
+  String get settingsUsernameUpdated => 'Username berhasil diubah';
+
+  @override
+  String get settingsUsernameHint => 'Masukkan username baru';
+
+  @override
+  String get settingsDeleteAccount => 'Hapus Akun';
+
+  @override
+  String get settingsDeleteAccountTitle => 'Hapus Akun';
+
+  @override
+  String get settingsDeleteAccountWarning =>
+      'Tindakan ini permanen dan tidak dapat dibatalkan. Semua data Anda akan dihapus.';
+
+  @override
+  String get settingsDeleteAccountReason => 'Kenapa Anda pergi?';
+
+  @override
+  String get settingsDeleteReasonNoLongerNeed =>
+      'Saya tidak lagi membutuhkan aplikasi ini';
+
+  @override
+  String get settingsDeleteReasonPrivacy => 'Masalah privasi';
+
+  @override
+  String get settingsDeleteReasonNotifications => 'Terlalu banyak notifikasi';
+
+  @override
+  String get settingsDeleteReasonBetterApp =>
+      'Menemukan aplikasi yang lebih baik';
+
+  @override
+  String get settingsDeleteReasonOther => 'Lainnya';
+
+  @override
+  String get settingsDeleteReasonOtherHint => 'Ceritakan alasanmu...';
+
+  @override
+  String get settingsDeleteOtherTooShort => 'Masukkan minimal 3 kata';
+
+  @override
+  String get passwordComplexityHint =>
+      'Min. 8 karakter, huruf besar, huruf kecil, dan angka';
+
+  @override
+  String get passwordTooWeak =>
+      'Password harus min. 8 karakter dan mengandung huruf besar, huruf kecil, dan angka';
+
+  @override
+  String get settingsDeleteConfirmButton => 'Hapus Akun Saya';
+
+  @override
+  String get settingsDeleteSuccess => 'Akun berhasil dihapus';
 }

@@ -1268,4 +1268,263 @@ class AppLocalizationsEn extends AppLocalizations {
   String hafalanProgressKata(Object matched, Object total) {
     return '$matched/$total Words';
   }
+
+  @override
+  String get authChoiceTitle => 'Get Started';
+
+  @override
+  String get authChoiceSubtitle => 'Choose how you\'d like to continue';
+
+  @override
+  String get authChoiceLogin => 'Login with Account';
+
+  @override
+  String get authChoiceLoginSubtitle => 'Sync your data across devices';
+
+  @override
+  String get authChoiceRegister => 'Create New Account';
+
+  @override
+  String get authChoiceRegisterSubtitle => 'Join Muslimly for free';
+
+  @override
+  String get authChoiceGuest => 'Continue as Guest';
+
+  @override
+  String get authChoiceGuestNote =>
+      'You can always sign in later from Settings';
+
+  @override
+  String get loginWelcome => 'Welcome Back';
+
+  @override
+  String get loginSubtitle => 'Sign in to your daily worship space.';
+
+  @override
+  String get loginHintPassword => 'Enter your password';
+
+  @override
+  String get loginForgotPassword => 'Forgot Password?';
+
+  @override
+  String get loginOr => 'OR';
+
+  @override
+  String get loginContinueAsGuest => 'Continue as Guest';
+
+  @override
+  String get loginNewHere => 'New here?';
+
+  @override
+  String loginWelcomeBack(Object name) {
+    return 'Welcome back, $name!';
+  }
+
+  @override
+  String get registerSubtitle => 'Join Muslimly and sync your progress.';
+
+  @override
+  String get registerLabelUsername => 'Username';
+
+  @override
+  String get registerHintUsername => 'Enter your username';
+
+  @override
+  String get registerLabelEmail => 'Email';
+
+  @override
+  String get registerHintEmail => 'Enter your email';
+
+  @override
+  String get registerLabelPassword => 'Password';
+
+  @override
+  String get registerHintPassword => 'Minimum 6 characters';
+
+  @override
+  String get registerErrorAllFields => 'All fields are required.';
+
+  @override
+  String get registerErrorPasswordLength =>
+      'Password must be at least 6 characters.';
+
+  @override
+  String get registerSuccess => 'Account created! Please log in.';
+
+  @override
+  String get registerErrorFallback => 'Registration failed.';
+
+  @override
+  String get registerHaveAccount => 'Already have an account?';
+
+  @override
+  String get registerLogIn => 'Log In';
+
+  @override
+  String get settingsSecurity => 'Security';
+
+  @override
+  String get settingsAccount => 'Account';
+
+  @override
+  String get settingsLogout => 'Logout';
+
+  @override
+  String get settingsLogoutConfirm => 'Are you sure you want to logout?';
+
+  @override
+  String get settingsLogin => 'Login';
+
+  @override
+  String get settingsLoginSubtitle =>
+      'Sign in to sync your data across devices';
+
+  @override
+  String get settingsCreateAccount => 'Create Account';
+
+  @override
+  String get settingsCreateAccountSubtitle => 'New to Muslimly? Register here';
+
+  @override
+  String get targetChooseTarget => 'Choose Target';
+
+  @override
+  String settingsMonthAdjustment(Object month) {
+    return '$month Adjustment';
+  }
+
+  @override
+  String get settingsEmail => 'Email';
+
+  @override
+  String get settingsEmailCopied => 'Email copied to clipboard';
+
+  @override
+  String get forgotPasswordTitle => 'Forgot Password';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your email to receive a verification code';
+
+  @override
+  String get forgotPasswordSendCode => 'Send Code';
+
+  @override
+  String get forgotPasswordBackToLogin => 'Back to Login';
+
+  @override
+  String get otpVerifyTitle => 'Enter OTP Code';
+
+  @override
+  String otpVerifySubtitle(String email) {
+    return 'We sent a 6-digit code to $email';
+  }
+
+  @override
+  String get otpVerifyHint => '6-digit code';
+
+  @override
+  String get otpVerifyButton => 'Verify';
+
+  @override
+  String get otpVerifyResend => 'Resend Code';
+
+  @override
+  String get newPasswordTitle => 'New Password';
+
+  @override
+  String get newPasswordSubtitle => 'Enter your new password below';
+
+  @override
+  String get newPasswordLabel => 'NEW PASSWORD';
+
+  @override
+  String get newPasswordConfirmLabel => 'CONFIRM PASSWORD';
+
+  @override
+  String get newPasswordHint => 'Min. 8 characters';
+
+  @override
+  String get newPasswordConfirmHint => 'Repeat new password';
+
+  @override
+  String get newPasswordButton => 'Reset Password';
+
+  @override
+  String get newPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get newPasswordSuccess => 'Password reset! Please login.';
+
+  @override
+  String get settingsUsername => 'Username';
+
+  @override
+  String get settingsEditUsername => 'Edit Username';
+
+  @override
+  String get settingsChangePassword => 'Change Password';
+
+  @override
+  String get settingsCurrentPassword => 'Current Password';
+
+  @override
+  String get settingsCurrentPasswordHint => 'Enter current password';
+
+  @override
+  String get settingsPasswordChanged => 'Password changed successfully';
+
+  @override
+  String get settingsUsernameUpdated => 'Username updated';
+
+  @override
+  String get settingsUsernameHint => 'Enter new username';
+
+  @override
+  String get settingsDeleteAccount => 'Delete Account';
+
+  @override
+  String get settingsDeleteAccountTitle => 'Delete Account';
+
+  @override
+  String get settingsDeleteAccountWarning =>
+      'This action is permanent and cannot be undone. All your data will be deleted.';
+
+  @override
+  String get settingsDeleteAccountReason => 'Why are you leaving?';
+
+  @override
+  String get settingsDeleteReasonNoLongerNeed => 'I no longer need the app';
+
+  @override
+  String get settingsDeleteReasonPrivacy => 'Privacy concerns';
+
+  @override
+  String get settingsDeleteReasonNotifications => 'Too many notifications';
+
+  @override
+  String get settingsDeleteReasonBetterApp => 'Found a better app';
+
+  @override
+  String get settingsDeleteReasonOther => 'Other';
+
+  @override
+  String get settingsDeleteReasonOtherHint => 'Tell us your reason...';
+
+  @override
+  String get settingsDeleteOtherTooShort => 'Please enter at least 3 words';
+
+  @override
+  String get passwordComplexityHint =>
+      'Min. 8 characters, uppercase, lowercase, and number';
+
+  @override
+  String get passwordTooWeak =>
+      'Password must be at least 8 characters and contain uppercase, lowercase, and a number';
+
+  @override
+  String get settingsDeleteConfirmButton => 'Delete My Account';
+
+  @override
+  String get settingsDeleteSuccess => 'Account deleted successfully';
 }

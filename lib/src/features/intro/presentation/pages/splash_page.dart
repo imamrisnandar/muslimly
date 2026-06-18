@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../settings/data/repositories/settings_repository.dart';
+import '../../../settings/presentation/bloc/settings_cubit.dart';
 import '../../domain/repositories/name_repository.dart';
 
 class SplashPage extends StatefulWidget {
@@ -41,20 +46,55 @@ class _SplashPageState extends State<SplashPage>
 
   Future<void> _navigateToHome() async {
     await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      final repo = getIt<NameRepository>();
-      final name = await repo.getName();
+    if (!mounted) return;
 
-      // Trigger background settings sync on app start
-      getIt<SettingsRepository>().syncSettingsFromRemote();
+    // Trigger background settings sync on app start
+    getIt<SettingsRepository>().syncSettingsFromRemote();
 
-      if (mounted) {
-        if (name == null || name.isEmpty) {
-          context.go('/onboarding');
-        } else {
-          context.go('/dashboard');
+    final tokenResult = await getIt<AuthRepository>().getToken();
+    final token = tokenResult.getOrElse((_) => null);
+
+    if (token != null && token.isNotEmpty) {
+      final payload = _decodeJwtPayload(token);
+      final exp = payload?['exp'] as int?;
+      final isValid = exp != null &&
+          DateTime.fromMillisecondsSinceEpoch(exp * 1000).isAfter(DateTime.now());
+
+      if (isValid) {
+        // Sync account username from JWT → SettingsCubit (scenario: returning logged-in user)
+        final username = payload!['username'] as String?;
+        if (username != null && username.isNotEmpty && mounted) {
+          context.read<SettingsCubit>().updateName(username);
         }
+        if (mounted) context.go('/dashboard');
+        return;
       }
+
+      // Token expired — delete and force re-login
+      await getIt<AuthRepository>().deleteToken();
+      if (mounted) context.go('/login');
+      return;
+    }
+
+    final name = await getIt<NameRepository>().getName();
+    if (mounted) {
+      context.go(name == null || name.isEmpty ? '/onboarding' : '/dashboard');
+    }
+  }
+
+  Map<String, dynamic>? _decodeJwtPayload(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+      final payload = parts[1];
+      final normalized = payload.padRight(
+        payload.length + (4 - payload.length % 4) % 4,
+        '=',
+      );
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      return jsonDecode(decoded) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
     }
   }
 

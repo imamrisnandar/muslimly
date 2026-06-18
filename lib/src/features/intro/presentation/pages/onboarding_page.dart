@@ -23,8 +23,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
-  void _onSkip() {
-    context.go('/name-input');
+  void _goToAuthChoice() {
+    context.go('/auth-choice');
   }
 
   void _onNext() {
@@ -34,7 +34,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         curve: Curves.easeInOut,
       );
     } else {
-      _onSkip();
+      _goToAuthChoice();
     }
   }
 
@@ -135,7 +135,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
                       // Skip Button (Right)
                       TextButton(
-                        onPressed: _onSkip,
+                        onPressed: _goToAuthChoice,
                         child: Text(
                           l10n.lblSkip,
                           style: TextStyle(

@@ -2401,6 +2401,498 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{matched}/{total} Words'**
   String hafalanProgressKata(Object matched, Object total);
+
+  /// No description provided for @authChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get authChoiceTitle;
+
+  /// No description provided for @authChoiceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how you\'d like to continue'**
+  String get authChoiceSubtitle;
+
+  /// No description provided for @authChoiceLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login with Account'**
+  String get authChoiceLogin;
+
+  /// No description provided for @authChoiceLoginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync your data across devices'**
+  String get authChoiceLoginSubtitle;
+
+  /// No description provided for @authChoiceRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Account'**
+  String get authChoiceRegister;
+
+  /// No description provided for @authChoiceRegisterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Muslimly for free'**
+  String get authChoiceRegisterSubtitle;
+
+  /// No description provided for @authChoiceGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get authChoiceGuest;
+
+  /// No description provided for @authChoiceGuestNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You can always sign in later from Settings'**
+  String get authChoiceGuestNote;
+
+  /// No description provided for @loginWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back'**
+  String get loginWelcome;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to your daily worship space.'**
+  String get loginSubtitle;
+
+  /// No description provided for @loginHintPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password'**
+  String get loginHintPassword;
+
+  /// No description provided for @loginForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get loginForgotPassword;
+
+  /// No description provided for @loginOr.
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get loginOr;
+
+  /// No description provided for @loginContinueAsGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get loginContinueAsGuest;
+
+  /// No description provided for @loginNewHere.
+  ///
+  /// In en, this message translates to:
+  /// **'New here?'**
+  String get loginNewHere;
+
+  /// No description provided for @loginWelcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back, {name}!'**
+  String loginWelcomeBack(Object name);
+
+  /// No description provided for @registerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Muslimly and sync your progress.'**
+  String get registerSubtitle;
+
+  /// No description provided for @registerLabelUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get registerLabelUsername;
+
+  /// No description provided for @registerHintUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your username'**
+  String get registerHintUsername;
+
+  /// No description provided for @registerLabelEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get registerLabelEmail;
+
+  /// No description provided for @registerHintEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email'**
+  String get registerHintEmail;
+
+  /// No description provided for @registerLabelPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get registerLabelPassword;
+
+  /// No description provided for @registerHintPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 6 characters'**
+  String get registerHintPassword;
+
+  /// No description provided for @registerErrorAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'All fields are required.'**
+  String get registerErrorAllFields;
+
+  /// No description provided for @registerErrorPasswordLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters.'**
+  String get registerErrorPasswordLength;
+
+  /// No description provided for @registerSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created! Please log in.'**
+  String get registerSuccess;
+
+  /// No description provided for @registerErrorFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration failed.'**
+  String get registerErrorFallback;
+
+  /// No description provided for @registerHaveAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get registerHaveAccount;
+
+  /// No description provided for @registerLogIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get registerLogIn;
+
+  /// No description provided for @settingsSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get settingsSecurity;
+
+  /// No description provided for @settingsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get settingsAccount;
+
+  /// No description provided for @settingsLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get settingsLogout;
+
+  /// No description provided for @settingsLogoutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get settingsLogoutConfirm;
+
+  /// No description provided for @settingsLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get settingsLogin;
+
+  /// No description provided for @settingsLoginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to sync your data across devices'**
+  String get settingsLoginSubtitle;
+
+  /// No description provided for @settingsCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get settingsCreateAccount;
+
+  /// No description provided for @settingsCreateAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New to Muslimly? Register here'**
+  String get settingsCreateAccountSubtitle;
+
+  /// No description provided for @targetChooseTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Target'**
+  String get targetChooseTarget;
+
+  /// No description provided for @settingsMonthAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'{month} Adjustment'**
+  String settingsMonthAdjustment(Object month);
+
+  /// No description provided for @settingsEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get settingsEmail;
+
+  /// No description provided for @settingsEmailCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Email copied to clipboard'**
+  String get settingsEmailCopied;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email to receive a verification code'**
+  String get forgotPasswordSubtitle;
+
+  /// No description provided for @forgotPasswordSendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Code'**
+  String get forgotPasswordSendCode;
+
+  /// No description provided for @forgotPasswordBackToLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get forgotPasswordBackToLogin;
+
+  /// No description provided for @otpVerifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter OTP Code'**
+  String get otpVerifyTitle;
+
+  /// No description provided for @otpVerifySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a 6-digit code to {email}'**
+  String otpVerifySubtitle(String email);
+
+  /// No description provided for @otpVerifyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'6-digit code'**
+  String get otpVerifyHint;
+
+  /// No description provided for @otpVerifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get otpVerifyButton;
+
+  /// No description provided for @otpVerifyResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Code'**
+  String get otpVerifyResend;
+
+  /// No description provided for @newPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPasswordTitle;
+
+  /// No description provided for @newPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new password below'**
+  String get newPasswordSubtitle;
+
+  /// No description provided for @newPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NEW PASSWORD'**
+  String get newPasswordLabel;
+
+  /// No description provided for @newPasswordConfirmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIRM PASSWORD'**
+  String get newPasswordConfirmLabel;
+
+  /// No description provided for @newPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Min. 8 characters'**
+  String get newPasswordHint;
+
+  /// No description provided for @newPasswordConfirmHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat new password'**
+  String get newPasswordConfirmHint;
+
+  /// No description provided for @newPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get newPasswordButton;
+
+  /// No description provided for @newPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get newPasswordMismatch;
+
+  /// No description provided for @newPasswordSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset! Please login.'**
+  String get newPasswordSuccess;
+
+  /// No description provided for @settingsUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get settingsUsername;
+
+  /// No description provided for @settingsEditUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Username'**
+  String get settingsEditUsername;
+
+  /// No description provided for @settingsChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get settingsChangePassword;
+
+  /// No description provided for @settingsCurrentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get settingsCurrentPassword;
+
+  /// No description provided for @settingsCurrentPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter current password'**
+  String get settingsCurrentPasswordHint;
+
+  /// No description provided for @settingsPasswordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully'**
+  String get settingsPasswordChanged;
+
+  /// No description provided for @settingsUsernameUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Username updated'**
+  String get settingsUsernameUpdated;
+
+  /// No description provided for @settingsUsernameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter new username'**
+  String get settingsUsernameHint;
+
+  /// No description provided for @settingsDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get settingsDeleteAccount;
+
+  /// No description provided for @settingsDeleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get settingsDeleteAccountTitle;
+
+  /// No description provided for @settingsDeleteAccountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This action is permanent and cannot be undone. All your data will be deleted.'**
+  String get settingsDeleteAccountWarning;
+
+  /// No description provided for @settingsDeleteAccountReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you leaving?'**
+  String get settingsDeleteAccountReason;
+
+  /// No description provided for @settingsDeleteReasonNoLongerNeed.
+  ///
+  /// In en, this message translates to:
+  /// **'I no longer need the app'**
+  String get settingsDeleteReasonNoLongerNeed;
+
+  /// No description provided for @settingsDeleteReasonPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy concerns'**
+  String get settingsDeleteReasonPrivacy;
+
+  /// No description provided for @settingsDeleteReasonNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many notifications'**
+  String get settingsDeleteReasonNotifications;
+
+  /// No description provided for @settingsDeleteReasonBetterApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Found a better app'**
+  String get settingsDeleteReasonBetterApp;
+
+  /// No description provided for @settingsDeleteReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get settingsDeleteReasonOther;
+
+  /// No description provided for @settingsDeleteReasonOtherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us your reason...'**
+  String get settingsDeleteReasonOtherHint;
+
+  /// No description provided for @settingsDeleteOtherTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter at least 3 words'**
+  String get settingsDeleteOtherTooShort;
+
+  /// No description provided for @passwordComplexityHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Min. 8 characters, uppercase, lowercase, and number'**
+  String get passwordComplexityHint;
+
+  /// No description provided for @passwordTooWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 8 characters and contain uppercase, lowercase, and a number'**
+  String get passwordTooWeak;
+
+  /// No description provided for @settingsDeleteConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete My Account'**
+  String get settingsDeleteConfirmButton;
+
+  /// No description provided for @settingsDeleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account deleted successfully'**
+  String get settingsDeleteSuccess;
 }
 
 class _AppLocalizationsDelegate
