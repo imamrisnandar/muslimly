@@ -7,7 +7,7 @@ import '../../domain/entities/city.dart';
 import '../../domain/entities/prayer_time.dart';
 import '../../domain/usecases/get_prayer_time.dart';
 import '../../domain/usecases/search_city.dart';
-import '../../../settings/data/repositories/settings_repository.dart';
+import '../../../settings/domain/repositories/settings_repository.dart';
 import '../../../quran/data/repositories/last_read_repository.dart';
 import '../../../../l10n/generated/app_localizations.dart'; // Import generated l10n
 import 'prayer_event.dart';

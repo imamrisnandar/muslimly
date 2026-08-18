@@ -1,10 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import '../../domain/repositories/tajweed_repository.dart';
 import '../models/tajweed_model.dart';
-
-abstract class TajweedRepository {
-  Future<List<TajweedCategory>> getTajweedContent(String languageCode);
-}
 
 class TajweedRepositoryImpl implements TajweedRepository {
   @override

@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../../core/database/database_service.dart';
 import '../../../../../core/services/notification_service.dart';
-import '../../../../settings/data/repositories/settings_repository.dart';
+import '../../../../settings/domain/repositories/settings_repository.dart';
 import '../../../../auth/domain/repositories/auth_repository.dart';
 import '../../../domain/repositories/quran_repository.dart';
 import '../../../domain/entities/last_read.dart';

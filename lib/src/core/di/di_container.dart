@@ -13,7 +13,8 @@ import '../../features/article/presentation/bloc/article_bloc.dart';
 
 import '../../features/intro/data/repositories/name_repository.dart';
 import '../../features/intro/domain/repositories/name_repository.dart' show NameRepository;
-import '../../features/settings/data/repositories/settings_repository.dart'; // Settings Repo
+import '../../features/settings/data/repositories/settings_repository_impl.dart';
+import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/settings/presentation/bloc/settings_cubit.dart'; // Settings Cubit
 import '../services/notification_service.dart';
 import '../services/showcase_preferences_service.dart';
@@ -57,7 +58,8 @@ import '../../features/zikir/data/repositories/zikir_local_repository.dart' show
 import '../../features/zikir/domain/repositories/zikir_repository.dart' show ZikirRepository;
 import '../../features/zikir/domain/usecases/get_zikir_content.dart';
 import '../../features/quran/data/repositories/translation_repository_impl.dart';
-import '../../features/tajweed/data/repositories/tajweed_repository.dart'; // Added
+import '../../features/tajweed/data/repositories/tajweed_repository_impl.dart';
+import '../../features/tajweed/domain/repositories/tajweed_repository.dart';
 import '../../features/tajweed/domain/usecases/get_tajweed_content.dart';
 import '../../features/fasting/data/repositories/fasting_repository.dart' show FastingRepositoryImpl;
 import '../../features/fasting/domain/repositories/fasting_repository.dart' show FastingRepository;

@@ -1,5 +1,5 @@
 import '../../data/models/tajweed_model.dart';
-import '../../data/repositories/tajweed_repository.dart';
+import '../repositories/tajweed_repository.dart';
 
 class GetTajweedContent {
   final TajweedRepository _repository;

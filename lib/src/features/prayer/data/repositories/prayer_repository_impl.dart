@@ -4,7 +4,7 @@ import 'package:geocoding/geocoding.dart' as geo;
 import 'package:intl/intl.dart';
 
 import '../../../../core/error/failures.dart';
-import '../../../settings/data/repositories/settings_repository.dart';
+import '../../../settings/domain/repositories/settings_repository.dart';
 import '../../domain/entities/city.dart';
 import '../../domain/entities/prayer_calculation_method.dart';
 import '../../domain/entities/prayer_time.dart';

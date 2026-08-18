@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../utils/app_logger.dart';
 import 'dart:ui'; // for Locale
 import '../../core/di/di_container.dart';
-import '../../features/settings/data/repositories/settings_repository.dart';
+import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../core/database/database_service.dart';
 import '../../l10n/generated/app_localizations.dart'; // Localization
 import 'notification_service.dart';

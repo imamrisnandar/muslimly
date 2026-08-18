@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
-import '../../../settings/data/repositories/settings_repository.dart';
+import '../../../settings/domain/repositories/settings_repository.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart';
 import '../../domain/repositories/name_repository.dart';
 import '../../../../core/theme/app_colors.dart';

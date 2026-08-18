@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:muslimly/src/features/prayer/data/repositories/prayer_repository_impl.dart';
-import 'package:muslimly/src/features/settings/data/repositories/settings_repository.dart';
+import 'package:muslimly/src/features/settings/domain/repositories/settings_repository.dart';
 
 class _StubSettingsRepository implements SettingsRepository {
   _StubSettingsRepository(this.calculationMethod);
