@@ -3,12 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../tajweed/presentation/pages/tajweed_page.dart';
-import '../../domain/repositories/zikir_repository.dart';
+import '../../domain/usecases/get_zikir_content.dart';
 import 'dzikir_reading_page.dart';
 import 'doa_harian_list_page.dart';
 import '../../../../features/fasting/presentation/pages/fasting_guide_page.dart';
 import '../../../../features/wudhu/presentation/pages/wudhu_guide_page.dart';
 import '../../../../features/prayer/presentation/pages/prayer_guide_page.dart'; // Added
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class DzikirPage extends StatelessWidget {
   const DzikirPage({super.key});
@@ -32,7 +34,8 @@ class DzikirPage extends StatelessWidget {
         color: Colors.orangeAccent,
         onTap: () async {
           final locale = Localizations.localeOf(context);
-          final items = await getIt<ZikirRepository>().getMorningZikir(
+          final items = await getIt<GetZikirContent>()(
+            ZikirCategory.morning,
             locale,
           );
           if (context.mounted) {
@@ -55,7 +58,8 @@ class DzikirPage extends StatelessWidget {
         color: Colors.indigoAccent,
         onTap: () async {
           final locale = Localizations.localeOf(context);
-          final items = await getIt<ZikirRepository>().getEveningZikir(
+          final items = await getIt<GetZikirContent>()(
+            ZikirCategory.evening,
             locale,
           );
           if (context.mounted) {
@@ -75,10 +79,11 @@ class DzikirPage extends StatelessWidget {
         title: l10n.dzikirPrayerTitle,
         subtitle: l10n.dzikirPrayerSubtitle,
         icon: Icons.mosque_outlined,
-        color: const Color(0xFF00E676),
+        color: AppColors.accent,
         onTap: () async {
           final locale = Localizations.localeOf(context);
-          final items = await getIt<ZikirRepository>().getPrayerZikir(
+          final items = await getIt<GetZikirContent>()(
+            ZikirCategory.prayer,
             locale,
           );
           if (context.mounted) {
@@ -152,7 +157,7 @@ class DzikirPage extends StatelessWidget {
         title: l10n.ibadahPrayerTitle,
         subtitle: l10n.prayerGuideSubtitle,
         icon: Icons.accessibility_new_rounded,
-        color: const Color(0xFFFFC107), // Amber 700
+        color: AppColors.gold, // Amber 700
         onTap: () {
           Navigator.push(
             context,
@@ -164,16 +169,8 @@ class DzikirPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        title: Text(
-          l10n.bottomNavDzikir, // "Ibadah"
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: AppTransparentAppBar(
+        title: l10n.bottomNavDzikir, // "Ibadah"
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -254,9 +251,9 @@ class DzikirPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.r),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(16.r),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -264,7 +261,7 @@ class DzikirPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(12.r), // Use .r for consistent padding
                 decoration: BoxDecoration(
-                  color: item.color.withOpacity(0.2),
+                  color: item.color.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(item.icon, color: item.color, size: 28.sp),
@@ -309,12 +306,12 @@ class DzikirPage extends StatelessWidget {
 
     // Matches Dzikir Pagi Button Style (Glassmorphism)
     final cardColor = isDisabled
-        ? Colors.white.withOpacity(0.02)
-        : Colors.white.withOpacity(0.05);
+        ? Colors.white.withValues(alpha: 0.02)
+        : Colors.white.withValues(alpha: 0.05);
 
     final borderColor = isDisabled
-        ? Colors.white.withOpacity(0.05)
-        : Colors.white.withOpacity(0.1);
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.white.withValues(alpha: 0.1);
 
     final titleColor = isDisabled ? Colors.white38 : Colors.white;
     final subtitleColor = isDisabled ? Colors.white24 : Colors.white54;
@@ -337,8 +334,8 @@ class DzikirPage extends StatelessWidget {
                 padding: EdgeInsets.all(12.r),
                 decoration: BoxDecoration(
                   color: isDisabled
-                      ? Colors.grey.withOpacity(0.1)
-                      : item.color.withOpacity(0.2), // Increased opacity
+                      ? Colors.grey.withValues(alpha: 0.1)
+                      : item.color.withValues(alpha: 0.2), // Increased opacity
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Icon(

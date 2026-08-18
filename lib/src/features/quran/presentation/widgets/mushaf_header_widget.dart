@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:muslimly/src/features/quran/presentation/utils/arabic_utils.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class MushafHeaderWidget extends StatelessWidget {
   final int surahNumber;
@@ -26,7 +27,7 @@ class MushafHeaderWidget extends StatelessWidget {
               shaderCallback: (Rect bounds) {
                 return const LinearGradient(
                   colors: [
-                    Color(0xFF00E676), // Green
+                    AppColors.accent, // Green
                     Colors.blue, // Blue
                   ],
                   begin: Alignment.centerLeft,

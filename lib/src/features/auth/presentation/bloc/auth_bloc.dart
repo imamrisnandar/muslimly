@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 
 import '../../../../core/database/database_service.dart';
 import '../../../../core/services/notification_service.dart';
@@ -18,7 +17,6 @@ import '../../../../core/utils/surah_names.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-@injectable
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase _loginUseCase;
   final AuthRepository _authRepository;

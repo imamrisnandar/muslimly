@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../domain/repositories/zikir_repository.dart';
+import '../../domain/usecases/get_zikir_content.dart';
 import '../../domain/entities/zikir_item.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
 import 'dzikir_reading_page.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class DoaHarianListPage extends StatefulWidget {
   const DoaHarianListPage({super.key});
@@ -34,7 +35,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
 
   Future<void> _loadData() async {
     final locale = Localizations.localeOf(context);
-    final items = await getIt<ZikirRepository>().getDailyDzikir(locale);
+    final items = await getIt<GetZikirContent>()(ZikirCategory.daily, locale);
     if (mounted) {
       setState(() {
         _allItems = items;
@@ -74,22 +75,9 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
         MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C2A30), // Dark Theme Background
-      appBar: AppBar(
-        title: Text(
-          l10n.dzikirDailyTitle,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontFamily: GoogleFonts.outfit().fontFamily,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
+      backgroundColor: AppColors.cardDark, // Dark Theme Background
+      appBar: AppTransparentAppBar(
+        title: l10n.dzikirDailyTitle,
       ),
       body: Column(
         children: [
@@ -119,7 +107,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                   size: isLandscape ? 18.sp : 20.sp,
                 ),
                 filled: true,
-                fillColor: Colors.black.withOpacity(0.3),
+                fillColor: Colors.black.withValues(alpha: 0.3),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
@@ -135,7 +123,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: const BorderSide(
-                    color: Color(0xFF00E676),
+                    color: AppColors.accent,
                     width: 1,
                   ),
                 ),
@@ -176,13 +164,13 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              Colors.white.withOpacity(0.05),
-                              Colors.white.withOpacity(0.02),
+                              Colors.white.withValues(alpha: 0.05),
+                              Colors.white.withValues(alpha: 0.02),
                             ],
                           ),
                           borderRadius: BorderRadius.circular(16.r),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.05),
+                            color: Colors.white.withValues(alpha: 0.05),
                             width: 1,
                           ),
                         ),
@@ -217,12 +205,12 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                     decoration: BoxDecoration(
                                       color: const Color(
                                         0xFF00E676,
-                                      ).withOpacity(0.1),
+                                      ).withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: const Color(
                                           0xFF00E676,
-                                        ).withOpacity(0.3),
+                                        ).withValues(alpha: 0.3),
                                         width: 1.5,
                                       ),
                                     ),
@@ -230,7 +218,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                       child: Text(
                                         "${originalIndex + 1}",
                                         style: TextStyle(
-                                          color: const Color(0xFF00E676),
+                                          color: AppColors.accent,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14.sp,
                                           fontFamily:
@@ -259,7 +247,7 @@ class _DoaHarianListPageState extends State<DoaHarianListPage> {
                                   Container(
                                     padding: EdgeInsets.all(8.w),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.05),
+                                      color: Colors.white.withValues(alpha: 0.05),
                                       borderRadius: BorderRadius.circular(8.r),
                                     ),
                                     child: Icon(

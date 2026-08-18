@@ -20,6 +20,7 @@ import '../../domain/models/reminder_models.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../../features/settings/presentation/bloc/settings_cubit.dart';
 import '../../../../features/settings/presentation/bloc/settings_state.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class PrayerPage extends StatefulWidget {
   const PrayerPage({super.key});
@@ -67,7 +68,7 @@ class _PrayerPageState extends State<PrayerPage>
     return BlocBuilder<SettingsCubit, SettingsState>(
       builder: (context, settingsState) {
         return Scaffold(
-          backgroundColor: const Color(0xFF1C2A30), // Dark Theme
+          backgroundColor: AppColors.cardDark, // Dark Theme
           body: LayoutBuilder(
             builder: (context, constraints) {
               final isLandscape = constraints.maxWidth > constraints.maxHeight;
@@ -110,7 +111,7 @@ class _PrayerPageState extends State<PrayerPage>
               SliverAppBar(
                 expandedHeight: 340.h, // Increased from 280.h to fix overflow
                 pinned: true,
-                backgroundColor: const Color(0xFF1C2A30),
+                backgroundColor: AppColors.cardDark,
                 flexibleSpace: FlexibleSpaceBar(
                   background: PrayerHeaderWidget(
                     nextPrayer: nextPrayer,
@@ -230,18 +231,18 @@ class _PrayerPageState extends State<PrayerPage>
       margin: EdgeInsets.symmetric(horizontal: 24.w),
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
+        color: Colors.black.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(30.r),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: TabBar(
         controller: _tabController,
         indicator: BoxDecoration(
-          color: const Color(0xFF00E676),
+          color: AppColors.accent,
           borderRadius: BorderRadius.circular(26.r),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF00E676).withOpacity(0.3),
+              color: AppColors.accent.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -271,7 +272,7 @@ class _PrayerPageState extends State<PrayerPage>
 
   Widget _buildPrayerTab(BuildContext context, PrayerState state) {
     return RefreshIndicator(
-      color: const Color(0xFF00E676),
+      color: AppColors.accent,
       onRefresh: () async {
         context.read<PrayerBloc>().add(
           FetchPrayerTime(
@@ -290,7 +291,7 @@ class _PrayerPageState extends State<PrayerPage>
 
   Widget _buildCalendarTab(BuildContext context) {
     return RefreshIndicator(
-      color: const Color(0xFF00E676),
+      color: AppColors.accent,
       onRefresh: () async {
         await Future.delayed(const Duration(milliseconds: 500));
       },
@@ -438,7 +439,7 @@ class _PrayerPageState extends State<PrayerPage>
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF1C2A30),
+      backgroundColor: AppColors.cardDark,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
@@ -525,17 +526,17 @@ class _PrayerPageState extends State<PrayerPage>
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected ? const Color(0xFF00E676) : Colors.white70,
+        color: isSelected ? AppColors.accent : Colors.white70,
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: isSelected ? const Color(0xFF00E676) : Colors.white,
+          color: isSelected ? AppColors.accent : Colors.white,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Color(0xFF00E676))
+          ? const Icon(Icons.check_circle, color: AppColors.accent)
           : null,
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
@@ -654,10 +655,10 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
               Navigator.pop(context);
             },
             icon: const Icon(Icons.my_location),
-            color: const Color(0xFF00E676),
+            color: AppColors.accent,
             tooltip: l10n.useCurrentLocation,
             style: IconButton.styleFrom(
-              backgroundColor: const Color(0xFF00E676).withOpacity(0.1),
+              backgroundColor: AppColors.accent.withValues(alpha: 0.1),
             ),
           ),
         ],
@@ -678,14 +679,14 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
                   borderSide: BorderSide(color: Colors.white54),
                 ),
                 focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF00E676)),
+                  borderSide: BorderSide(color: AppColors.accent),
                 ),
               ),
             ),
             SizedBox(height: 16.h),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1B5E20),
+                backgroundColor: AppColors.quranGreen,
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
@@ -706,7 +707,7 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
                       height: 100.h,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF00E676),
+                          color: AppColors.accent,
                         ),
                       ),
                     );
@@ -722,7 +723,7 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
                           return ListTile(
                             leading: const Icon(
                               Icons.location_on,
-                              color: Color(0xFF00E676),
+                              color: AppColors.accent,
                             ),
                             title: Text(
                               city.name,
@@ -870,18 +871,18 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF00E676).withOpacity(0.15),
+          color: AppColors.accent.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: const Color(0xFF00E676).withOpacity(0.3)),
+          border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.history, size: 14.sp, color: const Color(0xFF00E676)),
+            Icon(Icons.history, size: 14.sp, color: AppColors.accent),
             SizedBox(width: 4.w),
             Text(
               cityName,
-              style: TextStyle(fontSize: 12.sp, color: const Color(0xFF00E676)),
+              style: TextStyle(fontSize: 12.sp, color: AppColors.accent),
             ),
           ],
         ),
@@ -895,7 +896,7 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.arrow_right, size: 16.sp, color: const Color(0xFF00E676)),
+          Icon(Icons.arrow_right, size: 16.sp, color: AppColors.accent),
           SizedBox(width: 4.w),
           Text(
             text,
@@ -915,9 +916,9 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
         ),
         child: Text(
           cityName,

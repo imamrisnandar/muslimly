@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class AuthChoicePage extends StatelessWidget {
   const AuthChoicePage({super.key});
@@ -16,7 +17,7 @@ class AuthChoicePage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
           ),
         ),
         child: SafeArea(
@@ -140,7 +141,7 @@ class _AuthOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const green = Color(0xFF00E676);
+    const green = AppColors.accent;
 
     return GestureDetector(
       onTap: onTap,

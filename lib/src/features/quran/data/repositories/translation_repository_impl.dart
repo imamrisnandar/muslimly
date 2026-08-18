@@ -1,12 +1,10 @@
 import '../../../../core/config/app_urls.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
 import '../../domain/entities/word.dart';
 import '../../domain/repositories/translation_repository.dart';
 
-@LazySingleton(as: TranslationRepository)
 class TranslationRepositoryImpl implements TranslationRepository {
   final DatabaseService _databaseService;
 

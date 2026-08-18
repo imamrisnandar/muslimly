@@ -9,6 +9,7 @@ import '../../data/models/fasting_model.dart';
 import '../bloc/fasting_cubit.dart';
 import '../bloc/fasting_state.dart';
 import 'fasting_detail_page.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class FastingGuidePage extends StatelessWidget {
   const FastingGuidePage({super.key});
@@ -55,7 +56,7 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C2A30),
+      backgroundColor: AppColors.cardDark,
       appBar: AppTransparentAppBar(title: l10n.fastingGuideTitle),
       body: BlocBuilder<FastingCubit, FastingState>(
         builder: (context, state) {
@@ -104,7 +105,7 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                           )
                         : null,
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
+                    fillColor: Colors.white.withValues(alpha: 0.05),
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
@@ -151,9 +152,9 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
   Widget _buildChapterCard(BuildContext context, FastingModel item, List<FastingModel> allItems) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -173,15 +174,15 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                   width: 36.w,
                   height: 36.w,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00E676).withOpacity(0.1),
+                    color: AppColors.accent.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF00E676).withOpacity(0.3)),
+                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
                   ),
                   child: Center(
                     child: Text(
                       "${item.order}",
                       style: TextStyle(
-                        color: const Color(0xFF00E676),
+                        color: AppColors.accent,
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
                         fontFamily: GoogleFonts.outfit().fontFamily,

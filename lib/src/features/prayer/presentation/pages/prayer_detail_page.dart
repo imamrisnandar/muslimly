@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/models/prayer_guide_model.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class PrayerDetailPage extends StatelessWidget {
   final PrayerGuideItem prayerModel;
@@ -20,32 +21,19 @@ class PrayerDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     // Theme Colors matching Fasting and Wudhu Guides
-    const backgroundColor = Color(0xFFFFF8E1); // Cream Theme
-    const textColor = Color(0xFF4E342E); // Dark Brown
-    const accentColor = Color(0xFF1B5E20); // Dark Green
+    const backgroundColor = AppColors.creamBg; // Cream Theme
+    const textColor = AppColors.quranBrown; // Dark Brown
+    const accentColor = AppColors.quranGreen; // Dark Green
 
     // Map to store keys for headings
     final Map<String, GlobalKey> headingKeys = {};
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        title: Text(
-          prayerModel.title,
-          style: TextStyle(
-            color: textColor,
-            fontWeight: FontWeight.bold,
-            fontFamily: GoogleFonts.outfit().fontFamily,
-            fontSize: 18.sp,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: textColor),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
+      appBar: AppTransparentAppBar(
+        title: prayerModel.title,
+        titleColor: textColor,
+        iconColor: textColor,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -66,13 +54,13 @@ class PrayerDetailPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(24.r),
                   boxShadow: [
                     BoxShadow(
-                      color: accentColor.withOpacity(0.1),
+                      color: accentColor.withValues(alpha: 0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
                   border: Border.all(
-                    color: accentColor.withOpacity(0.1),
+                    color: accentColor.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -128,13 +116,13 @@ class PrayerDetailPage extends StatelessWidget {
                       fontFamily: GoogleFonts.outfit().fontFamily,
                     ),
                     blockquote: TextStyle(
-                      color: textColor.withOpacity(0.8),
+                      color: textColor.withValues(alpha: 0.8),
                       fontSize: 15.sp,
                       fontStyle: FontStyle.italic,
                       fontFamily: GoogleFonts.outfit().fontFamily,
                     ),
                     blockquoteDecoration: BoxDecoration(
-                      color: textColor.withOpacity(0.05),
+                      color: textColor.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border(
                         left: BorderSide(color: accentColor, width: 4.w),
@@ -144,7 +132,7 @@ class PrayerDetailPage extends StatelessWidget {
                     horizontalRuleDecoration: BoxDecoration(
                       border: Border(
                         top: BorderSide(
-                          color: textColor.withOpacity(0.1),
+                          color: textColor.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -181,7 +169,7 @@ class PrayerDetailPage extends StatelessWidget {
 
     return Column(
       children: [
-        Divider(color: Colors.brown.withOpacity(0.2)),
+        Divider(color: Colors.brown.withValues(alpha: 0.2)),
         SizedBox(height: 16.h),
         Row(
           children: [
@@ -247,8 +235,8 @@ class PrayerDetailPage extends StatelessWidget {
     required AppLocalizations l10n,
     required VoidCallback onTap,
   }) {
-    const accentColor = Color(0xFF1B5E20); // Dark Green
-    const textColor = Color(0xFF4E342E); // Dark Brown
+    const accentColor = AppColors.quranGreen; // Dark Green
+    const textColor = AppColors.quranBrown; // Dark Brown
 
     return InkWell(
       onTap: onTap,
@@ -258,10 +246,10 @@ class PrayerDetailPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: accentColor.withOpacity(0.1)),
+          border: Border.all(color: accentColor.withValues(alpha: 0.1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.blueGrey.withOpacity(0.05),
+              color: Colors.blueGrey.withValues(alpha: 0.05),
               offset: const Offset(0, 2),
               blurRadius: 4,
             ),
@@ -414,13 +402,13 @@ class _BlockquoteBuilder extends MarkdownElementBuilder {
                 segmentText,
                 style: currentIsArabic
                     ? GoogleFonts.amiriQuran(
-                        color: textColor.withOpacity(0.9),
+                        color: textColor.withValues(alpha: 0.9),
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w500,
                         height: 1.8,
                       )
                     : TextStyle(
-                        color: textColor.withOpacity(0.8),
+                        color: textColor.withValues(alpha: 0.8),
                         fontSize: 15.sp,
                         fontStyle: FontStyle.italic,
                         fontFamily: GoogleFonts.outfit().fontFamily,
@@ -452,13 +440,13 @@ class _BlockquoteBuilder extends MarkdownElementBuilder {
             segmentText,
             style: currentIsArabic
                 ? GoogleFonts.amiriQuran(
-                    color: textColor.withOpacity(0.9),
+                    color: textColor.withValues(alpha: 0.9),
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w500,
                     height: 1.8,
                   )
                 : TextStyle(
-                    color: textColor.withOpacity(0.8),
+                    color: textColor.withValues(alpha: 0.8),
                     fontSize: 15.sp,
                     fontStyle: FontStyle.italic,
                     fontFamily: GoogleFonts.outfit().fontFamily,
@@ -481,7 +469,7 @@ class _BlockquoteBuilder extends MarkdownElementBuilder {
         bottom: 12.h,
       ),
       decoration: BoxDecoration(
-        color: textColor.withOpacity(0.05),
+        color: textColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8.r),
         border: Border(
           right: hasArabic

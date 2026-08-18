@@ -36,7 +36,7 @@ import '../../../quran/presentation/widgets/draggable_audio_player.dart';
 import '../../domain/services/reminder_service.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../domain/models/reminder_models.dart';
-import '../../../zikir/domain/repositories/zikir_repository.dart';
+import '../../../zikir/domain/usecases/get_zikir_content.dart';
 import '../../../zikir/presentation/pages/dzikir_reading_page.dart';
 
 import '../../../prayer/domain/entities/prayer_time_extension.dart'; // Ext Impt
@@ -45,6 +45,7 @@ import '../../../../core/services/notification_service.dart';
 
 import '../../../article/presentation/bloc/article_bloc.dart';
 import '../../../article/presentation/widgets/article_carousel_widget.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class DashboardPage extends StatefulWidget {
   final int initialIndex;
@@ -56,11 +57,17 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   late int _currentIndex;
+  // Tabs are only ever built once the user actually opens them, instead of
+  // all 5 (each with its own BLoC/init side effects) firing at once on
+  // startup. Once built, a tab stays in the IndexedStack so its state (scroll
+  // position, in-progress audio, etc.) survives switching away and back.
+  late final Set<int> _builtIndices;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    _builtIndices = {widget.initialIndex};
     context.read<SettingsCubit>().loadSettings();
     _requestAllPermissions();
   }
@@ -76,8 +83,16 @@ class _DashboardPageState extends State<DashboardPage> {
     if (widget.initialIndex != oldWidget.initialIndex) {
       setState(() {
         _currentIndex = widget.initialIndex;
+        _builtIndices.add(widget.initialIndex);
       });
     }
+  }
+
+  void _onTabSelected(int index) {
+    setState(() {
+      _currentIndex = index;
+      _builtIndices.add(index);
+    });
   }
 
   Future<void> _requestAllPermissions() async {
@@ -96,7 +111,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, -5),
                       ),
@@ -104,9 +119,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   child: BottomNavigationBar(
                     currentIndex: _currentIndex,
-                    onTap: (index) => setState(() => _currentIndex = index),
-                    backgroundColor: const Color(0xFF1C2A30),
-                    selectedItemColor: const Color(0xFF00E676),
+                    onTap: _onTabSelected,
+                    backgroundColor: AppColors.cardDark,
+                    selectedItemColor: AppColors.accent,
                     unselectedItemColor: Colors.white54,
                     type: BottomNavigationBarType.fixed,
                     showUnselectedLabels: true,
@@ -131,7 +146,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       BottomNavigationBarItem(
                         icon: const Icon(
                           Icons.menu_book_rounded,
-                          color: Color(0xFFFFC107),
+                          color: AppColors.gold,
                         ),
                         label: AppLocalizations.of(context)!.bottomNavQuran,
                       ),
@@ -147,18 +162,28 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 body: Container(
-                  decoration: const BoxDecoration(color: Color(0xFF0F2027)),
+                  decoration: const BoxDecoration(color: AppColors.bgGradientStart),
                   child: SafeArea(
                     child: Stack(
                       children: [
                         IndexedStack(
                           index: _currentIndex,
                           children: [
-                            _buildHomeContent(context),
-                            const PrayerPage(),
-                            QuranPage(isVisible: _currentIndex == 2),
-                            const DzikirPage(),
-                            const SettingsPage(),
+                            _builtIndices.contains(0)
+                                ? _buildHomeContent(context)
+                                : const SizedBox.shrink(),
+                            _builtIndices.contains(1)
+                                ? const PrayerPage()
+                                : const SizedBox.shrink(),
+                            _builtIndices.contains(2)
+                                ? QuranPage(isVisible: _currentIndex == 2)
+                                : const SizedBox.shrink(),
+                            _builtIndices.contains(3)
+                                ? const DzikirPage()
+                                : const SizedBox.shrink(),
+                            _builtIndices.contains(4)
+                                ? const SettingsPage()
+                                : const SizedBox.shrink(),
                           ],
                         ),
                         BlocListener<AudioBloc, AudioState>(
@@ -216,10 +241,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         vertical: 6.h,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                         ),
                       ),
                       child: Row(
@@ -227,7 +252,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         children: [
                           Icon(
                             Icons.location_on,
-                            color: const Color(0xFF00E676),
+                            color: AppColors.accent,
                             size: 14.sp,
                           ),
                           SizedBox(width: 4.w),
@@ -247,7 +272,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           SizedBox(width: 4.w),
                           Icon(
                             Icons.edit_outlined,
-                            color: const Color(0xFF00E676),
+                            color: AppColors.accent,
                             size: 12.sp,
                           ),
                         ],
@@ -283,7 +308,7 @@ class _DashboardPageState extends State<DashboardPage> {
               // Small delay for visual feedback
               await Future.delayed(const Duration(seconds: 1));
             },
-            color: const Color(0xFF00E676),
+            color: AppColors.accent,
             child: SingleChildScrollView(
               physics:
                   const AlwaysScrollableScrollPhysics(), // Force Scrollable
@@ -398,7 +423,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               Orientation.landscape;
 
                           return GestureDetector(
-                              onTap: () => setState(() => _currentIndex = 1),
+                              onTap: () => _onTabSelected(1),
                               child: Container(
                                 height: isLandscape
                                     ? null
@@ -409,8 +434,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                     colors: [
                                       const Color(
                                         0xFF1DE9B6,
-                                      ).withOpacity(0.2), // Teal Accent as Base
-                                      const Color(0xFF1DE9B6).withOpacity(0.05),
+                                      ).withValues(alpha: 0.2), // Teal Accent as Base
+                                      AppColors.accentDark.withValues(alpha: 0.05),
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -420,7 +445,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     BoxShadow(
                                       color: const Color(
                                         0xFF1DE9B6,
-                                      ).withOpacity(0.1),
+                                      ).withValues(alpha: 0.1),
                                       blurRadius: 20,
                                       spreadRadius: -5,
                                       offset: const Offset(0, 8),
@@ -429,7 +454,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   border: Border.all(
                                     color: const Color(
                                       0xFFFFC107,
-                                    ).withOpacity(0.3), // Clearer Gold Border
+                                    ).withValues(alpha: 0.3), // Clearer Gold Border
                                     width: 1,
                                   ),
                                 ),
@@ -444,7 +469,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         size: isLandscape ? 80.sp : 120.sp,
                                         color: const Color(
                                           0xFFFFC107,
-                                        ).withOpacity(0.1), // Gold Icon Tint
+                                        ).withValues(alpha: 0.1), // Gold Icon Tint
                                       ),
                                     ),
                                     Padding(
@@ -549,14 +574,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                                         border: Border.all(
                                                           color: const Color(
                                                             0xFFFFC107,
-                                                          ).withOpacity(0.3),
+                                                          ).withValues(alpha: 0.3),
                                                           width: 1,
                                                         ),
                                                         boxShadow: [
                                                           BoxShadow(
                                                             color: const Color(
                                                               0xFFFFC107,
-                                                            ).withOpacity(0.15),
+                                                            ).withValues(alpha: 0.15),
                                                             blurRadius: 10,
                                                             spreadRadius: -2,
                                                           ),
@@ -672,14 +697,14 @@ class _DashboardPageState extends State<DashboardPage> {
                                                         border: Border.all(
                                                           color: const Color(
                                                             0xFFFFC107,
-                                                          ).withOpacity(0.3),
+                                                          ).withValues(alpha: 0.3),
                                                           width: 1,
                                                         ),
                                                         boxShadow: [
                                                           BoxShadow(
                                                             color: const Color(
                                                               0xFFFFC107,
-                                                            ).withOpacity(0.15),
+                                                            ).withValues(alpha: 0.15),
                                                             blurRadius: 10,
                                                             spreadRadius: -2,
                                                           ),
@@ -725,7 +750,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                     ),
                                                     decoration: BoxDecoration(
                                                       color: Colors.black
-                                                          .withOpacity(0.2),
+                                                          .withValues(alpha: 0.2),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             12.r,
@@ -748,7 +773,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             Padding(
                                                               padding: EdgeInsets.symmetric(vertical: 6.h),
                                                               child: Divider(
-                                                                color: Colors.white.withOpacity(0.1),
+                                                                color: Colors.white.withValues(alpha: 0.1),
                                                                 height: 1,
                                                               ),
                                                             ),
@@ -758,8 +783,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                                             onDzikirTap: (dzikir) async {
                                                               final locale = Localizations.localeOf(context);
                                                               final items = dzikir.type == DzikirType.morning
-                                                                  ? await getIt<ZikirRepository>().getMorningZikir(locale)
-                                                                  : await getIt<ZikirRepository>().getEveningZikir(locale);
+                                                                  ? await getIt<GetZikirContent>()(ZikirCategory.morning, locale)
+                                                                  : await getIt<GetZikirContent>()(ZikirCategory.evening, locale);
                                                               final title = dzikir.type == DzikirType.morning
                                                                   ? l10n.dzikirMorningTitle
                                                                   : l10n.dzikirEveningTitle;
@@ -897,7 +922,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       height: 220.h,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: const Center(child: IslamicLoadingIndicator(size: 64)),
@@ -908,9 +933,9 @@ class _DashboardPageState extends State<DashboardPage> {
     return Container(
       height: 220.h,
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
       ),
       child: Center(
         child: Text(msg, style: const TextStyle(color: Colors.white)),
@@ -954,8 +979,8 @@ class _DashboardPageState extends State<DashboardPage> {
         borderRadius: BorderRadius.circular(24.r),
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF1DE9B6).withOpacity(0.2), // Teal Accent as Base
-            const Color(0xFF1DE9B6).withOpacity(0.05),
+            AppColors.accentDark.withValues(alpha: 0.2), // Teal Accent as Base
+            AppColors.accentDark.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -963,14 +988,14 @@ class _DashboardPageState extends State<DashboardPage> {
         boxShadow: [
           // Soft Teal Glow
           BoxShadow(
-            color: const Color(0xFF1DE9B6).withOpacity(0.1),
+            color: AppColors.accentDark.withValues(alpha: 0.1),
             blurRadius: 20,
             spreadRadius: -5,
             offset: const Offset(0, 8),
           ),
         ],
         border: Border.all(
-          color: const Color(0xFFFFC107).withOpacity(0.3),
+          color: AppColors.gold.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -988,7 +1013,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 size: isLandscape ? 80.sp : 140.sp,
                 color: const Color(
                   0xFFFFC107,
-                ).withOpacity(0.1), // Gold Icon Tint
+                ).withValues(alpha: 0.1), // Gold Icon Tint
               ),
             ),
 
@@ -1091,7 +1116,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               BoxShadow(
                                 color: const Color(
                                   0xFFFFC107,
-                                ).withOpacity(0.2), // Gold Glow
+                                ).withValues(alpha: 0.2), // Gold Glow
                                 blurRadius: 10,
                                 spreadRadius: -2,
                               ),
@@ -1104,7 +1129,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 value: 1.0,
                                 strokeWidth: 4.w,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white.withOpacity(0.1),
+                                  Colors.white.withValues(alpha: 0.1),
                                 ),
                               ),
                               CircularProgressIndicator(
@@ -1112,7 +1137,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 strokeWidth: 4.w,
                                 strokeCap: StrokeCap.round,
                                 valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Color(0xFFFFC107), // Gold Progress
+                                  AppColors.gold, // Gold Progress
                                 ),
                                 backgroundColor: Colors.transparent,
                               ),
@@ -1260,7 +1285,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     value: 1.0,
                                     strokeWidth: 8.w,
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white.withOpacity(0.1),
+                                      Colors.white.withValues(alpha: 0.1),
                                     ),
                                   ),
                                 ),
@@ -1273,7 +1298,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       BoxShadow(
                                         color: const Color(
                                           0xFFFFC107,
-                                        ).withOpacity(0.2), // Gold Glow
+                                        ).withValues(alpha: 0.2), // Gold Glow
                                         blurRadius: 15,
                                         spreadRadius: -2,
                                       ),
@@ -1285,7 +1310,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     strokeCap: StrokeCap.round,
                                     valueColor:
                                         const AlwaysStoppedAnimation<Color>(
-                                          Color(0xFFFFC107), // Gold Progress
+                                          AppColors.gold, // Gold Progress
                                         ),
                                     backgroundColor: Colors.transparent,
                                   ),
@@ -1339,15 +1364,15 @@ class _DashboardPageState extends State<DashboardPage> {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(20.r),
-        splashColor: color.withOpacity(0.3),
-        highlightColor: color.withOpacity(0.1),
+        splashColor: color.withValues(alpha: 0.3),
+        highlightColor: color.withValues(alpha: 0.1),
         child: Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                const Color(0xFF1C2A30).withOpacity(0.95),
-                const Color(0xFF243742).withOpacity(0.85),
+                AppColors.cardDark.withValues(alpha: 0.95),
+                const Color(0xFF243742).withValues(alpha: 0.85),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -1355,19 +1380,19 @@ class _DashboardPageState extends State<DashboardPage> {
             borderRadius: BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 blurRadius: 15,
                 offset: const Offset(0, 6),
               ),
               BoxShadow(
-                color: color.withOpacity(0.15),
+                color: color.withValues(alpha: 0.15),
                 blurRadius: 25,
                 spreadRadius: -5,
                 offset: const Offset(0, 8),
               ),
             ],
             border: Border.all(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withValues(alpha: 0.1),
               width: 1.5,
             ),
           ),
@@ -1384,20 +1409,20 @@ class _DashboardPageState extends State<DashboardPage> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [color.withOpacity(0.15), color.withOpacity(0.05)],
+                    colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)],
                   ),
                   // Thin, Subtle Border
-                  border: Border.all(color: color.withOpacity(0.3), width: 1.5),
+                  border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
                   // Soft, Diffused Shadows
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(0.2),
+                      color: color.withValues(alpha: 0.2),
                       blurRadius: 15,
                       spreadRadius: -2,
                       offset: const Offset(0, 8),
                     ),
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -1406,7 +1431,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: Center(
                   child: Icon(
                     icon,
-                    color: color.withOpacity(0.9), // Slightly softer icon color
+                    color: color.withValues(alpha: 0.9), // Slightly softer icon color
                     size: 28.sp,
                   ),
                 ),
@@ -1425,7 +1450,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   height: 1.2,
                   shadows: [
                     Shadow(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
                     ),
@@ -1556,7 +1581,7 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      backgroundColor: const Color(0xFF1E2F36),
+      backgroundColor: AppColors.cardDarker,
       title: Row(
         children: [
           Expanded(
@@ -1574,10 +1599,10 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
               Navigator.pop(context);
             },
             icon: const Icon(Icons.my_location),
-            color: const Color(0xFF00E676),
+            color: AppColors.accent,
             tooltip: l10n.useCurrentLocation,
             style: IconButton.styleFrom(
-              backgroundColor: const Color(0xFF00E676).withOpacity(0.1),
+              backgroundColor: AppColors.accent.withValues(alpha: 0.1),
             ),
           ),
         ],
@@ -1598,14 +1623,14 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
                   borderSide: BorderSide(color: Colors.white54),
                 ),
                 focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFF00E676)),
+                  borderSide: BorderSide(color: AppColors.accent),
                 ),
               ),
             ),
             SizedBox(height: 16.h),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1B5E20),
+                backgroundColor: AppColors.quranGreen,
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
@@ -1625,7 +1650,7 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
                       height: 100.h,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF00E676),
+                          color: AppColors.accent,
                         ),
                       ),
                     );
@@ -1641,7 +1666,7 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
                           return ListTile(
                             leading: const Icon(
                               Icons.location_on,
-                              color: Color(0xFF00E676),
+                              color: AppColors.accent,
                             ),
                             title: Text(
                               city.name,
@@ -1781,18 +1806,18 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF00E676).withOpacity(0.15),
+          color: AppColors.accent.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: const Color(0xFF00E676).withOpacity(0.3)),
+          border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.history, size: 14.sp, color: const Color(0xFF00E676)),
+            Icon(Icons.history, size: 14.sp, color: AppColors.accent),
             SizedBox(width: 4.w),
             Text(
               cityName,
-              style: TextStyle(fontSize: 12.sp, color: const Color(0xFF00E676)),
+              style: TextStyle(fontSize: 12.sp, color: AppColors.accent),
             ),
           ],
         ),
@@ -1806,7 +1831,7 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.arrow_right, size: 16.sp, color: const Color(0xFF00E676)),
+          Icon(Icons.arrow_right, size: 16.sp, color: AppColors.accent),
           SizedBox(width: 4.w),
           Text(
             text,
@@ -1826,9 +1851,9 @@ class __CitySearchDialogState extends State<_CitySearchDialog> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
         ),
         child: Text(
           cityName,

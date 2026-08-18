@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import '../config/app_urls.dart';
 
 // --- SSL Pinning: Let's Encrypt E7 Intermediate CA ---
@@ -42,9 +41,7 @@ YRmT7/OXpmOH/FVLtwS+8ng1cAmpCujPwteJZNcDG0sF2n/sc0+SQf49fdyUK0ty
 +VUwFj9tmWxyR/M=
 -----END CERTIFICATE-----''';
 
-@module
 abstract class NetworkModule {
-  @lazySingleton
   Dio get dio {
     final dio = Dio(
       BaseOptions(

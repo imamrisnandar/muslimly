@@ -9,6 +9,7 @@ import '../../data/models/wudhu_model.dart';
 import '../bloc/wudhu_cubit.dart';
 import '../bloc/wudhu_state.dart';
 import 'wudhu_detail_page.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class WudhuGuidePage extends StatelessWidget {
   const WudhuGuidePage({super.key});
@@ -55,7 +56,7 @@ class _WudhuGuideViewState extends State<_WudhuGuideView> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C2A30),
+      backgroundColor: AppColors.cardDark,
       appBar: AppTransparentAppBar(title: l10n.wudhuGuideTitle),
       body: BlocBuilder<WudhuCubit, WudhuState>(
         builder: (context, state) {
@@ -101,7 +102,7 @@ class _WudhuGuideViewState extends State<_WudhuGuideView> {
                           )
                         : null,
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
+                    fillColor: Colors.white.withValues(alpha: 0.05),
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
@@ -146,13 +147,13 @@ class _WudhuGuideViewState extends State<_WudhuGuideView> {
   }
 
   Widget _buildChapterCard(BuildContext context, WudhuModel item, List<WudhuModel> allItems) {
-    const accentColor = Color(0xFF00E676);
+    const accentColor = AppColors.accent;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -172,9 +173,9 @@ class _WudhuGuideViewState extends State<_WudhuGuideView> {
                   width: 36.w,
                   height: 36.w,
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.1),
+                    color: accentColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(color: accentColor.withOpacity(0.3)),
+                    border: Border.all(color: accentColor.withValues(alpha: 0.3)),
                   ),
                   child: Center(
                     child: Text(

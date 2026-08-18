@@ -1,5 +1,4 @@
 import 'package:workmanager/workmanager.dart';
-import 'package:injectable/injectable.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/app_logger.dart';
 import 'dart:ui'; // for Locale
@@ -10,7 +9,6 @@ import '../../l10n/generated/app_localizations.dart'; // Localization
 import 'notification_service.dart';
 // Actually we need to re-initialize DI in background.
 
-@lazySingleton
 class BackgroundService {
   void initialize() {
     Workmanager().initialize(callbackDispatcher, isInDebugMode: kDebugMode);

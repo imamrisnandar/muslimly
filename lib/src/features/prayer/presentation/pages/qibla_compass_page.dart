@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:async'; // For Timer
 import 'package:flutter/material.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 import 'package:flutter/services.dart'; // For Haptic Feedback
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../../../core/utils/qibla_util.dart'; // Import utility we just made
+import '../../../../core/theme/app_colors.dart';
 
 class QiblaCompassPage extends StatefulWidget {
   const QiblaCompassPage({super.key});
@@ -69,19 +71,11 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: AppTransparentAppBar(
+        title: AppLocalizations.of(context)!.qiblaCompass,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => context.pop(),
-        ),
-        title: Text(
-          AppLocalizations.of(context)!.qiblaCompass,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
         ),
         centerTitle: true,
       ),
@@ -96,9 +90,9 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF0F2027),
-                  Color(0xFF203A43),
-                  Color(0xFF2C5364),
+                  AppColors.bgGradientStart,
+                  AppColors.bgGradientMid,
+                  AppColors.bgGradientEnd,
                 ],
               ),
             ),
@@ -206,10 +200,10 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
         // Update status based on stability
         if (_isStableAligned) {
           statusText = l10n.qiblaFacing;
-          statusColor = const Color(0xFF00E676); // Green
+          statusColor = AppColors.accent; // Green
         } else {
           statusText = l10n.qiblaLocating;
-          statusColor = const Color(0xFFFFB74D); // Orange (transitioning)
+          statusColor = AppColors.goldPale; // Orange (transitioning)
         }
       } else {
         // Exited alignment - reset everything
@@ -250,10 +244,10 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                     vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00E676).withOpacity(0.2),
+                    color: AppColors.accent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
-                      color: const Color(0xFF00E676),
+                      color: AppColors.accent,
                       width: 2,
                     ),
                   ),
@@ -262,14 +256,14 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                     children: [
                       Icon(
                         Icons.check_circle,
-                        color: const Color(0xFF00E676),
+                        color: AppColors.accent,
                         size: 20.sp,
                       ),
                       SizedBox(width: 8.w),
                       Text(
                         l10n.qiblaAligned,
                         style: TextStyle(
-                          color: const Color(0xFF00E676),
+                          color: AppColors.accent,
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.5,
@@ -326,17 +320,17 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: [
-                            statusColor.withOpacity(0.05),
-                            statusColor.withOpacity(0.15),
+                            statusColor.withValues(alpha: 0.05),
+                            statusColor.withValues(alpha: 0.15),
                           ],
                         ),
                         border: Border.all(
-                          color: statusColor.withOpacity(0.3),
+                          color: statusColor.withValues(alpha: 0.3),
                           width: 2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: statusColor.withOpacity(
+                            color: statusColor.withValues(alpha: 
                               _isStableAligned ? 0.5 : 0.1,
                             ),
                             blurRadius: _isStableAligned ? 60 : 20,
@@ -382,7 +376,7 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: statusColor.withOpacity(0.5),
+                      color: statusColor.withValues(alpha: 0.5),
                       blurRadius: 10,
                     ),
                   ],
@@ -394,7 +388,7 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                 top: 0,
                 child: Icon(
                   Icons.arrow_drop_down,
-                  color: Colors.white.withOpacity(0.8),
+                  color: Colors.white.withValues(alpha: 0.8),
                   size: 50.sp,
                 ),
               ),
@@ -427,7 +421,7 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
             _isStableAligned ? '${l10n.qiblaAligned} ✓' : l10n.qiblaAlignArrow,
             style: TextStyle(
               color: _isStableAligned
-                  ? const Color(0xFF00E676)
+                  ? AppColors.accent
                   : Colors.white54,
               fontSize: _isStableAligned ? 16.sp : 14.sp,
               fontWeight: _isStableAligned
@@ -466,7 +460,7 @@ class QiblaNeedleWidget extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.6),
+                color: color.withValues(alpha: 0.6),
                 blurRadius: isAligned ? 20 : 10,
                 spreadRadius: 2,
               ),
@@ -495,7 +489,7 @@ class CompassDialPainter extends CustomPainter {
     final radius = size.width / 2;
 
     final paintTick = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
@@ -516,7 +510,7 @@ class CompassDialPainter extends CustomPainter {
           : (isMinor ? outerRadius - 10 : outerRadius - 5);
 
       if (isMajor || isMinor) {
-        paintTick.color = isMajor ? color : color.withOpacity(0.4);
+        paintTick.color = isMajor ? color : color.withValues(alpha: 0.4);
         paintTick.strokeWidth = isMajor ? 3 : (isMinor ? 2 : 1);
 
         final p1 = Offset(

@@ -6,6 +6,7 @@ import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../bloc/auth_bloc.dart';
 import '../../../../core/utils/custom_snackbar.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -38,9 +39,9 @@ class _LoginPageState extends State<LoginPage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF0F2027),
-              Color(0xFF203A43),
-              Color(0xFF2C5364),
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
             ],
           ),
         ),
@@ -70,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Container(
                   padding: EdgeInsets.all(24.w),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1C2A30).withValues(alpha: 0.9),
+                    color: AppColors.cardDark.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24.r),
                     border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     boxShadow: [
@@ -179,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: Text(
                             l10n.loginForgotPassword,
-                            style: const TextStyle(color: Color(0xFF00E676)),
+                            style: const TextStyle(color: AppColors.accent),
                           ),
                         ),
                       ),
@@ -202,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF00E676),
+                              backgroundColor: AppColors.accent,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),

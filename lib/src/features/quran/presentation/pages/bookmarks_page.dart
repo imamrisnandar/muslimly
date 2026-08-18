@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../../../core/utils/surah_names.dart';
 import '../../domain/entities/surah.dart';
@@ -17,6 +18,7 @@ import '../bloc/reading/reading_event.dart';
 import '../bloc/reading/reading_state.dart';
 
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class BookmarksPage extends StatelessWidget {
   const BookmarksPage({super.key});
@@ -57,28 +59,18 @@ class BookmarksPage extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF0F2027),
-                    Color(0xFF203A43),
-                    Color(0xFF2C5364),
+                    AppColors.bgGradientStart,
+                    AppColors.bgGradientMid,
+                    AppColors.bgGradientEnd,
                   ],
                 ),
               ),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
+                appBar: AppTransparentAppBar(
+                  title: AppLocalizations.of(context)!.lblBookmarks,
                   centerTitle: true,
-                  leading: const BackButton(color: Colors.white),
-                  title: Text(
-                    AppLocalizations.of(context)!.lblBookmarks,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Outfit',
-                    ),
-                  ),
+                  titleFontSize: 20.sp,
                   bottom: PreferredSize(
                     preferredSize: Size.fromHeight(60.h),
                     child: Container(
@@ -88,19 +80,19 @@ class BookmarksPage extends StatelessWidget {
                       ),
                       padding: EdgeInsets.all(4.w),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(50.r),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                         ),
                       ),
                       child: TabBar(
                         indicator: BoxDecoration(
                           borderRadius: BorderRadius.circular(40.r),
-                          color: const Color(0xFF00E676),
+                          color: AppColors.accent,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF00E676).withOpacity(0.3),
+                              color: AppColors.accent.withValues(alpha: 0.3),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -249,7 +241,7 @@ class BookmarksPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(16.w), // Even smaller padding
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -285,7 +277,7 @@ class BookmarksPage extends StatelessWidget {
                   context.go('/dashboard?index=2');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00E676),
+                  backgroundColor: AppColors.accent,
                   foregroundColor: Colors.black,
                   padding: EdgeInsets.symmetric(
                     horizontal: 20.w,
@@ -322,12 +314,12 @@ class BookmarksPage extends StatelessWidget {
                   padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
                   child: Row(
                     children: [
-                      Icon(Icons.history, color: const Color(0xFF00E676), size: 18.sp),
+                      Icon(Icons.history, color: AppColors.accent, size: 18.sp),
                       SizedBox(width: 8.w),
                       Text(
                         AppLocalizations.of(context)!.cardContinueReading,
                         style: TextStyle(
-                          color: const Color(0xFF00E676),
+                          color: AppColors.accent,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.0,
@@ -382,10 +374,10 @@ class BookmarksPage extends StatelessWidget {
           return Container(
             margin: EdgeInsets.only(bottom: 12.h),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03), // Lighter/Darker than hero
+              color: Colors.white.withValues(alpha: 0.03), // Lighter/Darker than hero
               borderRadius: BorderRadius.circular(16.r),
               border: Border.all(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
               ), // Subtle border
             ),
             child: Material(
@@ -442,7 +434,7 @@ class BookmarksPage extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(10.w),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12.r),
                         ),
                         child: Icon(
@@ -465,7 +457,7 @@ class BookmarksPage extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                                 fontFamily: 'Outfit',
                               ),
                             ),
@@ -545,14 +537,14 @@ class BookmarksPage extends StatelessWidget {
       decoration: BoxDecoration(
         // Premium Gradient
         gradient: const LinearGradient(
-          colors: [Color(0xFF00BFA5), Color(0xFF00E676)], // Teal to Green
+          colors: [Color(0xFF00BFA5), AppColors.accent], // Teal to Green
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00E676).withOpacity(0.3),
+            color: AppColors.accent.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -613,7 +605,7 @@ class BookmarksPage extends StatelessWidget {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Text(
@@ -649,7 +641,7 @@ class BookmarksPage extends StatelessWidget {
                             ? "${AppLocalizations.of(context)!.lblAyah} ${lastRead.ayahNumber}"
                             : "${AppLocalizations.of(context)!.lblPage} ${lastRead.pageNumber}",
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -666,7 +658,7 @@ class BookmarksPage extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),

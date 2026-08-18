@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:injectable/injectable.dart';
 import '../models/tajweed_model.dart';
 
 abstract class TajweedRepository {
   Future<List<TajweedCategory>> getTajweedContent(String languageCode);
 }
 
-@LazySingleton(as: TajweedRepository)
 class TajweedRepositoryImpl implements TajweedRepository {
   @override
   Future<List<TajweedCategory>> getTajweedContent(String languageCode) async {

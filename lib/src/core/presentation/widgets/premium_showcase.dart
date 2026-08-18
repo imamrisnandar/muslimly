@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:showcaseview/showcaseview.dart';
+import '../../theme/app_colors.dart';
 
 class PremiumShowcase extends StatelessWidget {
   final GlobalKey globalKey;
@@ -49,7 +50,7 @@ class PremiumShowcase extends StatelessWidget {
       scope: scope,
       targetShapeBorder: targetShapeBorder ?? const CircleBorder(),
       targetPadding: targetPadding ?? EdgeInsets.zero,
-      overlayColor: Colors.black.withOpacity(0.85),
+      overlayColor: Colors.black.withValues(alpha: 0.85),
       container: _buildTooltip(context),
       child: child,
     );
@@ -63,17 +64,17 @@ class PremiumShowcase extends StatelessWidget {
         color: const Color(0xFF1E2C34), // Dark Grey/Blue
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: const Color(0xFF00E676).withOpacity(0.3),
+          color: AppColors.accent.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00E676).withOpacity(0.15),
+            color: AppColors.accent.withValues(alpha: 0.15),
             blurRadius: 20,
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -89,12 +90,12 @@ class PremiumShowcase extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(6.w),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00E676).withOpacity(0.2),
+                  color: AppColors.accent.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.info_outline,
-                  color: const Color(0xFF00E676),
+                  color: AppColors.accent,
                   size: 16.sp,
                 ),
               ),
@@ -138,7 +139,7 @@ class PremiumShowcase extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00E676),
+                  color: AppColors.accent,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(

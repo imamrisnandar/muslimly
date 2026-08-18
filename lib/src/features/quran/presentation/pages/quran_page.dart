@@ -16,6 +16,7 @@ import '../bloc/audio_event.dart';
 import '../bloc/audio_state.dart';
 import '../widgets/reciter_selector_bottom_sheet.dart';
 import '../widgets/quran_navigation_bottom_sheet.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class QuranPage extends StatefulWidget {
   final bool isVisible;
@@ -120,7 +121,7 @@ class _QuranPageState extends State<QuranPage> {
                                         (_searchQuery.isNotEmpty ? 1 : 0),
                                     separatorBuilder: (context, index) =>
                                         Divider(
-                                          color: Colors.white.withOpacity(0.05),
+                                          color: Colors.white.withValues(alpha: 0.05),
                                         ),
                                     itemBuilder: (context, index) {
                                       if (_searchQuery.isNotEmpty) {
@@ -147,13 +148,13 @@ class _QuranPageState extends State<QuranPage> {
                                               decoration: BoxDecoration(
                                                 color: const Color(
                                                   0xFF00E676,
-                                                ).withOpacity(0.1),
+                                                ).withValues(alpha: 0.1),
                                                 borderRadius:
                                                     BorderRadius.circular(12.r),
                                                 border: Border.all(
                                                   color: const Color(
                                                     0xFF00E676,
-                                                  ).withOpacity(0.3),
+                                                  ).withValues(alpha: 0.3),
                                                 ),
                                               ),
                                               child: Row(
@@ -219,10 +220,10 @@ class _QuranPageState extends State<QuranPage> {
                                           final bgColor = isActive
                                               ? const Color(
                                                   0xFF00E676,
-                                                ).withOpacity(0.1)
+                                                ).withValues(alpha: 0.1)
                                               : Colors.transparent;
                                           final borderColor = isActive
-                                              ? const Color(0xFF00E676)
+                                              ? AppColors.accent
                                               : Colors.transparent;
 
                                           Widget item = Container(
@@ -262,7 +263,7 @@ class _QuranPageState extends State<QuranPage> {
                                                                 0xFF00E676,
                                                               )
                                                             : Colors.white
-                                                                  .withOpacity(
+                                                                  .withValues(alpha: 
                                                                     0.05,
                                                                   ),
                                                         shape: BoxShape.circle,
@@ -330,7 +331,7 @@ class _QuranPageState extends State<QuranPage> {
                                                                 decoration: BoxDecoration(
                                                                   color: Colors
                                                                       .white
-                                                                      .withOpacity(
+                                                                      .withValues(alpha: 
                                                                         0.1,
                                                                       ),
                                                                   borderRadius:
@@ -500,7 +501,7 @@ class _QuranPageState extends State<QuranPage> {
               },
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 hintText: AppLocalizations.of(context)!.searchSurahHint,
                 hintStyle: const TextStyle(color: Colors.white54),
                 prefixIcon: const Icon(Icons.search, color: Colors.white54),
@@ -534,7 +535,7 @@ class _QuranPageState extends State<QuranPage> {
                       },
                       icon: Icon(
                         Icons.headphones,
-                        color: const Color(0xFF00E676),
+                        color: AppColors.accent,
                         size: 18.sp,
                       ),
                       tooltip: 'Pilih Qori',
@@ -593,7 +594,7 @@ class _QuranPageState extends State<QuranPage> {
                   },
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
+                    fillColor: Colors.white.withValues(alpha: 0.05),
                     hintText: AppLocalizations.of(context)!.searchSurahHint,
                     hintStyle: const TextStyle(color: Colors.white54),
                     prefixIcon: const Icon(Icons.search, color: Colors.white54),
@@ -630,7 +631,7 @@ class _QuranPageState extends State<QuranPage> {
                           },
                           icon: Icon(
                             Icons.headphones,
-                            color: const Color(0xFF00E676),
+                            color: AppColors.accent,
                             size: 18.sp, // Reduced size
                           ),
                           tooltip: 'Pilih Qori',
@@ -692,7 +693,7 @@ class _QuranPageState extends State<QuranPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // Allow full height for landscape
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: AppColors.bgGradientStart,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -765,13 +766,13 @@ class _QuranPageState extends State<QuranPage> {
       child: Container(
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: Colors.white10),
         ),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xFF00E676), size: 28.sp),
+            Icon(icon, color: AppColors.accent, size: 28.sp),
             SizedBox(width: 16.w),
             Expanded(
               child: Column(

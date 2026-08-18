@@ -1,12 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../../domain/repositories/translation_repository.dart';
 import '../../../domain/entities/word.dart';
 import 'translation_event.dart';
 import 'translation_state.dart';
 
-@injectable
 class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
   final TranslationRepository _repository;
 

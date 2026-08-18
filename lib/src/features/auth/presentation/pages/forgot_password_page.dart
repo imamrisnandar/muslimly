@@ -7,6 +7,7 @@ import '../../../../core/widgets/islamic_loading_indicator.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/utils/custom_snackbar.dart';
 import '../bloc/forgot_password_bloc.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -35,7 +36,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
           ),
         ),
         child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
@@ -58,7 +59,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 child: Container(
                   padding: EdgeInsets.all(24.w),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1C2A30).withValues(alpha: 0.9),
+                    color: AppColors.cardDark.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24.r),
                     border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     boxShadow: [
@@ -73,7 +74,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.lock_reset, color: const Color(0xFF00E676), size: 48.sp),
+                      Icon(Icons.lock_reset, color: AppColors.accent, size: 48.sp),
                       SizedBox(height: 16.h),
                       Text(
                         l10n.forgotPasswordTitle,
@@ -131,7 +132,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF00E676),
+                              backgroundColor: AppColors.accent,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),
@@ -150,7 +151,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           onPressed: () => context.go('/login'),
                           child: Text(
                             l10n.forgotPasswordBackToLogin,
-                            style: const TextStyle(color: Color(0xFF00E676)),
+                            style: const TextStyle(color: AppColors.accent),
                           ),
                         ),
                       ),

@@ -1,9 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:injectable/injectable.dart';
 import '../entities/search_response.dart';
 import '../repositories/quran_repository.dart';
 
-@lazySingleton
 class SearchAyahs {
   final QuranRepository repository;
 

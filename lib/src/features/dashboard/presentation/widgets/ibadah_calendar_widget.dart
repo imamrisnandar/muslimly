@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class IbadahCalendarWidget extends StatefulWidget {
   final FastingService fastingService;
@@ -201,16 +202,16 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
       child: Container(
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF00E676).withOpacity(0.2)
-              : const Color(0xFF1C2A30).withOpacity(0.5),
+              ? AppColors.accent.withValues(alpha: 0.2)
+              : AppColors.cardDark.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(16.r),
           border: isToday
-              ? Border.all(color: const Color(0xFF00E676), width: 1.5)
-              : Border.all(color: Colors.white.withOpacity(0.05), width: 0.5),
+              ? Border.all(color: AppColors.accent, width: 1.5)
+              : Border.all(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFF00E676).withOpacity(0.1),
+                    color: AppColors.accent.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -232,7 +233,7 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
                 Text(
                   "${date.day}",
                   style: TextStyle(
-                    color: isSelected ? const Color(0xFF00E676) : Colors.white,
+                    color: isSelected ? AppColors.accent : Colors.white,
                     fontSize: daySize,
                     fontWeight: FontWeight.bold,
                     height: 1.0, // Reset height for natural spacing
@@ -266,9 +267,9 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
 
   Widget _buildFastingDot(FastingType type) {
     Color? color;
-    if (type == FastingType.wajib) color = const Color(0xFFFFC107);
-    if (type == FastingType.sunnah) color = const Color(0xFF00E676);
-    if (type == FastingType.haram) color = Colors.redAccent.withOpacity(0.7);
+    if (type == FastingType.wajib) color = AppColors.gold;
+    if (type == FastingType.sunnah) color = AppColors.accent;
+    if (type == FastingType.haram) color = Colors.redAccent.withValues(alpha: 0.7);
 
     if (color == null) return const SizedBox.shrink();
 
@@ -288,25 +289,25 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
     );
     final fastingType = widget.fastingService.getFastingType(_selectedDate);
 
-    Color borderColor = const Color(0xFF1B5E20).withOpacity(0.1);
+    Color borderColor = AppColors.quranGreen.withValues(alpha: 0.1);
 
     if (fastingType == FastingType.wajib) {
-      borderColor = const Color(0xFFFFC107);
+      borderColor = AppColors.gold;
     } else if (fastingType == FastingType.sunnah) {
-      borderColor = const Color(0xFF00E676);
+      borderColor = AppColors.accent;
     } else if (fastingType == FastingType.haram) {
-      borderColor = Colors.redAccent.withOpacity(0.5);
+      borderColor = Colors.redAccent.withValues(alpha: 0.5);
     }
 
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C2A30),
+        color: AppColors.cardDark,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: borderColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

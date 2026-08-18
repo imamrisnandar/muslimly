@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import '../../domain/usecases/get_wudhu_content.dart';
 import 'wudhu_state.dart';
 
-@injectable
 class WudhuCubit extends Cubit<WudhuState> {
   final GetWudhuContent _getWudhuContent;
 

@@ -11,6 +11,9 @@ class AppTransparentAppBar extends StatelessWidget
   final Color iconColor;
   final VoidCallback? onBack;
   final Widget? leading;
+  final bool? centerTitle;
+  final PreferredSizeWidget? bottom;
+  final double? titleFontSize;
 
   const AppTransparentAppBar({
     super.key,
@@ -20,6 +23,9 @@ class AppTransparentAppBar extends StatelessWidget
     this.iconColor = Colors.white,
     this.onBack,
     this.leading,
+    this.centerTitle,
+    this.bottom,
+    this.titleFontSize,
   });
 
   @override
@@ -27,13 +33,14 @@ class AppTransparentAppBar extends StatelessWidget
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
+      centerTitle: centerTitle,
       title: Text(
         title,
         style: TextStyle(
           color: titleColor,
           fontWeight: FontWeight.bold,
           fontFamily: GoogleFonts.outfit().fontFamily,
-          fontSize: 18.sp,
+          fontSize: titleFontSize ?? 18.sp,
         ),
       ),
       leading: leading ??
@@ -42,9 +49,12 @@ class AppTransparentAppBar extends StatelessWidget
             onPressed: onBack ?? () => context.pop(),
           ),
       actions: actions,
+      bottom: bottom,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => Size.fromHeight(
+        kToolbarHeight + (bottom?.preferredSize.height ?? 0),
+      );
 }

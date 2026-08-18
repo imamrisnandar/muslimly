@@ -18,6 +18,8 @@ import '../../../../core/utils/custom_snackbar.dart';
 import '../../../../core/utils/password_validator.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -30,11 +32,11 @@ class SettingsPage extends StatelessWidget {
       builder: (context) {
         return Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1E2F36),
+            color: AppColors.cardDarker,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withValues(alpha: 0.4),
                 blurRadius: 20,
                 offset: const Offset(0, -5),
               ),
@@ -136,11 +138,11 @@ class SettingsPage extends StatelessWidget {
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF00E676).withOpacity(0.15)
-              : Colors.white.withOpacity(0.05),
+              ? AppColors.accent.withValues(alpha: 0.15)
+              : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
-            color: isSelected ? const Color(0xFF00E676) : Colors.white10,
+            color: isSelected ? AppColors.accent : Colors.white10,
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -149,7 +151,7 @@ class SettingsPage extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Text(flag, style: TextStyle(fontSize: 24.sp)),
@@ -186,12 +188,12 @@ class SettingsPage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(4.w),
                 decoration: const BoxDecoration(
-                  color: Color(0xFF00E676),
+                  color: AppColors.accent,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.check,
-                  color: const Color(0xFF1E2F36),
+                  color: AppColors.cardDarker,
                   size: 16.sp,
                 ),
               ),
@@ -210,7 +212,7 @@ class SettingsPage extends StatelessWidget {
       builder: (context) {
         final l10n = AppLocalizations.of(context)!;
         return Dialog(
-          backgroundColor: const Color(0xFF1E2F36),
+          backgroundColor: AppColors.cardDarker,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
           ),
@@ -232,7 +234,7 @@ class SettingsPage extends StatelessWidget {
                   SizedBox(height: 24.h),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(color: Colors.white10),
                     ),
@@ -242,7 +244,7 @@ class SettingsPage extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: l10n.nameInputHint,
                         hintStyle: TextStyle(
-                          color: Colors.white.withOpacity(0.3),
+                          color: Colors.white.withValues(alpha: 0.3),
                         ),
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(
@@ -290,7 +292,7 @@ class SettingsPage extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00E676),
+                            backgroundColor: AppColors.accent,
                             padding: EdgeInsets.symmetric(vertical: 12.h),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -315,7 +317,7 @@ class SettingsPage extends StatelessWidget {
           ),
         );
       },
-    );
+    ).then((_) => controller.dispose());
   }
 
   void _showEditUsernameSheet(BuildContext context, String userId, String currentUsername, String token) {
@@ -327,7 +329,7 @@ class SettingsPage extends StatelessWidget {
         bool isLoading = false;
         return StatefulBuilder(
           builder: (ctx, setState) => Dialog(
-            backgroundColor: const Color(0xFF1E2F36),
+            backgroundColor: AppColors.cardDarker,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
             child: Padding(
               padding: EdgeInsets.all(24.w),
@@ -390,7 +392,7 @@ class SettingsPage extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00E676),
+                            backgroundColor: AppColors.accent,
                             padding: EdgeInsets.symmetric(vertical: 12.h),
                             elevation: 0,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
@@ -408,7 +410,7 @@ class SettingsPage extends StatelessWidget {
           ),
         );
       },
-    );
+    ).then((_) => controller.dispose());
   }
 
   void _showChangePasswordSheet(BuildContext context, String token) {
@@ -425,7 +427,7 @@ class SettingsPage extends StatelessWidget {
         bool showConfirm = false;
         return StatefulBuilder(
           builder: (ctx, setState) => Dialog(
-            backgroundColor: const Color(0xFF1E2F36),
+            backgroundColor: AppColors.cardDarker,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
             child: SingleChildScrollView(
               padding: EdgeInsets.all(24.w),
@@ -490,7 +492,7 @@ class SettingsPage extends StatelessWidget {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00E676),
+                            backgroundColor: AppColors.accent,
                             padding: EdgeInsets.symmetric(vertical: 12.h),
                             elevation: 0,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
@@ -508,7 +510,11 @@ class SettingsPage extends StatelessWidget {
           ),
         );
       },
-    );
+    ).then((_) {
+      currentCtrl.dispose();
+      newCtrl.dispose();
+      confirmCtrl.dispose();
+    });
   }
 
   Widget _passwordField(String label, String hint, TextEditingController ctrl, bool visible, VoidCallback onToggle) {
@@ -567,7 +573,7 @@ class SettingsPage extends StatelessWidget {
             padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
             child: Container(
             decoration: BoxDecoration(
-              color: const Color(0xFF1E2F36),
+              color: AppColors.cardDarker,
               borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
             ),
             padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 32.h),
@@ -624,7 +630,7 @@ class SettingsPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: selected ? const Color(0xFF00E676) : Colors.white38,
+                                  color: selected ? AppColors.accent : Colors.white38,
                                   width: 2,
                                 ),
                               ),
@@ -635,7 +641,7 @@ class SettingsPage extends StatelessWidget {
                                         height: 10.w,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Color(0xFF00E676),
+                                          color: AppColors.accent,
                                         ),
                                       ),
                                     )
@@ -670,7 +676,7 @@ class SettingsPage extends StatelessWidget {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.r),
-                          borderSide: const BorderSide(color: Color(0xFF00E676)),
+                          borderSide: const BorderSide(color: AppColors.accent),
                         ),
                         contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
                       ),
@@ -693,7 +699,7 @@ class SettingsPage extends StatelessWidget {
                         final confirmed = await showDialog<bool>(
                           context: ctx,
                           builder: (dialogContext) => AlertDialog(
-                            backgroundColor: const Color(0xFF1E2F36),
+                            backgroundColor: AppColors.cardDarker,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
                             title: Text(
                               l10n.settingsDeleteConfirmTitle,
@@ -754,7 +760,7 @@ class SettingsPage extends StatelessWidget {
           ),
         );
       },
-    );
+    ).then((_) => otherReasonCtrl.dispose());
   }
 
   void _showTargetBottomSheet(
@@ -764,7 +770,7 @@ class SettingsPage extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E2F36),
+      backgroundColor: AppColors.cardDarker,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -842,10 +848,10 @@ class SettingsPage extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(12.w),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0D47A1).withOpacity(0.3),
+                              color: const Color(0xFF0D47A1).withValues(alpha: 0.3),
                               borderRadius: BorderRadius.circular(12.r),
                               border: Border.all(
-                                color: Colors.blueAccent.withOpacity(0.3),
+                                color: Colors.blueAccent.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Row(
@@ -865,7 +871,7 @@ class SettingsPage extends StatelessWidget {
                                         : (l10n.targetPageExplanation ??
                                               "Page target tracked in Mushaf Tab"),
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withValues(alpha: 0.9),
                                       fontSize: 13.sp,
                                       height: 1.4,
                                     ),
@@ -1007,7 +1013,7 @@ class SettingsPage extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E2F36),
+      backgroundColor: AppColors.cardDarker,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -1044,7 +1050,7 @@ class SettingsPage extends StatelessWidget {
                     return ListView.separated(
                       itemCount: 12,
                       separatorBuilder: (c, i) =>
-                          Divider(color: Colors.white.withOpacity(0.05)),
+                          Divider(color: Colors.white.withValues(alpha: 0.05)),
                       itemBuilder: (context, index) {
                         final monthIndex = index + 1;
                         final monthName = getMonthName(monthIndex);
@@ -1067,12 +1073,12 @@ class SettingsPage extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: currentVal != 0
-                                  ? const Color(0xFF00E676).withOpacity(0.2)
+                                  ? AppColors.accent.withValues(alpha: 0.2)
                                   : Colors.white10,
                               borderRadius: BorderRadius.circular(8.r),
                               border: Border.all(
                                 color: currentVal != 0
-                                    ? const Color(0xFF00E676)
+                                    ? AppColors.accent
                                     : Colors.transparent,
                               ),
                             ),
@@ -1080,7 +1086,7 @@ class SettingsPage extends StatelessWidget {
                               _getAdjustmentText(currentVal, l10n),
                               style: TextStyle(
                                 color: currentVal != 0
-                                    ? const Color(0xFF00E676)
+                                    ? AppColors.accent
                                     : Colors.white70,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1152,7 +1158,7 @@ class SettingsPage extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1E2F36),
+      backgroundColor: AppColors.cardDarker,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
       ),
@@ -1207,7 +1213,7 @@ class SettingsPage extends StatelessWidget {
         width: 50.w,
         height: 50.w,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF00E676) : Colors.white10,
+          color: isSelected ? AppColors.accent : Colors.white10,
           shape: BoxShape.circle,
         ),
         alignment: Alignment.center,
@@ -1237,12 +1243,12 @@ class SettingsPage extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF00E676) : Colors.transparent,
+          color: isSelected ? AppColors.accent : Colors.transparent,
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFF00E676).withOpacity(0.3),
+                    color: AppColors.accent.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -1275,7 +1281,7 @@ class SettingsPage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: const Color(0xFF1E2F36),
+          backgroundColor: AppColors.cardDarker,
           title: Text(
             l10n.targetCustomTitle,
             style: const TextStyle(color: Colors.white),
@@ -1286,12 +1292,12 @@ class SettingsPage extends StatelessWidget {
             style: const TextStyle(color: Colors.white),
             decoration: InputDecoration(
               hintText: l10n.targetCustomHint,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+              hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
               enabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white54),
               ),
               focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFF00E676)),
+                borderSide: BorderSide(color: AppColors.accent),
               ),
             ),
           ),
@@ -1314,13 +1320,13 @@ class SettingsPage extends StatelessWidget {
               },
               child: Text(
                 l10n.settingsSave,
-                style: const TextStyle(color: Color(0xFF00E676)),
+                style: const TextStyle(color: AppColors.accent),
               ),
             ),
           ],
         );
       },
-    );
+    ).then((_) => controller.dispose());
   }
 
   Widget _buildTargetOption(
@@ -1335,11 +1341,11 @@ class SettingsPage extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 8.h),
       decoration: BoxDecoration(
         color: isSelected
-            ? const Color(0xFF00E676).withOpacity(0.1)
-            : Colors.white.withOpacity(0.05),
+            ? AppColors.accent.withValues(alpha: 0.1)
+            : Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12.r),
         border: isSelected
-            ? Border.all(color: const Color(0xFF00E676))
+            ? Border.all(color: AppColors.accent)
             : Border.all(color: Colors.transparent),
       ),
       child: ListTile(
@@ -1348,7 +1354,7 @@ class SettingsPage extends StatelessWidget {
         ),
         leading: Icon(
           isSelected ? Icons.check_circle : Icons.circle_outlined,
-          color: isSelected ? const Color(0xFF00E676) : Colors.white54,
+          color: isSelected ? AppColors.accent : Colors.white54,
         ),
         title: Text(
           label,
@@ -1371,14 +1377,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          AppLocalizations.of(context)!.settingsTitle,
-          style: const TextStyle(color: Colors.white),
-        ),
+      backgroundColor: AppColors.bgGradientStart,
+      appBar: AppTransparentAppBar(
+        title: AppLocalizations.of(context)!.settingsTitle,
       ),
       body: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
@@ -1422,7 +1423,7 @@ class SettingsPage extends StatelessWidget {
                           ),
                           leading: const Icon(
                             Icons.email_outlined,
-                            color: Color(0xFF00E676),
+                            color: AppColors.accent,
                           ),
                           title: Text(
                             l10n.settingsEmail,
@@ -1474,7 +1475,7 @@ class SettingsPage extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          leading: const Icon(Icons.lock_outline, color: Color(0xFF00E676)),
+                          leading: const Icon(Icons.lock_outline, color: AppColors.accent),
                           title: Text(
                             l10n.settingsChangePassword,
                             style: TextStyle(color: Colors.white, fontSize: 14.sp, fontWeight: FontWeight.w600),
@@ -1551,7 +1552,7 @@ class SettingsPage extends StatelessWidget {
                             onPressed: () => showDialog(
                               context: context,
                               builder: (ctx) => AlertDialog(
-                                backgroundColor: const Color(0xFF1E2F36),
+                                backgroundColor: AppColors.cardDarker,
                                 title: Text(
                                   l10n.settingsLogout,
                                   style: const TextStyle(color: Colors.white),
@@ -1624,7 +1625,7 @@ class SettingsPage extends StatelessWidget {
                         title: l10n.settingsLogin,
                         subtitle: l10n.settingsLoginSubtitle,
                         onTap: () => context.go('/login'),
-                        iconColor: const Color(0xFF00E676),
+                        iconColor: AppColors.accent,
                       ),
                       SizedBox(height: 8.h),
                       _buildListTile(
@@ -1632,7 +1633,7 @@ class SettingsPage extends StatelessWidget {
                         title: l10n.settingsCreateAccount,
                         subtitle: l10n.settingsCreateAccountSubtitle,
                         onTap: () => context.go('/register'),
-                        iconColor: const Color(0xFF00E676),
+                        iconColor: AppColors.accent,
                       ),
                       SizedBox(height: 16.h),
                     ],
@@ -1674,14 +1675,14 @@ class SettingsPage extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.mail_outline,
-                            color: const Color(0xFF00E676),
+                            color: AppColors.accent,
                             size: 20.sp,
                           ),
                           SizedBox(width: 12.w),
                           Text(
                             l10n.contactTitle,
                             style: TextStyle(
-                              color: const Color(0xFF00E676),
+                              color: AppColors.accent,
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1724,7 +1725,7 @@ class SettingsPage extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(
-                        backgroundColor: const Color(0xFF1C2A30),
+                        backgroundColor: AppColors.cardDark,
                         title: const Text(
                           'Test Crashlytics',
                           style: TextStyle(color: Colors.white),
@@ -1780,7 +1781,7 @@ class SettingsPage extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          color: const Color(0xFF00E676),
+          color: AppColors.accent,
           fontSize: 14.sp,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -1797,11 +1798,11 @@ class SettingsPage extends StatelessWidget {
     Color? iconColor,
   }) {
     return Material(
-      color: Colors.white.withOpacity(0.05),
+      color: Colors.white.withValues(alpha: 0.05),
       borderRadius: BorderRadius.circular(12.r),
       child: ListTile(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-        leading: Icon(icon, color: iconColor ?? const Color(0xFF00E676)),
+        leading: Icon(icon, color: iconColor ?? AppColors.accent),
         title: Text(
           title,
           style: TextStyle(

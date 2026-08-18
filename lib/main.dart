@@ -19,6 +19,7 @@ import 'src/features/quran/presentation/bloc/audio_event.dart'; // Init audio if
 
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'src/core/theme/app_colors.dart';
 
 
 void main() async {
@@ -113,8 +114,8 @@ class MyApp extends StatelessWidget {
                 theme: ThemeData(
                   useMaterial3: true,
                   colorScheme: ColorScheme.fromSeed(
-                    seedColor: const Color(0xFF00E676),
-                    primary: const Color(0xFF00E676),
+                    seedColor: AppColors.accent,
+                    primary: AppColors.accent,
                   ),
                 ),
                 routerConfig: appRouter,

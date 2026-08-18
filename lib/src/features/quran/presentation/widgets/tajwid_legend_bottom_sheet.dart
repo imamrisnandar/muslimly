@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class TajwidLegendBottomSheet extends StatelessWidget {
   const TajwidLegendBottomSheet({super.key});
@@ -18,7 +19,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -50,12 +51,12 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(10.w),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00E676).withOpacity(0.1),
+                    color: AppColors.accent.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.auto_stories_rounded,
-                    color: const Color(0xFF00E676),
+                    color: AppColors.accent,
                     size: 24.sp,
                   ),
                 ),
@@ -66,7 +67,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Outfit',
-                    color: const Color(0xFF2D3436),
+                    color: AppColors.surfaceDark,
                   ),
                 ),
               ],
@@ -83,13 +84,13 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                 children: [
                   _buildPremiumCard(
                     context,
-                    color: const Color(0xFF169278),
+                    color: AppColors.accentGreen,
                     title: AppLocalizations.of(context)!.tajwidGhunnah,
                     subtitle: AppLocalizations.of(context)!.tajwidGhunnahDesc,
                   ),
                   _buildPremiumCard(
                     context,
-                    color: const Color(0xFFFFD54F),
+                    color: AppColors.goldLight,
                     title: AppLocalizations.of(context)!.tajwidIkhfa,
                     subtitle: AppLocalizations.of(context)!.tajwidIkhfaDesc,
                   ),
@@ -119,7 +120,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                   ),
                   _buildPremiumCard(
                     context,
-                    color: const Color(0xFFA1A1A1),
+                    color: AppColors.textMuted,
                     title: AppLocalizations.of(
                       context,
                     )!.tajwidIdghamBilaghunnah,
@@ -149,7 +150,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -168,7 +169,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                 width: 48.w,
                 height: 48.w,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(14.r),
                 ),
                 child: Center(
@@ -180,7 +181,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: color.withOpacity(0.4),
+                          color: color.withValues(alpha: 0.4),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -203,7 +204,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                         fontFamily: 'Outfit',
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF2D3436),
+                        color: AppColors.surfaceDark,
                         height: 1.2,
                       ),
                     ),
@@ -213,7 +214,7 @@ class TajwidLegendBottomSheet extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Outfit',
                         fontSize: 13.sp,
-                        color: const Color(0xFF636E72), // Softer grey
+                        color: AppColors.textDisabled, // Softer grey
                         height: 1.5,
                         fontWeight: FontWeight.w400,
                       ),

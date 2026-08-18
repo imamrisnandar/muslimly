@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../theme/app_colors.dart';
 
 enum SnackBarType { success, error, info }
 
@@ -15,7 +16,7 @@ void showCustomSnackBar(
 
   switch (type) {
     case SnackBarType.success:
-      backgroundColor = const Color(0xFF00E676); // App Green
+      backgroundColor = AppColors.accent; // App Green
       icon = Icons.check_circle_rounded;
       iconColor = Colors.white;
       break;
@@ -27,7 +28,7 @@ void showCustomSnackBar(
     case SnackBarType.info:
       backgroundColor = const Color(0xFF263238); // Dark Blue Grey
       icon = Icons.info_outline_rounded;
-      iconColor = const Color(0xFF00E676);
+      iconColor = AppColors.accent;
       break;
   }
 
@@ -40,7 +41,7 @@ void showCustomSnackBar(
             Container(
               padding: EdgeInsets.all(4.w),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: iconColor, size: 20.sp),

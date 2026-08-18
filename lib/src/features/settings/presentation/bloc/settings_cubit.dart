@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:injectable/injectable.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../../intro/domain/repositories/name_repository.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../features/prayer/domain/services/fasting_service.dart';
 import 'settings_state.dart';
 
-@injectable
 class SettingsCubit extends Cubit<SettingsState> {
   final SettingsRepository _settingsRepository;
   final NameRepository _nameRepository;

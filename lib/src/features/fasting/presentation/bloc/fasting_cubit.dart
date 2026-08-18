@@ -1,9 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import '../../domain/usecases/get_fasting_content.dart';
 import 'fasting_state.dart';
 
-@injectable
 class FastingCubit extends Cubit<FastingState> {
   final GetFastingContent _getFastingContent;
 

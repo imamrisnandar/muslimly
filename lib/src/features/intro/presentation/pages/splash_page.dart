@@ -10,6 +10,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../settings/data/repositories/settings_repository.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart';
 import '../../domain/repositories/name_repository.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -112,7 +113,7 @@ class _SplashPageState extends State<SplashPage>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
           ),
         ),
         child: Center(
@@ -168,7 +169,7 @@ class _SplashPageState extends State<SplashPage>
           border: Border.all(color: const Color(0xFFD4AF37), width: 2),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF00E676).withOpacity(0.3),
+              color: AppColors.accent.withValues(alpha: 0.3),
               blurRadius: 40,
               spreadRadius: 2,
             ),

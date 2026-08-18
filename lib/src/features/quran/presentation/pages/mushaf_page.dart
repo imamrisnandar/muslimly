@@ -47,6 +47,7 @@ import '../../../../core/presentation/widgets/premium_showcase.dart';
 import 'package:muslimly/src/features/quran/presentation/widgets/ayah_selector_bottom_sheet.dart';
 import 'package:muslimly/src/core/utils/quran_constants.dart';
 import 'package:muslimly/src/core/utils/surah_names.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class MushafPage extends StatefulWidget {
   final Surah? surah;
@@ -657,7 +658,7 @@ class _MushafPageState extends State<MushafPage> {
                           top: 5.h,
                           left: 16.w,
                           child: CircleAvatar(
-                            backgroundColor: Colors.black.withOpacity(
+                            backgroundColor: Colors.black.withValues(alpha: 
                               0.0,
                             ), // Transparent
                             child: IconButton(
@@ -712,7 +713,7 @@ class _MushafPageState extends State<MushafPage> {
                               }
 
                               return CircleAvatar(
-                                backgroundColor: Colors.black.withOpacity(
+                                backgroundColor: Colors.black.withValues(alpha: 
                                   0.0,
                                 ), // Transparent
                                 child: PremiumShowcase(
@@ -731,7 +732,7 @@ class _MushafPageState extends State<MushafPage> {
                                           ? Icons.bookmark
                                           : Icons.bookmark_border,
                                       color: isBookmarked
-                                          ? const Color(0xFF00E676)
+                                          ? AppColors.accent
                                           : Colors.black,
                                     ),
                                     onPressed: () {
@@ -778,7 +779,7 @@ class _MushafPageState extends State<MushafPage> {
                                     mini: true,
                                     elevation: 0,
                                     heroTag: 'finish_reading_btn',
-                                    backgroundColor: const Color(0xFF00E676),
+                                    backgroundColor: AppColors.accent,
                                     onPressed: () {
                                       if (_lastPageNumber != -1) {
                                         _logReading(
@@ -1181,7 +1182,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                       width: 5.w,
                       height: 50.h, // Approx height for 2 lines
                       decoration: BoxDecoration(
-                        color: const Color(0xFF00E676).withOpacity(0.8),
+                        color: AppColors.accent.withValues(alpha: 0.8),
                         borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(4.r),
                         ),
@@ -1197,7 +1198,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                       width: 5.w,
                       height: 50.h,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF00E676).withOpacity(0.8),
+                        color: AppColors.accent.withValues(alpha: 0.8),
                         borderRadius: BorderRadius.only(
                           bottomRight: Radius.circular(4.r),
                         ),
@@ -1316,7 +1317,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
               foreground: Paint()
                 ..shader =
                     const LinearGradient(
-                      colors: [Color(0xFF00E676), Colors.blue],
+                      colors: [AppColors.accent, Colors.blue],
                     ).createShader(
                       const Rect.fromLTWH(0.0, 0.0, 20.0, 20.0),
                     ), // Approx bounds for the glyph
@@ -1435,7 +1436,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                       maxHeight: screenHeight * 0.9, // Allow nearly full height
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF263238).withOpacity(0.85),
+                      color: const Color(0xFF263238).withValues(alpha: 0.85),
                       borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(color: Colors.white10),
                     ),
@@ -1479,7 +1480,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                 child: Container(
                   width: bubbleWidth,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF263238).withOpacity(0.85),
+                    color: const Color(0xFF263238).withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(16.r),
                     border: Border.all(color: Colors.white10),
                   ),
@@ -1510,7 +1511,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
                 Text(
                   surahName,
                   style: TextStyle(
-                    color: const Color(0xFF00E676),
+                    color: AppColors.accent,
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -1626,7 +1627,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
             }
             return _buildBubbleItem(
               icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-              color: isBookmarked ? const Color(0xFF00E676) : Colors.white,
+              color: isBookmarked ? AppColors.accent : Colors.white,
               label: l10n.menuBookmark,
               compact: compact,
               onTap: () {
@@ -1718,7 +1719,7 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       height: 1,
-      color: Colors.white10.withOpacity(compact ? 0.05 : 0.1),
+      color: Colors.white10.withValues(alpha: compact ? 0.05 : 0.1),
     );
   }
 }

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class TajweedParser {
   // Color Mapping based on Quran.com V4 class names
   static final Map<String, Color> _colorMap = {
     // Green: Ghunnah
-    'ghunnah': const Color(0xFF169278),
-    'idgham_with_ghunnah': const Color(0xFF169278),
-    'idgham_ghunnah': const Color(0xFF169278),
-    'ikhfa_syafawi': const Color(0xFF169278),
-    'ghunnah_mushaddadah': const Color(0xFF169278),
-    'ghunne_mushaddadah': const Color(0xFF169278),
+    'ghunnah': AppColors.accentGreen,
+    'idgham_with_ghunnah': AppColors.accentGreen,
+    'idgham_ghunnah': AppColors.accentGreen,
+    'ikhfa_syafawi': AppColors.accentGreen,
+    'ghunnah_mushaddadah': AppColors.accentGreen,
+    'ghunne_mushaddadah': AppColors.accentGreen,
 
     // Ikhfa (Yellow) - As per user request (User prefers Yellow over Orange)
-    'ikhafa': const Color(0xFFFFD54F),
-    'ikhfa': const Color(0xFFFFD54F),
+    'ikhafa': AppColors.goldLight,
+    'ikhfa': AppColors.goldLight,
 
     // Qalqalah (Blue)
     'qalqalah': const Color(0xFF3B83BD),
@@ -31,13 +32,13 @@ class TajweedParser {
     'madda_tabee': const Color(0xFF9E9E9E),
 
     // Gray / Silent
-    'idgham_wo_ghunnah': const Color(0xFFA1A1A1),
-    'idgham_no_ghunnah': const Color(0xFFA1A1A1),
-    'silent': const Color(0xFFA1A1A1),
-    'lam_shamsyiah': const Color(0xFFA1A1A1),
-    'laam_shamsiyah': const Color(0xFFA1A1A1),
-    'ham_wasl': const Color(0xFFA1A1A1),
-    'slnt': const Color(0xFFA1A1A1), // Added slnt
+    'idgham_wo_ghunnah': AppColors.textMuted,
+    'idgham_no_ghunnah': AppColors.textMuted,
+    'silent': AppColors.textMuted,
+    'lam_shamsyiah': AppColors.textMuted,
+    'laam_shamsiyah': AppColors.textMuted,
+    'ham_wasl': AppColors.textMuted,
+    'slnt': AppColors.textMuted, // Added slnt
   };
 
   static TextSpan parse(String text, {TextStyle? style}) {

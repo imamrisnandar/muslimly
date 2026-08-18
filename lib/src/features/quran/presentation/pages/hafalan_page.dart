@@ -32,6 +32,7 @@ import '../../../../core/utils/custom_snackbar.dart';
 import 'package:dio/dio.dart';
 
 import '../../data/datasources/local/quran_library/quran.dart' as quran_lib;
+import '../../../../core/theme/app_colors.dart';
 
 class HafalanPage extends StatefulWidget {
   final Surah? surah;
@@ -213,7 +214,7 @@ class _HafalanPageState extends State<HafalanPage> {
         BlocProvider(create: (context) => HafalanBloc()..add(InitSpeech())),
       ],
       child: Scaffold(
-        backgroundColor: const Color(0xFFFFF8E1),
+        backgroundColor: AppColors.creamBg,
         body: SafeArea(
           child: BlocBuilder<QuranBloc, QuranState>(
             builder: (context, state) {
@@ -299,7 +300,7 @@ class _HafalanPageState extends State<HafalanPage> {
                       top: 5.h,
                       left: 16.w,
                       child: CircleAvatar(
-                        backgroundColor: Colors.black.withOpacity(0.0),
+                        backgroundColor: Colors.black.withValues(alpha: 0.0),
                         child: IconButton(
                           icon: const Icon(
                             Icons.arrow_back,
@@ -439,7 +440,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                       child: Icon(
                         Icons.visibility_outlined,
                         color: isPeeking
-                            ? const Color(0xFF00E676)
+                            ? AppColors.accent
                             : Colors.black54,
                         size: 24,
                       ),
@@ -498,7 +499,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                           children: [
                             const Icon(
                               Icons.celebration,
-                              color: Color(0xFF00E676),
+                              color: AppColors.accent,
                               size: 16,
                             ),
                             SizedBox(width: 4.w),
@@ -509,7 +510,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF00E676),
+                                color: AppColors.accent,
                               ),
                             ),
                           ],
@@ -537,7 +538,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                           : data.completed / widget.ayahs.length,
                       backgroundColor: Colors.black12,
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                        Color(0xFF00E676),
+                        AppColors.accent,
                       ),
                       minHeight: 6.h,
                     ),
@@ -686,8 +687,8 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                             end: Alignment.topCenter,
                             colors: [
                               Colors.white,
-                              Colors.white.withOpacity(0.95),
-                              Colors.white.withOpacity(0.0),
+                              Colors.white.withValues(alpha: 0.95),
+                              Colors.white.withValues(alpha: 0.0),
                             ],
                             stops: const [0.0, 0.7, 1.0],
                           ),
@@ -710,7 +711,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                                     ),
                                     margin: EdgeInsets.only(right: 8.w),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.65),
+                                      color: Colors.black.withValues(alpha: 0.65),
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     child: Text(
@@ -750,7 +751,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                                     vertical: 6.h,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black.withValues(alpha: 0.5),
                                     borderRadius: BorderRadius.circular(28.r),
                                   ),
                                   child: Row(
@@ -830,7 +831,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
         height: 32.w,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.white.withOpacity(0.15),
+          color: Colors.white.withValues(alpha: 0.15),
         ),
         child: Icon(icon, color: color, size: 18.sp),
       ),
@@ -874,7 +875,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
           } else if (isError) {
             buttonColor = Colors.orange;
           } else {
-            buttonColor = const Color(0xFF00E676); // Green = start
+            buttonColor = AppColors.accent; // Green = start
           }
 
           // Determine icon
@@ -900,7 +901,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                 boxShadow: isListening
                     ? [
                         BoxShadow(
-                          color: Colors.red.withOpacity(glowOpacity),
+                          color: Colors.red.withValues(alpha: glowOpacity),
                           blurRadius: 14,
                           spreadRadius: 3,
                         ),
@@ -1057,7 +1058,7 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
           if (!isTargetSurah) {
             charColor = Colors.black87; // Normal visibility for other surahs
           } else if (isPeeking) {
-            charColor = Colors.black.withOpacity(0.3);
+            charColor = Colors.black.withValues(alpha: 0.3);
           } else if (isAyahCompleted) {
             if (isWordMismatched) {
               charColor = const Color(
@@ -1072,9 +1073,9 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
             if (isWordMismatched) {
               charColor = const Color(0xFFEF5350); // Red for mismatched (priority over green)
             } else if (isWordRevealed) {
-              charColor = const Color(0xFF00E676); // Bright green for matched
+              charColor = AppColors.accent; // Bright green for matched
             } else {
-              charColor = Colors.black.withOpacity(0.08); // Barely visible
+              charColor = Colors.black.withValues(alpha: 0.08); // Barely visible
             }
           } else {
             charColor = Colors.transparent; // Hidden
@@ -1118,9 +1119,9 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
                   colors: !isTargetSurah
                       ? [Colors.black87, Colors.black87]
                       : isCurrent && !isAyahCompleted
-                      ? [const Color(0xFF00E676), Colors.blue]
+                      ? [AppColors.accent, Colors.blue]
                       : isAyahCompleted
-                      ? [const Color(0xFF2E7D32), const Color(0xFF1B5E20)]
+                      ? [AppColors.quranGreenDark, AppColors.quranGreen]
                       : [Colors.black26, Colors.black12],
                 ).createShader(const Rect.fromLTWH(0.0, 0.0, 20.0, 20.0)),
             ),
@@ -1134,9 +1135,9 @@ class _HafalanSinglePageState extends State<_HafalanSinglePage>
               color: !isTargetSurah
                   ? Colors.black87
                   : isAyahCompleted
-                  ? const Color(0xFF2E7D32)
+                  ? AppColors.quranGreenDark
                   : isCurrent
-                  ? Colors.black.withOpacity(0.08)
+                  ? Colors.black.withValues(alpha: 0.08)
                   : Colors.transparent,
             ),
           ),

@@ -4,6 +4,7 @@ import '../../domain/models/reminder_models.dart';
 import '../../domain/services/reminder_service.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class FastingReminderSection extends StatelessWidget {
   final FastingReminder? todayFasting;
@@ -31,14 +32,14 @@ class FastingReminderSection extends StatelessWidget {
           children: [
             Icon(
               Icons.nightlight_round,
-              color: const Color(0xFF00E676),
+              color: AppColors.accent,
               size: 14.sp,
             ),
             SizedBox(width: 6.w),
             Text(
               AppLocalizations.of(context)!.lblFastingHeader,
               style: TextStyle(
-                color: const Color(0xFF00E676),
+                color: AppColors.accent,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
@@ -78,14 +79,14 @@ class FastingReminderSection extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            fasting.color.withOpacity(0.15),
-            fasting.color.withOpacity(0.08),
+            fasting.color.withValues(alpha: 0.15),
+            fasting.color.withValues(alpha: 0.08),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: fasting.color.withOpacity(0.3), width: 1),
+        border: Border.all(color: fasting.color.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         children: [
@@ -93,7 +94,7 @@ class FastingReminderSection extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(6.w),
             decoration: BoxDecoration(
-              color: fasting.color.withOpacity(0.2),
+              color: fasting.color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(6.r),
             ),
             child: Icon(

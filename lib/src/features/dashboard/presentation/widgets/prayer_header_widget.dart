@@ -6,6 +6,7 @@ import 'prayer_countdown_widget.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../domain/models/reminder_models.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class PrayerHeaderWidget extends StatelessWidget {
   final Map<String, dynamic>? nextPrayer;
@@ -223,10 +224,10 @@ class PrayerHeaderWidget extends StatelessWidget {
                             vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20.r),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                             ),
                           ),
                           child: Row(
@@ -288,7 +289,7 @@ class PrayerHeaderWidget extends StatelessWidget {
                       Text(
                         nextPrayer?['time'] ?? '--:--',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           fontSize: 26.sp, // Reduced from 32.sp
                           fontWeight: FontWeight.w300,
                           letterSpacing: -0.5,
@@ -309,7 +310,7 @@ class PrayerHeaderWidget extends StatelessWidget {
                           decoration: BoxDecoration(
                             border: Border(
                               left: BorderSide(
-                                color: Colors.white.withOpacity(0.3),
+                                color: Colors.white.withValues(alpha: 0.3),
                                 width: 2,
                               ),
                             ),
@@ -354,10 +355,10 @@ class PrayerHeaderWidget extends StatelessWidget {
                       Container(
                         margin: EdgeInsets.only(bottom: 40.h),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.15),
+                            color: Colors.white.withValues(alpha: 0.15),
                           ),
                         ),
                         child: IconButton(
@@ -424,9 +425,9 @@ class PrayerHeaderWidget extends StatelessWidget {
                       vertical: 6.h,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(color: Colors.white.withOpacity(0.15)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -463,9 +464,9 @@ class PrayerHeaderWidget extends StatelessWidget {
               // Qibla
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withOpacity(0.15)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
                 ),
                 child: IconButton(
                   onPressed: onQiblaTap,
@@ -517,7 +518,7 @@ class PrayerHeaderWidget extends StatelessWidget {
               Text(
                 nextPrayer?['time'] ?? '--:--',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 28.sp,
                   fontWeight: FontWeight.w300,
                   letterSpacing: -0.3,
@@ -536,7 +537,7 @@ class PrayerHeaderWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border(
                   left: BorderSide(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -603,9 +604,9 @@ class PrayerHeaderWidget extends StatelessWidget {
       margin: EdgeInsets.only(top: 12.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.white.withOpacity(0.15), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -661,7 +662,7 @@ class PrayerHeaderWidget extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(3.w),
           decoration: BoxDecoration(
-            color: fasting.color.withOpacity(0.2),
+            color: fasting.color.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4.r),
           ),
           child: Icon(Icons.restaurant, color: fasting.color, size: 10.sp),
@@ -730,12 +731,12 @@ class PrayerHeaderWidget extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(3.w),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00E676).withOpacity(0.2),
+                  color: AppColors.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Icon(
                   dzikir.icon,
-                  color: const Color(0xFF00E676),
+                  color: AppColors.accent,
                   size: 10.sp,
                 ),
               ),

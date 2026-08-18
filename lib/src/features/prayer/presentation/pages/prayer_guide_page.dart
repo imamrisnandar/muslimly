@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../data/models/prayer_guide_model.dart';
-import '../../data/repositories/prayer_guide_repository.dart';
+import '../../domain/usecases/get_prayer_guide_content.dart';
 import 'prayer_detail_page.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class PrayerGuidePage extends StatefulWidget {
   const PrayerGuidePage({super.key});
@@ -30,9 +31,7 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
     final locale = Localizations.localeOf(context).languageCode;
     if (_currentLocale != locale) {
       _currentLocale = locale;
-      _prayerContentFuture = getIt<PrayerGuideRepository>().getPrayerContent(
-        locale,
-      );
+      _prayerContentFuture = getIt<GetPrayerGuideContent>()(locale);
     }
   }
 
@@ -88,21 +87,8 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
       backgroundColor: const Color(
         0xFF1C2A30,
       ), // Dark Theme matching Wudhu Guide
-      appBar: AppBar(
-        title: Text(
-          l10n.ibadahPrayerTitle,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontFamily: GoogleFonts.outfit().fontFamily,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
+      appBar: AppTransparentAppBar(
+        title: l10n.ibadahPrayerTitle,
       ),
       body: FutureBuilder<List<PrayerGuideCategory>>(
         future: _prayerContentFuture,
@@ -161,7 +147,7 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
                           )
                         : null,
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
+                    fillColor: Colors.white.withValues(alpha: 0.05),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.w,
                       vertical: 12.h,
@@ -208,7 +194,7 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
     PrayerGuideCategory category,
     bool forceExpand,
   ) {
-    const accentColor = Color(0xFF00E676); // Green Accent (Tajweed Style)
+    const accentColor = AppColors.accent; // Green Accent (Tajweed Style)
 
     // Key to handle expansion state based on search
     final key = PageStorageKey('${category.id}_$forceExpand');
@@ -216,12 +202,12 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
       child: Material(
-        color: const Color(0xFF1C2A30),
+        color: AppColors.cardDark,
         borderRadius: BorderRadius.circular(12.r),
         clipBehavior: Clip.antiAlias,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Theme(
@@ -273,7 +259,7 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
   }
 
   Widget _buildItemCard(BuildContext context, PrayerGuideItem item, int order) {
-    const accentColor = Color(0xFF00E676); // Green Accent (Tajweed Style)
+    const accentColor = AppColors.accent; // Green Accent (Tajweed Style)
 
     return Container(
       margin: EdgeInsets.only(bottom: 8.h),
@@ -282,12 +268,12 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.08),
-            Colors.white.withOpacity(0.04),
+            Colors.white.withValues(alpha: 0.08),
+            Colors.white.withValues(alpha: 0.04),
           ],
         ),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Material(
         color: Colors.transparent,
@@ -311,9 +297,9 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
                   width: 32.w,
                   height: 32.w,
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.1),
+                    color: accentColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(color: accentColor.withOpacity(0.3)),
+                    border: Border.all(color: accentColor.withValues(alpha: 0.3)),
                   ),
                   child: Center(
                     child: Text(

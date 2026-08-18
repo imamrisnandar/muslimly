@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class HelpGuidePage extends StatelessWidget {
   const HelpGuidePage({super.key});
@@ -10,23 +12,11 @@ class HelpGuidePage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
-          l10n.guideTitle,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Outfit',
-          ),
-        ),
+      backgroundColor: AppColors.bgGradientStart,
+      appBar: AppTransparentAppBar(
+        title: l10n.guideTitle,
+        titleFontSize: 20.sp,
+        onBack: () => Navigator.of(context).pop(),
       ),
       body: ListView(
         padding: EdgeInsets.all(20.w),
@@ -72,16 +62,16 @@ class HelpGuidePage extends StatelessWidget {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF1E2F36),
+        color: AppColors.cardDarker,
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -93,14 +83,14 @@ class HelpGuidePage extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF00E676).withOpacity(0.15),
+                  AppColors.accent.withValues(alpha: 0.15),
                   Colors.transparent,
                 ],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
               ),
               border: Border(
-                bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+                bottom: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
               ),
             ),
             child: Row(
@@ -108,7 +98,7 @@ class HelpGuidePage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00E676).withOpacity(0.1),
+                    color: AppColors.accent.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Text(icon, style: TextStyle(fontSize: 20.sp)),
@@ -118,7 +108,7 @@ class HelpGuidePage extends StatelessWidget {
                   child: Text(
                     title,
                     style: TextStyle(
-                      color: const Color(0xFF00E676),
+                      color: AppColors.accent,
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Outfit',
@@ -168,7 +158,7 @@ class HelpGuidePage extends StatelessWidget {
                 Text(
                   "•",
                   style: TextStyle(
-                    color: const Color(0xFF00E676),
+                    color: AppColors.accent,
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                     height: 1.5,

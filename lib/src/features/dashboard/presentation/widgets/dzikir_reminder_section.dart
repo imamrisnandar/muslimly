@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../domain/models/reminder_models.dart';
 import '../../domain/services/reminder_service.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class DzikirReminderSection extends StatelessWidget {
   final DzikirReminder morningDzikir;
@@ -34,14 +35,14 @@ class DzikirReminderSection extends StatelessWidget {
           children: [
             Icon(
               Icons.menu_book_rounded,
-              color: const Color(0xFFFFC107),
+              color: AppColors.gold,
               size: 14.sp,
             ),
             SizedBox(width: 6.w),
             Text(
               'DZIKIR',
               style: TextStyle(
-                color: const Color(0xFFFFC107),
+                color: AppColors.gold,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
@@ -67,15 +68,15 @@ class DzikirReminderSection extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color(0xFFFFC107).withOpacity(0.2),
-              const Color(0xFFFFC107).withOpacity(0.1),
+              AppColors.gold.withValues(alpha: 0.2),
+              AppColors.gold.withValues(alpha: 0.1),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: const Color(0xFFFFC107).withOpacity(0.4),
+            color: AppColors.gold.withValues(alpha: 0.4),
             width: 1,
           ),
         ),
@@ -87,8 +88,8 @@ class DzikirReminderSection extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFFFFC107).withOpacity(0.4),
-                    const Color(0xFFFFC107).withOpacity(0.2),
+                    AppColors.gold.withValues(alpha: 0.4),
+                    AppColors.gold.withValues(alpha: 0.2),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -97,7 +98,7 @@ class DzikirReminderSection extends StatelessWidget {
               ),
               child: Icon(
                 dzikir.icon,
-                color: const Color(0xFFFFC107),
+                color: AppColors.gold,
                 size: 14.sp,
               ),
             ),
@@ -119,7 +120,7 @@ class DzikirReminderSection extends StatelessWidget {
                   Text(
                     ReminderService.formatTime(dzikir.scheduledTime),
                     style: TextStyle(
-                      color: const Color(0xFFFFC107).withOpacity(0.8),
+                      color: AppColors.gold.withValues(alpha: 0.8),
                       fontSize: 10.sp,
                     ),
                   ),
@@ -129,7 +130,7 @@ class DzikirReminderSection extends StatelessWidget {
             // Arrow icon
             Icon(
               Icons.arrow_forward_ios,
-              color: const Color(0xFFFFC107).withOpacity(0.6),
+              color: AppColors.gold.withValues(alpha: 0.6),
               size: 12.sp,
             ),
           ],

@@ -1,9 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:injectable/injectable.dart';
 import '../entities/prayer_time.dart';
 import '../repositories/prayer_repository.dart';
 
-@injectable
 class GetPrayerTime {
   final PrayerRepository _repository;
 

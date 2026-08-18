@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Named ShowcaseView scopes, one per page *instance* that registers a
@@ -22,7 +21,6 @@ abstract class ShowcaseKeys {
   static const String audioPlayer = 'hasShownPlayerShowcase';
 }
 
-@lazySingleton
 class ShowcasePreferencesService {
   Future<bool> hasShown(String key) async {
     final prefs = await SharedPreferences.getInstance();

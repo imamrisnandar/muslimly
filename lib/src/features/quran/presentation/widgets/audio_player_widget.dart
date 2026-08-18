@@ -10,6 +10,7 @@ import '../../../../core/utils/custom_snackbar.dart';
 import 'reciter_selector_bottom_sheet.dart';
 import '../../../../core/presentation/widgets/premium_showcase.dart';
 import 'package:muslimly/src/l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class AudioPlayerWidget extends StatelessWidget {
   final GlobalKey? qoriShowcaseKey;
@@ -70,11 +71,11 @@ class AudioPlayerWidget extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A2C33),
+          color: AppColors.cardAlt,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -118,7 +119,7 @@ class AudioPlayerWidget extends StatelessWidget {
             IconButton(
               icon: Icon(
                 isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                color: const Color(0xFF00E676),
+                color: AppColors.accent,
               ),
               onPressed: () {
                 if (isPlaying) {
@@ -174,11 +175,11 @@ class AudioPlayerWidget extends StatelessWidget {
           child: Container(
             padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A2C33),
+              color: AppColors.cardAlt,
               borderRadius: BorderRadius.circular(20.r),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -272,12 +273,12 @@ class AudioPlayerWidget extends StatelessWidget {
                           overlayShape: RoundSliderOverlayShape(
                             overlayRadius: 14.r,
                           ),
-                          activeTrackColor: const Color(0xFF00E676),
+                          activeTrackColor: AppColors.accent,
                           inactiveTrackColor: Colors.white10,
                           thumbColor: Colors.white,
                           overlayColor: const Color(
                             0xFF00E676,
-                          ).withOpacity(0.2),
+                          ).withValues(alpha: 0.2),
                         ),
                         child: Slider(
                           value: sliderValue,
@@ -332,7 +333,7 @@ class AudioPlayerWidget extends StatelessWidget {
                     // Play/Pause Button (Center)
                     Container(
                       decoration: const BoxDecoration(
-                        color: Color(0xFF00E676),
+                        color: AppColors.accent,
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
@@ -341,7 +342,7 @@ class AudioPlayerWidget extends StatelessWidget {
                               ? Icons.pause_rounded
                               : Icons.play_arrow_rounded,
                         ),
-                        color: const Color(0xFF1A2C33),
+                        color: AppColors.cardAlt,
                         iconSize: 32.sp,
                         onPressed: () {
                           if (isPlaying) {
@@ -384,7 +385,7 @@ class AudioPlayerWidget extends StatelessWidget {
                         child: Text(
                           "${state.playbackSpeed}x",
                           style: TextStyle(
-                            color: const Color(0xFF00E676),
+                            color: AppColors.accent,
                             fontSize: 12.sp,
                             fontWeight: FontWeight.bold,
                           ),
@@ -412,11 +413,11 @@ class AudioPlayerWidget extends StatelessWidget {
         break;
       case LoopMode.all: // Standard Repeat
         icon = Icons.repeat;
-        color = const Color(0xFF00E676);
+        color = AppColors.accent;
         break;
       case LoopMode.one:
         icon = Icons.repeat_one;
-        color = const Color(0xFF00E676);
+        color = AppColors.accent;
         break;
     }
 
@@ -452,7 +453,7 @@ class AudioPlayerWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(color: Colors.white10),
         ),
@@ -501,7 +502,7 @@ class AudioPlayerWidget extends StatelessWidget {
       width: 40.w,
       height: 40.w,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Icon(Icons.music_note, color: Colors.white70, size: 24.sp),

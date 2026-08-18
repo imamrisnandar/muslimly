@@ -1,6 +1,5 @@
 import '../../../../core/config/app_urls.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:injectable/injectable.dart';
 import '../../domain/entities/ayah.dart';
 import '../../domain/entities/surah.dart';
 import '../../domain/repositories/quran_repository.dart';
@@ -14,7 +13,6 @@ import '../../../../core/database/database_service.dart';
 import '../../domain/entities/search_result.dart'; // Import SearchResult entity
 import '../../domain/entities/search_response.dart';
 
-@LazySingleton(as: QuranRepository)
 class QuranRepositoryImpl implements QuranRepository {
   final QuranLocalDataSource _localDataSource;
   final DatabaseService _databaseService;

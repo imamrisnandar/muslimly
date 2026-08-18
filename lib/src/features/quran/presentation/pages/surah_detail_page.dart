@@ -38,6 +38,7 @@ import '../../domain/entities/last_read.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../widgets/ayah_selector_bottom_sheet.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class SurahDetailPage extends StatefulWidget {
   final Surah surah;
@@ -674,8 +675,8 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [
-                                Color(0xFF1B5E20), // Dark Green
-                                Color(0xFF2E7D32),
+                                AppColors.quranGreen, // Dark Green
+                                AppColors.quranGreenDark,
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -683,7 +684,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                             borderRadius: BorderRadius.circular(16.r),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF1B5E20).withOpacity(0.3),
+                                color: AppColors.quranGreen.withValues(alpha: 0.3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -715,7 +716,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                           Icon(
                                             Icons.menu_book_rounded,
                                             size: 12.sp,
-                                            color: const Color(0xFF00E676),
+                                            color: AppColors.accent,
                                           ),
                                           SizedBox(width: 4.w),
                                           Text(
@@ -729,7 +730,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                           Icon(
                                             Icons.bookmark_outline,
                                             size: 12.sp,
-                                            color: const Color(0xFF00E676),
+                                            color: AppColors.accent,
                                           ),
                                           SizedBox(width: 4.w),
                                           Text(
@@ -747,7 +748,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                   Text(
                                     widget.surah.name,
                                     style: TextStyle(
-                                      color: const Color(0xFF00E676),
+                                      color: AppColors.accent,
                                       fontSize: 24.sp,
                                       fontWeight: FontWeight.bold,
                                       fontFamily:
@@ -988,7 +989,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                               boxShadow: [
                                                 BoxShadow(
                                                   color: Colors.black
-                                                      .withOpacity(0.05),
+                                                      .withValues(alpha: 0.05),
                                                   blurRadius: 10,
                                                   offset: const Offset(0, 2),
                                                 ),
@@ -1065,7 +1066,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                 SizedBox(height: 16.h),
                                                 Divider(
                                                   color: Colors.grey
-                                                      .withOpacity(0.1),
+                                                      .withValues(alpha: 0.1),
                                                   height: 1,
                                                 ),
                                                 SizedBox(height: 12.h),
@@ -1105,7 +1106,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                                                 color:
                                                                     const Color(
                                                                       0xFF00E676,
-                                                                    ).withOpacity(
+                                                                    ).withValues(alpha: 
                                                                       0.1,
                                                                     ),
                                                                 shape: BoxShape

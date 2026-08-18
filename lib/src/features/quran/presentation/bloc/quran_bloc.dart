@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/di/di_container.dart';
 import '../../domain/repositories/translation_repository.dart';
@@ -8,7 +7,6 @@ import '../../domain/usecases/get_surahs.dart';
 import 'quran_event.dart';
 import 'quran_state.dart';
 
-@injectable
 class QuranBloc extends Bloc<QuranEvent, QuranState> {
   final GetSurahs _getSurahs;
   final GetAyahs _getAyahs;

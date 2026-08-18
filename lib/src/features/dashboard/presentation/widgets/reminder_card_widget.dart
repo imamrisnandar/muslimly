@@ -4,6 +4,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/models/reminder_models.dart';
 import 'dzikir_reminder_section.dart';
 import 'fasting_reminder_section.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ReminderCardWidget extends StatelessWidget {
   final ReminderCardData data;
@@ -34,7 +35,7 @@ class ReminderCardWidget extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +46,7 @@ class ReminderCardWidget extends StatelessWidget {
             children: [
               Icon(
                 Icons.notifications_active_outlined,
-                color: const Color(0xFF00E676),
+                color: AppColors.accent,
                 size: 16.sp,
               ),
               SizedBox(width: 8.w),
@@ -62,10 +63,10 @@ class ReminderCardWidget extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFC107).withOpacity(0.2),
+                    color: AppColors.gold.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(4.r),
                     border: Border.all(
-                      color: const Color(0xFFFFC107).withOpacity(0.4),
+                      color: AppColors.gold.withValues(alpha: 0.4),
                       width: 1,
                     ),
                   ),
@@ -76,7 +77,7 @@ class ReminderCardWidget extends StatelessWidget {
                         width: 4.w,
                         height: 4.h,
                         decoration: const BoxDecoration(
-                          color: Color(0xFFFFC107),
+                          color: AppColors.gold,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -84,7 +85,7 @@ class ReminderCardWidget extends StatelessWidget {
                       Text(
                         'Aktif',
                         style: TextStyle(
-                          color: const Color(0xFFFFC107),
+                          color: AppColors.gold,
                           fontSize: 9.sp,
                           fontWeight: FontWeight.bold,
                         ),

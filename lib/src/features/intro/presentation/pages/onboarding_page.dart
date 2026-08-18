@@ -5,6 +5,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../features/settings/presentation/bloc/settings_cubit.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -50,11 +51,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: isActive ? const Color(0xFF00E676) : Colors.transparent,
+          color: isActive ? AppColors.accent : Colors.transparent,
           borderRadius: BorderRadius.circular(20.r),
           border: isActive
               ? null
-              : Border.all(color: Colors.white.withOpacity(0.3)),
+              : Border.all(color: Colors.white.withValues(alpha: 0.3)),
         ),
         child: Text(
           label,
@@ -77,7 +78,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         title: l10n.onboardingTitle1,
         description: l10n.onboardingDesc1,
         icon: Icons.track_changes,
-        color: const Color(0xFF00E676),
+        color: AppColors.accent,
       ),
       _OnboardingSlide(
         title: l10n.onboardingTitle2,
@@ -94,7 +95,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: AppColors.bgGradientStart,
       body: Stack(
         children: [
           // Background Gradient
@@ -104,9 +105,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Color(0xFF0F2027),
-                  Color(0xFF203A43),
-                  Color(0xFF2C5364),
+                  AppColors.bgGradientStart,
+                  AppColors.bgGradientMid,
+                  AppColors.bgGradientEnd,
                 ],
               ),
             ),
@@ -175,7 +176,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       height: 8.h,
                       decoration: BoxDecoration(
                         color: _currentPage == index
-                            ? const Color(0xFF00E676)
+                            ? AppColors.accent
                             : Colors.white24,
                         borderRadius: BorderRadius.circular(4.r),
                       ),
@@ -197,7 +198,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     child: ElevatedButton(
                       onPressed: _onNext,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00E676),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16.r),
@@ -246,12 +247,12 @@ class _OnboardingSlide extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(32.w),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
-              border: Border.all(color: color.withOpacity(0.3), width: 2),
+              border: Border.all(color: color.withValues(alpha: 0.3), width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   blurRadius: 30,
                   spreadRadius: 5,
                 ),

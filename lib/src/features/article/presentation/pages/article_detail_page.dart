@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../domain/entities/article.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ArticleDetailPage extends StatelessWidget {
   final Article article;
@@ -16,8 +17,8 @@ class ArticleDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateStr = DateFormat('d MMMM yyyy').format(article.publishedAt);
-    final backgroundColor = const Color(0xFF0F2027);
-    final categoryColor = const Color(0xFF1DE9B6);
+    final backgroundColor = AppColors.bgGradientStart;
+    final categoryColor = AppColors.accentDark;
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -41,7 +42,7 @@ class ArticleDetailPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          categoryColor.withOpacity(0.3),
+                          categoryColor.withValues(alpha: 0.3),
                           backgroundColor,
                         ],
                         begin: Alignment.topCenter,
@@ -82,9 +83,9 @@ class ArticleDetailPage extends StatelessWidget {
                       vertical: 6.h,
                     ),
                     decoration: BoxDecoration(
-                      color: categoryColor.withOpacity(0.15),
+                      color: categoryColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: categoryColor.withOpacity(0.3)),
+                      border: Border.all(color: categoryColor.withValues(alpha: 0.3)),
                     ),
                     child: Text(
                       article.category.toUpperCase(),
@@ -104,7 +105,7 @@ class ArticleDetailPage extends StatelessWidget {
                     style: GoogleFonts.outfit(
                       fontSize: 28.sp,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFFFFC107), // Gold
+                      color: AppColors.gold, // Gold
                       height: 1.2,
                     ),
                   ),
@@ -156,7 +157,7 @@ class ArticleDetailPage extends StatelessWidget {
                     article.content,
                     textStyle: GoogleFonts.inter(
                       fontSize: 16.sp,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       height: 1.6,
                     ),
                     customWidgetBuilder: (element) {
@@ -220,11 +221,11 @@ class ArticleDetailPage extends StatelessWidget {
                                       ? GoogleFonts.amiriQuran(
                                           fontSize: 22.sp,
                                           height: 1.8,
-                                          color: const Color(0xFFFFC107), // Gold for Arabic
+                                          color: AppColors.gold, // Gold for Arabic
                                         )
                                       : GoogleFonts.inter(
                                           fontSize: 14.sp,
-                                          color: Colors.white.withOpacity(0.7),
+                                          color: Colors.white.withValues(alpha: 0.7),
                                         ),
                                 ),
                               );
@@ -245,11 +246,11 @@ class ArticleDetailPage extends StatelessWidget {
                                   ? GoogleFonts.amiriQuran(
                                       fontSize: 22.sp,
                                       height: 1.8,
-                                      color: const Color(0xFFFFC107),
+                                      color: AppColors.gold,
                                     )
                                   : GoogleFonts.inter(
                                       fontSize: 14.sp,
-                                      color: Colors.white.withOpacity(0.7),
+                                      color: Colors.white.withValues(alpha: 0.7),
                                     ),
                             ),
                           );

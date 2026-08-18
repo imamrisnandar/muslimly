@@ -7,6 +7,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 
 import '../bloc/article_bloc.dart';
 import '../../domain/entities/article.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ArticleListPage extends StatefulWidget {
   const ArticleListPage({super.key});
@@ -73,9 +74,9 @@ class _ArticleListPageState extends State<ArticleListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2027),
+      backgroundColor: AppColors.bgGradientStart,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0F2027),
+        backgroundColor: AppColors.bgGradientStart,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
@@ -101,7 +102,7 @@ class _ArticleListPageState extends State<ArticleListPage> {
         builder: (context, state) {
           if (state is ArticleLoading) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1DE9B6)),
+              child: CircularProgressIndicator(color: AppColors.accentDark),
             );
           } else if (state is ArticleLoaded) {
             final articles = state.articles;
@@ -129,7 +130,7 @@ class _ArticleListPageState extends State<ArticleListPage> {
                     child: Padding(
                       padding: EdgeInsets.all(8.0),
                       child: CircularProgressIndicator(
-                        color: Color(0xFF1DE9B6),
+                        color: AppColors.accentDark,
                       ),
                     ),
                   );
@@ -181,9 +182,9 @@ class _ArticleListItem extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(12.w),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,19 +198,19 @@ class _ArticleListItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.r),
                 gradient: LinearGradient(
                   colors: [
-                    categoryColor.withOpacity(0.2),
-                    Colors.black.withOpacity(0.4),
+                    categoryColor.withValues(alpha: 0.2),
+                    Colors.black.withValues(alpha: 0.4),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 border: Border.all(
-                  color: categoryColor.withOpacity(0.3),
+                  color: categoryColor.withValues(alpha: 0.3),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: categoryColor.withOpacity(0.1),
+                    color: categoryColor.withValues(alpha: 0.1),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -226,7 +227,7 @@ class _ArticleListItem extends StatelessWidget {
                       child: Icon(
                         _getCategoryIcon(article.category),
                         size: 60.sp,
-                        color: categoryColor.withOpacity(0.1),
+                        color: categoryColor.withValues(alpha: 0.1),
                       ),
                     ),
                   ),
@@ -275,7 +276,7 @@ class _ArticleListItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.outfit(
                       fontSize: 16.sp,
-                      color: const Color(0xFFFFC107), // Gold to match Carousel
+                      color: AppColors.gold, // Gold to match Carousel
                       fontWeight: FontWeight.bold,
                       height: 1.2,
                     ),

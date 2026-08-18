@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:muslimly/src/core/utils/surah_names.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 import '../bloc/reading/reading_bloc.dart';
 import '../bloc/reading/reading_event.dart';
 import '../bloc/reading/reading_state.dart';
@@ -14,6 +15,7 @@ import '../../domain/entities/reading_activity.dart';
 import 'package:flutter/foundation.dart'; // For kDebugMode
 import '../../../../core/database/generate_dummy_data.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ReadingHistoryPage extends StatefulWidget {
   const ReadingHistoryPage({super.key});
@@ -84,29 +86,19 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF0F2027),
-                    Color(0xFF203A43),
-                    Color(0xFF2C5364),
+                    AppColors.bgGradientStart,
+                    AppColors.bgGradientMid,
+                    AppColors.bgGradientEnd,
                   ],
                 ),
               ),
               child: Scaffold(
                 backgroundColor: Colors.transparent,
-                appBar: AppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
+                appBar: AppTransparentAppBar(
                   centerTitle: true,
-                  leading: const BackButton(color: Colors.white),
-                  title: Text(
-                    AppLocalizations.of(context)!.historyTitle ??
-                        "Reading History",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Outfit',
-                    ),
-                  ),
+                  titleFontSize: 20.sp,
+                  title: AppLocalizations.of(context)!.historyTitle ??
+                      "Reading History",
                   actions: [
                     // Debug: Generate Dummy Data
                     // Debug: Generate Dummy Data
@@ -175,19 +167,19 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                       ),
                       padding: EdgeInsets.all(4.w),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(50.r),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                         ),
                       ),
                       child: TabBar(
                         indicator: BoxDecoration(
                           borderRadius: BorderRadius.circular(40.r),
-                          color: const Color(0xFF00E676),
+                          color: AppColors.accent,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF00E676).withOpacity(0.3),
+                              color: AppColors.accent.withValues(alpha: 0.3),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -369,7 +361,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                       children: [
                         Container(
                           padding: EdgeInsets.all(16.w),
-                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), shape: BoxShape.circle),
+                          decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.05), shape: BoxShape.circle),
                           child: Icon(Icons.history_toggle_off, size: 28.sp, color: Colors.white24),
                         ),
                         SizedBox(height: 12.h),
@@ -387,7 +379,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                         ElevatedButton(
                           onPressed: () => context.go('/dashboard?index=2'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF00E676),
+                            backgroundColor: AppColors.accent,
                             foregroundColor: Colors.black,
                             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
@@ -431,7 +423,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                   data: Theme.of(context).copyWith(
                     dividerColor: Colors.transparent,
                     expansionTileTheme: ExpansionTileThemeData(
-                      iconColor: const Color(0xFF00E676),
+                      iconColor: AppColors.accent,
                       collapsedIconColor: Colors.white54,
                       textColor: Colors.white,
                       collapsedTextColor: Colors.white,
@@ -451,7 +443,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                           children: [
                             Text(
                               "$weeklyTotal $unit",
-                              style: TextStyle(color: const Color(0xFF00E676), fontSize: 12.sp, fontWeight: FontWeight.w600, fontFamily: 'Outfit'),
+                              style: TextStyle(color: AppColors.accent, fontSize: 12.sp, fontWeight: FontWeight.w600, fontFamily: 'Outfit'),
                             ),
                             if (totalDuration > 0) ...[
                               SizedBox(width: 8.w),
@@ -563,14 +555,14 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
       margin: EdgeInsets.only(bottom: 8.h, left: 16.w, right: 16.w),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
         children: [
           Icon(
             isListMode ? Icons.format_list_bulleted : Icons.menu_book,
-            color: const Color(0xFF00E676),
+            color: AppColors.accent,
             size: 16.sp,
           ),
           SizedBox(width: 12.w),
@@ -673,13 +665,13 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
           padding: EdgeInsets.symmetric(vertical: 8.h),
           decoration: BoxDecoration(
             color: isActive
-                ? const Color(0xFF00E676)
-                : Colors.white.withOpacity(0.05),
+                ? AppColors.accent
+                : Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(8.r),
             border: Border.all(
               color: isActive
-                  ? const Color(0xFF00E676)
-                  : Colors.white.withOpacity(0.1),
+                  ? AppColors.accent
+                  : Colors.white.withValues(alpha: 0.1),
             ),
           ),
           child: Text(
@@ -776,14 +768,14 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF00E676).withOpacity(0.15),
-            Colors.white.withOpacity(0.05),
+            AppColors.accent.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
         borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -902,7 +894,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                           decoration: BoxDecoration(
                             border: Border(
                               top: BorderSide(
-                                color: Colors.white.withOpacity(0.1),
+                                color: Colors.white.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                             ),
@@ -915,15 +907,15 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                         height: valHeight > 0 ? valHeight : 2.h, // Min height
                         decoration: BoxDecoration(
                           color: isAchieved
-                              ? const Color(0xFF00E676)
+                              ? AppColors.accent
                               : (val > 0
-                                    ? const Color(0xFFFFB74D)
+                                    ? AppColors.goldPale
                                     : Colors.white10),
                           borderRadius: BorderRadius.circular(4.r),
                           gradient: isAchieved
                               ? const LinearGradient(
                                   colors: [
-                                    Color(0xFF00E676),
+                                    AppColors.accent,
                                     Color(0xFF69F0AE),
                                   ],
                                   begin: Alignment.bottomCenter,
@@ -938,7 +930,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                   Text(
                     label,
                     style: TextStyle(
-                      color: isToday ? const Color(0xFF00E676) : Colors.white54,
+                      color: isToday ? AppColors.accent : Colors.white54,
                       fontSize: fontSize,
                       fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                     ),
@@ -953,21 +945,21 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildLegendItem(
-                color: const Color(0xFF00E676),
+                color: AppColors.accent,
                 label:
                     AppLocalizations.of(context)!.chartLegendTargetReached ??
                     "Reached",
               ),
               SizedBox(width: 16.w),
               _buildLegendItem(
-                color: const Color(0xFFFFB74D),
+                color: AppColors.goldPale,
                 label:
                     AppLocalizations.of(context)!.chartLegendInProgress ??
                     "In Progress",
               ),
               SizedBox(width: 16.w),
               _buildLegendItem(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 label: "Target ($target)",
               ),
             ],
@@ -1017,14 +1009,14 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF00E676).withOpacity(0.15),
-                  Colors.white.withOpacity(0.05),
+                  AppColors.accent.withValues(alpha: 0.15),
+                  Colors.white.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1033,7 +1025,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
                   children: [
                     Icon(
                       isListMode ? Icons.format_list_bulleted : Icons.menu_book,
-                      color: const Color(0xFF00E676),
+                      color: AppColors.accent,
                       size: 20.sp,
                     ),
                     SizedBox(width: 6.w),
@@ -1081,14 +1073,14 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFFFFB74D).withOpacity(0.15),
-                  Colors.white.withOpacity(0.05),
+                  AppColors.goldPale.withValues(alpha: 0.15),
+                  Colors.white.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1141,14 +1133,14 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF64B5F6).withOpacity(0.15),
-                  Colors.white.withOpacity(0.05),
+                  const Color(0xFF64B5F6).withValues(alpha: 0.15),
+                  Colors.white.withValues(alpha: 0.05),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1240,7 +1232,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         'type': 'warning',
         'icon': '⚠️',
         'message': 'insightStreakWarning',
-        'color': const Color(0xFFFFB74D),
+        'color': AppColors.goldPale,
         'params': {'streak': currentStreak.toString()},
       };
     }
@@ -1251,7 +1243,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         'type': 'success',
         'icon': '🎉',
         'message': 'insightAheadTarget',
-        'color': const Color(0xFF00E676),
+        'color': AppColors.accent,
         'params': {'percent': (percentage - 100).toStringAsFixed(0)},
       };
     }
@@ -1269,7 +1261,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         'type': 'warning',
         'icon': '💪',
         'message': 'insightBehindTarget',
-        'color': const Color(0xFFFFB74D),
+        'color': AppColors.goldPale,
         'params': {
           'remaining': remaining.toString(),
           'needed': needed.toString(),
@@ -1297,7 +1289,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         'type': 'success',
         'icon': '👏',
         'message': 'insightPerfectWeek',
-        'color': const Color(0xFF00E676),
+        'color': AppColors.accent,
         'params': {},
       };
     }
@@ -1319,7 +1311,7 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
         'type': 'milestone',
         'icon': '🌟',
         'message': 'insightLifetimeMilestone',
-        'color': const Color(0xFF00E676),
+        'color': AppColors.accent,
         'params': {'total': lifetimeTotal.toString()},
       };
     }
@@ -1395,15 +1387,15 @@ class _ReadingHistoryPageState extends State<ReadingHistoryPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            (insight['color'] as Color).withOpacity(0.2),
-            Colors.white.withOpacity(0.05),
+            (insight['color'] as Color).withValues(alpha: 0.2),
+            Colors.white.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: (insight['color'] as Color).withOpacity(0.3),
+          color: (insight['color'] as Color).withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),

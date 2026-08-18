@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
+import '../../../../core/theme/app_colors.dart';
 
 /// Type of dzikir (morning or evening)
 enum DzikirType { morning, evening }
@@ -60,9 +61,9 @@ class FastingReminder {
   Color get color {
     switch (fastingTypeName) {
       case 'wajib':
-        return const Color(0xFFFFC107); // Gold
+        return AppColors.gold; // Gold
       case 'sunnah':
-        return const Color(0xFF00E676); // Green
+        return AppColors.accent; // Green
       case 'haram':
         return Colors.redAccent;
       default:

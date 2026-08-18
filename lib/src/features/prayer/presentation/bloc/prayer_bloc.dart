@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import '../../../../core/utils/location_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../domain/services/fasting_service.dart';
@@ -14,7 +13,6 @@ import '../../../../l10n/generated/app_localizations.dart'; // Import generated 
 import 'prayer_event.dart';
 import 'prayer_state.dart';
 
-@injectable
 class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
   final GetPrayerTime _getPrayerTime;
   final SearchCity _searchCity;

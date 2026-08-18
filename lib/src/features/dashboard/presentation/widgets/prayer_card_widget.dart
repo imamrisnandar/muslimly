@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class PrayerCardWidget extends StatelessWidget {
   final String name;
@@ -37,15 +38,15 @@ class PrayerCardWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4.h), // Reduced from 6.h
       decoration: BoxDecoration(
-        color: const Color(0xFF1C2A30).withOpacity(0.6),
+        color: AppColors.cardDark.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
-          color: const Color(0xFF00E676).withOpacity(0.5),
+          color: AppColors.accent.withValues(alpha: 0.5),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00E676).withOpacity(0.1),
+            color: AppColors.accent.withValues(alpha: 0.1),
             blurRadius: 20,
             spreadRadius: 2,
             offset: const Offset(0, 4),
@@ -70,12 +71,12 @@ class PrayerCardWidget extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00E676).withOpacity(0.2),
+                    color: AppColors.accent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
                   child: Icon(
                     icon,
-                    color: const Color(0xFF00E676),
+                    color: AppColors.accent,
                     size: 20.sp,
                   ),
                 ),
@@ -115,7 +116,7 @@ class PrayerCardWidget extends StatelessWidget {
                 Text(
                   time,
                   style: TextStyle(
-                    color: const Color(0xFF00E676),
+                    color: AppColors.accent,
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.3,

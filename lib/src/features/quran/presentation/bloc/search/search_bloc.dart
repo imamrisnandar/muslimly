@@ -1,11 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
 import '../../../domain/usecases/search_ayahs.dart';
 import 'search_event.dart';
 import 'search_state.dart';
 import 'package:rxdart/rxdart.dart'; // For debounce
 
-@injectable
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final SearchAyahs _searchAyahs;
 

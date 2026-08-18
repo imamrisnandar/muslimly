@@ -1,6 +1,5 @@
 import '../../../../core/config/app_urls.dart';
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
 import '../../domain/entities/reciter.dart';
 
@@ -12,7 +11,6 @@ abstract class AudioRepository {
   Future<List<String>> getSurahAudioUrls(String reciterId, int surahId);
 }
 
-@LazySingleton(as: AudioRepository)
 class AudioRepositoryImpl implements AudioRepository {
   final DatabaseService _databaseService;
 

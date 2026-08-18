@@ -1,9 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:injectable/injectable.dart';
 import '../entities/surah.dart';
 import '../repositories/quran_repository.dart';
 
-@injectable
 class GetSurahs {
   final QuranRepository _repository;
 

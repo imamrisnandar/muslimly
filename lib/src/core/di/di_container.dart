@@ -46,6 +46,7 @@ import '../../features/quran/data/repositories/quran_repository_impl.dart';
 import '../../features/quran/data/repositories/last_read_repository.dart'; // Added
 import '../../features/quran/domain/repositories/quran_repository.dart';
 import '../../features/quran/domain/usecases/get_ayahs.dart';
+import '../../features/quran/domain/usecases/get_page_for_ayah.dart';
 import '../../features/quran/domain/usecases/get_surahs.dart';
 import '../../features/quran/presentation/bloc/quran_bloc.dart';
 import '../../features/quran/presentation/bloc/reading/reading_bloc.dart';
@@ -54,8 +55,10 @@ import '../../features/quran/data/repositories/audio_repository.dart';
 import '../../features/quran/presentation/bloc/audio_bloc.dart';
 import '../../features/zikir/data/repositories/zikir_local_repository.dart' show ZikirLocalRepository;
 import '../../features/zikir/domain/repositories/zikir_repository.dart' show ZikirRepository;
+import '../../features/zikir/domain/usecases/get_zikir_content.dart';
 import '../../features/quran/data/repositories/translation_repository_impl.dart';
 import '../../features/tajweed/data/repositories/tajweed_repository.dart'; // Added
+import '../../features/tajweed/domain/usecases/get_tajweed_content.dart';
 import '../../features/fasting/data/repositories/fasting_repository.dart' show FastingRepositoryImpl;
 import '../../features/fasting/domain/repositories/fasting_repository.dart' show FastingRepository;
 import '../../features/fasting/domain/usecases/get_fasting_content.dart';
@@ -67,6 +70,7 @@ import '../../features/wudhu/presentation/bloc/wudhu_cubit.dart';
 import '../../features/prayer/domain/services/fasting_service.dart'; // Added
 import '../../features/dashboard/domain/services/reminder_service.dart'; // Added
 import '../../features/prayer/data/repositories/prayer_guide_repository.dart'; // Added
+import '../../features/prayer/domain/usecases/get_prayer_guide_content.dart';
 import '../../features/quran/domain/repositories/translation_repository.dart';
 import '../../features/quran/presentation/bloc/translation/translation_bloc.dart';
 import '../../features/quran/domain/usecases/search_ayahs.dart'; // Added
@@ -187,6 +191,7 @@ void configureDependencies() {
 
   getIt.registerFactory<GetSurahs>(() => GetSurahs(getIt<QuranRepository>()));
   getIt.registerFactory<GetAyahs>(() => GetAyahs(getIt<QuranRepository>()));
+  getIt.registerFactory<GetPageForAyah>(() => GetPageForAyah(getIt<QuranRepository>()));
   getIt.registerFactory<QuranBloc>(
     () => QuranBloc(getIt<GetSurahs>(), getIt<GetAyahs>()),
   );
@@ -238,9 +243,11 @@ void configureDependencies() {
   getIt.registerLazySingleton<ZikirRepository>(
     () => ZikirLocalRepository(),
   );
+  getIt.registerFactory<GetZikirContent>(() => GetZikirContent(getIt<ZikirRepository>()));
 
   // --- Tajweed Feature ---
   getIt.registerLazySingleton<TajweedRepository>(() => TajweedRepositoryImpl());
+  getIt.registerFactory<GetTajweedContent>(() => GetTajweedContent(getIt<TajweedRepository>()));
 
   // --- Fasting Feature ---
   getIt.registerLazySingleton<FastingRepository>(() => FastingRepositoryImpl());
@@ -263,6 +270,7 @@ void configureDependencies() {
   getIt.registerLazySingleton<PrayerGuideRepository>(
     () => PrayerGuideRepository(),
   );
+  getIt.registerFactory<GetPrayerGuideContent>(() => GetPrayerGuideContent(getIt<PrayerGuideRepository>()));
 
   // --- Article Feature ---
   getIt.registerLazySingleton<ArticleLocalDataSource>(

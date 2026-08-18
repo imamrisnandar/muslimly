@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 
-@lazySingleton
 class SyncApiService {
   final Dio _dio;
 

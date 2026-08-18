@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:injectable/injectable.dart';
 import '../../domain/entities/zikir_item.dart';
 import '../../domain/repositories/zikir_repository.dart';
 
-@LazySingleton(as: ZikirRepository)
 class ZikirLocalRepository implements ZikirRepository {
   Future<List<ZikirItem>> _loadData(String category, Locale locale) async {
     try {

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../data/inspiration_data.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class DailyInspirationPage extends StatefulWidget {
   const DailyInspirationPage({super.key});
@@ -32,9 +33,8 @@ class _DailyInspirationPageState extends State<DailyInspirationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: AppTransparentAppBar(
+        title: '',
         leading: IconButton(
           icon: Container(
             padding: EdgeInsets.all(8.w),

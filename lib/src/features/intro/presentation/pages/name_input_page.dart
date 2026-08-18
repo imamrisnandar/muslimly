@@ -5,6 +5,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/widgets/islamic_loading_indicator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class NameInputPage extends StatefulWidget {
   const NameInputPage({super.key});
@@ -43,7 +44,7 @@ class _NameInputPageState extends State<NameInputPage> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isActive ? const Color(0xFF00E676) : Colors.transparent,
+          color: isActive ? AppColors.accent : Colors.transparent,
           borderRadius: BorderRadius.circular(20.r),
           border: isActive ? null : Border.all(color: Colors.white.withValues(alpha: 0.3)),
         ),
@@ -69,7 +70,7 @@ class _NameInputPageState extends State<NameInputPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
           ),
         ),
         child: SafeArea(
@@ -129,7 +130,7 @@ class _NameInputPageState extends State<NameInputPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
-                              borderSide: const BorderSide(color: Color(0xFF00E676)),
+                              borderSide: const BorderSide(color: AppColors.accent),
                             ),
                             prefixIcon: const Icon(Icons.person, color: Colors.white54),
                           ),
@@ -147,7 +148,7 @@ class _NameInputPageState extends State<NameInputPage> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _submitName,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF00E676),
+                              backgroundColor: AppColors.accent,
                               foregroundColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),

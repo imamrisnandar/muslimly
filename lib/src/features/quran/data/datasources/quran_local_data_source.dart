@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 
 import '../models/ayah_model.dart';
 import '../models/surah_model.dart';
@@ -11,7 +10,6 @@ abstract class QuranLocalDataSource {
   Future<int> getPageForAyah(int surahId, int ayahNumber);
 }
 
-@LazySingleton(as: QuranLocalDataSource)
 class QuranLocalDataSourceImpl implements QuranLocalDataSource {
   @override
   Future<List<SurahModel>> getSurahs() async {

@@ -13,6 +13,7 @@ import '../../domain/entities/surah.dart';
 import '../bloc/search/search_bloc.dart';
 import '../bloc/search/search_event.dart';
 import '../bloc/search/search_state.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class SearchResultsPage extends StatelessWidget {
   final String initialQuery;
@@ -72,9 +73,9 @@ class _SearchViewState extends State<_SearchView> {
   @override
   Widget build(BuildContext context) {
     // Theme colors matching Mushaf
-    const backgroundColor = Color(0xFFFFF8E1); // Cream
-    const textColor = Color(0xFF4E342E); // Dark Brown
-    const accentColor = Color(0xFF1B5E20); // Dark Green
+    const backgroundColor = AppColors.creamBg; // Cream
+    const textColor = AppColors.quranBrown; // Dark Brown
+    const accentColor = AppColors.quranGreen; // Dark Green
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -112,7 +113,7 @@ class _SearchViewState extends State<_SearchView> {
             return Center(
               child: Text(
                 state.message,
-                style: TextStyle(color: textColor.withOpacity(0.7)),
+                style: TextStyle(color: textColor.withValues(alpha: 0.7)),
               ),
             );
           } else if (state is SearchLoaded) {
@@ -124,14 +125,14 @@ class _SearchViewState extends State<_SearchView> {
                     Icon(
                       Icons.search_off,
                       size: 64.sp,
-                      color: textColor.withOpacity(0.3),
+                      color: textColor.withValues(alpha: 0.3),
                     ),
                     SizedBox(height: 16.h),
                     Text(
                       "No results found for\n'${state.query}'",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: textColor.withOpacity(0.7),
+                        color: textColor.withValues(alpha: 0.7),
                         fontSize: 16.sp,
                         fontFamily: GoogleFonts.outfit().fontFamily,
                       ),
@@ -150,7 +151,7 @@ class _SearchViewState extends State<_SearchView> {
                     AppLocalizations.of(context)!.searchSortedByRelevance,
                     style: GoogleFonts.outfit(
                       fontSize: 10.sp,
-                      color: textColor.withOpacity(0.5),
+                      color: textColor.withValues(alpha: 0.5),
                       fontStyle: FontStyle.italic,
                     ),
                     textAlign: TextAlign.end,
@@ -232,7 +233,7 @@ class _SearchResultCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -254,7 +255,7 @@ class _SearchResultCard extends StatelessWidget {
                     vertical: 4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.1),
+                    color: accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(
@@ -303,10 +304,10 @@ class _SearchResultCard extends StatelessWidget {
         TextSpan(
           text: m.group(1),
           style: TextStyle(
-            color: const Color(0xFF2E7D32), // Darker Green for text on light bg
+            color: AppColors.quranGreenDark, // Darker Green for text on light bg
             backgroundColor: const Color(
               0xFFA5D6A7,
-            ).withOpacity(0.3), // Light Green highlight
+            ).withValues(alpha: 0.3), // Light Green highlight
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -321,7 +322,7 @@ class _SearchResultCard extends StatelessWidget {
     return RichText(
       text: TextSpan(
         style: TextStyle(
-          color: textColor.withOpacity(0.8),
+          color: textColor.withValues(alpha: 0.8),
           fontSize: 14.sp,
           height: 1.5,
           fontFamily: GoogleFonts.outfit().fontFamily,

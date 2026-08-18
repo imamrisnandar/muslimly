@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/database/database_service.dart';
 import '../../../../../core/services/notification_service.dart';
@@ -21,12 +22,16 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     this._syncApiService,
     this._authRepository,
   ) : super(BookmarkInitial()) {
-    on<LoadBookmarks>(_onLoadBookmarks);
-    on<AddBookmark>(_onAddBookmark);
-    on<ToggleBookmark>(_onToggleBookmark);
-    on<DeleteBookmark>(_onDeleteBookmark);
-    on<SaveLastRead>(_onSaveLastRead);
-    on<LoadLastRead>(_onLoadLastRead);
+    // sequential() prevents a rapid double-tap from dispatching two
+    // ToggleBookmark events that both read "not bookmarked" before either
+    // write lands, which used to produce duplicate rows and duplicate
+    // server pushes.
+    on<LoadBookmarks>(_onLoadBookmarks, transformer: sequential());
+    on<AddBookmark>(_onAddBookmark, transformer: sequential());
+    on<ToggleBookmark>(_onToggleBookmark, transformer: sequential());
+    on<DeleteBookmark>(_onDeleteBookmark, transformer: sequential());
+    on<SaveLastRead>(_onSaveLastRead, transformer: sequential());
+    on<LoadLastRead>(_onLoadLastRead, transformer: sequential());
   }
 
   // M17: Load bookmarks + pull from server and merge

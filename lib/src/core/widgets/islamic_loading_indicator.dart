@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 /// A beautiful loading indicator using the app logo
 /// Features a pulsing/breathing animation
@@ -56,8 +57,8 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
   Widget build(BuildContext context) {
     // Determine color based on theme
     final baseColor = widget.isDark
-        ? const Color(0xFF00E676)
-        : const Color(0xFF00796B);
+        ? AppColors.accent
+        : AppColors.quranTeal;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -73,7 +74,7 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: baseColor.withOpacity(0.3 * _opacityAnimation.value),
+                    color: baseColor.withValues(alpha: 0.3 * _opacityAnimation.value),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),

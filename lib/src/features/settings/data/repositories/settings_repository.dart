@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/utils/app_logger.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
@@ -40,7 +39,6 @@ abstract class SettingsRepository {
   Future<void> syncSettingsFromRemote();
 }
 
-@LazySingleton(as: SettingsRepository)
 class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyLanguage = 'app_language';
   static const String _keyPrayerPrefix = 'prayer_notify_';

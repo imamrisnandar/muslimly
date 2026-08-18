@@ -9,6 +9,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 
 import '../../domain/entities/article.dart';
 import '../bloc/article_bloc.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class ArticleCarouselWidget extends StatefulWidget {
   const ArticleCarouselWidget({super.key});
@@ -134,7 +135,7 @@ class _ArticleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconData = _getCategoryIcon(article.category);
-    final categoryColor = const Color(0xFF1DE9B6); // Fresh Teal
+    final categoryColor = AppColors.accentDark; // Fresh Teal
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
@@ -149,7 +150,7 @@ class _ArticleCard extends StatelessWidget {
           ), // Flyer-like slightly sharper corners
           boxShadow: [
             BoxShadow(
-              color: categoryColor.withOpacity(0.1),
+              color: categoryColor.withValues(alpha: 0.1),
               blurRadius: 30,
               spreadRadius: -5,
               offset: const Offset(0, 15),
@@ -167,7 +168,7 @@ class _ArticleCard extends StatelessWidget {
                   filter: dart_ui.ImageFilter.blur(sigmaX: 25.0, sigmaY: 25.0),
                   child: Container(
                     // Lighter tint so more background colors bleed through
-                    color: const Color(0xFF0F2027).withOpacity(0.35),
+                    color: AppColors.bgGradientStart.withValues(alpha: 0.35),
                   ),
                 ),
               ),
@@ -181,19 +182,19 @@ class _ArticleCard extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        categoryColor.withOpacity(
+                        categoryColor.withValues(alpha: 
                           0.25,
                         ), // Stronger Teal highlight on top-left edge
-                        Colors.white.withOpacity(
+                        Colors.white.withValues(alpha: 
                           0.12,
                         ), // Stronger white reflection
-                        Colors.black.withOpacity(0.1),
+                        Colors.black.withValues(alpha: 0.1),
                       ],
                       stops: const [0.0, 0.35, 1.0],
                     ),
                     border: Border.all(
                       // Stronger white border to emphasize the glass edge
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       width: 1.2,
                     ),
                   ),
@@ -209,7 +210,7 @@ class _ArticleCard extends StatelessWidget {
                   child: Icon(
                     iconData,
                     size: 150.sp,
-                    color: categoryColor.withOpacity(
+                    color: categoryColor.withValues(alpha: 
                       0.05,
                     ), // Very subtle embedded graphic
                   ),
@@ -244,15 +245,15 @@ class _ArticleCard extends StatelessWidget {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    categoryColor.withOpacity(0.3),
-                                    categoryColor.withOpacity(0.1),
+                                    categoryColor.withValues(alpha: 0.3),
+                                    categoryColor.withValues(alpha: 0.1),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 borderRadius: BorderRadius.circular(6.r),
                                 border: Border.all(
-                                  color: categoryColor.withOpacity(0.4),
+                                  color: categoryColor.withValues(alpha: 0.4),
                                   width: 1,
                                 ),
                               ),
@@ -274,14 +275,14 @@ class _ArticleCard extends StatelessWidget {
                             //     vertical: 4.h,
                             //   ),
                             //   decoration: BoxDecoration(
-                            //     color: Colors.white.withOpacity(0.1),
+                            //     color: Colors.white.withValues(alpha: 0.1),
                             //     borderRadius: BorderRadius.circular(10.r),
                             //   ),
                             //   child: Text(
                             //     "${article.publishedAt.day} ${_getMonthName(article.publishedAt.month)} ${article.publishedAt.year}",
                             //     style: GoogleFonts.inter(
                             //       fontSize: isLandscape ? 8.sp : 9.sp,
-                            //       color: Colors.white.withOpacity(0.9),
+                            //       color: Colors.white.withValues(alpha: 0.9),
                             //       fontWeight: FontWeight.w600,
                             //     ),
                             //   ),
@@ -305,12 +306,12 @@ class _ArticleCard extends StatelessWidget {
                                   style: GoogleFonts.outfit(
                                     fontSize: isLandscape ? 15.sp : 18.sp,
                                     fontWeight: FontWeight.w800,
-                                    color: const Color(0xFFFFC107), // Pop Gold
+                                    color: AppColors.gold, // Pop Gold
                                     height: 1.15,
                                     letterSpacing: 0.5,
                                     shadows: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.8),
+                                        color: Colors.black.withValues(alpha: 0.8),
                                         blurRadius: 10,
                                         offset: const Offset(0, 3),
                                       ),
@@ -328,7 +329,7 @@ class _ArticleCard extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
                                         fontSize: 12.sp,
-                                        color: Colors.white.withOpacity(0.75),
+                                        color: Colors.white.withValues(alpha: 0.75),
                                         height: 1.4,
                                         letterSpacing: 0.2,
                                       ),
@@ -349,12 +350,12 @@ class _ArticleCard extends StatelessWidget {
                               vertical: 6.h,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(
+                              color: Colors.white.withValues(alpha: 
                                 0.1,
                               ), // Glass Pill
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 width: 0.5,
                               ),
                             ),
@@ -376,7 +377,7 @@ class _ArticleCard extends StatelessWidget {
                                 Icon(
                                   Icons.arrow_forward_rounded,
                                   size: 13.sp,
-                                  color: const Color(0xFFFFC107), // Gold arrow
+                                  color: AppColors.gold, // Gold arrow
                                 ),
                               ],
                             ),

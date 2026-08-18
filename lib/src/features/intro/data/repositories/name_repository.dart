@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import '../../../../core/database/database_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../quran/data/datasources/remote/sync_api_service.dart';
 import '../../domain/repositories/name_repository.dart';
 
-@LazySingleton(as: NameRepository)
 class NameRepositoryImpl implements NameRepository {
   static const String _keyName = 'user_name';
   final DatabaseService _databaseService;

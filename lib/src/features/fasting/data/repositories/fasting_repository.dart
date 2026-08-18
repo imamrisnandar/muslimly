@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:injectable/injectable.dart';
 import '../../domain/repositories/fasting_repository.dart';
 import '../models/fasting_model.dart';
 
-@LazySingleton(as: FastingRepository)
 class FastingRepositoryImpl implements FastingRepository {
   @override
   Future<List<FastingModel>> getFastingContent(String locale) async {

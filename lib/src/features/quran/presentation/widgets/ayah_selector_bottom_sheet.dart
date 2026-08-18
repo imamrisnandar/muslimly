@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class AyahSelectorBottomSheet extends StatelessWidget {
   final int totalAyahs;
@@ -19,11 +20,11 @@ class AyahSelectorBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF0F2027), // Dark Background
+        color: AppColors.bgGradientStart, // Dark Background
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -67,7 +68,7 @@ class AyahSelectorBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          Divider(height: 1, color: Colors.white.withOpacity(0.1)),
+          Divider(height: 1, color: Colors.white.withValues(alpha: 0.1)),
 
           // Grid
           Expanded(
@@ -90,9 +91,9 @@ class AyahSelectorBottomSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     alignment: Alignment.center,
                     child: Text(

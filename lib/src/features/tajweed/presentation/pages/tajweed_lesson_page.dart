@@ -6,6 +6,8 @@ import '../../data/models/tajweed_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/presentation/widgets/app_transparent_app_bar.dart';
 
 class TajweedLessonPage extends StatefulWidget {
   final TajweedLesson lesson;
@@ -128,19 +130,11 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8E1), // Cream Theme
-      appBar: AppBar(
-        title: Text(
-          widget.lesson.title,
-          style: TextStyle(
-            color: const Color(0xFF4E342E), // Dark Brown
-            fontWeight: FontWeight.bold,
-            fontFamily: GoogleFonts.outfit().fontFamily,
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF4E342E)),
+      backgroundColor: AppColors.creamBg, // Cream Theme
+      appBar: AppTransparentAppBar(
+        title: widget.lesson.title,
+        titleColor: AppColors.quranBrown,
+        iconColor: AppColors.quranBrown,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.r),
@@ -155,18 +149,18 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.white, const Color(0xFFFFF8E1)],
+                  colors: [Colors.white, AppColors.creamBg],
                 ),
                 borderRadius: BorderRadius.circular(24.r),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF1B5E20).withOpacity(0.1),
+                    color: AppColors.quranGreen.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
                 ],
                 border: Border.all(
-                  color: const Color(0xFF1B5E20).withOpacity(0.1),
+                  color: AppColors.quranGreen.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -178,12 +172,12 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                       Container(
                         padding: EdgeInsets.all(8.w),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1B5E20).withOpacity(0.1),
+                          color: AppColors.quranGreen.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                         child: Icon(
                           Icons.menu_book,
-                          color: const Color(0xFF1B5E20),
+                          color: AppColors.quranGreen,
                           size: 20.sp,
                         ),
                       ),
@@ -193,7 +187,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1B5E20), // Dark Green
+                          color: AppColors.quranGreen, // Dark Green
                           fontFamily: GoogleFonts.outfit().fontFamily,
                         ),
                       ),
@@ -205,7 +199,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                     style: TextStyle(
                       fontSize: 15.sp,
                       height: 1.6,
-                      color: const Color(0xFF4E342E), // Brown
+                      color: AppColors.quranBrown, // Brown
                       fontFamily: GoogleFonts.outfit().fontFamily,
                     ),
                   ),
@@ -214,7 +208,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                     Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF4E342E).withOpacity(0.05),
+                        color: AppColors.quranBrown.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Row(
@@ -223,7 +217,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                           Icon(
                             Icons.info_outline,
                             size: 16.sp,
-                            color: const Color(0xFF4E342E).withOpacity(0.6),
+                            color: AppColors.quranBrown.withValues(alpha: 0.6),
                           ),
                           SizedBox(width: 8.w),
                           Expanded(
@@ -232,7 +226,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontStyle: FontStyle.italic,
-                                color: const Color(0xFF4E342E).withOpacity(0.8),
+                                color: AppColors.quranBrown.withValues(alpha: 0.8),
                               ),
                             ),
                           ),
@@ -252,7 +246,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF4E342E),
+                  color: AppColors.quranBrown,
                   fontFamily: GoogleFonts.outfit().fontFamily,
                 ),
               ),
@@ -269,13 +263,13 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.brown.withOpacity(0.1),
+                          color: Colors.brown.withValues(alpha: 0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
                       ],
                       border: Border.all(
-                        color: const Color(0xFF1B5E20).withOpacity(0.2),
+                        color: AppColors.quranGreen.withValues(alpha: 0.2),
                       ),
                     ),
                     child: Center(
@@ -285,7 +279,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                           fontSize: 28.sp,
                           fontWeight: FontWeight.bold,
                           fontFamily: GoogleFonts.amiriQuran().fontFamily,
-                          color: const Color(0xFF1B5E20),
+                          color: AppColors.quranGreen,
                         ),
                       ),
                     ),
@@ -302,7 +296,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF4E342E),
+                  color: AppColors.quranBrown,
                   fontFamily: GoogleFonts.outfit().fontFamily,
                 ),
               ),
@@ -325,14 +319,14 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                       borderRadius: BorderRadius.circular(16.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.05),
+                          color: Colors.grey.withValues(alpha: 0.05),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
                       ],
                       border: Border.all(
                         color: isPlaying
-                            ? const Color(0xFF1B5E20)
+                            ? AppColors.quranGreen
                             : Colors.transparent,
                         width: 1.5,
                       ),
@@ -349,13 +343,13 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                               padding: EdgeInsets.all(10.r),
                               decoration: BoxDecoration(
                                 color: isPlaying
-                                    ? const Color(0xFF1B5E20) // Active Green
-                                    : const Color(0xFFFFF8E1), // Cream bg
+                                    ? AppColors.quranGreen // Active Green
+                                    : AppColors.creamBg, // Cream bg
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: const Color(
                                     0xFF1B5E20,
-                                  ).withOpacity(0.2),
+                                  ).withValues(alpha: 0.2),
                                 ),
                               ),
                               child: _isLoading && isPlaying
@@ -371,7 +365,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                                       isPlaying ? Icons.stop : Icons.play_arrow,
                                       color: isPlaying
                                           ? Colors.white
-                                          : const Color(0xFF1B5E20),
+                                          : AppColors.quranGreen,
                                       size: 24.sp,
                                     ),
                             ),
@@ -402,7 +396,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                                   example.subCategory!,
                                   style: TextStyle(
                                     fontSize: 11.sp,
-                                    color: const Color(0xFF1B5E20),
+                                    color: AppColors.quranGreen,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 0.5,
                                   ),
@@ -420,7 +414,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                                   fontSize: 13.sp,
                                   color: const Color(
                                     0xFF4E342E,
-                                  ).withOpacity(0.7),
+                                  ).withValues(alpha: 0.7),
                                   fontFamily: GoogleFonts.outfit().fontFamily,
                                 ),
                               ),
@@ -465,7 +459,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
     return Column(
       children: [
         SizedBox(height: 24.h),
-        Divider(color: Colors.brown.withOpacity(0.2)),
+        Divider(color: Colors.brown.withValues(alpha: 0.2)),
         SizedBox(height: 16.h),
         Row(
           children: [
@@ -536,10 +530,10 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: const Color(0xFF1B5E20).withOpacity(0.1)),
+          border: Border.all(color: AppColors.quranGreen.withValues(alpha: 0.1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.brown.withOpacity(0.05),
+              color: Colors.brown.withValues(alpha: 0.05),
               offset: const Offset(0, 2),
               blurRadius: 4,
             ),
@@ -559,7 +553,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                   Icon(
                     Icons.arrow_back_rounded,
                     size: 16.sp,
-                    color: const Color(0xFF1B5E20),
+                    color: AppColors.quranGreen,
                   ),
                   SizedBox(width: 4.w),
                 ],
@@ -578,7 +572,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                   Icon(
                     Icons.arrow_forward_rounded,
                     size: 16.sp,
-                    color: const Color(0xFF1B5E20),
+                    color: AppColors.quranGreen,
                   ),
                 ],
               ],
@@ -591,7 +585,7 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 12.sp,
-                color: const Color(0xFF4E342E),
+                color: AppColors.quranBrown,
                 fontWeight: FontWeight.bold,
                 fontFamily: GoogleFonts.outfit().fontFamily,
               ),

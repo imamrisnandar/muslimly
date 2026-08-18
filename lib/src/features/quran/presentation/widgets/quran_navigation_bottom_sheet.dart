@@ -10,7 +10,8 @@ import '../bloc/quran_bloc.dart';
 import '../bloc/quran_state.dart';
 
 import 'package:muslimly/src/core/di/di_container.dart';
-import 'package:muslimly/src/features/quran/domain/repositories/quran_repository.dart';
+import 'package:muslimly/src/features/quran/domain/usecases/get_page_for_ayah.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class QuranNavigationBottomSheet extends StatefulWidget {
   const QuranNavigationBottomSheet({super.key});
@@ -43,11 +44,11 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
     return Container(
       height: 0.85.sh,
       decoration: BoxDecoration(
-        color: const Color(0xFF0F2027), // Dark Background
+        color: AppColors.bgGradientStart, // Dark Background
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -86,7 +87,7 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
             height: 48.h,
             margin: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05), // White transparent bg
+              color: Colors.white.withValues(alpha: 0.05), // White transparent bg
               borderRadius: BorderRadius.circular(24.r),
             ),
             child: TabBar(
@@ -95,7 +96,7 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
               unselectedLabelColor: Colors.white60, // Light text for unselected
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
-                color: const Color(0xFF00E676), // Brand Green
+                color: AppColors.accent, // Brand Green
                 borderRadius: BorderRadius.circular(24.r),
               ),
               labelStyle: TextStyle(
@@ -184,7 +185,7 @@ class _PageTabState extends State<_PageTab> {
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          color: const Color(0xFF00E676),
+                          color: AppColors.accent,
                           width: 2.h,
                         ),
                       ),
@@ -198,7 +199,7 @@ class _PageTabState extends State<_PageTab> {
                         LengthLimitingTextInputFormatter(3),
                       ],
                       style: TextStyle(
-                        color: const Color(0xFF00E676),
+                        color: AppColors.accent,
                         fontSize: 72.sp,
                         fontWeight: FontWeight.bold,
                         height: 1.0,
@@ -249,13 +250,13 @@ class _PageTabState extends State<_PageTab> {
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       trackHeight: 8.h,
-                      activeTrackColor: const Color(0xFF00E676),
+                      activeTrackColor: AppColors.accent,
                       inactiveTrackColor: Colors.white12,
                       thumbColor: Colors.white,
                       thumbShape: RoundSliderThumbShape(
                         enabledThumbRadius: 12.r,
                       ),
-                      overlayColor: const Color(0xFF00E676).withOpacity(0.2),
+                      overlayColor: AppColors.accent.withValues(alpha: 0.2),
                     ),
                     child: Slider(
                       value: _currentPage,
@@ -298,7 +299,7 @@ class _PageTabState extends State<_PageTab> {
                     child: ElevatedButton(
                       onPressed: _navigateToPage,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00E676),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.black,
                         padding: EdgeInsets.symmetric(vertical: 18.h),
                         shape: RoundedRectangleBorder(
@@ -348,12 +349,12 @@ class _JuzTab extends StatelessWidget {
         return Container(
           margin: EdgeInsets.only(bottom: 12.h),
           child: Material(
-            color: Colors.white.withOpacity(0.03),
+            color: Colors.white.withValues(alpha: 0.03),
             borderRadius: BorderRadius.circular(16.r),
             clipBehavior: Clip.antiAlias,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white.withOpacity(0.05)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Theme(
@@ -363,7 +364,7 @@ class _JuzTab extends StatelessWidget {
                 horizontal: 16.w,
                 vertical: 4.h,
               ),
-              iconColor: const Color(0xFF00E676),
+              iconColor: AppColors.accent,
               collapsedIconColor: Colors.white30,
               title: Row(
                 children: [
@@ -372,13 +373,13 @@ class _JuzTab extends StatelessWidget {
                     height: 36.w,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00E676).withOpacity(0.1),
+                      color: AppColors.accent.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       "$juzNumber",
                       style: TextStyle(
-                        color: const Color(0xFF00E676),
+                        color: AppColors.accent,
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
                       ),
@@ -415,28 +416,28 @@ class _JuzTab extends StatelessWidget {
                         isHighlight: true,
                       ),
                       Divider(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         height: 16.h,
                       ),
 
                       // Rub' 1 (Approx start + 2.5 pages) -> Page + 3
                       _buildJuzItem(context, "${l10n.rub} 1", startPage + 3),
                       Divider(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         height: 16.h,
                       ),
 
                       // Rub' 2 (Approx start + 5 pages) -> Page + 5
                       _buildJuzItem(context, "${l10n.rub} 2", startPage + 5),
                       Divider(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         height: 16.h,
                       ),
 
                       // Rub' 3 (Approx start + 7.5 pages) -> Page + 8
                       _buildJuzItem(context, "${l10n.rub} 3", startPage + 8),
                       Divider(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         height: 16.h,
                       ),
 
@@ -448,21 +449,21 @@ class _JuzTab extends StatelessWidget {
                         isHighlight: true,
                       ),
                       Divider(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         height: 16.h,
                       ),
 
                       // Rub' 5 (Hizb 2 + 2.5) -> start + 13
                       _buildJuzItem(context, "${l10n.rub} 5", startPage + 13),
                       Divider(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         height: 16.h,
                       ),
 
                       // Rub' 6 (Hizb 2 + 5) -> start + 15
                       _buildJuzItem(context, "${l10n.rub} 6", startPage + 15),
                       Divider(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         height: 16.h,
                       ),
 
@@ -568,7 +569,7 @@ class _SurahTabState extends State<_SurahTab> {
               hintStyle: const TextStyle(color: Colors.white30),
               prefixIcon: const Icon(Icons.search, color: Colors.white30),
               filled: true,
-              fillColor: Colors.white.withOpacity(0.05),
+              fillColor: Colors.white.withValues(alpha: 0.05),
               contentPadding: EdgeInsets.symmetric(vertical: 12.h),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16.r),
@@ -587,7 +588,7 @@ class _SurahTabState extends State<_SurahTab> {
               final surah = filtered[index];
               return Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.03),
+                  color: Colors.white.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: ListTile(
@@ -603,12 +604,12 @@ class _SurahTabState extends State<_SurahTab> {
                       shape: BoxShape.circle,
                       color: const Color(
                         0xFF00E676,
-                      ).withOpacity(0.1), // Unified Green
+                      ).withValues(alpha: 0.1), // Unified Green
                     ),
                     child: Text(
                       '${surah.number}',
                       style: TextStyle(
-                        color: const Color(0xFF00E676), // Unified Green Text
+                        color: AppColors.accent, // Unified Green Text
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp, // Unified Size
                       ),
@@ -662,7 +663,7 @@ class _SurahTabState extends State<_SurahTab> {
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () => setState(() => _selectedSurah = null),
                 style: IconButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.1),
+                  backgroundColor: Colors.white.withValues(alpha: 0.1),
                   padding: EdgeInsets.all(8.w),
                 ),
               ),
@@ -703,8 +704,7 @@ class _SurahTabState extends State<_SurahTab> {
               final ayahNum = index + 1;
               return InkWell(
                 onTap: () async {
-                  final quranRepo = getIt<QuranRepository>();
-                  final page = await quranRepo.getPageForAyah(
+                  final page = await getIt<GetPageForAyah>()(
                     surahNumber,
                     ayahNum,
                   );
@@ -721,7 +721,7 @@ class _SurahTabState extends State<_SurahTab> {
                 borderRadius: BorderRadius.circular(12.r),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12.r),
                     border: Border.all(color: Colors.white10),
                   ),
@@ -757,7 +757,7 @@ void _showReadingModeSelection(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: const Color(0xFF0F2027),
+    backgroundColor: AppColors.bgGradientStart,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
     ),
@@ -834,13 +834,13 @@ Widget _buildModeTile({
     child: Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.white10),
       ),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xFF00E676), size: 28.sp),
+          Icon(icon, color: AppColors.accent, size: 28.sp),
           SizedBox(width: 16.w),
           Expanded(
             child: Column(

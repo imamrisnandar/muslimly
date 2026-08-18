@@ -6,6 +6,7 @@ import '../bloc/audio_event.dart';
 import '../bloc/audio_state.dart';
 import 'reciter_selector_bottom_sheet.dart';
 import '../../domain/entities/reciter.dart';
+import '../../../../core/theme/app_colors.dart';
 
 class AudioBottomSheet extends StatelessWidget {
   const AudioBottomSheet({super.key});
@@ -23,7 +24,7 @@ class AudioBottomSheet extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A2C33), // Dark theme
+        color: AppColors.cardAlt, // Dark theme
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       child: BlocBuilder<AudioBloc, AudioState>(
@@ -80,7 +81,7 @@ class AudioBottomSheet extends StatelessWidget {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(color: Colors.white24),
                   ),
@@ -92,7 +93,7 @@ class AudioBottomSheet extends StatelessWidget {
                       Text(
                         state.selectedReciter?.name ?? 'Select Reciter',
                         style: TextStyle(
-                          color: const Color(0xFF00E676),
+                          color: AppColors.accent,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -109,15 +110,15 @@ class AudioBottomSheet extends StatelessWidget {
                             color:
                                 state.selectedReciter!.source ==
                                     AudioSourceType.quranComChapter
-                                ? Colors.blue.withOpacity(0.2)
-                                : Colors.orange.withOpacity(0.2),
+                                ? Colors.blue.withValues(alpha: 0.2)
+                                : Colors.orange.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4.r),
                             border: Border.all(
                               color:
                                   state.selectedReciter!.source ==
                                       AudioSourceType.quranComChapter
-                                  ? Colors.blue.withOpacity(0.5)
-                                  : Colors.orange.withOpacity(0.5),
+                                  ? Colors.blue.withValues(alpha: 0.5)
+                                  : Colors.orange.withValues(alpha: 0.5),
                             ),
                           ),
                           child: Text(
@@ -160,7 +161,7 @@ class AudioBottomSheet extends StatelessWidget {
                         overlayRadius: 14.r,
                       ),
                       trackHeight: 4.h,
-                      activeTrackColor: const Color(0xFF00E676),
+                      activeTrackColor: AppColors.accent,
                       inactiveTrackColor: Colors.white12,
                       thumbColor: Colors.white,
                     ),
@@ -216,11 +217,11 @@ class AudioBottomSheet extends StatelessWidget {
                     width: 64.w,
                     height: 64.w,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF00E676),
+                      color: AppColors.accent,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF00E676).withOpacity(0.4),
+                          color: AppColors.accent.withValues(alpha: 0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                         ),
