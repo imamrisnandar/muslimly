@@ -56,6 +56,7 @@ import '../../features/quran/data/repositories/audio_repository.dart';
 import '../../features/quran/presentation/bloc/audio_bloc.dart';
 import '../../features/zikir/data/repositories/zikir_local_repository.dart' show ZikirLocalRepository;
 import '../../features/zikir/domain/repositories/zikir_repository.dart' show ZikirRepository;
+import '../../features/zikir/presentation/bloc/doa_harian_list_cubit.dart';
 import '../../features/zikir/domain/usecases/get_zikir_content.dart';
 import '../../features/quran/data/repositories/translation_repository_impl.dart';
 import '../../features/tajweed/data/repositories/tajweed_repository_impl.dart';
@@ -249,6 +250,9 @@ void configureDependencies() {
     () => ZikirLocalRepository(),
   );
   getIt.registerFactory<GetZikirContent>(() => GetZikirContent(getIt<ZikirRepository>()));
+  getIt.registerFactory<DoaHarianListCubit>(
+    () => DoaHarianListCubit(getIt<GetZikirContent>()),
+  );
 
   // --- Tajweed Feature ---
   getIt.registerLazySingleton<TajweedRepository>(() => TajweedRepositoryImpl());
