@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../bloc/settings_cubit.dart';
 import '../bloc/settings_state.dart';
+import '../../../prayer/presentation/bloc/prayer_bloc.dart';
+import '../../../prayer/presentation/bloc/prayer_event.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -1062,6 +1064,20 @@ class SettingsPage extends StatelessWidget {
                     context.read<SettingsCubit>().updateCalculationMethod(
                       value,
                     );
+                    // PrayerBloc is only provided under the /dashboard route
+                    // (shared with the Jadwal tab); Settings can also be
+                    // reached via the standalone /settings route, where it
+                    // isn't available, so this refetch is best-effort.
+                    try {
+                      final prayerBloc = context.read<PrayerBloc>();
+                      prayerBloc.add(
+                        FetchPrayerTime(
+                          latitude: prayerBloc.state.currentCity.latitude,
+                          longitude: prayerBloc.state.currentCity.longitude,
+                          date: DateTime.now(),
+                        ),
+                      );
+                    } catch (_) {}
                     Navigator.pop(sheetContext);
                   },
                 );
