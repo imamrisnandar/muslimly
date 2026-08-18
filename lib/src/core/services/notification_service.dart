@@ -11,7 +11,9 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../di/di_container.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
@@ -142,8 +144,10 @@ class NotificationService {
       if (response.data != null && response.data['data'] != null) {
         final deviceId = response.data['data']['device_id'];
         if (deviceId != null) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('device_id', deviceId);
+          await getIt<FlutterSecureStorage>().write(
+            key: 'device_id',
+            value: deviceId,
+          );
           debugPrint('✅ Device ID stored');
         }
       }
@@ -153,10 +157,24 @@ class NotificationService {
     }
   }
 
-  /// Get the stored device_id from SharedPreferences
+  /// Get the stored device_id from secure storage.
+  ///
+  /// One-time migration: device_id used to live in SharedPreferences.
+  /// Existing installs already have a value there — if secure storage is
+  /// empty, pull it across once so upgrading doesn't silently orphan a
+  /// guest's local reading history/bookmarks from their synced device_id.
   static Future<String?> getDeviceId() async {
+    final secureStorage = getIt<FlutterSecureStorage>();
+    final current = await secureStorage.read(key: 'device_id');
+    if (current != null) return current;
+
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('device_id');
+    final legacy = prefs.getString('device_id');
+    if (legacy != null) {
+      await secureStorage.write(key: 'device_id', value: legacy);
+      await prefs.remove('device_id');
+    }
+    return legacy;
   }
 
   Future<Map<String, String>> _getDeviceInfo() async {

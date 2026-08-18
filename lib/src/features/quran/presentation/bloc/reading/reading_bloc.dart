@@ -341,32 +341,13 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyy-MM-dd').format(now);
 
-      // 1. Get Settings
       final pageTarget = await _settingsRepository.getDailyReadingTarget();
       final ayahTarget = await _settingsRepository.getDailyAyahTarget();
       final unit = await _settingsRepository.getReadingTargetUnit();
 
-      // 2. Get Progress from DB
-      // We need a smart progress fetcher
-      // For now, let's keep dailyProgress as "Int representing current unit progress" behavior
-      // OR we add logic to fetch BOTH page and ayah counts.
-      // Ideally ReadingState should have pagesRead AND ayahsRead fields.
-      // But to save time refactoring state excessively:
-      // If unit == 'page', dailyProgress = pageCount
-      // If unit == 'ayah', dailyProgress = ayahCount
-
-      int progress = 0;
-      if (unit == 'ayah') {
-        // Need a new DB method: getDailyAyahCount
-        // Or simple raw query here for now
-        // For now let's assume raw query or add method to DB service later
-        // Quick fix: Add getDailyAyahCount to DB Service.
-        // Wait, I can't add to DB Service without file edit.
-        // I'll stick to logic:
-        progress = await _databaseService.getDailyAyahCount(dateStr);
-      } else {
-        progress = await _databaseService.getDailyPageCount(dateStr);
-      }
+      final progress = unit == 'ayah'
+          ? await _databaseService.getDailyAyahCount(dateStr)
+          : await _databaseService.getDailyPageCount(dateStr);
 
       emit(
         state.copyWith(

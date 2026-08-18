@@ -30,8 +30,6 @@ import '../../../quran/presentation/bloc/bookmark/bookmark_state.dart';
 import '../widgets/prayer_countdown_widget.dart';
 import '../widgets/fasting_reminder_section.dart';
 import '../widgets/dzikir_reminder_section.dart';
-import '../../../quran/presentation/bloc/audio_bloc.dart';
-import '../../../quran/presentation/bloc/audio_state.dart';
 import '../../../quran/presentation/widgets/draggable_audio_player.dart';
 import '../../domain/services/reminder_service.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
@@ -186,11 +184,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                 : const SizedBox.shrink(),
                           ],
                         ),
-                        BlocListener<AudioBloc, AudioState>(
-                          listener: (context, state) {},
-                          child: DraggableAudioPlayer(
-                            enableShowcase: _currentIndex == 2,
-                          ),
+                        DraggableAudioPlayer(
+                          enableShowcase: _currentIndex == 2,
                         ),
                       ],
                     ),

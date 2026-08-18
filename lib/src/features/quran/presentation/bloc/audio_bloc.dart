@@ -202,37 +202,10 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
 
     var reciter = state.selectedReciter ?? currentReciters.first;
 
-    // Enforce Compatibility
-    // Preference: ALWAYS Prefer Verse-by-Verse (alQuranCloudVerse) if available.
-    // This allows Ayah Highlighting (Auto-Scroll) to work, which is a key feature.
-    // Only use Full Surah (Gapless) if user specifically chose a Qori that is ONLY quranComChapter.
-
-    // Check if current selection has an alternative source for Verse-by-Verse
-    if (reciter.source == AudioSourceType.quranComChapter) {
-      // Search for same reciter in Verse mode (not really possible to map 1:1 easily without ID mapping)
-      // OR, just check if we can switch to a default Verse reciter?
-      // No, we should respect user selection.
-      // BUT, checking lines 207-230 in original code:
-      // The logic I added forced 'Surah Mode' (startAyah == null) to switch to Gapless.
-      // THIS IS WRONG. Even for full Surah play, we want Verse-by-Verse if possible.
-
-      // Allow Verse-by-Verse even if startAyah is null.
-      // So we REMOVE the block that forces switch to quranComChapter.
-
-      // However, if we are in Verse Mode (startAyah != null), we MUST ensure Verse Reciter.
-      // Removed unused verseReciter declaration
-
-      // If the selected reciter is ONLY quranComChapter, we stick to it (No Highlight).
-      // If we can find a matching Verse reciter (by name/id logic? No reliable way).
-      // Strategy: User explicitly selects Reciter. We use that Reciter.
-      // If that Reciter is Gapless, we accept No Highlights.
-      // If that Reciter is Verse, we get Highlights.
-
-      // The issue: "di mode mushaf play, sekarang jadi hilang highlight"
-      // This implies previously it worked.
-      // My previous edit ADDED logic to force switch to Gapless if startAyah is null.
-      // I will revert that specific "Force Gapless" logic.
-    }
+    // Prefer verse-by-verse (alQuranCloudVerse) whenever the selected reciter
+    // supports it, since that's what enables ayah highlighting/auto-scroll.
+    // Only fall back to full-surah (gapless, quranComChapter) mode below when
+    // the user's chosen reciter doesn't offer a verse-by-verse source.
 
     if (event.startAyah != null && event.startAyah! > 0) {
       if (reciter.source == AudioSourceType.quranComChapter) {
@@ -258,7 +231,6 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
         reciter = chapterReciter;
       }
     }
-    // REMOVED: The else block that forced `chapterReciter`.
 
     emit(
       state.copyWith(
