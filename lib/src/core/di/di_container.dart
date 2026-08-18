@@ -123,7 +123,9 @@ void configureDependencies() {
 
   // --- Prayer Feature ---
 
-  getIt.registerLazySingleton<PrayerRepository>(() => PrayerRepositoryImpl());
+  getIt.registerLazySingleton<PrayerRepository>(
+    () => PrayerRepositoryImpl(getIt<SettingsRepository>()),
+  );
   getIt.registerFactory<GetPrayerTime>(
     () => GetPrayerTime(getIt<PrayerRepository>()),
   );

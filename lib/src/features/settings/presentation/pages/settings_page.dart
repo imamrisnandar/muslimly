@@ -1009,6 +1009,70 @@ class SettingsPage extends StatelessWidget {
     return "$sign$adjustment ${l10n.days ?? 'Days'}";
   }
 
+  void _showCalculationMethodBottomSheet(
+    BuildContext context,
+    SettingsState state,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.cardDarker,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (sheetContext) {
+        final l10n = AppLocalizations.of(sheetContext)!;
+        final options = <String, String>{
+          'singapore': l10n.prayerCalculationMethodSingapore,
+          'kemenag_ri': l10n.prayerCalculationMethodKemenagRI,
+        };
+
+        return Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 32.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.prayerCalculationMethod,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              ...options.entries.map((entry) {
+                final selected = state.calculationMethod == entry.key;
+                return RadioListTile<String>(
+                  value: entry.key,
+                  groupValue: state.calculationMethod,
+                  activeColor: AppColors.accent,
+                  title: Text(
+                    entry.value,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: selected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    context.read<SettingsCubit>().updateCalculationMethod(
+                      value,
+                    );
+                    Navigator.pop(sheetContext);
+                  },
+                );
+              }),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _showHijriAdjustmentBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -1508,6 +1572,15 @@ class SettingsPage extends StatelessWidget {
                 title: l10n.hijriAdjustment ?? 'Hijri Adjustment',
                 subtitle: l10n.hijriAdjustmentSubtitle,
                 onTap: () => _showHijriAdjustmentBottomSheet(context),
+              ),
+              SizedBox(height: 12.h),
+              _buildListTile(
+                icon: Icons.access_time,
+                title: l10n.prayerCalculationMethod,
+                subtitle: state.calculationMethod == 'kemenag_ri'
+                    ? l10n.prayerCalculationMethodKemenagRI
+                    : l10n.prayerCalculationMethodSingapore,
+                onTap: () => _showCalculationMethodBottomSheet(context, state),
               ),
               SizedBox(height: 24.h),
               _buildSectionHeader(context, l10n.settingsQuran),

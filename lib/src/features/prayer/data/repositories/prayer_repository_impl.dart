@@ -3,11 +3,46 @@ import 'package:fpdart/fpdart.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:intl/intl.dart';
 
+import '../../../settings/data/repositories/settings_repository.dart';
 import '../../domain/entities/city.dart';
+import '../../domain/entities/prayer_calculation_method.dart';
 import '../../domain/entities/prayer_time.dart';
 import '../../domain/repositories/prayer_repository.dart';
 
 class PrayerRepositoryImpl implements PrayerRepository {
+  final SettingsRepository _settingsRepository;
+
+  PrayerRepositoryImpl(this._settingsRepository);
+
+  // Kemenag RI publishes the same Fajr/Isha angles as the "Singapore" method
+  // (20°/18°); what it adds on top is an ihtiyat (safety margin), which
+  // these values follow (the same margins used by common Indonesian
+  // falakiyah software, e.g. Winhisab).
+  static CalculationParameters _kemenagRIParameters() {
+    final params = CalculationParameters(fajrAngle: 20.0, ishaAngle: 18.0);
+    params.madhab = Madhab.shafi;
+    params.adjustments = PrayerAdjustments(
+      fajr: -2,
+      sunrise: 1,
+      dhuhr: 2,
+      asr: 2,
+      maghrib: 2,
+      isha: 2,
+    );
+    return params;
+  }
+
+  static CalculationParameters _parametersFor(PrayerCalculationMethod method) {
+    switch (method) {
+      case PrayerCalculationMethod.kemenagRI:
+        return _kemenagRIParameters();
+      case PrayerCalculationMethod.singapore:
+        final params = CalculationMethod.singapore.getParameters();
+        params.madhab = Madhab.shafi;
+        return params;
+    }
+  }
+
   @override
   Future<Either<String, PrayerTime>> getPrayerTime(
     double latitude,
@@ -16,10 +51,14 @@ class PrayerRepositoryImpl implements PrayerRepository {
   ) async {
     try {
       final coordinates = Coordinates(latitude, longitude);
-      final params = CalculationMethod.singapore.getParameters();
-      params.madhab = Madhab.shafi;
+      final methodKey = await _settingsRepository.getPrayerCalculationMethod();
+      final params = _parametersFor(PrayerCalculationMethod.fromKey(methodKey));
 
-      final prayerTimes = PrayerTimes.today(coordinates, params);
+      final prayerTimes = PrayerTimes(
+        coordinates,
+        DateComponents.from(date),
+        params,
+      );
 
       // Format times
       final formatter = DateFormat('HH:mm');

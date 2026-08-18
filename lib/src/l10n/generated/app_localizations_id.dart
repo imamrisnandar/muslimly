@@ -18,6 +18,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get hijriAdjustmentSubtitle => 'Sesuaikan jika tanggal berbeda';
 
   @override
+  String get prayerCalculationMethod => 'Metode Perhitungan Waktu Sholat';
+
+  @override
+  String get prayerCalculationMethodSingapore => 'Singapura (JAKIM/MUIS)';
+
+  @override
+  String get prayerCalculationMethodKemenagRI => 'Kemenag RI';
+
+  @override
   String get days => 'Hari';
 
   @override

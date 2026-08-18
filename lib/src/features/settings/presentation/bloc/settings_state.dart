@@ -9,6 +9,7 @@ class SettingsState extends Equatable {
   final String targetUnit;
   final int hijriAdjustment; // Current month's adjustment
   final List<Map<String, dynamic>> hijriAdjustments; // All adjustments
+  final String calculationMethod; // 'singapore' or 'kemenag_ri'
 
   const SettingsState({
     this.locale,
@@ -18,6 +19,7 @@ class SettingsState extends Equatable {
     this.targetUnit = 'page',
     this.hijriAdjustment = 0,
     this.hijriAdjustments = const [],
+    this.calculationMethod = 'singapore',
   });
 
   factory SettingsState.initial() => const SettingsState(locale: Locale('id'));
@@ -30,6 +32,7 @@ class SettingsState extends Equatable {
     String? targetUnit,
     int? hijriAdjustment,
     List<Map<String, dynamic>>? hijriAdjustments,
+    String? calculationMethod,
   }) {
     return SettingsState(
       locale: locale ?? this.locale,
@@ -39,6 +42,7 @@ class SettingsState extends Equatable {
       targetUnit: targetUnit ?? this.targetUnit,
       hijriAdjustment: hijriAdjustment ?? this.hijriAdjustment,
       hijriAdjustments: hijriAdjustments ?? this.hijriAdjustments,
+      calculationMethod: calculationMethod ?? this.calculationMethod,
     );
   }
 
@@ -51,5 +55,6 @@ class SettingsState extends Equatable {
     targetUnit,
     hijriAdjustment,
     hijriAdjustments,
+    calculationMethod,
   ];
 }

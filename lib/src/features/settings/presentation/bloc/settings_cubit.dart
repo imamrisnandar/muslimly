@@ -28,6 +28,8 @@ class SettingsCubit extends Cubit<SettingsState> {
     final target = await _settingsRepository.getDailyReadingTarget();
     final ayahTarget = await _settingsRepository.getDailyAyahTarget();
     final unit = await _settingsRepository.getReadingTargetUnit();
+    final calculationMethod = await _settingsRepository
+        .getPrayerCalculationMethod();
     List<Map<String, dynamic>> adjustments = await _settingsRepository
         .getHijriAdjustments();
 
@@ -55,6 +57,7 @@ class SettingsCubit extends Cubit<SettingsState> {
           targetUnit: unit,
           hijriAdjustment: adjustmentValue,
           hijriAdjustments: currentAdjustments,
+          calculationMethod: calculationMethod,
         ),
       );
     }
@@ -118,6 +121,11 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> updateTargetUnit(String unit) async {
     await _settingsRepository.saveReadingTargetUnit(unit);
     emit(state.copyWith(targetUnit: unit));
+  }
+
+  Future<void> updateCalculationMethod(String method) async {
+    await _settingsRepository.savePrayerCalculationMethod(method);
+    emit(state.copyWith(calculationMethod: method));
   }
 
   Future<void> updateHijriAdjustment(int month, int days) async {

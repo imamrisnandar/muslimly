@@ -116,6 +116,24 @@ abstract class AppLocalizations {
   /// **'Adjust date if sighting varies'**
   String get hijriAdjustmentSubtitle;
 
+  /// No description provided for @prayerCalculationMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Time Calculation Method'**
+  String get prayerCalculationMethod;
+
+  /// No description provided for @prayerCalculationMethodSingapore.
+  ///
+  /// In en, this message translates to:
+  /// **'Singapore (JAKIM/MUIS)'**
+  String get prayerCalculationMethodSingapore;
+
+  /// No description provided for @prayerCalculationMethodKemenagRI.
+  ///
+  /// In en, this message translates to:
+  /// **'Kemenag RI (Indonesia)'**
+  String get prayerCalculationMethodKemenagRI;
+
   /// No description provided for @days.
   ///
   /// In en, this message translates to:

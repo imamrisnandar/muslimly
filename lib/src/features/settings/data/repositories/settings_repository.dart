@@ -20,6 +20,9 @@ abstract class SettingsRepository {
   Future<int> getDailyReadingTarget();
   Future<void> saveDailyReadingTarget(int pages);
 
+  Future<String> getPrayerCalculationMethod(); // 'singapore' or 'kemenag_ri'
+  Future<void> savePrayerCalculationMethod(String method);
+
   Future<String> getReadingTargetUnit(); // 'page' or 'ayah'
   Future<void> saveReadingTargetUnit(String unit);
 
@@ -43,6 +46,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyLanguage = 'app_language';
   static const String _keyPrayerPrefix = 'prayer_notify_';
   static const String _keyDailyTarget = 'quran_daily_target';
+  static const String _keyPrayerCalculationMethod = 'prayer_calculation_method';
   static const String _keyDailyAyahTarget = 'quran_daily_ayah_target';
   static const String _keyTargetUnit = 'quran_target_unit';
   static const String _keyUserName = 'user_name';
@@ -140,6 +144,18 @@ class SettingsRepositoryImpl implements SettingsRepository {
     final value = pages.toString();
     await _databaseService.saveSetting(_keyDailyTarget, value);
     _syncSettingChanges(_keyDailyTarget, value);
+  }
+
+  @override
+  Future<String> getPrayerCalculationMethod() async {
+    final val = await _databaseService.getSetting(_keyPrayerCalculationMethod);
+    return val ?? 'singapore';
+  }
+
+  @override
+  Future<void> savePrayerCalculationMethod(String method) async {
+    await _databaseService.saveSetting(_keyPrayerCalculationMethod, method);
+    _syncSettingChanges(_keyPrayerCalculationMethod, method);
   }
 
   @override
