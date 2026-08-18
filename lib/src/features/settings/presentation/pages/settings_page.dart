@@ -563,7 +563,9 @@ class SettingsPage extends StatelessWidget {
         bool canSubmit() => selectedReason != null && (!isOther(selectedReason) || otherValid());
 
         return StatefulBuilder(
-          builder: (ctx, setState) => Container(
+          builder: (ctx, setState) => Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            child: Container(
             decoration: BoxDecoration(
               color: const Color(0xFF1E2F36),
               borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
@@ -688,6 +690,32 @@ class SettingsPage extends StatelessWidget {
                     height: 50.h,
                     child: ElevatedButton(
                       onPressed: (!canSubmit() || isLoading) ? null : () async {
+                        final confirmed = await showDialog<bool>(
+                          context: ctx,
+                          builder: (dialogContext) => AlertDialog(
+                            backgroundColor: const Color(0xFF1E2F36),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+                            title: Text(
+                              l10n.settingsDeleteConfirmTitle,
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                            content: Text(
+                              l10n.settingsDeleteConfirmMessage,
+                              style: const TextStyle(color: Colors.white70),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(dialogContext, false),
+                                child: Text(l10n.settingsDeleteConfirmNo, style: const TextStyle(color: Colors.white54)),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(dialogContext, true),
+                                child: Text(l10n.settingsDeleteConfirmYes, style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                        );
+                        if (confirmed != true) return;
                         setState(() => isLoading = true);
                         final reason = isOther(selectedReason) ? otherReasonCtrl.text.trim() : selectedReason!;
                         try {
@@ -722,6 +750,7 @@ class SettingsPage extends StatelessWidget {
                 ],
               ),
             ),
+          ),
           ),
         );
       },

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import '../config/app_urls.dart';
 import '../utils/app_logger.dart';
 import 'package:dio/dio.dart';
@@ -220,7 +219,7 @@ class NotificationService {
         await androidImplementation.requestNotificationsPermission();
         await androidImplementation.requestExactAlarmsPermission();
       }
-    } on PlatformException catch (e) {
+    } catch (e) {
       AppLogger.error('Notification permission request failed', e);
     }
   }

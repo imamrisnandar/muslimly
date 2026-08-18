@@ -91,9 +91,15 @@ class _MushafPageState extends State<MushafPage> {
   // surah is already playing.
   int? _lastAudioSurahId;
 
+  // Owned directly by state to avoid context.read<ReadingBloc>() calls that
+  // can fail when the calling context is above the MultiBlocProvider returned
+  // from build() (e.g. closures captured before the provider subtree exists).
+  late final ReadingBloc _readingBloc;
+
   @override
   void initState() {
     super.initState();
+    _readingBloc = getIt<ReadingBloc>();
     _showcaseView = ShowcaseView.register(scope: _showcaseScope);
     // Initialize Surah
     _initializeSurah();
@@ -174,6 +180,7 @@ class _MushafPageState extends State<MushafPage> {
     // when currentScope still matches this page's scope, so a showcase left
     // running while another scope took over would leak its overlay and crash
     // on a later rebuild once no scope is registered.
+    _readingBloc.close();
     if (_showcaseView.isShowcaseRunning) {
       _showcaseView.dismiss();
     }
@@ -188,7 +195,7 @@ class _MushafPageState extends State<MushafPage> {
     if (manual || _readStopwatch.elapsed.inSeconds > 20) {
       final duration = _readStopwatch.elapsed.inSeconds;
 
-      context.read<ReadingBloc>().add(
+      _readingBloc.add(
         LogPageRead(
           pageNumber: pageNum,
           durationSeconds: duration,
@@ -197,7 +204,7 @@ class _MushafPageState extends State<MushafPage> {
       );
 
       // Trigger background sync
-      context.read<ReadingBloc>().add(SyncReadingData());
+      _readingBloc.add(SyncReadingData());
 
       String durationStr;
       if (duration < 60) {
@@ -407,7 +414,7 @@ class _MushafPageState extends State<MushafPage> {
           create: (context) =>
               getIt<QuranBloc>()..add(QuranFetchAyahs(_surah.number)),
         ),
-        BlocProvider(create: (context) => getIt<ReadingBloc>()),
+        BlocProvider.value(value: _readingBloc),
         BlocProvider(create: (context) => getIt<BookmarkBloc>()),
       ],
       child: Scaffold(
@@ -605,7 +612,7 @@ class _MushafPageState extends State<MushafPage> {
                                       );
 
                                       // Trigger background sync for Last Read
-                                      context.read<ReadingBloc>().add(
+                                      _readingBloc.add(
                                         SyncLastRead(
                                           pageNumber: lastRead.pageNumber,
                                           surahNumber: lastRead.surahNumber,
@@ -685,6 +692,12 @@ class _MushafPageState extends State<MushafPage> {
                                       ? SnackBarType.info
                                       : SnackBarType.success,
                                 );
+                              } else if (state is BookmarkError) {
+                                showCustomSnackBar(
+                                  context,
+                                  message: state.message,
+                                  type: SnackBarType.error,
+                                );
                               }
                             },
                             builder: (context, state) {
@@ -749,48 +762,44 @@ class _MushafPageState extends State<MushafPage> {
                         Positioned(
                           bottom: 40.h,
                           right: 16.w,
-                          child: Opacity(
-                            opacity: 0.4,
-                            child: SizedBox(
-                              width: 40.w,
-                              height: 40.w,
-                              child: FloatingActionButton(
-                                mini: true,
-                                elevation: 0,
-                                heroTag: 'finish_reading_btn',
-                                backgroundColor: const Color(0xFF00E676),
-                                child: PremiumShowcase(
-                                  globalKey: _completionKey,
-                                  scope: _showcaseScope,
-                                  title: AppLocalizations.of(
-                                    context,
-                                  )!.markAsRead,
-                                  description: AppLocalizations.of(
-                                    context,
-                                  )!.showcaseCompletion,
-                                  targetShapeBorder: const CircleBorder(),
-                                  child: const Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                    size: 20,
+                          child: Builder(
+                            builder: (ctx) => Opacity(
+                              opacity: 0.4,
+                              child: PremiumShowcase(
+                                globalKey: _completionKey,
+                                scope: _showcaseScope,
+                                title: AppLocalizations.of(ctx)!.markAsRead,
+                                description: AppLocalizations.of(ctx)!.showcaseCompletion,
+                                targetShapeBorder: const CircleBorder(),
+                                child: SizedBox(
+                                  width: 40.w,
+                                  height: 40.w,
+                                  child: FloatingActionButton(
+                                    mini: true,
+                                    elevation: 0,
+                                    heroTag: 'finish_reading_btn',
+                                    backgroundColor: const Color(0xFF00E676),
+                                    onPressed: () {
+                                      if (_lastPageNumber != -1) {
+                                        _logReading(
+                                          ctx,
+                                          _lastPageNumber,
+                                          manual: true,
+                                        );
+                                        showCustomSnackBar(
+                                          ctx,
+                                          message: AppLocalizations.of(ctx)!.sbReadingSaved,
+                                          type: SnackBarType.success,
+                                        );
+                                      }
+                                    },
+                                    child: const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
                                   ),
                                 ),
-                                onPressed: () {
-                                  if (_lastPageNumber != -1) {
-                                    _logReading(
-                                      context,
-                                      _lastPageNumber,
-                                      manual: true,
-                                    );
-                                    showCustomSnackBar(
-                                      context,
-                                      message: AppLocalizations.of(
-                                        context,
-                                      )!.sbReadingSaved,
-                                      type: SnackBarType.success,
-                                    );
-                                  }
-                                },
                               ),
                             ),
                           ),

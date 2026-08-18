@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,8 +35,52 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     this._lastReadRepository,
     this._syncApiService,
   ) : super(AuthInitial()) {
+    on<AuthStarted>(_onAuthStarted);
     on<AuthLoginRequested>(_onLoginRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
+  }
+
+  Future<void> _onAuthStarted(
+    AuthStarted event,
+    Emitter<AuthState> emit,
+  ) async {
+    final result = await _authRepository.getToken();
+    final token = result.getOrElse((_) => null);
+    if (token == null || token.isEmpty) return;
+
+    final payload = _decodeJwtPayload(token);
+    final exp = payload?['exp'] as int?;
+    final isValid = exp != null &&
+        DateTime.fromMillisecondsSinceEpoch(exp * 1000).isAfter(DateTime.now());
+
+    if (!isValid) {
+      await _authRepository.deleteToken();
+      return;
+    }
+
+    final user = User(
+      id: payload!['user_id'] as String? ?? '',
+      email: payload['email'] as String? ?? '',
+      name: payload['username'] as String? ?? '',
+      token: token,
+    );
+    emit(AuthAuthenticated(user));
+  }
+
+  Map<String, dynamic>? _decodeJwtPayload(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+      final payload = parts[1];
+      final normalized = payload.padRight(
+        payload.length + (4 - payload.length % 4) % 4,
+        '=',
+      );
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      return jsonDecode(decoded) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<void> _onLoginRequested(

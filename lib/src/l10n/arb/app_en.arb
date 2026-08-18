@@ -470,5 +470,9 @@
     "passwordComplexityHint": "Min. 8 characters, uppercase, lowercase, and number",
     "passwordTooWeak": "Password must be at least 8 characters and contain uppercase, lowercase, and a number",
     "settingsDeleteConfirmButton": "Delete My Account",
-    "settingsDeleteSuccess": "Account deleted successfully"
+    "settingsDeleteSuccess": "Account deleted successfully",
+    "settingsDeleteConfirmTitle": "Are you sure?",
+    "settingsDeleteConfirmMessage": "Your account and all data will be permanently deleted. This cannot be undone.",
+    "settingsDeleteConfirmYes": "Yes, Delete",
+    "settingsDeleteConfirmNo": "Cancel"
 }

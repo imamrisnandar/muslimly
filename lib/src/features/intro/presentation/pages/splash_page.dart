@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../auth/domain/repositories/auth_repository.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../settings/data/repositories/settings_repository.dart';
 import '../../../settings/presentation/bloc/settings_cubit.dart';
 import '../../domain/repositories/name_repository.dart';
@@ -51,6 +52,9 @@ class _SplashPageState extends State<SplashPage>
     // Trigger background settings sync on app start
     getIt<SettingsRepository>().syncSettingsFromRemote();
 
+    // Restore AuthBloc state from persisted token (runs in parallel with navigation logic)
+    if (mounted) context.read<AuthBloc>().add(AuthStarted());
+
     final tokenResult = await getIt<AuthRepository>().getToken();
     final token = tokenResult.getOrElse((_) => null);
 
@@ -61,7 +65,6 @@ class _SplashPageState extends State<SplashPage>
           DateTime.fromMillisecondsSinceEpoch(exp * 1000).isAfter(DateTime.now());
 
       if (isValid) {
-        // Sync account username from JWT → SettingsCubit (scenario: returning logged-in user)
         final username = payload!['username'] as String?;
         if (username != null && username.isNotEmpty && mounted) {
           context.read<SettingsCubit>().updateName(username);

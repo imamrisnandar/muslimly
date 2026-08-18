@@ -28,6 +28,7 @@ import '../bloc/reading/reading_bloc.dart';
 import '../bloc/reading/reading_event.dart';
 import '../bloc/bookmark/bookmark_bloc.dart';
 import '../bloc/bookmark/bookmark_event.dart';
+import '../bloc/bookmark/bookmark_operation_type.dart';
 import '../bloc/bookmark/bookmark_state.dart';
 import '../../domain/entities/quran_bookmark.dart';
 import '../../domain/entities/ayah.dart';
@@ -78,9 +79,19 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
   // surah is already playing.
   int? _lastAudioSurahId;
 
+  // Owned directly by state — same reason as in MushafPage: these blocs are
+  // provided via MultiBlocProvider inside build(), so their context only covers
+  // descendant widgets. Any State method that calls context.read<T>() with
+  // this.context (which is above the MultiBlocProvider node) would crash with
+  // "Provider<T> not found".
+  late final ReadingBloc _readingBloc;
+  late final BookmarkBloc _bookmarkBloc;
+
   @override
   void initState() {
     super.initState();
+    _readingBloc = getIt<ReadingBloc>();
+    _bookmarkBloc = getIt<BookmarkBloc>()..add(LoadBookmarks());
     _showcaseView = ShowcaseView.register(scope: _showcaseScope);
   }
 
@@ -133,7 +144,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => AyahSelectorBottomSheet(
+      builder: (_) => AyahSelectorBottomSheet(
         totalAyahs: widget.surah.numberOfAyahs,
         surahName: widget.surah.englishName,
         onAyahSelected: (ayahNumber) {
@@ -164,6 +175,8 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     // when currentScope still matches this page's scope, so a showcase left
     // running while another scope took over would leak its overlay and crash
     // on a later rebuild once no scope is registered.
+    _readingBloc.close();
+    _bookmarkBloc.close();
     if (_showcaseView.isShowcaseRunning) {
       _showcaseView.dismiss();
     }
@@ -320,7 +333,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       mode: 'list',
     );
 
-    context.read<BookmarkBloc>().add(ToggleBookmark(bookmark));
+    _bookmarkBloc.add(ToggleBookmark(bookmark));
   }
 
   void _shareAyah(
@@ -347,7 +360,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
 
     int previousAyah = widget.initialAyah ?? 0;
 
-    final bookmarkState = context.read<BookmarkBloc>().state;
+    final bookmarkState = _bookmarkBloc.state;
     if (bookmarkState is BookmarkLoaded && bookmarkState.lastReadList != null) {
       if (bookmarkState.lastReadList!.surahNumber == widget.surah.number) {
         // If stored last read is greater than initialAyah (e.g. user read further in another session), use that.
@@ -384,14 +397,24 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       ayahNumber: ayah.numberInSurah,
       timestamp: DateTime.now().millisecondsSinceEpoch,
     );
-    context.read<BookmarkBloc>().add(SaveLastRead(lastRead, mode: 'list'));
+    _bookmarkBloc.add(SaveLastRead(lastRead, mode: 'list'));
+
+    _readingBloc.add(
+      SyncLastRead(
+        pageNumber: ayah.page,
+        surahName: widget.surah.englishName,
+        surahNumber: widget.surah.number,
+        ayahNumber: ayah.numberInSurah,
+        mode: 'list',
+      ),
+    );
 
     // Calculate Delta
     // If ayah.numberInSurah (8) <= previousAyah (5), means we are backtracking or same spot.
     int delta = ayah.numberInSurah - previousAyah;
 
     if (delta > 0) {
-      context.read<ReadingBloc>().add(
+      _readingBloc.add(
         LogAyahRead(
           surahNumber: widget.surah.number,
           startAyah: previousAyah + 1,
@@ -467,10 +490,8 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
           create: (context) => getIt<QuranBloc>()
             ..add(QuranFetchAyahs(widget.surah.number, languageCode: locale)),
         ),
-        BlocProvider(create: (context) => getIt<ReadingBloc>()),
-        BlocProvider(
-          create: (context) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
-        ),
+        BlocProvider.value(value: _readingBloc),
+        BlocProvider.value(value: _bookmarkBloc),
       ],
       child: MultiBlocListener(
             listeners: [
@@ -527,6 +548,28 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                         _currentPlayingAyah = null;
                       });
                     }
+                  }
+                },
+              ),
+              BlocListener<BookmarkBloc, BookmarkState>(
+                listener: (context, state) {
+                  if (state is BookmarkOperationSuccess) {
+                    final l10n = AppLocalizations.of(context)!;
+                    showCustomSnackBar(
+                      context,
+                      message: state.type == BookmarkOperationType.saved
+                          ? l10n.sbBookmarkSaved
+                          : l10n.sbBookmarkRemoved,
+                      type: state.type == BookmarkOperationType.removed
+                          ? SnackBarType.info
+                          : SnackBarType.success,
+                    );
+                  } else if (state is BookmarkError) {
+                    showCustomSnackBar(
+                      context,
+                      message: state.message,
+                      type: SnackBarType.error,
+                    );
                   }
                 },
               ),

@@ -29,8 +29,18 @@ void main() async {
   // so offline devices get the real fonts instead of a fatal-looking error
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  // Crashlytics — capture Flutter framework errors
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  // Crashlytics — capture Flutter framework errors, but treat font-load
+  // failures as non-fatal so they don't skew crash-free rate.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    final errorText = details.exception.toString();
+    final isFontLoadError = details.exception is Exception &&
+        (errorText.contains('Failed to load font') ||
+            errorText.contains('GoogleFonts.config.allowRuntimeFetching'));
+    FirebaseCrashlytics.instance.recordFlutterError(
+      details,
+      fatal: !isFontLoadError,
+    );
+  };
 
   // Crashlytics — capture async/platform errors outside Flutter's zone
   PlatformDispatcher.instance.onError = (error, stack) {

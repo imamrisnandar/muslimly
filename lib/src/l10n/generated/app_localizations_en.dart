@@ -1527,4 +1527,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDeleteSuccess => 'Account deleted successfully';
+
+  @override
+  String get settingsDeleteConfirmTitle => 'Are you sure?';
+
+  @override
+  String get settingsDeleteConfirmMessage =>
+      'Your account and all data will be permanently deleted. This cannot be undone.';
+
+  @override
+  String get settingsDeleteConfirmYes => 'Yes, Delete';
+
+  @override
+  String get settingsDeleteConfirmNo => 'Cancel';
 }

@@ -1535,4 +1535,17 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsDeleteSuccess => 'Akun berhasil dihapus';
+
+  @override
+  String get settingsDeleteConfirmTitle => 'Apakah Anda yakin?';
+
+  @override
+  String get settingsDeleteConfirmMessage =>
+      'Akun dan semua data Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.';
+
+  @override
+  String get settingsDeleteConfirmYes => 'Ya, Hapus';
+
+  @override
+  String get settingsDeleteConfirmNo => 'Batal';
 }

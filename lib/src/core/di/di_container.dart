@@ -82,7 +82,9 @@ void configureDependencies() {
 
   // --- Core ---
   getIt.registerLazySingleton<FlutterSecureStorage>(
-    () => const FlutterSecureStorage(),
+    () => const FlutterSecureStorage(
+      iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+    ),
   );
   getIt.registerLazySingleton<ShowcasePreferencesService>(
     () => ShowcasePreferencesService(),

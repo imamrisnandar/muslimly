@@ -2893,6 +2893,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account deleted successfully'**
   String get settingsDeleteSuccess;
+
+  /// No description provided for @settingsDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure?'**
+  String get settingsDeleteConfirmTitle;
+
+  /// No description provided for @settingsDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account and all data will be permanently deleted. This cannot be undone.'**
+  String get settingsDeleteConfirmMessage;
+
+  /// No description provided for @settingsDeleteConfirmYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Delete'**
+  String get settingsDeleteConfirmYes;
+
+  /// No description provided for @settingsDeleteConfirmNo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get settingsDeleteConfirmNo;
 }
 
 class _AppLocalizationsDelegate

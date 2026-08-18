@@ -470,6 +470,10 @@
     "passwordComplexityHint": "Min. 8 karakter, huruf besar, huruf kecil, dan angka",
     "passwordTooWeak": "Password harus min. 8 karakter dan mengandung huruf besar, huruf kecil, dan angka",
     "settingsDeleteConfirmButton": "Hapus Akun Saya",
-    "settingsDeleteSuccess": "Akun berhasil dihapus"
+    "settingsDeleteSuccess": "Akun berhasil dihapus",
+    "settingsDeleteConfirmTitle": "Apakah Anda yakin?",
+    "settingsDeleteConfirmMessage": "Akun dan semua data Anda akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan.",
+    "settingsDeleteConfirmYes": "Ya, Hapus",
+    "settingsDeleteConfirmNo": "Batal"
 }
 

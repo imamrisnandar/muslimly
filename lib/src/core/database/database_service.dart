@@ -24,7 +24,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 12, // v12: pending_bookmark_deletes queue
+      version: 13, // v13: ensure server_id column on bookmarks (fresh-install v12 fix)
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -69,9 +69,13 @@ class DatabaseService {
         page_number INTEGER NOT NULL,
         created_at INTEGER NOT NULL,
         ayah_number INTEGER,
-        mode TEXT DEFAULT 'list'
+        mode TEXT DEFAULT 'list',
+        server_id TEXT UNIQUE
       )
     ''');
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_bookmarks_server_id ON bookmarks(server_id)',
+    );
 
     // Pending bookmark deletes queue (offline support)
     await db.execute('''
@@ -167,6 +171,17 @@ class DatabaseService {
           created_at INTEGER NOT NULL
         )
       ''');
+    }
+    if (oldVersion < 13) {
+      // Fresh installs at v12 (before _onCreate fix) missed server_id on bookmarks
+      try {
+        await db.execute('ALTER TABLE bookmarks ADD COLUMN server_id TEXT UNIQUE');
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_bookmarks_server_id ON bookmarks(server_id)',
+        );
+      } catch (_) {
+        // Column already exists (users who upgraded through v11)
+      }
     }
   }
 
