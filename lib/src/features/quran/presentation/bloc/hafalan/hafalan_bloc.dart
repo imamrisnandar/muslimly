@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -78,16 +79,27 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
   }
 
   HafalanBloc() : super(const HafalanState()) {
-    on<InitSpeech>(_onInitSpeech);
-    on<StartListening>(_onStartListening);
-    on<StopListening>(_onStopListening);
-    on<SpeechResultReceived>(_onSpeechResult);
-    on<SkipAyah>(_onSkipAyah);
-    on<ForceEvaluateMismatch>(_onForceEvaluateMismatch);
-    on<TogglePeek>(_onTogglePeek);
-    on<ResetHafalan>(_onResetHafalan);
-    on<SetCurrentAyah>(_onSetCurrentAyah);
-    on<_AutoRestartListening>(_onAutoRestart);
+    // Handlers below await (speech engine calls, transition delays) while
+    // mutating shared instance fields like _currentExpectedWords and
+    // _lastPartialWords. flutter_bloc processes same-type events concurrently
+    // by default, so two overlapping SpeechResultReceived events (STT fires
+    // partials every ~150ms) could previously start mutating that state
+    // before the prior one finished — exactly what the replay-trim/phantom-
+    // word logic below exists to prevent. `sequential()` queues each event
+    // type's own handler invocations so they never overlap with each other.
+    // Cross-type interaction between SpeechResultReceived and
+    // _AutoRestartListening is separately guarded by the _isTransitioning
+    // checks further down.
+    on<InitSpeech>(_onInitSpeech, transformer: sequential());
+    on<StartListening>(_onStartListening, transformer: sequential());
+    on<StopListening>(_onStopListening, transformer: sequential());
+    on<SpeechResultReceived>(_onSpeechResult, transformer: sequential());
+    on<SkipAyah>(_onSkipAyah, transformer: sequential());
+    on<ForceEvaluateMismatch>(_onForceEvaluateMismatch, transformer: sequential());
+    on<TogglePeek>(_onTogglePeek, transformer: sequential());
+    on<ResetHafalan>(_onResetHafalan, transformer: sequential());
+    on<SetCurrentAyah>(_onSetCurrentAyah, transformer: sequential());
+    on<_AutoRestartListening>(_onAutoRestart, transformer: sequential());
   }
 
   /// Set the ayahs for the current page (called from the Page widget)

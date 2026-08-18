@@ -91,9 +91,15 @@ void _configureSslPinning(Dio dio) {
             (X509Certificate cert, String host, int port) => false;
     }
 
-    // Release: trust E7 intermediate CA + system roots
+    // Release: trust ONLY the pinned E7 intermediate CA, not the OS trust
+    // store. withTrustedRoots: true would let any system-trusted CA (or a
+    // maliciously/corporately installed one) validate the connection too,
+    // defeating the point of pinning. This Dio instance is only ever used
+    // for muslimly.my.id (auth/sync/settings/article) — third-party APIs
+    // (Quran.com, CDNs) use their own separate, unpinned Dio instances — so
+    // narrowing the trust store here doesn't affect them.
     final certBytes = utf8.encode(_letsEncryptE7Pem);
-    final context = SecurityContext(withTrustedRoots: true);
+    final context = SecurityContext(withTrustedRoots: false);
     try {
       context.setTrustedCertificatesBytes(certBytes);
     } catch (_) {
