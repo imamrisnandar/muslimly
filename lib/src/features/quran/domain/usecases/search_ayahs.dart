@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import '../../../../core/error/failures.dart';
 import '../entities/search_response.dart';
 import '../repositories/quran_repository.dart';
 
@@ -7,7 +8,7 @@ class SearchAyahs {
 
   SearchAyahs(this.repository);
 
-  Future<Either<String, SearchResponse>> call(
+  Future<Either<Failure, SearchResponse>> call(
     String query, {
     int page = 1,
     String languageCode = 'id',

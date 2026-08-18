@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
+import '../../../../../core/error/failures.dart';
 import '../../../domain/repositories/translation_repository.dart';
 import '../../../domain/entities/word.dart';
 import 'translation_event.dart';
@@ -55,11 +56,11 @@ class TranslationBloc extends Bloc<TranslationEvent, TranslationState> {
     final results = await Future.wait(tasks);
 
     // Safe casting
-    final transIndoRes = results[0] as Either<String, String>;
-    final transEngRes = results[1] as Either<String, String>;
-    final wordRes = results[2] as Either<String, List<Word>>;
-    final tafsirJalalaynRes = results[3] as Either<String, String>;
-    final tafsirIbnKathirRes = results[4] as Either<String, String>;
+    final transIndoRes = results[0] as Either<Failure, String>;
+    final transEngRes = results[1] as Either<Failure, String>;
+    final wordRes = results[2] as Either<Failure, List<Word>>;
+    final tafsirJalalaynRes = results[3] as Either<Failure, String>;
+    final tafsirIbnKathirRes = results[4] as Either<Failure, String>;
 
     String translationIndo = '';
     String translationEng = '';

@@ -3,6 +3,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:intl/intl.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../../settings/data/repositories/settings_repository.dart';
 import '../../domain/entities/city.dart';
 import '../../domain/entities/prayer_calculation_method.dart';
@@ -44,7 +45,7 @@ class PrayerRepositoryImpl implements PrayerRepository {
   }
 
   @override
-  Future<Either<String, PrayerTime>> getPrayerTime(
+  Future<Either<Failure, PrayerTime>> getPrayerTime(
     double latitude,
     double longitude,
     DateTime date,
@@ -81,12 +82,12 @@ class PrayerRepositoryImpl implements PrayerRepository {
         ),
       );
     } catch (e) {
-      return Left(e.toString());
+      return Left(MessageFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<String, List<City>>> searchCity(String keyword) async {
+  Future<Either<Failure, List<City>>> searchCity(String keyword) async {
     try {
       List<geo.Location> locations = await geo.locationFromAddress(keyword);
 
@@ -130,12 +131,16 @@ class PrayerRepositoryImpl implements PrayerRepository {
       // Provide more user-friendly error messages
       if (e.toString().contains('No results') ||
           e.toString().contains('not found')) {
-        return const Left('Location not found. Try a different search term.');
+        return const Left(
+          MessageFailure('Location not found. Try a different search term.'),
+        );
       } else if (e.toString().contains('network') ||
           e.toString().contains('connection')) {
-        return const Left('Network error. Please check your connection.');
+        return const Left(
+          MessageFailure('Network error. Please check your connection.'),
+        );
       }
-      return Left('Failed to search location: ${e.toString()}');
+      return Left(MessageFailure('Failed to search location: ${e.toString()}'));
     }
   }
 

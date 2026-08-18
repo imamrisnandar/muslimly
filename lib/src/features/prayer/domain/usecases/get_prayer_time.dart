@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import '../../../../core/error/failures.dart';
 import '../entities/prayer_time.dart';
 import '../repositories/prayer_repository.dart';
 
@@ -7,7 +8,7 @@ class GetPrayerTime {
 
   GetPrayerTime(this._repository);
 
-  Future<Either<String, PrayerTime>> call({
+  Future<Either<Failure, PrayerTime>> call({
     required double latitude,
     required double longitude,
     required DateTime date,

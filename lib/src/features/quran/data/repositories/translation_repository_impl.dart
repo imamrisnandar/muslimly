@@ -1,5 +1,6 @@
 import '../../../../core/config/app_urls.dart';
 import 'package:fpdart/fpdart.dart';
+import '../../../../core/error/failures.dart';
 import 'package:dio/dio.dart';
 import '../../../../core/database/database_service.dart';
 import '../../domain/entities/word.dart';
@@ -18,7 +19,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
   TranslationRepositoryImpl(this._databaseService);
 
   @override
-  Future<Either<String, String>> getTranslation(
+  Future<Either<Failure, String>> getTranslation(
     int surahId,
     int ayahId, {
     String languageCode = 'id',
@@ -62,14 +63,14 @@ class TranslationRepositoryImpl implements TranslationRepository {
           return Right(text);
         }
       }
-      return const Left('Translation not found');
+      return const Left(MessageFailure('Translation not found'));
     } catch (e) {
-      return Left('Failed to load translation: $e');
+      return Left(MessageFailure('Failed to load translation: $e'));
     }
   }
 
   @override
-  Future<Either<String, String>> getTafsir(
+  Future<Either<Failure, String>> getTafsir(
     int surahId,
     int ayahId, {
     String tafsirId = 'id.jalalayn',
@@ -133,15 +134,15 @@ class TranslationRepositoryImpl implements TranslationRepository {
           return Right(text);
         }
       }
-      return const Left('Tafsir not found');
+      return const Left(MessageFailure('Tafsir not found'));
     } catch (e) {
       // print('DEBUG: Error fetching tafsir: $e');
-      return Left('Failed to load tafsir: $e');
+      return Left(MessageFailure('Failed to load tafsir: $e'));
     }
   }
 
   @override
-  Future<Either<String, List<Word>>> getWordByWord(
+  Future<Either<Failure, List<Word>>> getWordByWord(
     int surahId,
     int ayahId, {
     String languageCode = 'id',
@@ -161,14 +162,14 @@ class TranslationRepositoryImpl implements TranslationRepository {
         final words = wordsJson.map((json) => Word.fromJson(json)).toList();
         return Right(words);
       }
-      return const Left('Words not found');
+      return const Left(MessageFailure('Words not found'));
     } catch (e) {
-      return Left('Failed to load words: $e');
+      return Left(MessageFailure('Failed to load words: $e'));
     }
   }
 
   @override
-  Future<Either<String, Map<int, String>>> getSurahTranslations(
+  Future<Either<Failure, Map<int, String>>> getSurahTranslations(
     int surahId, {
     String languageCode = 'id',
     int? expectedAyahCount,
@@ -237,9 +238,9 @@ class TranslationRepositoryImpl implements TranslationRepository {
 
         return Right(resultMap);
       }
-      return const Left('Failed to fetch translations');
+      return const Left(MessageFailure('Failed to fetch translations'));
     } catch (e) {
-      return Left('Error: $e');
+      return Left(MessageFailure('Error: $e'));
     }
   }
 

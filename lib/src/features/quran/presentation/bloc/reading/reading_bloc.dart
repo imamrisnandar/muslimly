@@ -7,6 +7,7 @@ import '../../../../auth/domain/repositories/auth_repository.dart';
 import '../../../domain/repositories/quran_repository.dart';
 import '../../../domain/entities/last_read.dart';
 import '../../../domain/entities/reading_activity.dart';
+import '../../../data/repositories/last_read_repository.dart';
 import 'reading_event.dart';
 import 'reading_state.dart';
 
@@ -15,12 +16,14 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
   final SettingsRepository _settingsRepository;
   final AuthRepository _authRepository;
   final QuranRepository _quranRepository;
+  final LastReadRepository _lastReadRepository;
 
   ReadingBloc(
     this._databaseService,
     this._settingsRepository,
     this._authRepository,
     this._quranRepository,
+    this._lastReadRepository,
   ) : super(const ReadingState()) {
     on<LoadReadingOverview>(_onLoadOverview);
     on<LoadReadingHistory>(_onLoadReadingHistory);
@@ -455,9 +458,33 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
           token,
           deviceId: deviceId,
         );
+        await _retryPendingLastRead(token, deviceId);
       }
     } catch (e) {
       // Ignore sync errors for now to not disrupt UX
+    }
+  }
+
+  // Retries any last-read position that failed to sync earlier (e.g. no
+  // network at the time), using the locally cached value for each mode.
+  Future<void> _retryPendingLastRead(String? token, String? deviceId) async {
+    for (final mode in const ['mushaf', 'list']) {
+      if (!await _lastReadRepository.hasPendingSync(mode)) continue;
+
+      final cached = await _lastReadRepository.getLastRead(mode: mode);
+      if (cached == null) {
+        await _lastReadRepository.clearPendingSync(mode);
+        continue;
+      }
+
+      final result = await _quranRepository.syncLastReadPosition(
+        cached,
+        token,
+        deviceId: deviceId,
+      );
+      result.fold((failure) {}, (_) async {
+        await _lastReadRepository.clearPendingSync(mode);
+      });
     }
   }
 
@@ -487,14 +514,20 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
           timestamp: DateTime.now().millisecondsSinceEpoch,
           mode: event.mode,
         );
-        await _quranRepository.syncLastReadPosition(
+        final result = await _quranRepository.syncLastReadPosition(
           lastRead,
           token,
           deviceId: deviceId,
         );
+        await result.fold(
+          (failure) => _lastReadRepository.markPendingSync(event.mode),
+          (_) => _lastReadRepository.clearPendingSync(event.mode),
+        );
       }
     } catch (e) {
-      // Ignore explicitly to not disrupt UX on background sync
+      // Network/parsing error before we even got a Left/Right back — treat
+      // the same as a failed sync so it gets retried later.
+      await _lastReadRepository.markPendingSync(event.mode);
     }
   }
 }

@@ -49,7 +49,10 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
 
       result.fold(
         (failure) => emit(
-          state.copyWith(status: PrayerStatus.failure, errorMessage: failure),
+          state.copyWith(
+            status: PrayerStatus.failure,
+            errorMessage: failure.message,
+          ),
         ),
         (prayerTime) {
           // DEBUG: 1 minute for faster testing
@@ -101,8 +104,9 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
       emit(state.copyWith(isSearching: true));
       final result = await _searchCity(event.keyword);
       result.fold(
-        (failure) =>
-            emit(state.copyWith(isSearching: false, errorMessage: failure)),
+        (failure) => emit(
+          state.copyWith(isSearching: false, errorMessage: failure.message),
+        ),
         (cities) =>
             emit(state.copyWith(isSearching: false, searchResults: cities)),
       );

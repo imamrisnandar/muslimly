@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import '../../../../core/error/failures.dart';
 import '../entities/ayah.dart';
 import '../repositories/quran_repository.dart';
 
@@ -7,7 +8,7 @@ class GetAyahs {
 
   GetAyahs(this._repository);
 
-  Future<Either<String, List<Ayah>>> call(int surahId) {
+  Future<Either<Failure, List<Ayah>>> call(int surahId) {
     return _repository.getAyahs(surahId);
   }
 }

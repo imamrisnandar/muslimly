@@ -38,7 +38,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     );
 
     result.fold(
-      (failure) => emit(SearchError(failure)),
+      (failure) => emit(SearchError(failure.message)),
       (response) => emit(
         SearchLoaded(
           results: response.results,

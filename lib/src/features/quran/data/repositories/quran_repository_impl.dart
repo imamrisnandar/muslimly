@@ -1,5 +1,6 @@
 import '../../../../core/config/app_urls.dart';
 import 'package:fpdart/fpdart.dart';
+import '../../../../core/error/failures.dart';
 import '../../domain/entities/ayah.dart';
 import '../../domain/entities/surah.dart';
 import '../../domain/repositories/quran_repository.dart';
@@ -29,17 +30,17 @@ class QuranRepositoryImpl implements QuranRepository {
   );
 
   @override
-  Future<Either<String, List<Surah>>> getSurahs() async {
+  Future<Either<Failure, List<Surah>>> getSurahs() async {
     try {
       final surahs = await _localDataSource.getSurahs();
       return Right(surahs);
     } catch (e) {
-      return Left(e.toString());
+      return Left(MessageFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<String, List<Ayah>>> getAyahs(int surahId) async {
+  Future<Either<Failure, List<Ayah>>> getAyahs(int surahId) async {
     try {
       // 1. Get Local Ayahs (Base Data)
       final List<Ayah> localAyahs = await _localDataSource.getAyahs(surahId);
@@ -92,7 +93,7 @@ class QuranRepositoryImpl implements QuranRepository {
 
       return Right(localAyahs);
     } catch (e) {
-      return Left(e.toString());
+      return Left(MessageFailure(e.toString()));
     }
   }
 
@@ -118,7 +119,7 @@ class QuranRepositoryImpl implements QuranRepository {
   }
 
   @override
-  Future<Either<String, SearchResponse>> searchAyahs(
+  Future<Either<Failure, SearchResponse>> searchAyahs(
     String query, {
     int page = 1,
     String languageCode = 'id',
@@ -177,14 +178,14 @@ class QuranRepositoryImpl implements QuranRepository {
           ),
         );
       }
-      return const Left('Search failed');
+      return const Left(MessageFailure('Search failed'));
     } catch (e) {
-      return Left('Search error: $e');
+      return Left(MessageFailure('Search error: $e'));
     }
   }
 
   @override
-  Future<Either<String, void>> syncLastReadPosition(
+  Future<Either<Failure, void>> syncLastReadPosition(
     LastRead lastRead,
     String? token, {
     String? deviceId,
@@ -203,12 +204,12 @@ class QuranRepositoryImpl implements QuranRepository {
       await _syncApiService.upsertReadingHistory(payload, token);
       return const Right(null);
     } catch (e) {
-      return Left('Sync failed: $e');
+      return Left(MessageFailure('Sync failed: $e'));
     }
   }
 
   @override
-  Future<Either<String, void>> syncUnsyncedActivities(
+  Future<Either<Failure, void>> syncUnsyncedActivities(
     String? token, {
     String? deviceId,
   }) async {
@@ -238,12 +239,12 @@ class QuranRepositoryImpl implements QuranRepository {
 
       return const Right(null);
     } catch (e) {
-      return Left('Bulk sync failed: $e');
+      return Left(MessageFailure('Bulk sync failed: $e'));
     }
   }
 
   @override
-  Future<Either<String, List<dynamic>>> getReadingHistory(
+  Future<Either<Failure, List<dynamic>>> getReadingHistory(
     String? token, {
     String? deviceId,
   }) async {
@@ -254,7 +255,7 @@ class QuranRepositoryImpl implements QuranRepository {
       );
       return Right(history);
     } catch (e) {
-      return Left('Failed to fetch remote history: $e');
+      return Left(MessageFailure('Failed to fetch remote history: $e'));
     }
   }
 }

@@ -88,7 +88,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     final result = await _loginUseCase(event.email, event.password);
     await result.fold(
-      (failure) async => emit(AuthFailure(failure)),
+      (failure) async => emit(AuthFailure(failure.message)),
       (user) async {
         if (user.token != null) {
           // Link device to user account (blocking — prerequisite for migration)

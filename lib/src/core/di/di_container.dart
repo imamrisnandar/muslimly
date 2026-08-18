@@ -203,6 +203,7 @@ void configureDependencies() {
       getIt<SettingsRepository>(),
       getIt<AuthRepository>(),
       getIt<QuranRepository>(),
+      getIt<LastReadRepository>(),
     ),
   );
   getIt.registerFactory<BookmarkBloc>(

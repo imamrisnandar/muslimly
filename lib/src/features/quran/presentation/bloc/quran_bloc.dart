@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/di/di_container.dart';
+import '../../../../core/error/failures.dart';
 import '../../domain/repositories/translation_repository.dart';
 import '../../domain/usecases/get_ayahs.dart';
 import '../../domain/usecases/get_surahs.dart';
@@ -16,7 +17,7 @@ class QuranBloc extends Bloc<QuranEvent, QuranState> {
       emit(QuranLoading());
       final result = await _getSurahs();
       result.fold(
-        (failure) => emit(QuranError(failure)),
+        (failure) => emit(QuranError(failure.message)),
         (surahs) => emit(QuranSurahsLoaded(surahs)),
       );
     });
@@ -28,7 +29,8 @@ class QuranBloc extends Bloc<QuranEvent, QuranState> {
       final ayahsResult = await _getAyahs(event.surahId);
 
       if (ayahsResult is Left) {
-        emit(QuranError((ayahsResult as Left).value));
+        final failure = (ayahsResult as Left).value as Failure;
+        emit(QuranError(failure.message));
         return;
       }
 
@@ -46,7 +48,8 @@ class QuranBloc extends Bloc<QuranEvent, QuranState> {
 
       Map<int, String> transMap = {};
       if (translationResult is Right) {
-        transMap = (translationResult as Right<String, Map<int, String>>).value;
+        transMap =
+            (translationResult as Right<Failure, Map<int, String>>).value;
       }
 
       emit(QuranAyahsLoaded(ayahs, event.surahId, translationMap: transMap));

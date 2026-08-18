@@ -22,7 +22,7 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> 
     emit(ForgotPasswordLoading());
     final result = await _authRepository.forgotPassword(event.email);
     result.fold(
-      (failure) => emit(ForgotPasswordError(failure)),
+      (failure) => emit(ForgotPasswordError(failure.message)),
       (_) => emit(ForgotPasswordEmailSent(event.email)),
     );
   }
@@ -34,7 +34,7 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> 
     emit(ForgotPasswordLoading());
     final result = await _authRepository.verifyOTP(event.email, event.otp);
     result.fold(
-      (failure) => emit(ForgotPasswordError(failure)),
+      (failure) => emit(ForgotPasswordError(failure.message)),
       (resetToken) => emit(ForgotPasswordOTPVerified(resetToken)),
     );
   }
@@ -46,7 +46,7 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> 
     emit(ForgotPasswordLoading());
     final result = await _authRepository.resetPassword(event.resetToken, event.newPassword);
     result.fold(
-      (failure) => emit(ForgotPasswordError(failure)),
+      (failure) => emit(ForgotPasswordError(failure.message)),
       (_) => emit(ForgotPasswordSuccess()),
     );
   }
