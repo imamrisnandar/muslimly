@@ -5,40 +5,34 @@ import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import '../config/app_urls.dart';
 
-// --- SSL Pinning: Let's Encrypt E7 Intermediate CA ---
+// --- SSL Pinning: Let's Encrypt YE1 Intermediate CA ---
 // Strategy : Pin intermediate CA → tidak perlu update saat leaf cert direnew
-// CA expiry : 2027-03-12
-// SPKI Hash : y7xVm0TVJNahMr2sZydE2jQH8SquXV9yLF9seROHHHU=
-// Update    : Hanya perlu jika Let's Encrypt retire E7 (sangat jarang).
-//             Jalankan: openssl s_client -connect muslimly.my.id:443 -showcerts 2>/dev/null
+// CA expiry : 2028-09-02
+// SPKI Hash : brzvtCELCIZUo4sD/qPX0ccRtPsd3DY6RfmxpOU9oB4=
+// Update    : Hanya perlu jika Let's Encrypt retire YE1.
+//             Jalankan: openssl s_client -connect api.muslimly.id:443 -showcerts 2>/dev/null
 //               | awk '/BEGIN CERT/{c++} c==2{print} /END CERT/ && c==2{exit}'
 //               | openssl x509 -outform PEM
-//             Ganti _letsEncryptE7Pem di bawah dengan output tersebut.
-const _letsEncryptE7Pem = '''-----BEGIN CERTIFICATE-----
-MIIEVzCCAj+gAwIBAgIRAKp18eYrjwoiCWbTi7/UuqEwDQYJKoZIhvcNAQELBQAw
-TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh
-cmNoIEdyb3VwMRUwEwYDVQQDEwxJU1JHIFJvb3QgWDEwHhcNMjQwMzEzMDAwMDAw
-WhcNMjcwMzEyMjM1OTU5WjAyMQswCQYDVQQGEwJVUzEWMBQGA1UEChMNTGV0J3Mg
-RW5jcnlwdDELMAkGA1UEAxMCRTcwdjAQBgcqhkjOPQIBBgUrgQQAIgNiAARB6AST
-CFh/vjcwDMCgQer+VtqEkz7JANurZxLP+U9TCeioL6sp5Z8VRvRbYk4P1INBmbef
-QHJFHCxcSjKmwtvGBWpl/9ra8HW0QDsUaJW2qOJqceJ0ZVFT3hbUHifBM/2jgfgw
-gfUwDgYDVR0PAQH/BAQDAgGGMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcD
-ATASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBSuSJ7chx1EoG/aouVgdAR4
-wpwAgDAfBgNVHSMEGDAWgBR5tFnme7bl5AFzgAiIyBpY9umbbjAyBggrBgEFBQcB
-AQQmMCQwIgYIKwYBBQUHMAKGFmh0dHA6Ly94MS5pLmxlbmNyLm9yZy8wEwYDVR0g
-BAwwCjAIBgZngQwBAgEwJwYDVR0fBCAwHjAcoBqgGIYWaHR0cDovL3gxLmMubGVu
-Y3Iub3JnLzANBgkqhkiG9w0BAQsFAAOCAgEAjx66fDdLk5ywFn3CzA1w1qfylHUD
-aEf0QZpXcJseddJGSfbUUOvbNR9N/QQ16K1lXl4VFyhmGXDT5Kdfcr0RvIIVrNxF
-h4lqHtRRCP6RBRstqbZ2zURgqakn/Xip0iaQL0IdfHBZr396FgknniRYFckKORPG
-yM3QKnd66gtMst8I5nkRQlAg/Jb+Gc3egIvuGKWboE1G89NTsN9LTDD3PLj0dUMr
-OIuqVjLB8pEC6yk9enrlrqjXQgkLEYhXzq7dLafv5Vkig6Gl0nuuqjqfp0Q1bi1o
-yVNAlXe6aUXw92CcghC9bNsKEO1+M52YY5+ofIXlS/SEQbvVYYBLZ5yeiglV6t3S
-M6H+vTG0aP9YHzLn/KVOHzGQfXDP7qM5tkf+7diZe7o2fw6O7IvN6fsQXEQQj8TJ
-UXJxv2/uJhcuy/tSDgXwHM8Uk34WNbRT7zGTGkQRX0gsbjAea/jYAoWv0ZvQRwpq
-Pe79D/i7Cep8qWnA+7AE/3B3S/3dEEYmc0lpe1366A/6GEgk3ktr9PEoQrLChs6I
-tu3wnNLB2euC8IKGLQFpGtOO/2/hiAKjyajaBP25w1jF0Wl8Bbqne3uZ2q1GyPFJ
-YRmT7/OXpmOH/FVLtwS+8ng1cAmpCujPwteJZNcDG0sF2n/sc0+SQf49fdyUK0ty
-+VUwFj9tmWxyR/M=
+//             Ganti _letsEncryptYE1Pem di bawah dengan output tersebut.
+// Riwayat   : sebelumnya pin ke E7 (ISRG Root X1) — Let's Encrypt sudah tidak
+//             lagi menerbitkan lewat chain itu (dicek 2026-08-20, --preferred-chain
+//             "ISRG Root X1" tidak lagi tersedia sebagai alternate chain), semua
+//             cert baru/renew keluar lewat "Root YE" → intermediate YE1.
+const _letsEncryptYE1Pem = '''-----BEGIN CERTIFICATE-----
+MIICizCCAhGgAwIBAgIQXd1w3TH4AchcGGp6BLgK/jAKBggqhkjOPQQDAzAuMQsw
+CQYDVQQGEwJVUzENMAsGA1UEChMESVNSRzEQMA4GA1UEAxMHUm9vdCBZRTAeFw0y
+NTA5MDMwMDAwMDBaFw0yODA5MDIyMzU5NTlaMDMxCzAJBgNVBAYTAlVTMRYwFAYD
+VQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQDEwNZRTEwdjAQBgcqhkjOPQIBBgUr
+gQQAIgNiAAQHZVB1/mimla2hfSurylScjPMZaOJXLz/NnAc2sylm8WDyhU9Ccp+z
+ASQi5vSwGGJjSGklkD9fdPR8GpyDIOIjCEfrnbt/v+ZSEPLLEGbaM6EccDbN7p9x
+teIm2Avf+ryjge4wgeswDgYDVR0PAQH/BAQDAgGGMBMGA1UdJQQMMAoGCCsGAQUF
+BwMBMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFLsgykcL/tflnPmPCSqj
+jDdFsbzYMB8GA1UdIwQYMBaAFKPIJlqOoUzQNWP8myPIOq5W809WMDIGCCsGAQUF
+BwEBBCYwJDAiBggrBgEFBQcwAoYWaHR0cDovL3llLmkubGVuY3Iub3JnLzATBgNV
+HSAEDDAKMAgGBmeBDAECATAnBgNVHR8EIDAeMBygGqAYhhZodHRwOi8veWUuYy5s
+ZW5jci5vcmcvMAoGCCqGSM49BAMDA2gAMGUCMQDgjUEahFT/h3DRakqiPZpLvPgf
+Zwkt6K2EOMmh1nvEzl83eMLYcod4GCl3b0J1Nn0CMBNYmEQJb4CEG5WoOe7aRn/L
+VKu6saHmHEynI7ysIPd8zQsK1HdmhlHKlw9Z5GpGvA==
 -----END CERTIFICATE-----''';
 
 abstract class NetworkModule {
@@ -95,7 +89,7 @@ void _configureSslPinning(Dio dio) {
     // for muslimly.my.id (auth/sync/settings/article) — third-party APIs
     // (Quran.com, CDNs) use their own separate, unpinned Dio instances — so
     // narrowing the trust store here doesn't affect them.
-    final certBytes = utf8.encode(_letsEncryptE7Pem);
+    final certBytes = utf8.encode(_letsEncryptYE1Pem);
     final context = SecurityContext(withTrustedRoots: false);
     try {
       context.setTrustedCertificatesBytes(certBytes);
