@@ -1,6 +1,6 @@
 abstract class AppUrls {
   // --- Backend API ---
-  static const String baseApi = 'https://muslimly.my.id/api/v1';
+  static const String baseApi = 'https://api.muslimly.id/api/v1';
 
   // --- Quran.com API ---
   static const String quranComApi = 'https://api.quran.com/api/v4';

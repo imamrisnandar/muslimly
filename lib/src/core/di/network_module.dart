@@ -86,7 +86,7 @@ void _configureSslPinning(Dio dio) {
     // store. withTrustedRoots: true would let any system-trusted CA (or a
     // maliciously/corporately installed one) validate the connection too,
     // defeating the point of pinning. This Dio instance is only ever used
-    // for muslimly.my.id (auth/sync/settings/article) — third-party APIs
+    // for api.muslimly.id (auth/sync/settings/article) — third-party APIs
     // (Quran.com, CDNs) use their own separate, unpinned Dio instances — so
     // narrowing the trust store here doesn't affect them.
     final certBytes = utf8.encode(_letsEncryptYE1Pem);
