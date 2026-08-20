@@ -174,7 +174,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ? const PrayerPage()
                                 : const SizedBox.shrink(),
                             _builtIndices.contains(2)
-                                ? QuranPage(isVisible: _currentIndex == 2)
+                                ? const QuranPage()
                                 : const SizedBox.shrink(),
                             _builtIndices.contains(3)
                                 ? const DzikirPage()

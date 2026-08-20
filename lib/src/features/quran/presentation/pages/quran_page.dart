@@ -19,8 +19,7 @@ import '../widgets/quran_navigation_bottom_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class QuranPage extends StatefulWidget {
-  final bool isVisible;
-  const QuranPage({super.key, this.isVisible = false});
+  const QuranPage({super.key});
 
   @override
   State<QuranPage> createState() => _QuranPageState();
