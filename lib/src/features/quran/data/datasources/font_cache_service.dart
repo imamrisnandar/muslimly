@@ -6,7 +6,6 @@ import '../../../../core/config/app_urls.dart';
 
 class FontCacheService {
   final Dio _dio;
-  // jsDelivr CDN for qpc-fonts
   final String _cdnBaseUrl = AppUrls.qpcFontsCdn;
 
   FontCacheService(this._dio);

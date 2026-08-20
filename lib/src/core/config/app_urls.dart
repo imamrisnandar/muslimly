@@ -14,7 +14,7 @@ abstract class AppUrls {
 
   // --- Font CDN ---
   static const String qpcFontsCdn =
-      'https://cdn.jsdelivr.net/gh/nuqayah/qpc-fonts@master/mushaf-v2';
+      'https://kencana.basic.box.cloudeka.id/tijar-market-o0mzhs/qpc';
 
   // --- Quran.com share links ---
   static String quranComJuz(int juzNumber) =>
