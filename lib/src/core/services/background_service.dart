@@ -114,9 +114,7 @@ void callbackDispatcher() {
       String body = "";
 
       // Unit Labels
-      final unitLabel = (unit == 'ayah')
-          ? (l10n.lblAyah ?? "Ayat")
-          : (l10n.lblPage ?? "Halaman");
+      final unitLabel = (unit == 'ayah') ? l10n.lblAyah : l10n.lblPage;
 
       if (progress == 0) {
         body = l10n.backgroundProgressZero;

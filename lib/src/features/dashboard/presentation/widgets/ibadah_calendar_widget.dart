@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:hijri/hijri_calendar.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../prayer/domain/services/fasting_service.dart';
 import '../../../../core/theme/app_colors.dart';

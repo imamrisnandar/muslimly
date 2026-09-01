@@ -792,8 +792,6 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
       return finalWords;
     }
 
-    final extraCount = finalWords.length - _lastPartialWords.length;
-
     bool sameStablePrefix = true;
     for (int i = 0; i < _lastPartialWords.length; i++) {
       if (!ArabicTextMatcher.wordsMatch(finalWords[i], _lastPartialWords[i])) {

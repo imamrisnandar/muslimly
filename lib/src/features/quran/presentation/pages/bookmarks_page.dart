@@ -454,7 +454,7 @@ class _BookmarksPageState extends State<BookmarksPage> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
               ),
               child: Text(
-                AppLocalizations.of(context)!.btnGoToQuran ?? "Read Quran",
+                AppLocalizations.of(context)!.btnGoToQuran,
                 style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
               ),
             ),

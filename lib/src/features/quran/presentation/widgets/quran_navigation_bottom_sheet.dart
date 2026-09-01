@@ -342,7 +342,6 @@ class _JuzTab extends StatelessWidget {
         final juzNumber = index + 1;
         final startPage = QuranConstants.juzPageStart[juzNumber] ?? 1;
 
-        final hizb1Number = (juzNumber * 2) - 1;
         final hizb2Number = juzNumber * 2;
         final hizb2Page = startPage + 10;
 

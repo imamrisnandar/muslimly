@@ -25,7 +25,6 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
   bool _isAligned = false; // To track if we are currently aligned
   Timer? _alignmentDebounceTimer;
   bool _isStableAligned = false; // True only after 0.5s stable
-  DateTime? _alignmentStartTime;
 
   @override
   void initState() {
@@ -180,7 +179,6 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
         // Start debounce timer if just entered alignment
         if (!_isAligned) {
           _isAligned = true;
-          _alignmentStartTime = DateTime.now();
 
           // Start timer to confirm stable alignment after 0.5s
           _alignmentDebounceTimer?.cancel();
@@ -212,7 +210,6 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
           setState(() {
             _isAligned = false;
             _isStableAligned = false;
-            _alignmentStartTime = null;
           });
         }
         // Direction Instruction
