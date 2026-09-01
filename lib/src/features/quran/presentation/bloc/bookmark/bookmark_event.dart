@@ -37,6 +37,16 @@ class DeleteBookmark extends BookmarkEvent {
   List<Object?> get props => [id];
 }
 
+class AssignBookmarkFolder extends BookmarkEvent {
+  final int bookmarkId;
+  final int? folderId; // null = uncategorized
+
+  const AssignBookmarkFolder(this.bookmarkId, this.folderId);
+
+  @override
+  List<Object?> get props => [bookmarkId, folderId];
+}
+
 class LoadLastRead extends BookmarkEvent {}
 
 class SaveLastRead extends BookmarkEvent {

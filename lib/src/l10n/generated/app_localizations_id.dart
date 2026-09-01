@@ -584,6 +584,70 @@ class AppLocalizationsId extends AppLocalizations {
   String get lblMushafType => 'Mushaf';
 
   @override
+  String get lblFolderAll => 'Semua';
+
+  @override
+  String get lblFolderUncategorized => 'Tanpa Folder';
+
+  @override
+  String get lblFolderHapalan => 'Hapalan';
+
+  @override
+  String get lblFolderBacaan => 'Bacaan';
+
+  @override
+  String get lblAddFolder => 'Tambah folder';
+
+  @override
+  String get hintFolderName => 'Nama folder';
+
+  @override
+  String get btnCreateFolder => 'Buat';
+
+  @override
+  String get btnRenameFolder => 'Ubah nama';
+
+  @override
+  String get btnDeleteFolder => 'Hapus';
+
+  @override
+  String get dlgRenameFolderTitle => 'Ubah nama folder';
+
+  @override
+  String get dlgDeleteFolderTitle => 'Hapus folder?';
+
+  @override
+  String get dlgDeleteFolderMessage =>
+      'Bookmark di folder ini akan menjadi tanpa folder.';
+
+  @override
+  String get lblMoveToFolder => 'Pindahkan ke folder';
+
+  @override
+  String get lblSaveToFolder => 'Simpan ke folder';
+
+  @override
+  String get lblSaveWithoutFolder => 'Simpan tanpa folder';
+
+  @override
+  String get lblNoFolder => 'Tanpa Folder';
+
+  @override
+  String get msgFolderCreated => 'Folder dibuat';
+
+  @override
+  String get msgFolderDeleted => 'Folder dihapus';
+
+  @override
+  String get msgBookmarkMoved => 'Bookmark dipindahkan';
+
+  @override
+  String get errFolderNameRequired => 'Nama folder wajib diisi';
+
+  @override
+  String get msgNoBookmarksInFolder => 'Belum ada bookmark di folder ini';
+
+  @override
   String get lblAyah => 'Ayat';
 
   @override

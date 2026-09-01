@@ -1166,6 +1166,132 @@ abstract class AppLocalizations {
   /// **'Mushaf'**
   String get lblMushafType;
 
+  /// No description provided for @lblFolderAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get lblFolderAll;
+
+  /// No description provided for @lblFolderUncategorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get lblFolderUncategorized;
+
+  /// No description provided for @lblFolderHapalan.
+  ///
+  /// In en, this message translates to:
+  /// **'Memorization'**
+  String get lblFolderHapalan;
+
+  /// No description provided for @lblFolderBacaan.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading'**
+  String get lblFolderBacaan;
+
+  /// No description provided for @lblAddFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Add folder'**
+  String get lblAddFolder;
+
+  /// No description provided for @hintFolderName.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder name'**
+  String get hintFolderName;
+
+  /// No description provided for @btnCreateFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get btnCreateFolder;
+
+  /// No description provided for @btnRenameFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get btnRenameFolder;
+
+  /// No description provided for @btnDeleteFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get btnDeleteFolder;
+
+  /// No description provided for @dlgRenameFolderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename folder'**
+  String get dlgRenameFolderTitle;
+
+  /// No description provided for @dlgDeleteFolderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete folder?'**
+  String get dlgDeleteFolderTitle;
+
+  /// No description provided for @dlgDeleteFolderMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarks in this folder will become uncategorized.'**
+  String get dlgDeleteFolderMessage;
+
+  /// No description provided for @lblMoveToFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to folder'**
+  String get lblMoveToFolder;
+
+  /// No description provided for @lblSaveToFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to folder'**
+  String get lblSaveToFolder;
+
+  /// No description provided for @lblSaveWithoutFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Save without folder'**
+  String get lblSaveWithoutFolder;
+
+  /// No description provided for @lblNoFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'No folder'**
+  String get lblNoFolder;
+
+  /// No description provided for @msgFolderCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder created'**
+  String get msgFolderCreated;
+
+  /// No description provided for @msgFolderDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder deleted'**
+  String get msgFolderDeleted;
+
+  /// No description provided for @msgBookmarkMoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark moved'**
+  String get msgBookmarkMoved;
+
+  /// No description provided for @errFolderNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder name is required'**
+  String get errFolderNameRequired;
+
+  /// No description provided for @msgNoBookmarksInFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookmarks in this folder yet'**
+  String get msgNoBookmarksInFolder;
+
   /// No description provided for @lblAyah.
   ///
   /// In en, this message translates to:

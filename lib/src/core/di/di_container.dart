@@ -52,6 +52,7 @@ import '../../features/quran/domain/usecases/get_surahs.dart';
 import '../../features/quran/presentation/bloc/quran_bloc.dart';
 import '../../features/quran/presentation/bloc/reading/reading_bloc.dart';
 import '../../features/quran/presentation/bloc/bookmark/bookmark_bloc.dart';
+import '../../features/quran/presentation/bloc/folder/folder_bloc.dart';
 import '../../features/quran/data/repositories/audio_repository.dart';
 import '../../features/quran/presentation/bloc/audio_bloc.dart';
 import '../../features/zikir/data/repositories/zikir_local_repository.dart' show ZikirLocalRepository;
@@ -213,6 +214,13 @@ void configureDependencies() {
     () => BookmarkBloc(
       getIt<DatabaseService>(),
       getIt<LastReadRepository>(),
+      getIt<SyncApiService>(),
+      getIt<AuthRepository>(),
+    ),
+  );
+  getIt.registerLazySingleton<FolderBloc>(
+    () => FolderBloc(
+      getIt<DatabaseService>(),
       getIt<SyncApiService>(),
       getIt<AuthRepository>(),
     ),

@@ -98,8 +98,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           if (deviceId != null && deviceId.isNotEmpty) {
             // M4: Migrate guest → user (fire & forget)
             unawaited(_syncApiService.migrateGuestData(user.token!, deviceId));
-            // M20: Bulk push local bookmarks to server
-            unawaited(_bulkPushLocalBookmarks(user.token!));
+            // M20: Bulk push local folders, then bookmarks, to server —
+            // folders must land first so the bookmark payload can resolve
+            // folder_id -> the folder's server_id.
+            unawaited(
+              _bulkPushLocalFolders(user.token!).then((_) => _bulkPushLocalBookmarks(user.token!)),
+            );
           }
           // M5: Pull server data → merge to local (fire & forget)
           unawaited(_pullServerData(user.token!));
@@ -173,6 +177,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _pullBookmarks(String token) async {
     try {
+      // Folders first (+ their own pending-delete flush) — bookmarks below
+      // need local folder rows to resolve a remote bookmark's folder_id.
+      final pendingFolders = await _databaseService.getPendingBookmarkFolderDeletes();
+      for (final serverId in pendingFolders) {
+        try {
+          await _syncApiService.deleteFolder(token, serverId);
+          await _databaseService.removePendingBookmarkFolderDelete(serverId);
+        } catch (_) {
+          // Still offline — keep in queue
+        }
+      }
+      final remoteFolders = await _syncApiService.getFolders(token);
+      if (remoteFolders.isNotEmpty) {
+        await _databaseService.mergeRemoteFolders(
+          remoteFolders.cast<Map<String, dynamic>>(),
+        );
+      }
+
       // Flush pending deletes first so they don't get re-added by the pull
       final pending = await _databaseService.getPendingBookmarkDeletes();
       for (final serverId in pending) {
@@ -195,6 +217,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  // M20: Bulk push all local folders that don't have a server_id yet
+  Future<void> _bulkPushLocalFolders(String token) async {
+    try {
+      for (final mode in ['list', 'mushaf']) {
+        final local = await _databaseService.getFolders(mode: mode);
+        final unsynced = local.where((f) => f.serverId == null).toList();
+        for (final folder in unsynced) {
+          final result = await _syncApiService.addFolder(token, {
+            'mode': folder.mode,
+            'name': folder.name,
+          });
+          final serverId = result?['id'] as String?;
+          if (serverId != null && folder.id != null) {
+            await _databaseService.updateServerIdForFolder(folder.id!, serverId);
+          }
+        }
+      }
+    } catch (_) {
+      // Bulk push failure is non-fatal
+    }
+  }
+
   // M20: Bulk push all local bookmarks that don't have a server_id yet
   Future<void> _bulkPushLocalBookmarks(String token) async {
     try {
@@ -202,13 +246,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final unsynced = local.where((b) => b.serverId == null).toList();
       if (unsynced.isEmpty) return;
 
-      final payload = unsynced.map((b) => {
-        'surah_number': b.surahNumber,
-        'surah_name': b.surahName,
-        'page_number': b.pageNumber,
-        'ayah_number': b.ayahNumber,
-        'mode': b.mode,
-      }).toList();
+      final payload = <Map<String, dynamic>>[];
+      for (final b in unsynced) {
+        String? folderServerId;
+        if (b.folderId != null) {
+          final folder = await _databaseService.getFolderById(b.folderId!);
+          folderServerId = folder?.serverId;
+        }
+        payload.add({
+          'surah_number': b.surahNumber,
+          'surah_name': b.surahName,
+          'page_number': b.pageNumber,
+          'ayah_number': b.ayahNumber,
+          'mode': b.mode,
+          'folder_id': folderServerId,
+        });
+      }
 
       final results = await _syncApiService.bulkUpsertBookmarks(token, payload);
       // Update server_id for each synced bookmark
@@ -238,6 +291,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _clearUserScopedLocalData() async {
     await _databaseService.clearAllBookmarks();
+    await _databaseService.clearAllFolders();
     await _lastReadRepository.clearAll();
   }
 }

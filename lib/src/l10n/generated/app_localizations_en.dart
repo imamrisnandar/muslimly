@@ -581,6 +581,70 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lblMushafType => 'Mushaf';
 
   @override
+  String get lblFolderAll => 'All';
+
+  @override
+  String get lblFolderUncategorized => 'Uncategorized';
+
+  @override
+  String get lblFolderHapalan => 'Memorization';
+
+  @override
+  String get lblFolderBacaan => 'Reading';
+
+  @override
+  String get lblAddFolder => 'Add folder';
+
+  @override
+  String get hintFolderName => 'Folder name';
+
+  @override
+  String get btnCreateFolder => 'Create';
+
+  @override
+  String get btnRenameFolder => 'Rename';
+
+  @override
+  String get btnDeleteFolder => 'Delete';
+
+  @override
+  String get dlgRenameFolderTitle => 'Rename folder';
+
+  @override
+  String get dlgDeleteFolderTitle => 'Delete folder?';
+
+  @override
+  String get dlgDeleteFolderMessage =>
+      'Bookmarks in this folder will become uncategorized.';
+
+  @override
+  String get lblMoveToFolder => 'Move to folder';
+
+  @override
+  String get lblSaveToFolder => 'Save to folder';
+
+  @override
+  String get lblSaveWithoutFolder => 'Save without folder';
+
+  @override
+  String get lblNoFolder => 'No folder';
+
+  @override
+  String get msgFolderCreated => 'Folder created';
+
+  @override
+  String get msgFolderDeleted => 'Folder deleted';
+
+  @override
+  String get msgBookmarkMoved => 'Bookmark moved';
+
+  @override
+  String get errFolderNameRequired => 'Folder name is required';
+
+  @override
+  String get msgNoBookmarksInFolder => 'No bookmarks in this folder yet';
+
+  @override
   String get lblAyah => 'Ayah';
 
   @override

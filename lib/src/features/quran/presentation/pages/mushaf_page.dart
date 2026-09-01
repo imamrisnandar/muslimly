@@ -24,6 +24,7 @@ import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_
 import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_operation_type.dart';
 import 'package:muslimly/src/features/quran/domain/entities/quran_bookmark.dart';
 import 'package:muslimly/src/features/quran/domain/entities/last_read.dart';
+import 'package:muslimly/src/features/quran/presentation/widgets/bookmark_folder_picker_sheet.dart';
 // import 'package:wakelock_plus/wakelock_plus.dart'; // Temporarily disabled if package missing
 import '../../../../core/utils/custom_snackbar.dart'; // Import Custom SnackBar
 
@@ -717,22 +718,34 @@ class _MushafPageState extends State<MushafPage> {
                                       ? AppColors.accent
                                       : Colors.black,
                                 ),
-                                onPressed: () {
-                                  // Get current page info
-                                  if (_lastPageNumber != -1) {
-                                    final bookmark = QuranBookmark(
-                                      surahNumber: _surah.number,
-                                      surahName: _surah.englishName,
-                                      pageNumber: _lastPageNumber,
-                                      createdAt:
-                                          DateTime.now().millisecondsSinceEpoch,
+                                onPressed: () async {
+                                  if (_lastPageNumber == -1) return;
+
+                                  final bookmarkBloc = context
+                                      .read<BookmarkBloc>();
+                                  int? folderId;
+                                  // Removing is instant; adding asks the folder.
+                                  if (!isBookmarked) {
+                                    final choice = await showBookmarkFolderPicker(
+                                      context,
                                       mode: 'mushaf',
                                     );
-
-                                    context.read<BookmarkBloc>().add(
-                                      ToggleBookmark(bookmark),
-                                    );
+                                    if (choice == null) return;
+                                    folderId = choice.folderId;
                                   }
+                                  if (!mounted) return;
+
+                                  final bookmark = QuranBookmark(
+                                    surahNumber: _surah.number,
+                                    surahName: _surah.englishName,
+                                    pageNumber: _lastPageNumber,
+                                    createdAt:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                    mode: 'mushaf',
+                                    folderId: folderId,
+                                  );
+
+                                  bookmarkBloc.add(ToggleBookmark(bookmark));
                                 },
                               ),
                             ),

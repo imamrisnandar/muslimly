@@ -30,6 +30,7 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     on<AddBookmark>(_onAddBookmark, transformer: sequential());
     on<ToggleBookmark>(_onToggleBookmark, transformer: sequential());
     on<DeleteBookmark>(_onDeleteBookmark, transformer: sequential());
+    on<AssignBookmarkFolder>(_onAssignBookmarkFolder, transformer: sequential());
     on<SaveLastRead>(_onSaveLastRead, transformer: sequential());
     on<LoadLastRead>(_onLoadLastRead, transformer: sequential());
   }
@@ -55,9 +56,23 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
 
   Future<void> _pullAndMergeFromServer() async {
     try {
-      await _flushPendingDeletes();
       final token = await _getToken();
       final deviceId = await NotificationService.getDeviceId();
+
+      // Folders FIRST — bookmarks below need local folder rows to resolve a
+      // remote bookmark's folder_id (server UUID) into a local int id.
+      await _flushPendingFolderDeletes();
+      final remoteFolders = await _syncApiService.getFolders(
+        token,
+        deviceId: (token == null) ? deviceId : null,
+      );
+      if (remoteFolders.isNotEmpty) {
+        await _databaseService.mergeRemoteFolders(
+          remoteFolders.cast<Map<String, dynamic>>(),
+        );
+      }
+
+      await _flushPendingDeletes();
       final remoteBookmarks = await _syncApiService.getBookmarks(
         token,
         deviceId: (token == null) ? deviceId : null,
@@ -69,6 +84,25 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
       }
     } catch (_) {
       // Pull failure is non-fatal
+    }
+  }
+
+  Future<void> _flushPendingFolderDeletes() async {
+    final pending = await _databaseService.getPendingBookmarkFolderDeletes();
+    if (pending.isEmpty) return;
+    final token = await _getToken();
+    final deviceId = await NotificationService.getDeviceId();
+    for (final serverId in pending) {
+      try {
+        await _syncApiService.deleteFolder(
+          token,
+          serverId,
+          deviceId: (token == null) ? deviceId : null,
+        );
+        await _databaseService.removePendingBookmarkFolderDelete(serverId);
+      } catch (_) {
+        // Still offline — keep in queue
+      }
     }
   }
 
@@ -92,12 +126,18 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     try {
       final token = await _getToken();
       final deviceId = await NotificationService.getDeviceId();
+      String? folderServerId;
+      if (bookmark.folderId != null) {
+        final folder = await _databaseService.getFolderById(bookmark.folderId!);
+        folderServerId = folder?.serverId;
+      }
       final payload = <String, dynamic>{
         'surah_number': bookmark.surahNumber,
         'surah_name': bookmark.surahName,
         'page_number': bookmark.pageNumber,
         'ayah_number': bookmark.ayahNumber,
         'mode': bookmark.mode,
+        'folder_id': folderServerId,
         if (token == null && deviceId != null) 'device_id': deviceId,
       };
       final result = await _syncApiService.addBookmark(token, payload);
@@ -197,6 +237,48 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
       add(LoadBookmarks());
     } catch (e) {
       emit(BookmarkError('Failed to delete bookmark: $e'));
+    }
+  }
+
+  Future<void> _onAssignBookmarkFolder(
+    AssignBookmarkFolder event,
+    Emitter<BookmarkState> emit,
+  ) async {
+    try {
+      await _databaseService.assignBookmarkToFolder(event.bookmarkId, event.folderId);
+      _pushBookmarkFolderToServer(event.bookmarkId, event.folderId); // fire & forget
+      add(LoadBookmarks());
+    } catch (e) {
+      emit(BookmarkError('Failed to move bookmark: $e'));
+    }
+  }
+
+  // Resolves both sides to their server ids before pushing — skips silently
+  // (self-heals on the next pull) if the bookmark or the target folder
+  // hasn't synced yet.
+  Future<void> _pushBookmarkFolderToServer(int bookmarkId, int? folderId) async {
+    try {
+      final bookmarks = await _databaseService.getBookmarks();
+      final bookmark = bookmarks.where((b) => b.id == bookmarkId).firstOrNull;
+      if (bookmark?.serverId == null) return;
+
+      String? folderServerId;
+      if (folderId != null) {
+        final folder = await _databaseService.getFolderById(folderId);
+        if (folder?.serverId == null) return;
+        folderServerId = folder!.serverId;
+      }
+
+      final token = await _getToken();
+      final deviceId = await NotificationService.getDeviceId();
+      await _syncApiService.setBookmarkFolder(
+        token,
+        bookmark!.serverId!,
+        folderServerId,
+        deviceId: (token == null) ? deviceId : null,
+      );
+    } catch (_) {
+      // Non-fatal — next pull/merge cycle self-heals
     }
   }
 

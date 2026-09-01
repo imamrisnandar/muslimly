@@ -7,6 +7,7 @@ class QuranBookmark {
   final int? ayahNumber;
   final String mode; // 'list' or 'mushaf'
   final String? serverId; // UUID from BE — null = not yet synced
+  final int? folderId; // local bookmark_folders.id — null = uncategorized
 
   QuranBookmark({
     this.id,
@@ -17,6 +18,7 @@ class QuranBookmark {
     this.ayahNumber,
     this.mode = 'list',
     this.serverId,
+    this.folderId,
   });
 
   Map<String, dynamic> toMap() {
@@ -29,6 +31,7 @@ class QuranBookmark {
       'ayah_number': ayahNumber,
       'mode': mode,
       'server_id': serverId,
+      'folder_id': folderId,
     };
   }
 
@@ -42,10 +45,18 @@ class QuranBookmark {
       ayahNumber: map['ayah_number'],
       mode: map['mode'] ?? 'list',
       serverId: map['server_id'] as String?,
+      folderId: map['folder_id'] as int?,
     );
   }
 
-  QuranBookmark copyWith({String? serverId}) {
+  /// [folderId] sets a new folder; pass [clearFolderId] to explicitly move
+  /// the bookmark to "no folder" (a plain null [folderId] means "leave
+  /// unchanged", since it can't otherwise be told apart from clearing).
+  QuranBookmark copyWith({
+    String? serverId,
+    int? folderId,
+    bool clearFolderId = false,
+  }) {
     return QuranBookmark(
       id: id,
       surahNumber: surahNumber,
@@ -55,6 +66,7 @@ class QuranBookmark {
       ayahNumber: ayahNumber,
       mode: mode,
       serverId: serverId ?? this.serverId,
+      folderId: clearFolderId ? null : (folderId ?? this.folderId),
     );
   }
 }

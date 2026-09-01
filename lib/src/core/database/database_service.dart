@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import '../utils/app_logger.dart';
 import '../../features/quran/domain/entities/reading_activity.dart';
 import '../../features/quran/domain/entities/quran_bookmark.dart';
+import '../../features/quran/domain/entities/quran_folder.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -24,7 +25,7 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 13, // v13: ensure server_id column on bookmarks (fresh-install v12 fix)
+      version: 14, // v14: bookmark_folders per-mode folders + bookmarks.folder_id
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -60,6 +61,25 @@ class DatabaseService {
       'CREATE INDEX idx_reading_date ON reading_activity (date)',
     );
 
+    // Bookmark Folders Table (per-mode; 'list' and 'mushaf' have independent folders)
+    await db.execute('''
+      CREATE TABLE bookmark_folders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        mode TEXT NOT NULL,
+        name TEXT NOT NULL,
+        is_system INTEGER NOT NULL DEFAULT 0,
+        system_key TEXT,
+        created_at INTEGER NOT NULL,
+        server_id TEXT UNIQUE
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_bookmark_folders_mode ON bookmark_folders(mode)',
+    );
+    await db.execute(
+      'CREATE UNIQUE INDEX IF NOT EXISTS idx_bookmark_folders_system ON bookmark_folders(mode, system_key) WHERE is_system = 1',
+    );
+
     // Bookmarks Table
     await db.execute('''
       CREATE TABLE bookmarks (
@@ -70,16 +90,29 @@ class DatabaseService {
         created_at INTEGER NOT NULL,
         ayah_number INTEGER,
         mode TEXT DEFAULT 'list',
-        server_id TEXT UNIQUE
+        server_id TEXT UNIQUE,
+        folder_id INTEGER REFERENCES bookmark_folders(id)
       )
     ''');
     await db.execute(
       'CREATE INDEX IF NOT EXISTS idx_bookmarks_server_id ON bookmarks(server_id)',
     );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_bookmarks_folder_id ON bookmarks(folder_id)',
+    );
 
     // Pending bookmark deletes queue (offline support)
     await db.execute('''
       CREATE TABLE pending_bookmark_deletes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        server_id TEXT NOT NULL UNIQUE,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
+    // Pending bookmark FOLDER deletes queue (offline support)
+    await db.execute('''
+      CREATE TABLE pending_bookmark_folder_deletes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         server_id TEXT NOT NULL UNIQUE,
         created_at INTEGER NOT NULL
@@ -182,6 +215,42 @@ class DatabaseService {
       } catch (_) {
         // Column already exists (users who upgraded through v11)
       }
+    }
+    if (oldVersion < 14) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS bookmark_folders (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          mode TEXT NOT NULL,
+          name TEXT NOT NULL,
+          is_system INTEGER NOT NULL DEFAULT 0,
+          system_key TEXT,
+          created_at INTEGER NOT NULL,
+          server_id TEXT UNIQUE
+        )
+      ''');
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_bookmark_folders_mode ON bookmark_folders(mode)',
+      );
+      await db.execute(
+        'CREATE UNIQUE INDEX IF NOT EXISTS idx_bookmark_folders_system ON bookmark_folders(mode, system_key) WHERE is_system = 1',
+      );
+      try {
+        await db.execute(
+          'ALTER TABLE bookmarks ADD COLUMN folder_id INTEGER REFERENCES bookmark_folders(id)',
+        );
+      } catch (_) {
+        // Column already exists (re-run safety, mirrors the v13 pattern above)
+      }
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_bookmarks_folder_id ON bookmarks(folder_id)',
+      );
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS pending_bookmark_folder_deletes (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          server_id TEXT NOT NULL UNIQUE,
+          created_at INTEGER NOT NULL
+        )
+      ''');
     }
   }
 
@@ -523,6 +592,23 @@ class DatabaseService {
       final ayahNumber = remote['ayah_number'] as int?;
       final pageNumber = remote['page_number'] as int? ?? 0;
 
+      // Resolve remote folder_id (server UUID) to a local int id. If the
+      // referenced folder hasn't been merged locally yet (ordering edge case),
+      // fall back to null (uncategorized) rather than failing the merge — this
+      // self-heals on a later pull once the folder exists locally.
+      int? localFolderId;
+      final remoteFolderServerId = remote['folder_id'] as String?;
+      if (remoteFolderServerId != null) {
+        final folderRows = await db.query(
+          'bookmark_folders',
+          where: 'server_id = ?',
+          whereArgs: [remoteFolderServerId],
+        );
+        if (folderRows.isNotEmpty) {
+          localFolderId = folderRows.first['id'] as int?;
+        }
+      }
+
       // Build where clause by type
       String whereClause;
       List<dynamic> whereArgs;
@@ -544,10 +630,19 @@ class DatabaseService {
       );
 
       if (existing.isNotEmpty) {
-        // Update server_id for existing local bookmark
+        // Update server_id for existing local bookmark. folder_id is only
+        // included when remote actually resolved one — a local-only folder
+        // assignment that hasn't synced yet (remote folder_id still null,
+        // e.g. its own push failed or the folder isn't deployed server-side)
+        // must not be clobbered back to null just because remote hasn't
+        // caught up.
+        final updateData = <String, dynamic>{'server_id': serverId};
+        if (localFolderId != null) {
+          updateData['folder_id'] = localFolderId;
+        }
         await db.update(
           'bookmarks',
-          {'server_id': serverId},
+          updateData,
           where: 'id = ?',
           whereArgs: [existing.first['id']],
         );
@@ -560,10 +655,169 @@ class DatabaseService {
           'ayah_number': ayahNumber,
           'mode': mode,
           'server_id': serverId,
+          'folder_id': localFolderId,
           'created_at': DateTime.now().millisecondsSinceEpoch,
         });
       }
     }
+  }
+
+  // --- CRUD Operations for Bookmark Folders ---
+
+  Future<int> insertFolder(QuranFolder folder) async {
+    final db = await database;
+    return await db.insert('bookmark_folders', folder.toMap());
+  }
+
+  Future<List<QuranFolder>> getFolders({required String mode}) async {
+    final db = await database;
+    final maps = await db.query(
+      'bookmark_folders',
+      where: 'mode = ?',
+      whereArgs: [mode],
+      orderBy: 'created_at ASC',
+    );
+    return maps.map(QuranFolder.fromMap).toList();
+  }
+
+  Future<QuranFolder?> getFolderById(int id) async {
+    final db = await database;
+    final maps = await db.query('bookmark_folders', where: 'id = ?', whereArgs: [id]);
+    if (maps.isEmpty) return null;
+    return QuranFolder.fromMap(maps.first);
+  }
+
+  /// Idempotent lazy seeding of system default folders for [mode]. Safe to
+  /// call on every load — the unique index on (mode, system_key) makes the
+  /// insert a no-op after the first successful seed.
+  Future<void> ensureDefaultFolders(
+    String mode, {
+    required String hapalanLabel,
+    required String bacaanLabel,
+  }) async {
+    final db = await database;
+    final defaults = [('hapalan', hapalanLabel), ('bacaan', bacaanLabel)];
+    for (final (key, name) in defaults) {
+      await db.insert(
+        'bookmark_folders',
+        {
+          'mode': mode,
+          'name': name,
+          'is_system': 1,
+          'system_key': key,
+          'created_at': DateTime.now().millisecondsSinceEpoch,
+        },
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+  }
+
+  Future<void> renameFolder(int id, String name) async {
+    final db = await database;
+    await db.update('bookmark_folders', {'name': name}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  /// Deletes the folder and nulls out `folder_id` on any bookmarks that
+  /// referenced it — bookmarks become uncategorized, not deleted.
+  Future<void> deleteFolder(int id) async {
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.update('bookmarks', {'folder_id': null}, where: 'folder_id = ?', whereArgs: [id]);
+      await txn.delete('bookmark_folders', where: 'id = ?', whereArgs: [id]);
+    });
+  }
+
+  Future<void> assignBookmarkToFolder(int bookmarkId, int? folderId) async {
+    final db = await database;
+    await db.update(
+      'bookmarks',
+      {'folder_id': folderId},
+      where: 'id = ?',
+      whereArgs: [bookmarkId],
+    );
+  }
+
+  Future<void> updateServerIdForFolder(int localId, String serverId) async {
+    final db = await database;
+    await db.update(
+      'bookmark_folders',
+      {'server_id': serverId},
+      where: 'id = ?',
+      whereArgs: [localId],
+    );
+  }
+
+  /// Merge server folders into local. System folders (Hapalan/Bacaan) match
+  /// on (mode, system_key) rather than server_id — the client's own
+  /// ensureDefaultFolders may have already created a local row before ever
+  /// talking to the server (offline-first), so matching on system_key
+  /// reconciles that pre-existing row instead of creating a duplicate.
+  /// Custom folders always match on server_id.
+  Future<void> mergeRemoteFolders(List<Map<String, dynamic>> remoteFolders) async {
+    final db = await database;
+    for (final remote in remoteFolders) {
+      final serverId = remote['id'] as String?;
+      if (serverId == null) continue;
+      final mode = remote['mode'] as String? ?? 'list';
+      final isSystem = remote['is_system'] as bool? ?? false;
+      final systemKey = remote['system_key'] as String?;
+
+      final existing = (isSystem && systemKey != null)
+          ? await db.query(
+              'bookmark_folders',
+              where: 'mode = ? AND system_key = ? AND is_system = 1',
+              whereArgs: [mode, systemKey],
+            )
+          : await db.query('bookmark_folders', where: 'server_id = ?', whereArgs: [serverId]);
+
+      if (existing.isNotEmpty) {
+        await db.update(
+          'bookmark_folders',
+          {'server_id': serverId, 'name': remote['name']},
+          where: 'id = ?',
+          whereArgs: [existing.first['id']],
+        );
+      } else {
+        await db.insert('bookmark_folders', {
+          'mode': mode,
+          'name': remote['name'] ?? '',
+          'is_system': isSystem ? 1 : 0,
+          'system_key': systemKey,
+          'server_id': serverId,
+          'created_at': DateTime.now().millisecondsSinceEpoch,
+        });
+      }
+    }
+  }
+
+  Future<void> clearAllFolders() async {
+    final db = await database;
+    await db.delete('bookmark_folders');
+    await db.delete('pending_bookmark_folder_deletes');
+  }
+
+  Future<void> addPendingBookmarkFolderDelete(String serverId) async {
+    final db = await database;
+    await db.insert(
+      'pending_bookmark_folder_deletes',
+      {'server_id': serverId, 'created_at': DateTime.now().millisecondsSinceEpoch},
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+  }
+
+  Future<List<String>> getPendingBookmarkFolderDeletes() async {
+    final db = await database;
+    final rows = await db.query('pending_bookmark_folder_deletes', columns: ['server_id']);
+    return rows.map((r) => r['server_id'] as String).toList();
+  }
+
+  Future<void> removePendingBookmarkFolderDelete(String serverId) async {
+    final db = await database;
+    await db.delete(
+      'pending_bookmark_folder_deletes',
+      where: 'server_id = ?',
+      whereArgs: [serverId],
+    );
   }
 
   Future<bool> isBookmarked({

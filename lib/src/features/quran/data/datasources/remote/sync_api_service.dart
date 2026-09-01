@@ -295,6 +295,134 @@ class SyncApiService {
     }
   }
 
+  Future<void> setBookmarkFolder(
+    String? token,
+    String bookmarkServerId,
+    String? folderServerId, {
+    String? deviceId,
+  }) async {
+    try {
+      await _dio.put(
+        '/sync/bookmarks/$bookmarkServerId/folder',
+        data: {
+          if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
+          'folder_id': folderServerId,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('⚠️ [API] setBookmarkFolder failed: ${e.message}');
+    }
+  }
+
+  Future<List<dynamic>> getFolders(String? token, {String? deviceId, String? mode}) async {
+    try {
+      final queryParams = <String, dynamic>{};
+      if (deviceId != null && deviceId.isNotEmpty) {
+        queryParams['device_id'] = deviceId;
+      }
+      if (mode != null && mode.isNotEmpty) {
+        queryParams['mode'] = mode;
+      }
+      final response = await _dio.get(
+        '/sync/folders',
+        queryParameters: queryParams,
+        options: Options(
+          headers: {
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return (response.data['data'] as List?) ?? [];
+      }
+      return [];
+    } on DioException catch (e) {
+      debugPrint('⚠️ [API] getFolders failed: ${e.message}');
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>?> addFolder(
+    String? token,
+    Map<String, dynamic> payload,
+  ) async {
+    try {
+      final response = await _dio.post(
+        '/sync/folders',
+        data: payload,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      if (response.statusCode == 201) {
+        return response.data['data'] as Map<String, dynamic>?;
+      }
+      return null;
+    } on DioException catch (e) {
+      debugPrint('⚠️ [API] addFolder failed: ${e.message}');
+      return null;
+    }
+  }
+
+  Future<void> renameFolder(
+    String? token,
+    String serverId,
+    String name, {
+    String? deviceId,
+  }) async {
+    try {
+      await _dio.put(
+        '/sync/folders/$serverId',
+        data: {
+          if (deviceId != null && deviceId.isNotEmpty) 'device_id': deviceId,
+          'name': name,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('⚠️ [API] renameFolder failed: ${e.message}');
+    }
+  }
+
+  Future<void> deleteFolder(String? token, String serverId, {String? deviceId}) async {
+    try {
+      final queryParams = <String, dynamic>{};
+      if (deviceId != null && deviceId.isNotEmpty) {
+        queryParams['device_id'] = deviceId;
+      }
+      await _dio.delete(
+        '/sync/folders/$serverId',
+        queryParameters: queryParams,
+        options: Options(
+          headers: {
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      debugPrint('⚠️ [API] deleteFolder failed: ${e.message}');
+    }
+  }
+
   Future<void> migrateGuestData(String token, String deviceId) async {
     try {
       await _dio.post(

@@ -39,6 +39,7 @@ import '../widgets/ayah_selector_bottom_sheet.dart';
 
 import '../widgets/surah_detail_header_widget.dart';
 import '../widgets/surah_ayah_list_card_widget.dart';
+import '../widgets/bookmark_folder_picker_sheet.dart';
 
 class SurahDetailPage extends StatefulWidget {
   final Surah surah;
@@ -324,7 +325,20 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
     return juzMap[surahNumber] ?? 1;
   }
 
-  void _handleBookmarkTap(BuildContext context, Ayah ayah) {
+  Future<void> _handleBookmarkTap(
+    BuildContext context,
+    Ayah ayah,
+    bool isBookmarked,
+  ) async {
+    int? folderId;
+    // Removing is instant; adding first asks which folder to save into.
+    if (!isBookmarked) {
+      final choice = await showBookmarkFolderPicker(context, mode: 'list');
+      if (choice == null) return; // sheet dismissed — leave bookmark untouched
+      folderId = choice.folderId;
+    }
+    if (!mounted) return;
+
     final bookmark = QuranBookmark(
       surahNumber: widget.surah.number,
       surahName: widget.surah.englishName,
@@ -332,6 +346,7 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
       pageNumber: ayah.page,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       mode: 'list',
+      folderId: folderId,
     );
 
     _bookmarkBloc.add(ToggleBookmark(bookmark));
@@ -770,8 +785,11 @@ class _SurahDetailPageState extends State<SurahDetailPage> {
                                         ),
                                       );
                                     },
-                                    onBookmark: () =>
-                                        _handleBookmarkTap(context, ayah),
+                                    onBookmark: () => _handleBookmarkTap(
+                                      context,
+                                      ayah,
+                                      isBookmarked,
+                                    ),
                                     markReadKey: _markReadKey,
                                     shareKey: _shareKey,
                                     tafsirKey: _tafsirKey,
