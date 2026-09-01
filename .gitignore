@@ -69,3 +69,4 @@ build_aab_production.sh
 build_aab_production.bat
 build_aab.bat
 build_apk.bat
+build_apk.sh

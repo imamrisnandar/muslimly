@@ -47,12 +47,20 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo.
-echo [4/4] Opening Output Folder...
-explorer build\app\outputs\flutter-apk\
+echo [4/4] Renaming output APK...
+set "APK_DIR=build\app\outputs\flutter-apk"
+set "APP_NAME=Muslimly"
+set "APP_VERSION="
+for /f "tokens=2" %%v in ('findstr /b /c:"version:" pubspec.yaml') do set "APP_VERSION=%%v"
+set "RELEASE_NAME=%APP_NAME%-v%APP_VERSION%.apk"
+if exist "%APK_DIR%\app-release.apk" (
+    copy /y "%APK_DIR%\app-release.apk" "%APK_DIR%\%RELEASE_NAME%" >nul
+)
+explorer "%APK_DIR%\"
 
 echo.
 echo ==========================================
 echo Build Completed Successfully!
-echo APK Location: build\app\outputs\flutter-apk\app-release.apk
+echo APK Location: %APK_DIR%\%RELEASE_NAME%
 echo ==========================================
 pause
