@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:muslimly/src/features/quran/presentation/utils/glyph_helper.dart';
@@ -17,7 +16,7 @@ import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_ev
 import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_state.dart';
 import 'package:muslimly/src/features/quran/domain/utils/arabic_text_matcher.dart';
 
-import 'package:dio/dio.dart';
+import 'package:muslimly/src/core/di/di_container.dart';
 
 import '../../data/datasources/font_cache_service.dart';
 import '../../data/datasources/local/quran_library/quran.dart' as quran_lib;
@@ -67,8 +66,9 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
   }
 
   Future<void> _loadFont() async {
-    final fontService = FontCacheService(Dio());
+    final fontService = getIt<FontCacheService>();
     await fontService.loadPageFont(widget.pageNumber);
+    fontService.prefetchAround(widget.pageNumber);
   }
 
   @override

@@ -19,7 +19,7 @@ import 'package:muslimly/src/features/quran/presentation/bloc/bookmark/bookmark_
 import 'package:muslimly/src/features/quran/domain/entities/quran_bookmark.dart';
 import 'package:muslimly/src/features/quran/presentation/widgets/bookmark_folder_picker_sheet.dart';
 import '../../data/datasources/font_cache_service.dart';
-import 'package:dio/dio.dart';
+import 'package:muslimly/src/core/di/di_container.dart';
 import 'dart:ui' as ui;
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_bloc.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
@@ -117,8 +117,10 @@ class _MushafSinglePageState extends State<MushafSinglePage> {
   }
 
   Future<void> _loadFont() async {
-    final fontService = FontCacheService(Dio());
+    final fontService = getIt<FontCacheService>();
     await fontService.loadPageFont(widget.pageNumber);
+    // Warm the neighbours so the next swipe renders without a spinner.
+    fontService.prefetchAround(widget.pageNumber);
   }
 
   @override

@@ -13,8 +13,13 @@ abstract class AppUrls {
   static const String islamicNetworkAudio = 'https://cdn.islamic.network/quran/audio';
 
   // --- Font CDN ---
-  static const String qpcFontsCdn =
-      'https://kencana.basic.box.cloudeka.id/tijar-market-o0mzhs/qpc';
+  // QPC v2 per-page mushaf fonts (QCF2001.ttf .. QCF2604.ttf), self-hosted on
+  // cdn.muslimly.id (VPS origin, cached at the Cloudflare edge for a year).
+  // Version lives in the path so a future font revision (v4, ...) gets a fresh
+  // URL instead of fighting stale caches.
+  static const String qpcFontsCdn = 'https://cdn.muslimly.id/qpc/v2';
+  static const String qpcFontsManifest =
+      'https://cdn.muslimly.id/qpc/v2/manifest.json';
 
   // --- Quran.com share links ---
   static String quranComJuz(int juzNumber) =>

@@ -41,6 +41,7 @@ import '../../features/prayer/presentation/bloc/prayer_bloc.dart';
 
 // Quran
 import '../../features/quran/data/datasources/quran_local_data_source.dart';
+import '../../features/quran/data/datasources/font_cache_service.dart';
 import '../../features/quran/data/datasources/remote/sync_api_service.dart'; // Added SyncApiService
 // import '../../features/quran/data/datasources/quran_remote_data_source.dart';
 import '../../features/quran/data/repositories/quran_repository_impl.dart';
@@ -183,6 +184,10 @@ void configureDependencies() {
   getIt.registerLazySingleton<QuranLocalDataSource>(
     () => QuranLocalDataSourceImpl(),
   );
+  // Shared across every mushaf/hafalan page so font downloads are de-duped and
+  // pages can be prefetched around the one on screen. Keeps its own plain Dio
+  // (see FontCacheService docs).
+  getIt.registerLazySingleton<FontCacheService>(() => FontCacheService());
   getIt.registerLazySingleton<SyncApiService>(
     () => SyncApiService(getIt<Dio>()),
   );
