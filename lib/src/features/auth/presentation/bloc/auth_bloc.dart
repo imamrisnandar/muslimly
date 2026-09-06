@@ -119,6 +119,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     await _authRepository.deleteToken();
     await _clearUserScopedLocalData();
+    // Detach this device from the logged-out account (re-registers as guest)
+    // so the next user on a shared phone doesn't inherit its targeted pushes.
+    await _notificationService.syncFCMToken(null);
     emit(AuthLoggedOut());
   }
 

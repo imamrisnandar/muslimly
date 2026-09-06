@@ -161,6 +161,7 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   Future<void> testNotification() async {
     await _notificationService.requestPermissions();
+    await _notificationService.requestExactAlarmPermission();
     await _notificationService.showImmediateNotification(
       title: 'Test Notification',
       body: 'This is a test notification for prayer times.',

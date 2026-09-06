@@ -83,6 +83,11 @@ class PrayerBloc extends Bloc<PrayerEvent, PrayerState> {
     });
 
     on<UpdateNotificationSetting>((event, emit) async {
+      // The user just picked a prayer-notification sound — a clear moment to
+      // ask for the exact-alarm permission (which sends them to a Settings
+      // screen), instead of ambushing them with it on app startup.
+      await _notificationService.requestExactAlarmPermission();
+
       await _settingsRepository.savePrayerNotificationSetting(
         event.prayerName,
         event.soundType,

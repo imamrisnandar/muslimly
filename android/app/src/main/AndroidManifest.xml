@@ -45,6 +45,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Channel FCM uses for system-tray notifications when the app is
+             backgrounded and the message has no explicit channel. Must match
+             kPushChannelId in notification_service.dart. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="push_general_v1" />
         
         <!-- Scheduled Notification Receivers -->
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
