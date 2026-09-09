@@ -322,6 +322,11 @@ class SyncApiService {
   }
 
   Future<List<dynamic>> getFolders(String? token, {String? deviceId, String? mode}) async {
+    // No identity to scope folders to — don't fire a request that can only 500.
+    if ((token == null || token.isEmpty) &&
+        (deviceId == null || deviceId.isEmpty)) {
+      return [];
+    }
     try {
       final queryParams = <String, dynamic>{};
       if (deviceId != null && deviceId.isNotEmpty) {

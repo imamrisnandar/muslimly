@@ -59,6 +59,11 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
       final token = await _getToken();
       final deviceId = await NotificationService.getDeviceId();
 
+      // Guest whose device isn't registered yet (fresh install, registration
+      // still in flight): no server identity to sync against. Skip entirely —
+      // calling the sync endpoints with neither token nor device_id just 500s.
+      if (token == null && (deviceId == null || deviceId.isEmpty)) return;
+
       // Folders FIRST — bookmarks below need local folder rows to resolve a
       // remote bookmark's folder_id (server UUID) into a local int id.
       await _flushPendingFolderDeletes();
