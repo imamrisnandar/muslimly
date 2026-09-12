@@ -5,6 +5,7 @@ import 'dart:ui'; // for Locale
 import '../../core/di/di_container.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../core/database/database_service.dart';
+import '../../features/quran/domain/utils/muraja_ah_scheduler.dart';
 import '../../l10n/generated/app_localizations.dart'; // Localization
 import 'notification_service.dart';
 // Actually we need to re-initialize DI in background.
@@ -129,6 +130,30 @@ void callbackDispatcher() {
         body: body,
         soundType: 'beep', // Requested by User
       );
+
+      // 3. Muraja'ah (spaced-repetition review) due-check — piggybacks on
+      // this same daily task rather than registering a second periodic
+      // Workmanager task (see HAFALAN_TRACKER_PLAN.md §C). Purely a local DB
+      // read + pure fold, no network — but this task itself only runs under
+      // NetworkType.connected (see _registerDailyTask above), so on an
+      // offline day this check (and its notification) is skipped along with
+      // everything else here, not just the network-dependent parts.
+      try {
+        final hafalanSessions = await dbService.getHafalanSessions();
+        final dueUnits = MurajaahScheduler.calculateDueUnits(hafalanSessions);
+        if (dueUnits.isNotEmpty) {
+          await notificationService.showImmediateNotification(
+            id: kMurajaahNotificationId,
+            title: l10n.murajaahNotifTitle,
+            body: l10n.murajaahNotifBody(dueUnits.length),
+            soundType: 'beep',
+          );
+        }
+      } catch (e, s) {
+        // Best-effort: a failed muraja'ah check shouldn't fail the whole
+        // daily task (the reading-progress notification above already sent).
+        AppLogger.error('Muraja\'ah due-check failed', e, s);
+      }
 
       // print("DEBUG: Background Task Finished. Progress: $progress/$target");
     } catch (e, s) {

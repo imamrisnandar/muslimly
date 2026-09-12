@@ -29,4 +29,8 @@ abstract class QuranRepository {
     String? token, {
     String? deviceId,
   });
+  Future<Either<Failure, void>> syncUnsyncedHafalanSessions(
+    String? token, {
+    String? deviceId,
+  });
 }

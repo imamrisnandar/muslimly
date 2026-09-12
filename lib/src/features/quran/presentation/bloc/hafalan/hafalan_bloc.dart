@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import '../../../domain/utils/arabic_text_matcher.dart';
 import '../../../domain/entities/ayah.dart';
@@ -47,7 +49,8 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
   /// giving the speech engine time to correct itself  int _currentExpectedWordsLength = 0;
 
   Timer? _silenceTimer;
-  bool _isTransitioning = false; // Suppress auto-restart during deliberate transitions
+  bool _isTransitioning =
+      false; // Suppress auto-restart during deliberate transitions
 
   /// Known huruf muqatta'ah patterns (normalized, without diacritics)
   /// These are special Quranic opening letters that speech recognition
@@ -78,7 +81,34 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     return _hurufMuqattaah.contains(combined);
   }
 
-  HafalanBloc() : super(const HafalanState()) {
+  /// Mode Anak / "Guided" — softens the strict recitation checker for
+  /// younger or beginner readers: mismatches never get force-marked after
+  /// a silence timeout (only an explicit Skip moves things along), and no
+  /// mismatch is ever shown as red (that's a UI-layer concern, see
+  /// hafalan_single_page.dart's kidsMode prop).
+  final bool kidsMode;
+
+  /// Opt-in "Rekam suara saat hafalan" (HAFALAN_TRACKER_PLAN.md §F) —
+  /// threaded from SettingsRepository the same way [kidsMode] is. When
+  /// false the recorder is never touched at all: no mic-recorder resource
+  /// use, no permission checks, purely opt-in.
+  final bool recordAudio;
+
+  // Lazy: AudioRecorder()'s constructor itself reaches for a platform
+  // channel (confirmed — it crashes plain test()s with "Binding has not
+  // yet been initialized" the moment a HafalanBloc is constructed, even
+  // with recordAudio false, since bare `test()` never initializes Flutter
+  // bindings the way testWidgets()/runApp() do). Every call site below is
+  // already guarded by `if (!recordAudio) return;`, so staying lazy means
+  // recordAudio:false — the default, and every non-recording bloc test —
+  // never touches the plugin at all.
+  AudioRecorder? _recorderInstance;
+  AudioRecorder get _recorder => _recorderInstance ??= AudioRecorder();
+  bool _isRecording = false;
+  String? _currentRecordingPath;
+
+  HafalanBloc({this.kidsMode = false, this.recordAudio = false})
+    : super(const HafalanState()) {
     // Handlers below await (speech engine calls, transition delays) while
     // mutating shared instance fields like _currentExpectedWords and
     // _lastPartialWords. flutter_bloc processes same-type events concurrently
@@ -95,7 +125,10 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     on<StopListening>(_onStopListening, transformer: sequential());
     on<SpeechResultReceived>(_onSpeechResult, transformer: sequential());
     on<SkipAyah>(_onSkipAyah, transformer: sequential());
-    on<ForceEvaluateMismatch>(_onForceEvaluateMismatch, transformer: sequential());
+    on<ForceEvaluateMismatch>(
+      _onForceEvaluateMismatch,
+      transformer: sequential(),
+    );
     on<TogglePeek>(_onTogglePeek, transformer: sequential());
     on<ResetHafalan>(_onResetHafalan, transformer: sequential());
     on<SetCurrentAyah>(_onSetCurrentAyah, transformer: sequential());
@@ -142,6 +175,71 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     return ayah.text.split(RegExp(r'\s+')).where((w) => w.isNotEmpty).toList();
   }
 
+  // ═══ Audio recording (HAFALAN_TRACKER_PLAN.md §F) ═══
+  // One continuous recording per page attempt: started fresh on the first
+  // StartListening after a page loads/resets, paused/resumed alongside the
+  // user's own pause/resume taps (the `record` package keeps writing into
+  // the SAME file across pause→resume, no stitching needed), and finalized
+  // only once the page's HafalanStatus reaches completed. All of this is
+  // best-effort — a failed recorder call never blocks the hafalan flow
+  // itself, since the STT-driven recitation check is still the feature's
+  // real source of truth.
+
+  Future<void> _startRecording() async {
+    if (!recordAudio || _isRecording) return;
+    try {
+      if (!await _recorder.hasPermission()) return;
+      final dir = await getApplicationDocumentsDirectory();
+      final path =
+          '${dir.path}/hafalan_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      await _recorder.start(const RecordConfig(), path: path);
+      _isRecording = true;
+      _currentRecordingPath = path;
+    } catch (_) {}
+  }
+
+  Future<void> _resumeRecording() async {
+    if (!recordAudio || !_isRecording) return;
+    try {
+      await _recorder.resume();
+    } catch (_) {}
+  }
+
+  Future<void> _pauseRecording() async {
+    if (!recordAudio || !_isRecording) return;
+    try {
+      await _recorder.pause();
+    } catch (_) {}
+  }
+
+  /// Stops and keeps the recording, returning its file path (or null if
+  /// recording was off, never started, or the stop itself failed).
+  Future<String?> _finalizeRecording() async {
+    if (!recordAudio || !_isRecording) return null;
+    try {
+      final path = await _recorder.stop();
+      _isRecording = false;
+      final result = path ?? _currentRecordingPath;
+      _currentRecordingPath = null;
+      return result;
+    } catch (_) {
+      _isRecording = false;
+      _currentRecordingPath = null;
+      return null;
+    }
+  }
+
+  /// Stops and deletes the in-progress recording — the page changed or was
+  /// abandoned before completing, so there's no session to attach it to.
+  void _discardRecording() {
+    if (!_isRecording) return;
+    _isRecording = false;
+    _currentRecordingPath = null;
+    // cancel() both stops and deletes the file on every platform this
+    // package supports — no separate File.delete() needed.
+    unawaited(_recorder.cancel());
+  }
+
   Future<void> _onInitSpeech(
     InitSpeech event,
     Emitter<HafalanState> emit,
@@ -165,7 +263,9 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
       _speech.statusListener = (status) {
         if (isClosed) return;
         if (status == 'done' || status == 'notListening') {
-          if (state.isListening && state.status != HafalanStatus.completed && !_isTransitioning) {
+          if (state.isListening &&
+              state.status != HafalanStatus.completed &&
+              !_isTransitioning) {
             // Auto-restart only when WE didn't deliberately stop it
             add(const _AutoRestartListening());
           }
@@ -213,6 +313,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
       // Fresh start — prepare words for current ayah
       _resetInternalState();
       _prepareCurrentAyahWords();
+      await _startRecording();
       emit(
         state.copyWith(
           status: HafalanStatus.listening,
@@ -227,6 +328,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     } else {
       // Resume from paused — keep matched progress, just restart engine
       _prepareCurrentAyahWords();
+      await _resumeRecording();
       emit(
         state.copyWith(
           status: HafalanStatus.listening,
@@ -305,6 +407,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     Emitter<HafalanState> emit,
   ) async {
     await _speech.stop();
+    await _pauseRecording();
     emit(
       state.copyWith(
         isListening: false,
@@ -350,7 +453,9 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     if (ayahNum == null) return;
 
     // ═══ DEBUG LOGGING ═══
-    debugPrint('[HAFALAN] ayahIdx=${state.currentAyahIndex} ayahNum=$ayahNum isFinal=${event.isFinal}');
+    debugPrint(
+      '[HAFALAN] ayahIdx=${state.currentAyahIndex} ayahNum=$ayahNum isFinal=${event.isFinal}',
+    );
     debugPrint('[HAFALAN] spoken: ${spokenWords.join(" | ")}');
     debugPrint('[HAFALAN] expected: ${_currentExpectedWords.join(" | ")}');
 
@@ -408,7 +513,10 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
           _isTransitioning = false;
         } else {
           _speech.stop();
-          emit(state.copyWith(isListening: false));
+          final audioPath = await _finalizeRecording();
+          emit(
+            state.copyWith(isListening: false, audioFilePath: audioPath),
+          );
         }
         return;
       }
@@ -463,7 +571,8 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     int cursor = alreadyProcessed; // Current expected word position
     final Set<int> newMatchedIndices = {};
     final Set<int> newMismatchedIndices = {};
-    bool hasUnresolvedWord = false; // Track if any spoken word failed ALL matching
+    bool hasUnresolvedWord =
+        false; // Track if any spoken word failed ALL matching
     bool allPreviousWereOverlap = (alreadyProcessed > 0) && !replayTrimmed;
     // If replay was already trimmed away, the remaining batch is at the live
     // frontier. Treating it as "all overlaps" would incorrectly drop the first
@@ -484,14 +593,17 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
 
       // Strategy 2: from offset with look-ahead and per-word status
       if (cursor < expectedLen) {
-        hasUnresolvedWord = false; // Reset for each word. Only the final state of the buffer dictates if we are stuck.
+        hasUnresolvedWord =
+            false; // Reset for each word. Only the final state of the buffer dictates if we are stuck.
         final expectedWord = _currentExpectedWords[cursor];
-        
+
         if (ArabicTextMatcher.wordsMatch(word, expectedWord)) {
           // Direct match — word is correct (green)
           newMatchedIndices.add(cursor);
           cursor++;
-          debugPrint('[HAFALAN] ✅ word[$i] "$word" matched expected[${cursor - 1}] "$expectedWord"');
+          debugPrint(
+            '[HAFALAN] ✅ word[$i] "$word" matched expected[${cursor - 1}] "$expectedWord"',
+          );
         } else {
           if (i + 1 < spokenWords.length &&
               cursor + 1 < expectedLen &&
@@ -510,15 +622,20 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
           }
 
           // ═══ Muqatta'ah Component Swallow ═══
-          // If the PREVIOUS expected word was a muqatta'ah (like الرا) and STT 
+          // If the PREVIOUS expected word was a muqatta'ah (like الرا) and STT
           // is still spelling out its components (like لام or ر), they will fail
           // against the CURRENT expected word.
           // If this happens, we just "swallow" the extra muqatta'ah component.
-          if (cursor > 0 && 
-              ArabicTextMatcher.isMuqattaahWord(_currentExpectedWords[cursor - 1]) &&
+          if (cursor > 0 &&
+              ArabicTextMatcher.isMuqattaahWord(
+                _currentExpectedWords[cursor - 1],
+              ) &&
               ArabicTextMatcher.isMuqattaahComponent(word)) {
-            debugPrint('[HAFALAN] 🔄 word[$i] "$word" swallowed as trailing component for "${_currentExpectedWords[cursor - 1]}"');
-            hasUnresolvedWord = false; // It's not genuinely unresolved, it belongs to previous
+            debugPrint(
+              '[HAFALAN] 🔄 word[$i] "$word" swallowed as trailing component for "${_currentExpectedWords[cursor - 1]}"',
+            );
+            hasUnresolvedWord =
+                false; // It's not genuinely unresolved, it belongs to previous
             continue;
           }
 
@@ -595,7 +712,9 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
             // from trailing audio. We drop it here. It will be confirmed in the next
             // batch or final result if it was genuine.
             if (!event.isFinal && allPreviousWereOverlap) {
-              debugPrint('[HAFALAN] 🛡️ Dropped potential phantom word "$word" after overlaps');
+              debugPrint(
+                '[HAFALAN] 🛡️ Dropped potential phantom word "$word" after overlaps',
+              );
               break;
             }
             allPreviousWereOverlap = false;
@@ -627,10 +746,16 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
 
             // If word didn't match anything (not overlap, not look-ahead, not merge),
             // mark it as unresolved so the silence timer can evaluate it.
-            if (!isOverlap && cursor == alreadyProcessed + newMatchedIndices.length + newMismatchedIndices.length) {
+            if (!isOverlap &&
+                cursor ==
+                    alreadyProcessed +
+                        newMatchedIndices.length +
+                        newMismatchedIndices.length) {
               // cursor didn't advance for this word — genuinely unresolved
               hasUnresolvedWord = true;
-              debugPrint('[HAFALAN] ❓ word[$i] "$word" unresolved (no match found)');
+              debugPrint(
+                '[HAFALAN] ❓ word[$i] "$word" unresolved (no match found)',
+              );
               // Be conservative: once a new unresolved word appears, do not
               // process later tokens from the same STT batch. On pauses, STT
               // often hallucinates likely continuation words at the tail of a
@@ -646,8 +771,13 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     // ═══ SILENCE EVALUATION TIMER ═══
     // Only fire when a spoken word genuinely didn't match any expected word.
     // This prevents false mismatch when the user pauses mid-ayah at a waqf point.
-    if (hasUnresolvedWord && cursor < expectedLen) {
-      debugPrint('[HAFALAN] ⏰ Setting 2s silence timer. cursor=$cursor expectedLen=$expectedLen');
+    // Mode Anak: never schedule this at all — an unresolved word just keeps
+    // waiting (no forced mismatch, ever); the child/parent moves on via the
+    // explicit Skip control instead of a timeout marking it wrong.
+    if (hasUnresolvedWord && cursor < expectedLen && !kidsMode) {
+      debugPrint(
+        '[HAFALAN] ⏰ Setting 2s silence timer. cursor=$cursor expectedLen=$expectedLen',
+      );
       _silenceTimer = Timer(const Duration(milliseconds: 2000), () {
         if (!isClosed) add(ForceEvaluateMismatch());
       });
@@ -658,7 +788,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     // rely on Strategy 2's output to correctly display omitted/skipped words.
 
     // ═══ SAFETY: remove conflicts ═══
-    // If a word is in BOTH matched and mismatched (e.g. from look-ahead), 
+    // If a word is in BOTH matched and mismatched (e.g. from look-ahead),
     // mismatched wins to prevent false green.
     newMatchedIndices.removeAll(newMismatchedIndices);
 
@@ -681,8 +811,12 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     final int totalProcessed = ayahRevealed.length + ayahMismatched.length;
     final bool ayahComplete = totalProcessed >= expectedLen;
 
-    debugPrint('[HAFALAN] matched=${newMatchedIndices} mismatched=${newMismatchedIndices} complete=$ayahComplete');
-    debugPrint('[HAFALAN] STATE ayah$ayahNum revealed=${ayahRevealed.toList()..sort()} mismatchedState=${ayahMismatched.toList()..sort()}');
+    debugPrint(
+      '[HAFALAN] matched=${newMatchedIndices} mismatched=${newMismatchedIndices} complete=$ayahComplete',
+    );
+    debugPrint(
+      '[HAFALAN] STATE ayah$ayahNum revealed=${ayahRevealed.toList()..sort()} mismatchedState=${ayahMismatched.toList()..sort()}',
+    );
 
     await _emitProgress(
       emit,
@@ -710,17 +844,22 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     // gets stuck on "ايها" against the next cursor word.
     int spokenCursor = 0;
     int expectedCursor = 0;
-    while (spokenCursor < spokenWords.length && expectedCursor < alreadyProcessed) {
+    while (spokenCursor < spokenWords.length &&
+        expectedCursor < alreadyProcessed) {
       final expectedWord = _currentExpectedWords[expectedCursor];
 
-      if (ArabicTextMatcher.wordsMatch(spokenWords[spokenCursor], expectedWord)) {
+      if (ArabicTextMatcher.wordsMatch(
+        spokenWords[spokenCursor],
+        expectedWord,
+      )) {
         spokenCursor++;
         expectedCursor++;
         continue;
       }
 
       if (spokenCursor + 1 < spokenWords.length) {
-        final merged = spokenWords[spokenCursor] + spokenWords[spokenCursor + 1];
+        final merged =
+            spokenWords[spokenCursor] + spokenWords[spokenCursor + 1];
         if (ArabicTextMatcher.wordsMatch(merged, expectedWord)) {
           spokenCursor += 2;
           expectedCursor++;
@@ -765,7 +904,8 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
       final currentExpected = alreadyProcessed < _currentExpectedWords.length
           ? _currentExpectedWords[alreadyProcessed]
           : null;
-      final canAlsoBeCurrent = currentExpected != null &&
+      final canAlsoBeCurrent =
+          currentExpected != null &&
           ArabicTextMatcher.wordsMatch(spokenWords.first, currentExpected);
       if (!canAlsoBeCurrent) {
         _lastTailReplayTrimCount = 1;
@@ -788,7 +928,8 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     required int alreadyProcessed,
     required int expectedLen,
   }) {
-    if (_lastPartialWords.isEmpty || finalWords.length <= _lastPartialWords.length) {
+    if (_lastPartialWords.isEmpty ||
+        finalWords.length <= _lastPartialWords.length) {
       return finalWords;
     }
 
@@ -805,7 +946,8 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     // speculative continuation words at the end of the final result when the
     // reader pauses, which is exactly what causes premature green highlights.
     if (sameStablePrefix) {
-      final bool completesAyah = alreadyProcessed + finalWords.length >= expectedLen;
+      final bool completesAyah =
+          alreadyProcessed + finalWords.length >= expectedLen;
       // Only allow the extra tail through when it finishes the ayah.
       // This keeps endings like "هدى للمتقين" working, while preventing
       // mid-ayah tails such as "بنهر فمن" from turning future words green.
@@ -872,7 +1014,9 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
       return false;
     }
 
-    if (spoken.length != expected.length || spoken.length < 2 || spoken.length > 3) {
+    if (spoken.length != expected.length ||
+        spoken.length < 2 ||
+        spoken.length > 3) {
       return false;
     }
 
@@ -937,8 +1081,14 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     Emitter<HafalanState> emit,
   ) async {
     if (state.status == HafalanStatus.completed || !state.isListening) return;
+    // Belt-and-suspenders: the silence timer that dispatches this event is
+    // never scheduled in kidsMode, but no-op here too in case anything else
+    // ever triggers it — a forced mismatch must never happen in Mode Anak.
+    if (kidsMode) return;
 
-    debugPrint('[HAFALAN] ⚠️ ForceEvaluateMismatch fires! ayahIdx=${state.currentAyahIndex}');
+    debugPrint(
+      '[HAFALAN] ⚠️ ForceEvaluateMismatch fires! ayahIdx=${state.currentAyahIndex}',
+    );
 
     final ayahNum = currentAyahNumber;
     if (ayahNum == null) return;
@@ -956,12 +1106,12 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
       final newRevealed = Map<int, Set<int>>.from(state.revealedWords);
       final newMismatched = Map<int, Set<int>>.from(state.mismatchedWords);
       final ayahMismatched = Set<int>.from(newMismatched[ayahNum] ?? <int>{});
-      
+
       ayahMismatched.addAll(newMismatchedIndices);
       newMismatched[ayahNum] = ayahMismatched;
 
-      final totalProcessed = (state.revealedWords[ayahNum]?.length ?? 0) +
-          ayahMismatched.length;
+      final totalProcessed =
+          (state.revealedWords[ayahNum]?.length ?? 0) + ayahMismatched.length;
       final ayahComplete = totalProcessed >= expectedLen;
 
       await _emitProgress(
@@ -989,7 +1139,8 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     bool ayahComplete,
   ) async {
     if (ayahComplete) {
-      _silenceTimer?.cancel(); // CRITICAL: prevent timer from corrupting next ayah
+      _silenceTimer
+          ?.cancel(); // CRITICAL: prevent timer from corrupting next ayah
       debugPrint('[HAFALAN] ═══ AYAH $ayahNum COMPLETE! Transitioning... ═══');
       final newCompleted = Set<int>.from(state.completedAyahs)..add(ayahNum);
       // Accuracy = matched / total (mismatched words reduce accuracy)
@@ -1036,7 +1187,8 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
         _isTransitioning = false;
       } else {
         _speech.stop();
-        emit(state.copyWith(isListening: false));
+        final audioPath = await _finalizeRecording();
+        emit(state.copyWith(isListening: false, audioFilePath: audioPath));
       }
     } else {
       emit(
@@ -1051,7 +1203,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
     }
   }
 
-  void _onSkipAyah(SkipAyah event, Emitter<HafalanState> emit) {
+  Future<void> _onSkipAyah(SkipAyah event, Emitter<HafalanState> emit) async {
     final ayahNum = currentAyahNumber;
     if (ayahNum == null) return;
 
@@ -1078,6 +1230,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
 
     final nextIndex = state.currentAyahIndex + 1;
     final isCompleted = nextIndex >= _ayahs.length;
+    final audioPath = isCompleted ? await _finalizeRecording() : null;
 
     emit(
       state.copyWith(
@@ -1089,6 +1242,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
         ayahAccuracies: newAccuracies,
         spokenText: '',
         currentMatchedWordCount: 0,
+        audioFilePath: audioPath,
       ),
     );
 
@@ -1104,7 +1258,11 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
 
   void _onResetHafalan(ResetHafalan event, Emitter<HafalanState> emit) {
     _silenceTimer?.cancel();
-    _speech.cancel(); // Use cancel instead of stop to prevent trailing stale results
+    _speech
+        .cancel(); // Use cancel instead of stop to prevent trailing stale results
+    // The page changed/reset before this attempt's recording (if any) was
+    // finalized by completion — nothing to attach it to, so discard it.
+    _discardRecording();
     _resetInternalState();
     _prepareCurrentAyahWords();
     emit(
@@ -1143,6 +1301,16 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
   Future<void> close() {
     _speech.stop();
     _speech.cancel();
+    // No-op if already finalized by a completed page — only discards a
+    // still-in-progress recording left behind by navigating away mid-page.
+    _discardRecording();
+    // Only dispose if the recorder was ever actually created — touching
+    // the `_recorder` getter here would lazily construct it (and its
+    // constructor reaches for a platform channel) even when recordAudio
+    // was never on for this bloc's whole lifetime.
+    if (_recorderInstance != null) {
+      unawaited(_recorderInstance!.dispose());
+    }
     return super.close();
   }
 }

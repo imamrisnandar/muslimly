@@ -11,7 +11,9 @@ class SyncApiService {
     String? token,
   ) async {
     try {
-      debugPrint('🌐 [API] POST /api/v1/sync/reading - Payload: $lastReadPayload');
+      debugPrint(
+        '🌐 [API] POST /api/v1/sync/reading - Payload: $lastReadPayload',
+      );
       final response = await _dio.post(
         '/sync/reading',
         data: lastReadPayload,
@@ -109,6 +111,78 @@ class SyncApiService {
     }
   }
 
+  Future<void> bulkInsertHafalanSessions(
+    List<Map<String, dynamic>> sessions,
+    String? token, {
+    String? deviceId,
+  }) async {
+    if (sessions.isEmpty) return;
+
+    try {
+      final payload = <String, dynamic>{'sessions': sessions};
+      if (deviceId != null && deviceId.isNotEmpty) {
+        payload['device_id'] = deviceId;
+      }
+
+      debugPrint(
+        '🌐 [API] POST /sync/hafalan-sessions - Sessions count: ${sessions.length}, DeviceID: $deviceId',
+      );
+      final response = await _dio.post(
+        '/sync/hafalan-sessions',
+        data: payload,
+        options: Options(
+          headers: {
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      debugPrint(
+        '🌐 [API] POST /sync/hafalan-sessions - Success: ${response.statusCode}',
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception('Failed to bulk insert hafalan sessions');
+      }
+    } on DioException catch (e) {
+      debugPrint(
+        '❌ [API] POST /sync/hafalan-sessions Error: ${e.message} - ${e.response?.data}',
+      );
+      throw Exception('Network error: ${e.message}');
+    }
+  }
+
+  Future<List<dynamic>> getHafalanSessions(
+    String? token, {
+    String? deviceId,
+  }) async {
+    try {
+      final queryParams = <String, dynamic>{};
+      if (deviceId != null && deviceId.isNotEmpty) {
+        queryParams['device_id'] = deviceId;
+      }
+
+      final response = await _dio.get(
+        '/sync/hafalan-sessions',
+        queryParameters: queryParams,
+        options: Options(
+          headers: {
+            if (token != null && token.isNotEmpty)
+              'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['data'] ?? [];
+      } else {
+        throw Exception('Failed to get hafalan sessions');
+      }
+    } on DioException catch (e) {
+      throw Exception('Network error: ${e.message}');
+    }
+  }
+
   Future<void> upsertSettings(
     List<Map<String, String>> settings,
     String? token, {
@@ -135,7 +209,9 @@ class SyncApiService {
           },
         ),
       );
-      debugPrint('🌐 [API] POST /sync/settings - Success: ${response.statusCode}');
+      debugPrint(
+        '🌐 [API] POST /sync/settings - Success: ${response.statusCode}',
+      );
 
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw Exception('Failed to upsert settings');
@@ -244,7 +320,11 @@ class SyncApiService {
     }
   }
 
-  Future<void> deleteBookmark(String? token, String serverId, {String? deviceId}) async {
+  Future<void> deleteBookmark(
+    String? token,
+    String serverId, {
+    String? deviceId,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
       if (deviceId != null && deviceId.isNotEmpty) {
@@ -321,7 +401,11 @@ class SyncApiService {
     }
   }
 
-  Future<List<dynamic>> getFolders(String? token, {String? deviceId, String? mode}) async {
+  Future<List<dynamic>> getFolders(
+    String? token, {
+    String? deviceId,
+    String? mode,
+  }) async {
     // No identity to scope folders to — don't fire a request that can only 500.
     if ((token == null || token.isEmpty) &&
         (deviceId == null || deviceId.isEmpty)) {
@@ -407,7 +491,11 @@ class SyncApiService {
     }
   }
 
-  Future<void> deleteFolder(String? token, String serverId, {String? deviceId}) async {
+  Future<void> deleteFolder(
+    String? token,
+    String serverId, {
+    String? deviceId,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
       if (deviceId != null && deviceId.isNotEmpty) {

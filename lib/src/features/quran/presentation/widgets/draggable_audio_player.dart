@@ -16,11 +16,18 @@ class DraggableAudioPlayer extends StatefulWidget {
   /// showcases are then skipped.
   final String? showcaseScope;
 
+  /// Extra bottom offset for the docked/mini player, in logical pixels.
+  /// Docked mode always pins to `bottom: 0` of this widget's Stack, which
+  /// overlaps a host page's own bottom-docked controls (e.g. HafalanPage's
+  /// mic/skip/reset bar) unless the host reserves space via this offset.
+  final double miniBottomOffset;
+
   const DraggableAudioPlayer({
     super.key,
     this.showcasePrefsKey,
     this.enableShowcase = true,
     this.showcaseScope,
+    this.miniBottomOffset = 0.0,
   });
 
   @override
@@ -72,7 +79,9 @@ class _DraggableAudioPlayerState extends State<DraggableAudioPlayer> {
       child: Positioned(
         top: _top,
         left: 0,
-        bottom: (_top == null) ? 0 : null, // Dock bottom if moved to null
+        // Dock bottom if moved to null — offset by miniBottomOffset so it
+        // doesn't sit on top of a host page's own bottom-docked controls.
+        bottom: (_top == null) ? widget.miniBottomOffset : null,
         right: 0, // Always dock full width
         child: GestureDetector(
           onVerticalDragStart: (details) {

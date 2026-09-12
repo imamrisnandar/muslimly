@@ -16,6 +16,9 @@ import '../../features/quran/domain/entities/surah.dart';
 import '../../features/quran/presentation/pages/surah_detail_page.dart';
 import '../../features/quran/presentation/pages/mushaf_page.dart';
 import '../../features/quran/presentation/pages/hafalan_page.dart';
+import '../../features/quran/presentation/pages/hafalan_progress_page.dart';
+import '../../features/quran/presentation/pages/hafalan_parent_view_page.dart';
+import '../../features/quran/presentation/bloc/hafalan_progress/hafalan_progress_cubit.dart';
 import '../../features/intro/presentation/pages/splash_page.dart';
 import '../../features/intro/presentation/pages/name_input_page.dart';
 import '../../features/auth/presentation/pages/auth_choice_page.dart';
@@ -48,9 +51,15 @@ final appRouter = GoRouter(
       path: '/name-input',
       builder: (context, state) => const NameInputPage(),
     ),
-    GoRoute(path: '/auth-choice', builder: (context, state) => const AuthChoicePage()),
+    GoRoute(
+      path: '/auth-choice',
+      builder: (context, state) => const AuthChoicePage(),
+    ),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-    GoRoute(path: '/register', builder: (context, state) => const RegisterPage()),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterPage(),
+    ),
     GoRoute(
       path: '/forgot-password',
       builder: (context, state) => BlocProvider(
@@ -86,7 +95,8 @@ final appRouter = GoRouter(
         return MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (_) => getIt<PrayerBloc>()..add(FetchPrayerTimeByLocation()),
+              create: (_) =>
+                  getIt<PrayerBloc>()..add(FetchPrayerTimeByLocation()),
             ),
             BlocProvider(
               create: (_) => getIt<ReadingBloc>()
@@ -97,6 +107,7 @@ final appRouter = GoRouter(
               create: (_) => getIt<BookmarkBloc>()..add(LoadBookmarks()),
             ),
             BlocProvider(create: (_) => getIt<ArticleBloc>()),
+            BlocProvider(create: (_) => getIt<HafalanProgressCubit>()..load()),
           ],
           child: DashboardPage(initialIndex: index),
         );
@@ -147,6 +158,17 @@ final appRouter = GoRouter(
           initialAyah: initialAyah,
         );
       },
+    ),
+    // Declared before the parameterized /quran/hafalan/:number route below —
+    // go_router matches routes in list order, and a static segment here
+    // must win over :number treating "progress" as its path parameter.
+    GoRoute(
+      path: '/quran/hafalan/progress',
+      builder: (context, state) => const HafalanProgressPage(),
+    ),
+    GoRoute(
+      path: '/quran/hafalan/parent-view',
+      builder: (context, state) => const HafalanParentViewPage(),
     ),
     GoRoute(
       path: '/quran/hafalan/:number',

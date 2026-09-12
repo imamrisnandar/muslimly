@@ -171,10 +171,7 @@ class SettingsPage extends StatelessWidget {
                 onTap: () => showLanguageBottomSheet(context),
               ),
               SizedBox(height: 12.h),
-              _buildSectionHeader(
-                context,
-                l10n.settingsIbadah,
-              ),
+              _buildSectionHeader(context, l10n.settingsIbadah),
               _buildListTile(
                 icon: Icons.calendar_today,
                 title: l10n.hijriAdjustment,
@@ -199,6 +196,23 @@ class SettingsPage extends StatelessWidget {
                     ? "${state.dailyAyahTarget} ${l10n.lblAyah}"
                     : l10n.settingsTargetPages(state.dailyTarget),
                 onTap: () => showTargetBottomSheet(context, state),
+              ),
+              SizedBox(height: 12.h),
+              _buildSwitchTile(
+                icon: Icons.face_retouching_natural,
+                title: l10n.settingsKidsMode,
+                subtitle: l10n.settingsKidsModeSubtitle,
+                value: state.kidsMode,
+                onChanged: (value) =>
+                    context.read<SettingsCubit>().updateKidsMode(value),
+              ),
+              SizedBox(height: 12.h),
+              _buildSwitchTile(
+                icon: Icons.mic_none_rounded,
+                title: l10n.settingsRecordHafalan,
+                subtitle: l10n.settingsRecordHafalanSubtitle,
+                value: state.recordHafalan,
+                onChanged: (value) => _onRecordHafalanChanged(context, value),
               ),
               SizedBox(height: 12.h),
               _buildListTile(
@@ -518,6 +532,86 @@ class SettingsPage extends StatelessWidget {
         ),
         trailing: const Icon(Icons.chevron_right, color: Colors.white54),
         onTap: onTap,
+      ),
+    );
+  }
+
+  /// Turning the toggle on shows a one-shot explainer (never again after
+  /// the first time — HAFALAN_TRACKER_PLAN.md §F) before actually enabling
+  /// it; turning it off needs no explanation.
+  Future<void> _onRecordHafalanChanged(BuildContext context, bool enabled) async {
+    if (enabled) {
+      final showcaseService = getIt<ShowcasePreferencesService>();
+      final hasShown = await showcaseService.hasShown(
+        ShowcaseKeys.recordHafalanExplainer,
+      );
+      if (!hasShown && context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: AppColors.cardDark,
+            title: Text(
+              l10n.settingsRecordHafalan,
+              style: const TextStyle(color: Colors.white),
+            ),
+            content: Text(
+              l10n.settingsRecordHafalanExplainer,
+              style: const TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(
+                  l10n.lblUnderstood,
+                  style: const TextStyle(color: AppColors.accent),
+                ),
+              ),
+            ],
+          ),
+        );
+        await showcaseService.markShown(ShowcaseKeys.recordHafalanExplainer);
+      }
+    }
+    if (context.mounted) {
+      context.read<SettingsCubit>().updateRecordHafalan(enabled);
+    }
+  }
+
+  Widget _buildSwitchTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    Color? iconColor,
+  }) {
+    return Material(
+      color: Colors.white.withValues(alpha: 0.05),
+      borderRadius: BorderRadius.circular(12.r),
+      child: ListTile(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        leading: Icon(icon, color: iconColor ?? AppColors.accent),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+        ),
+        trailing: Switch(
+          value: value,
+          onChanged: onChanged,
+          activeThumbColor: AppColors.accent,
+        ),
+        onTap: () => onChanged(!value),
       ),
     );
   }

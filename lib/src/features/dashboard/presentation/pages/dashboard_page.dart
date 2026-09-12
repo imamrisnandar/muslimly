@@ -44,6 +44,9 @@ import '../../../article/presentation/widgets/article_carousel_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/city_search_dialog.dart';
 import '../widgets/dashboard_daily_goal_card_widget.dart';
+import '../widgets/dashboard_hafalan_progress_card_widget.dart';
+import '../../../quran/presentation/bloc/hafalan_progress/hafalan_progress_cubit.dart';
+import '../../../quran/presentation/bloc/hafalan_progress/hafalan_progress_state.dart';
 
 class DashboardPage extends StatefulWidget {
   final int initialIndex;
@@ -378,6 +381,26 @@ class _DashboardPageState extends State<DashboardPage> {
                             target: target,
                             unitLabel: label,
                             l10n: l10n,
+                      );
+                    },
+                  ),
+
+                  // HAFALAN STREAK CARD — only once the user has actually
+                  // engaged with Mode Hafalan at least once; showing an
+                  // empty "0/5 hari" card to everyone who's never opened it
+                  // would just be dashboard clutter for an opt-in feature.
+                  BlocBuilder<HafalanProgressCubit, HafalanProgressState>(
+                    builder: (context, hafalanState) {
+                      if (hafalanState.totalAyatHafal == 0) {
+                        return const SizedBox.shrink();
+                      }
+                      return Column(
+                        children: [
+                          SizedBox(height: 12.h),
+                          DashboardHafalanProgressCardWidget(
+                            streak: hafalanState.streak,
+                          ),
+                        ],
                       );
                     },
                   ),

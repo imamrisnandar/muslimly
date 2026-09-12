@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../utils/app_logger.dart';
 import '../../features/quran/domain/entities/reading_activity.dart';
 import '../../features/quran/domain/entities/quran_bookmark.dart';
 import '../../features/quran/domain/entities/quran_folder.dart';
+import '../../features/quran/domain/entities/hafalan_session.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -12,6 +14,12 @@ class DatabaseService {
   factory DatabaseService() => _instance;
 
   DatabaseService._internal();
+
+  /// Generative constructor for test doubles that extend DatabaseService
+  /// to override its CRUD methods without touching the real singleton or
+  /// spinning up a real sqflite Database.
+  @visibleForTesting
+  DatabaseService.forTesting();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -25,7 +33,8 @@ class DatabaseService {
 
     return await openDatabase(
       path,
-      version: 14, // v14: bookmark_folders per-mode folders + bookmarks.folder_id
+      version:
+          16, // v16: hafalan_sessions.audio_file_path/is_audio_saved (Hafalan Tracker §F)
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -59,6 +68,30 @@ class DatabaseService {
 
     await db.execute(
       'CREATE INDEX idx_reading_date ON reading_activity (date)',
+    );
+
+    // Hafalan Sessions Table (one row per completed mushaf page in Hafalan mode)
+    await db.execute('''
+      CREATE TABLE hafalan_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        surah_number INTEGER NOT NULL,
+        page_number INTEGER NOT NULL,
+        start_ayah INTEGER NOT NULL,
+        end_ayah INTEGER NOT NULL,
+        ayah_count INTEGER NOT NULL,
+        accuracy REAL NOT NULL,
+        date TEXT NOT NULL,
+        timestamp INTEGER NOT NULL,
+        is_synced INTEGER DEFAULT 0,
+        audio_file_path TEXT,
+        is_audio_saved INTEGER DEFAULT 0
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX idx_hafalan_sessions_date ON hafalan_sessions (date)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_hafalan_sessions_surah_page ON hafalan_sessions (surah_number, page_number)',
     );
 
     // Bookmark Folders Table (per-mode; 'list' and 'mushaf' have independent folders)
@@ -208,7 +241,9 @@ class DatabaseService {
     if (oldVersion < 13) {
       // Fresh installs at v12 (before _onCreate fix) missed server_id on bookmarks
       try {
-        await db.execute('ALTER TABLE bookmarks ADD COLUMN server_id TEXT UNIQUE');
+        await db.execute(
+          'ALTER TABLE bookmarks ADD COLUMN server_id TEXT UNIQUE',
+        );
         await db.execute(
           'CREATE INDEX IF NOT EXISTS idx_bookmarks_server_id ON bookmarks(server_id)',
         );
@@ -251,6 +286,36 @@ class DatabaseService {
           created_at INTEGER NOT NULL
         )
       ''');
+    }
+    if (oldVersion < 15) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS hafalan_sessions (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          surah_number INTEGER NOT NULL,
+          page_number INTEGER NOT NULL,
+          start_ayah INTEGER NOT NULL,
+          end_ayah INTEGER NOT NULL,
+          ayah_count INTEGER NOT NULL,
+          accuracy REAL NOT NULL,
+          date TEXT NOT NULL,
+          timestamp INTEGER NOT NULL,
+          is_synced INTEGER DEFAULT 0
+        )
+      ''');
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_hafalan_sessions_date ON hafalan_sessions (date)',
+      );
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_hafalan_sessions_surah_page ON hafalan_sessions (surah_number, page_number)',
+      );
+    }
+    if (oldVersion < 16) {
+      await db.execute(
+        'ALTER TABLE hafalan_sessions ADD COLUMN audio_file_path TEXT',
+      );
+      await db.execute(
+        'ALTER TABLE hafalan_sessions ADD COLUMN is_audio_saved INTEGER DEFAULT 0',
+      );
     }
   }
 
@@ -443,7 +508,9 @@ class DatabaseService {
     );
   }
 
-  Future<void> mergeRemoteActivities(List<Map<String, dynamic>> remoteActivities) async {
+  Future<void> mergeRemoteActivities(
+    List<Map<String, dynamic>> remoteActivities,
+  ) async {
     final db = await database;
     for (final a in remoteActivities) {
       final timestamp = a['timestamp'] as int?;
@@ -465,6 +532,137 @@ class DatabaseService {
         'end_ayah': a['end_ayah'] as int? ?? 0,
         'total_ayahs': a['total_ayahs'] as int? ?? 0,
         'mode': a['mode'] as String? ?? 'page',
+        'is_synced': 1,
+      });
+    }
+  }
+
+  // --- CRUD Operations for Hafalan Sessions ---
+
+  /// Inserts a new completed hafalan session (one mushaf page finished).
+  Future<int> insertHafalanSession(HafalanSession session) async {
+    final db = await database;
+    return await db.insert('hafalan_sessions', session.toMap());
+  }
+
+  /// Get hafalan sessions, optionally filtered by surah and/or a start date.
+  Future<List<HafalanSession>> getHafalanSessions({
+    int? surahNumber,
+    String? since,
+  }) async {
+    final db = await database;
+    final where = <String>[];
+    final whereArgs = <Object?>[];
+    if (surahNumber != null) {
+      where.add('surah_number = ?');
+      whereArgs.add(surahNumber);
+    }
+    if (since != null) {
+      where.add('date >= ?');
+      whereArgs.add(since);
+    }
+    final maps = await db.query(
+      'hafalan_sessions',
+      where: where.isEmpty ? null : where.join(' AND '),
+      whereArgs: whereArgs.isEmpty ? null : whereArgs,
+      orderBy: 'timestamp ASC',
+    );
+    return maps.map((e) => HafalanSession.fromMap(e)).toList();
+  }
+
+  /// Get all unsynced hafalan sessions
+  Future<List<HafalanSession>> getUnsyncedHafalanSessions() async {
+    final db = await database;
+    final maps = await db.query(
+      'hafalan_sessions',
+      where: 'is_synced = ?',
+      whereArgs: [0],
+      orderBy: 'timestamp ASC', // Sync older ones first
+    );
+    return maps.map((e) => HafalanSession.fromMap(e)).toList();
+  }
+
+  /// Prior sessions on the same (surah, halaman) unit that still have a
+  /// recording — used by the retention/auto-purge step (§F) before writing
+  /// a new one. Excludes rows with no recording at all (nothing to purge).
+  Future<List<HafalanSession>> getHafalanSessionsWithAudioForUnit(
+    int surahNumber,
+    int pageNumber,
+  ) async {
+    final db = await database;
+    final maps = await db.query(
+      'hafalan_sessions',
+      where:
+          'surah_number = ? AND page_number = ? AND audio_file_path IS NOT NULL',
+      whereArgs: [surahNumber, pageNumber],
+      orderBy: 'timestamp ASC',
+    );
+    return maps.map((e) => HafalanSession.fromMap(e)).toList();
+  }
+
+  /// Clears a session's audio reference after its physical file has been
+  /// deleted by the caller (DatabaseService has no dart:io file access —
+  /// deletion happens at the call site, this just keeps the DB in sync).
+  Future<void> clearHafalanAudioFilePath(int sessionId) async {
+    final db = await database;
+    await db.update(
+      'hafalan_sessions',
+      {'audio_file_path': null},
+      where: 'id = ?',
+      whereArgs: [sessionId],
+    );
+  }
+
+  /// Marks (or unmarks) a session's recording as protected from
+  /// auto-purge.
+  Future<void> setHafalanAudioSaved(int sessionId, bool saved) async {
+    final db = await database;
+    await db.update(
+      'hafalan_sessions',
+      {'is_audio_saved': saved ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [sessionId],
+    );
+  }
+
+  /// Mark specific hafalan sessions as synced using their local IDs
+  Future<void> markHafalanSessionsSynced(List<int> ids) async {
+    if (ids.isEmpty) return;
+
+    final db = await database;
+    final placeholders = List.filled(ids.length, '?').join(',');
+
+    await db.update(
+      'hafalan_sessions',
+      {'is_synced': 1},
+      where: 'id IN ($placeholders)',
+      whereArgs: ids,
+    );
+  }
+
+  Future<void> mergeRemoteHafalanSessions(
+    List<Map<String, dynamic>> remoteSessions,
+  ) async {
+    final db = await database;
+    for (final s in remoteSessions) {
+      final timestamp = s['timestamp'] as int?;
+      if (timestamp == null) continue;
+      final existing = await db.query(
+        'hafalan_sessions',
+        where: 'timestamp = ?',
+        whereArgs: [timestamp],
+        limit: 1,
+      );
+      if (existing.isNotEmpty) continue;
+      await db.insert('hafalan_sessions', {
+        'surah_number': s['surah_number'] as int? ?? 0,
+        'page_number': s['page_number'] as int? ?? 0,
+        'start_ayah': s['start_ayah'] as int? ?? 0,
+        'end_ayah': s['end_ayah'] as int? ?? 0,
+        'ayah_count': s['ayah_count'] as int? ?? 0,
+        'accuracy': (s['accuracy'] as num?)?.toDouble() ?? 0.0,
+        'date': s['date'] as String? ?? '',
+        'timestamp': timestamp,
         'is_synced': 1,
       });
     }
@@ -552,22 +750,28 @@ class DatabaseService {
 
   Future<void> addPendingBookmarkDelete(String serverId) async {
     final db = await database;
-    await db.insert(
-      'pending_bookmark_deletes',
-      {'server_id': serverId, 'created_at': DateTime.now().millisecondsSinceEpoch},
-      conflictAlgorithm: ConflictAlgorithm.ignore,
-    );
+    await db.insert('pending_bookmark_deletes', {
+      'server_id': serverId,
+      'created_at': DateTime.now().millisecondsSinceEpoch,
+    }, conflictAlgorithm: ConflictAlgorithm.ignore);
   }
 
   Future<List<String>> getPendingBookmarkDeletes() async {
     final db = await database;
-    final rows = await db.query('pending_bookmark_deletes', columns: ['server_id']);
+    final rows = await db.query(
+      'pending_bookmark_deletes',
+      columns: ['server_id'],
+    );
     return rows.map((r) => r['server_id'] as String).toList();
   }
 
   Future<void> removePendingBookmarkDelete(String serverId) async {
     final db = await database;
-    await db.delete('pending_bookmark_deletes', where: 'server_id = ?', whereArgs: [serverId]);
+    await db.delete(
+      'pending_bookmark_deletes',
+      where: 'server_id = ?',
+      whereArgs: [serverId],
+    );
   }
 
   Future<void> updateServerIdForBookmark(int localId, String serverId) async {
@@ -581,7 +785,9 @@ class DatabaseService {
   }
 
   // Merge server bookmarks into local — inserts missing, updates server_id for existing
-  Future<void> mergeRemoteBookmarks(List<Map<String, dynamic>> remoteBookmarks) async {
+  Future<void> mergeRemoteBookmarks(
+    List<Map<String, dynamic>> remoteBookmarks,
+  ) async {
     final db = await database;
     for (final remote in remoteBookmarks) {
       final serverId = remote['id'] as String?;
@@ -682,7 +888,11 @@ class DatabaseService {
 
   Future<QuranFolder?> getFolderById(int id) async {
     final db = await database;
-    final maps = await db.query('bookmark_folders', where: 'id = ?', whereArgs: [id]);
+    final maps = await db.query(
+      'bookmark_folders',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
     if (maps.isEmpty) return null;
     return QuranFolder.fromMap(maps.first);
   }
@@ -698,23 +908,24 @@ class DatabaseService {
     final db = await database;
     final defaults = [('hapalan', hapalanLabel), ('bacaan', bacaanLabel)];
     for (final (key, name) in defaults) {
-      await db.insert(
-        'bookmark_folders',
-        {
-          'mode': mode,
-          'name': name,
-          'is_system': 1,
-          'system_key': key,
-          'created_at': DateTime.now().millisecondsSinceEpoch,
-        },
-        conflictAlgorithm: ConflictAlgorithm.ignore,
-      );
+      await db.insert('bookmark_folders', {
+        'mode': mode,
+        'name': name,
+        'is_system': 1,
+        'system_key': key,
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+      }, conflictAlgorithm: ConflictAlgorithm.ignore);
     }
   }
 
   Future<void> renameFolder(int id, String name) async {
     final db = await database;
-    await db.update('bookmark_folders', {'name': name}, where: 'id = ?', whereArgs: [id]);
+    await db.update(
+      'bookmark_folders',
+      {'name': name},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   /// Deletes the folder and nulls out `folder_id` on any bookmarks that
@@ -722,7 +933,12 @@ class DatabaseService {
   Future<void> deleteFolder(int id) async {
     final db = await database;
     await db.transaction((txn) async {
-      await txn.update('bookmarks', {'folder_id': null}, where: 'folder_id = ?', whereArgs: [id]);
+      await txn.update(
+        'bookmarks',
+        {'folder_id': null},
+        where: 'folder_id = ?',
+        whereArgs: [id],
+      );
       await txn.delete('bookmark_folders', where: 'id = ?', whereArgs: [id]);
     });
   }
@@ -753,7 +969,9 @@ class DatabaseService {
   /// talking to the server (offline-first), so matching on system_key
   /// reconciles that pre-existing row instead of creating a duplicate.
   /// Custom folders always match on server_id.
-  Future<void> mergeRemoteFolders(List<Map<String, dynamic>> remoteFolders) async {
+  Future<void> mergeRemoteFolders(
+    List<Map<String, dynamic>> remoteFolders,
+  ) async {
     final db = await database;
     for (final remote in remoteFolders) {
       final serverId = remote['id'] as String?;
@@ -768,7 +986,11 @@ class DatabaseService {
               where: 'mode = ? AND system_key = ? AND is_system = 1',
               whereArgs: [mode, systemKey],
             )
-          : await db.query('bookmark_folders', where: 'server_id = ?', whereArgs: [serverId]);
+          : await db.query(
+              'bookmark_folders',
+              where: 'server_id = ?',
+              whereArgs: [serverId],
+            );
 
       if (existing.isNotEmpty) {
         await db.update(
@@ -800,14 +1022,20 @@ class DatabaseService {
     final db = await database;
     await db.insert(
       'pending_bookmark_folder_deletes',
-      {'server_id': serverId, 'created_at': DateTime.now().millisecondsSinceEpoch},
+      {
+        'server_id': serverId,
+        'created_at': DateTime.now().millisecondsSinceEpoch,
+      },
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
   Future<List<String>> getPendingBookmarkFolderDeletes() async {
     final db = await database;
-    final rows = await db.query('pending_bookmark_folder_deletes', columns: ['server_id']);
+    final rows = await db.query(
+      'pending_bookmark_folder_deletes',
+      columns: ['server_id'],
+    );
     return rows.map((r) => r['server_id'] as String).toList();
   }
 

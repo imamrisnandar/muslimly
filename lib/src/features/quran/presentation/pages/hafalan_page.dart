@@ -1,21 +1,29 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:muslimly/src/core/widgets/islamic_loading_indicator.dart';
 import 'package:muslimly/src/features/quran/domain/entities/surah.dart';
 import 'package:muslimly/src/features/quran/domain/entities/ayah.dart';
+import 'package:muslimly/src/features/quran/domain/entities/hafalan_session.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/quran_bloc.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/quran_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/quran_state.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_bloc.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_event.dart';
+import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_state.dart';
+import 'package:muslimly/src/core/database/database_service.dart';
 import 'package:muslimly/src/core/di/di_container.dart';
 import 'package:muslimly/src/core/utils/quran_constants.dart';
 import 'package:muslimly/src/core/utils/surah_names.dart';
 import 'package:muslimly/src/features/quran/data/surah_details.dart';
+import 'package:muslimly/src/features/quran/presentation/widgets/draggable_audio_player.dart';
+import 'package:muslimly/src/features/settings/presentation/bloc/settings_cubit.dart';
 import '../../../../core/utils/custom_snackbar.dart';
 import '../widgets/hafalan_single_page.dart';
 
@@ -35,6 +43,72 @@ class _HafalanPageState extends State<HafalanPage> {
   PageController? _pageController;
   bool _isNavigating = false;
   late Surah _surah;
+
+  /// Ayahs of the mushaf page currently shown in the PageView — tracked
+  /// outside HafalanBloc so a completed session can be persisted with the
+  /// right (surah, page, ayah range) once HafalanState.status flips to
+  /// completed, regardless of which page the shared bloc is currently on.
+  int? _currentPageNumber;
+  List<Ayah> _currentPageAyahs = const [];
+
+  Future<void> _recordCompletedSession(
+    double accuracy,
+    String? audioFilePath,
+  ) async {
+    final ayahs = _currentPageAyahs;
+    final pageNumber = _currentPageNumber;
+    if (ayahs.isEmpty || pageNumber == null) return;
+
+    final now = DateTime.now();
+    final session = HafalanSession(
+      surahNumber: _surah.number,
+      pageNumber: pageNumber,
+      startAyah: ayahs.first.numberInSurah,
+      endAyah: ayahs.last.numberInSurah,
+      ayahCount: ayahs.length,
+      accuracy: accuracy,
+      date: DateFormat('yyyy-MM-dd').format(now),
+      timestamp: now.millisecondsSinceEpoch,
+      audioFilePath: audioFilePath,
+    );
+
+    try {
+      final db = getIt<DatabaseService>();
+      // Retention (§F): a fresh recording for this same (surah, halaman)
+      // unit replaces any earlier one — purge old sessions' audio first so
+      // storage doesn't grow unbounded, unless the user explicitly
+      // protected one via the "save" toggle (isAudioSaved).
+      if (audioFilePath != null) {
+        await _purgeOldAudioForUnit(db, _surah.number, pageNumber);
+      }
+      await db.insertHafalanSession(session);
+    } catch (_) {
+      // Best-effort: a failed local write shouldn't disrupt the reveal UX.
+    }
+  }
+
+  Future<void> _purgeOldAudioForUnit(
+    DatabaseService db,
+    int surahNumber,
+    int pageNumber,
+  ) async {
+    final priorWithAudio = await db.getHafalanSessionsWithAudioForUnit(
+      surahNumber,
+      pageNumber,
+    );
+    for (final old in priorWithAudio) {
+      if (old.isAudioSaved == 1 || old.audioFilePath == null) continue;
+      try {
+        final file = File(old.audioFilePath!);
+        if (await file.exists()) await file.delete();
+      } catch (_) {
+        // Best-effort: an orphaned file on disk is harmless.
+      }
+      if (old.id != null) {
+        await db.clearHafalanAudioFilePath(old.id!);
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -202,7 +276,12 @@ class _HafalanPageState extends State<HafalanPage> {
           create: (context) =>
               getIt<QuranBloc>()..add(QuranFetchAyahs(_surah.number)),
         ),
-        BlocProvider(create: (context) => HafalanBloc()..add(InitSpeech())),
+        BlocProvider(
+          create: (context) => HafalanBloc(
+            kidsMode: context.read<SettingsCubit>().state.kidsMode,
+            recordAudio: context.read<SettingsCubit>().state.recordHafalan,
+          )..add(InitSpeech()),
+        ),
       ],
       child: Scaffold(
         backgroundColor: AppColors.creamBg,
@@ -233,75 +312,126 @@ class _HafalanPageState extends State<HafalanPage> {
                   _pageController = PageController(initialPage: initialIndex);
 
                   if (sortedPages.isNotEmpty) {
-                    final initialAyahs = pages[sortedPages[initialIndex]]!;
+                    final initialPageNumber = sortedPages[initialIndex];
+                    final initialAyahs = pages[initialPageNumber]!;
+                    _currentPageNumber = initialPageNumber;
+                    _currentPageAyahs = initialAyahs;
                     context.read<HafalanBloc>().setAyahs(initialAyahs);
                   }
                 }
 
-                return Stack(
-                  children: [
-                    NotificationListener<ScrollNotification>(
-                      onNotification: (notification) {
-                        if (notification is ScrollUpdateNotification &&
-                            notification.dragDetails != null) {
-                          if (notification.metrics.pixels >
-                              notification.metrics.maxScrollExtent + 20) {
-                            if (_pageController!.page != null &&
-                                _pageController!.page!.round() ==
-                                    sortedPages.length - 1) {
-                              _goToNextSurah();
+                return BlocListener<HafalanBloc, HafalanState>(
+                  listenWhen: (prev, curr) =>
+                      prev.status != HafalanStatus.completed &&
+                      curr.status == HafalanStatus.completed,
+                  listener: (context, state) {
+                    _recordCompletedSession(
+                      state.overallAccuracy,
+                      state.audioFilePath,
+                    );
+                  },
+                  child: Stack(
+                    children: [
+                      NotificationListener<ScrollNotification>(
+                        onNotification: (notification) {
+                          if (notification is ScrollUpdateNotification &&
+                              notification.dragDetails != null) {
+                            if (notification.metrics.pixels >
+                                notification.metrics.maxScrollExtent + 20) {
+                              if (_pageController!.page != null &&
+                                  _pageController!.page!.round() ==
+                                      sortedPages.length - 1) {
+                                _goToNextSurah();
+                              }
+                            }
+                            if (notification.metrics.pixels < -20) {
+                              if (_pageController!.page != null &&
+                                  _pageController!.page!.round() == 0) {
+                                _goToPreviousSurah();
+                              }
                             }
                           }
-                          if (notification.metrics.pixels < -20) {
-                            if (_pageController!.page != null &&
-                                _pageController!.page!.round() == 0) {
-                              _goToPreviousSurah();
-                            }
-                          }
-                        }
-                        return false;
-                      },
-                      child: PageView.builder(
-                        controller: _pageController!,
-                        reverse: true,
-                        physics: const AlwaysScrollableScrollPhysics(
-                          parent: BouncingScrollPhysics(),
-                        ),
-                        onPageChanged: (index) {
-                          final newAyahs = pages[sortedPages[index]]!;
-                          final hafalanBloc = context.read<HafalanBloc>();
-                          hafalanBloc.setAyahs(newAyahs);
-                          hafalanBloc.add(ResetHafalan());
+                          return false;
                         },
-                        itemCount: sortedPages.length,
-                        itemBuilder: (context, index) {
-                          final pageNumber = sortedPages[index];
-                          final ayahsOnPage = pages[pageNumber]!;
-
-                          return HafalanSinglePage(
-                            pageNumber: pageNumber,
-                            ayahs: ayahsOnPage,
-                            surahName: _surah.englishName,
-                            surahNumber: _surah.number,
-                          );
-                        },
-                      ),
-                    ),
-                    Positioned(
-                      top: 5.h,
-                      left: 16.w,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.black.withValues(alpha: 0.0),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back,
-                            color: Colors.black,
+                        child: PageView.builder(
+                          controller: _pageController!,
+                          reverse: true,
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics(),
                           ),
-                          onPressed: () => context.pop(),
+                          onPageChanged: (index) {
+                            final newPageNumber = sortedPages[index];
+                            final newAyahs = pages[newPageNumber]!;
+                            _currentPageNumber = newPageNumber;
+                            _currentPageAyahs = newAyahs;
+                            final hafalanBloc = context.read<HafalanBloc>();
+                            hafalanBloc.setAyahs(newAyahs);
+                            hafalanBloc.add(ResetHafalan());
+                          },
+                          itemCount: sortedPages.length,
+                          itemBuilder: (context, index) {
+                            final pageNumber = sortedPages[index];
+                            final ayahsOnPage = pages[pageNumber]!;
+
+                            return HafalanSinglePage(
+                              pageNumber: pageNumber,
+                              ayahs: ayahsOnPage,
+                              surahName: _surah.englishName,
+                              surahNumber: _surah.number,
+                              kidsMode: context
+                                  .read<SettingsCubit>()
+                                  .state
+                                  .kidsMode,
+                            );
+                          },
                         ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 5.h,
+                        left: 16.w,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.black.withValues(alpha: 0.0),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.black,
+                            ),
+                            onPressed: () => context.pop(),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 5.h,
+                        right: 16.w,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.black.withValues(alpha: 0.0),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.bar_chart_rounded,
+                              color: Colors.black,
+                            ),
+                            tooltip: AppLocalizations.of(
+                              context,
+                            )!.hafalanProgressPageTitle,
+                            onPressed: () =>
+                                context.push('/quran/hafalan/progress'),
+                          ),
+                        ),
+                      ),
+                      // Mode Anak's "Dengar Ayat Ini" button needs somewhere
+                      // to surface playback controls — this page doesn't
+                      // otherwise mount a player.
+                      if (context.watch<SettingsCubit>().state.kidsMode)
+                        DraggableAudioPlayer(
+                          enableShowcase: false,
+                          // Clears HafalanSinglePage's own bottom mic/skip/
+                          // reset control bar (~44.w mic button + padding +
+                          // safe area) so the docked mini player doesn't sit
+                          // on top of it.
+                          miniBottomOffset: 100.h,
+                        ),
+                    ],
+                  ),
                 );
               }
               return const SizedBox.shrink();

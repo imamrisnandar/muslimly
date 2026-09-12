@@ -18,6 +18,12 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyUserName = 'user_name';
   static const String _keyPlayerShowcase = 'player_showcase_shown_v3';
   static const String _keyHijriAdjustments = 'hijri_adjustments_list';
+  static const String _keyKidsMode = 'hafalan_kids_mode';
+  static const String _keyRecordHafalan = 'hafalan_record_audio';
+  static const String _keyHafalanStreakMilestone =
+      'hafalan_streak_milestone_shown';
+  static const String _keyHafalanAyatMilestone =
+      'hafalan_ayat_milestone_shown';
 
   final DatabaseService _databaseService;
   final Dio _dio;
@@ -162,6 +168,32 @@ class SettingsRepositoryImpl implements SettingsRepository {
   }
 
   @override
+  Future<bool> getKidsMode() async {
+    final val = await _databaseService.getSetting(_keyKidsMode);
+    return val == 'true';
+  }
+
+  @override
+  Future<void> saveKidsMode(bool enabled) async {
+    final value = enabled.toString();
+    await _databaseService.saveSetting(_keyKidsMode, value);
+    _syncSettingChanges(_keyKidsMode, value);
+  }
+
+  @override
+  Future<bool> getRecordHafalan() async {
+    final val = await _databaseService.getSetting(_keyRecordHafalan);
+    return val == 'true';
+  }
+
+  @override
+  Future<void> saveRecordHafalan(bool enabled) async {
+    final value = enabled.toString();
+    await _databaseService.saveSetting(_keyRecordHafalan, value);
+    _syncSettingChanges(_keyRecordHafalan, value);
+  }
+
+  @override
   Future<bool> hasShownPlayerShowcase() async {
     final val = await _databaseService.getSetting(_keyPlayerShowcase);
     return val == 'true';
@@ -170,6 +202,34 @@ class SettingsRepositoryImpl implements SettingsRepository {
   @override
   Future<void> setPlayerShowcaseShown(bool shown) async {
     await _databaseService.saveSetting(_keyPlayerShowcase, shown.toString());
+  }
+
+  @override
+  Future<int> getLastShownHafalanStreakMilestone() async {
+    final val = await _databaseService.getSetting(_keyHafalanStreakMilestone);
+    return int.tryParse(val ?? '') ?? 0;
+  }
+
+  @override
+  Future<void> saveLastShownHafalanStreakMilestone(int milestone) async {
+    await _databaseService.saveSetting(
+      _keyHafalanStreakMilestone,
+      milestone.toString(),
+    );
+  }
+
+  @override
+  Future<int> getLastShownHafalanAyatMilestone() async {
+    final val = await _databaseService.getSetting(_keyHafalanAyatMilestone);
+    return int.tryParse(val ?? '') ?? 0;
+  }
+
+  @override
+  Future<void> saveLastShownHafalanAyatMilestone(int milestone) async {
+    await _databaseService.saveSetting(
+      _keyHafalanAyatMilestone,
+      milestone.toString(),
+    );
   }
 
   @override

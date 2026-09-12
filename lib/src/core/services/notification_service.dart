@@ -22,6 +22,18 @@ import '../di/di_container.dart';
 const String kPushChannelId = 'push_general_v1';
 const String kPushChannelName = 'General Notifications';
 
+/// Notification ID ranges in use across the app — there is no central
+/// registry, so a new feature must pick a range here and steer clear of the
+/// others:
+///   - 0-13:  prayer notifications, a local counter in prayer_bloc.dart
+///            (7 prayers x up to 2 notifications each)
+///   - 999:   showImmediateNotification's default id for 'adhan'/'beep'/
+///            'silent' (only one such notification is ever shown at a time)
+///   - epoch-based (large, effectively unbounded): server push messages via
+///     showImmediateNotification(soundType: 'default'), so they stack
+///   - 5000:  muraja'ah (spaced-repetition review) daily summary, below
+const int kMurajaahNotificationId = 5000;
+
 /// Resolve a notification payload to an in-app route. An explicit absolute
 /// `route` in the data wins; otherwise fall back to a per-`type` destination,
 /// and anything unrecognised opens the dashboard. Pure — unit-tested.
@@ -109,7 +121,8 @@ class NotificationService with WidgetsBindingObserver {
     }
 
     tz.initializeTimeZones();
-    final String timeZoneName = (await FlutterTimezone.getLocalTimezone()).identifier;
+    final String timeZoneName =
+        (await FlutterTimezone.getLocalTimezone()).identifier;
     try {
       tz.setLocalLocation(tz.getLocation(timeZoneName));
     } catch (_) {
@@ -219,8 +232,7 @@ class NotificationService with WidgetsBindingObserver {
   /// from a terminated state, [onMessageOpenedApp] covers a tap while the app
   /// sits in the background.
   Future<void> _setupInteractedMessage() async {
-    final initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
       _navigateFromData(initialMessage.data);
     }
@@ -324,10 +336,10 @@ class NotificationService with WidgetsBindingObserver {
 
       // Reflect the actual OS-level permission so broadcasts skip devices
       // where the user turned notifications off.
-      final settings =
-          await FirebaseMessaging.instance.getNotificationSettings();
-      final pushEnabled = settings.authorizationStatus !=
-              AuthorizationStatus.denied &&
+      final settings = await FirebaseMessaging.instance
+          .getNotificationSettings();
+      final pushEnabled =
+          settings.authorizationStatus != AuthorizationStatus.denied &&
           settings.authorizationStatus != AuthorizationStatus.notDetermined;
 
       // Shared Dio: base URL, timeouts and debug logging already configured.
@@ -472,8 +484,11 @@ class NotificationService with WidgetsBindingObserver {
     // Guard against headless contexts: the plugin needs a foreground Activity
     // and otherwise throws a PlatformException from a native NPE
     try {
-      await FirebaseMessaging.instance
-          .requestPermission(alert: true, badge: true, sound: true);
+      await FirebaseMessaging.instance.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
 
       final androidImplementation = _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -605,7 +620,11 @@ class NotificationService with WidgetsBindingObserver {
       try {
         await schedule(AndroidScheduleMode.inexactAllowWhileIdle);
       } catch (e2, s2) {
-        AppLogger.error('Failed to schedule prayer notification id=$id', e2, s2);
+        AppLogger.error(
+          'Failed to schedule prayer notification id=$id',
+          e2,
+          s2,
+        );
       }
     }
   }
@@ -613,11 +632,17 @@ class NotificationService with WidgetsBindingObserver {
   /// [soundType]: 'adhan' | 'beep' | 'silent' use the prayer channels;
   /// 'default' (the value used for server pushes) uses the general push
   /// channel with the system sound.
+  ///
+  /// [id] overrides the default id derived from [soundType] (999, or a
+  /// rolling epoch id for 'default') — pass one of the documented ranges
+  /// above when this notification must coexist with the others rather than
+  /// replace them.
   Future<void> showImmediateNotification({
     required String title,
     required String body,
     String soundType = 'adhan',
     String? payload,
+    int? id,
   }) async {
     AndroidNotificationDetails androidDetails;
 
@@ -673,9 +698,11 @@ class NotificationService with WidgetsBindingObserver {
     await _flutterLocalNotificationsPlugin.show(
       // Prayer notifications reuse id 999 (only one at a time); push messages
       // get a rolling id so they stack instead of replacing each other.
-      id: soundType == 'default'
-          ? (DateTime.now().millisecondsSinceEpoch ~/ 1000) & 0x7fffffff
-          : 999,
+      id:
+          id ??
+          (soundType == 'default'
+              ? (DateTime.now().millisecondsSinceEpoch ~/ 1000) & 0x7fffffff
+              : 999),
       title: title,
       body: body,
       notificationDetails: notificationDetails,

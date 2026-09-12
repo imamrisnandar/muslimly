@@ -14,6 +14,8 @@ import 'package:muslimly/src/features/quran/domain/entities/ayah.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_bloc.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_event.dart';
 import 'package:muslimly/src/features/quran/presentation/bloc/hafalan/hafalan_state.dart';
+import 'package:muslimly/src/features/quran/presentation/bloc/audio_bloc.dart';
+import 'package:muslimly/src/features/quran/presentation/bloc/audio_event.dart';
 import 'package:muslimly/src/features/quran/domain/utils/arabic_text_matcher.dart';
 
 import 'package:muslimly/src/core/di/di_container.dart';
@@ -31,6 +33,7 @@ class HafalanSinglePage extends StatefulWidget {
   final List<Ayah> ayahs;
   final String surahName;
   final int surahNumber;
+  final bool kidsMode;
 
   const HafalanSinglePage({
     super.key,
@@ -38,6 +41,7 @@ class HafalanSinglePage extends StatefulWidget {
     required this.ayahs,
     required this.surahName,
     required this.surahNumber,
+    this.kidsMode = false,
   });
 
   @override
@@ -93,6 +97,8 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
     } else {
       fontSize = 23.1.sp;
     }
+    // Mode Anak: larger text for younger readers.
+    if (widget.kidsMode) fontSize *= 1.15;
 
     final double lineHeight = isFatihahOrBaqarahStart ? 2.0 : 1.95;
     final String pageStr = widget.pageNumber.toString().padLeft(3, '0');
@@ -281,7 +287,9 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
                                     ),
                                     SizedBox(height: 10.h),
                                     Text(
-                                      'Font download error',
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.fontDownloadError,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16.sp,
@@ -294,7 +302,9 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
                                           _fontFuture = _loadFont();
                                         });
                                       },
-                                      child: const Text('Coba Lagi'),
+                                      child: Text(
+                                        AppLocalizations.of(context)!.tryAgain,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -401,13 +411,30 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
                                   BlocSelector<
                                     HafalanBloc,
                                     HafalanState,
-                                    String
+                                    ({String spokenText, bool isListening})
                                   >(
-                                    selector: (state) => state.spokenText,
-                                    builder: (context, spokenText) {
-                                      if (spokenText.trim().isEmpty) {
+                                    selector: (state) => (
+                                      spokenText: state.spokenText,
+                                      isListening:
+                                          state.isListening &&
+                                          state.status ==
+                                              HafalanStatus.listening,
+                                    ),
+                                    builder: (context, data) {
+                                      if (data.spokenText.trim().isEmpty) {
+                                        // Mode Anak: a silent mic isn't
+                                        // obviously "still working" to a
+                                        // child — show a breathing "still
+                                        // waiting" cue instead of nothing.
+                                        if (widget.kidsMode &&
+                                            data.isListening) {
+                                          return _WaitingIndicator(
+                                            pulseController: _pulseController,
+                                          );
+                                        }
                                         return const SizedBox.shrink();
                                       }
+                                      final spokenText = data.spokenText;
                                       return Container(
                                         padding: EdgeInsets.symmetric(
                                           horizontal: 12.w,
@@ -465,6 +492,31 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      // Mode Anak: audio-first fallback —
+                                      // let the child hear the ayah instead
+                                      // of only reading it, before/while
+                                      // trying to recite.
+                                      if (widget.kidsMode &&
+                                          data.status !=
+                                              HafalanStatus.completed) ...[
+                                        _buildSmallButton(
+                                          icon: Icons.volume_up_rounded,
+                                          onTap: () {
+                                            final ayahNumber = context
+                                                .read<HafalanBloc>()
+                                                .currentAyahNumber;
+                                            context.read<AudioBloc>().add(
+                                              PlaySurah(
+                                                surahId: widget.surahNumber,
+                                                surahName: widget.surahName,
+                                                startAyah: ayahNumber,
+                                              ),
+                                            );
+                                          },
+                                          color: AppColors.goldLight,
+                                        ),
+                                        SizedBox(width: 8.w),
+                                      ],
                                       // Skip Button
                                       if (data.status !=
                                           HafalanStatus.completed)
@@ -773,9 +825,11 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
             charColor = Colors.black.withValues(alpha: 0.3);
           } else if (isAyahCompleted) {
             if (isWordMismatched) {
-              charColor = const Color(
-                0xFFB71C1C,
-              ); // Dark red for completed mismatch
+              // Mode Anak: warm amber instead of red — "coba lagi, dengar
+              // dulu", never framed as an error (see HAFALAN_TRACKER_PLAN.md §D).
+              charColor = widget.kidsMode
+                  ? const Color(0xFF9A6A12) // Amber ink
+                  : const Color(0xFFB71C1C); // Dark red for completed mismatch
             } else {
               charColor = const Color(
                 0xFF2E7D32,
@@ -783,9 +837,11 @@ class _HafalanSinglePageState extends State<HafalanSinglePage>
             }
           } else if (isCurrent) {
             if (isWordMismatched) {
-              charColor = const Color(
-                0xFFEF5350,
-              ); // Red for mismatched (priority over green)
+              charColor = widget.kidsMode
+                  ? const Color(0xFF9A6A12) // Amber ink
+                  : const Color(
+                      0xFFEF5350,
+                    ); // Red for mismatched (priority over green)
             } else if (isWordRevealed) {
               charColor = AppColors.accent; // Bright green for matched
             } else {
@@ -939,5 +995,79 @@ class _AnimatedBuilder extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     return builder(context, null);
+  }
+}
+
+/// Mode Anak's "still listening, take your time" cue — reuses the page's
+/// existing mic-pulse AnimationController rather than owning a second one.
+class _WaitingIndicator extends StatelessWidget {
+  final AnimationController pulseController;
+
+  const _WaitingIndicator({required this.pulseController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _AnimatedBuilder(
+            animation: pulseController,
+            builder: (context, child) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(3, (i) {
+                  // Stagger each dot's phase so they breathe in sequence.
+                  final t = (pulseController.value + i * 0.25) % 1.0;
+                  final opacity = 0.35 + (0.5 * (1 - (t - 0.5).abs() * 2));
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.w),
+                    child: Container(
+                      width: 6.w,
+                      height: 6.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.goldLight.withValues(alpha: opacity),
+                      ),
+                    ),
+                  );
+                }),
+              );
+            },
+          ),
+          SizedBox(width: 8.w),
+          // Flexible + ellipsis: this bubble lives inside the bottom bar's
+          // Expanded slot alongside a 4-button control pill (kidsMode adds a
+          // 4th button), so the available width can get tight — the text
+          // must shrink rather than overflow.
+          Flexible(
+            child: Text(
+              'Menunggu ucapanmu, santai saja…',
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12.sp,
+                fontStyle: FontStyle.italic,
+                // Without an explicit height, this font's default leading
+                // sits asymmetrically (more space above the glyphs than
+                // below), so the text visually reads low against the
+                // geometrically-centered dots next to it. height: 1.0 pins
+                // the line box tightly to the glyphs so Row's center
+                // alignment lines them up correctly.
+                height: 1.0,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

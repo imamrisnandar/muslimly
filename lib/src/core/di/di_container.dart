@@ -12,7 +12,8 @@ import '../../features/article/domain/repositories/article_repository.dart';
 import '../../features/article/presentation/bloc/article_bloc.dart';
 
 import '../../features/intro/data/repositories/name_repository.dart';
-import '../../features/intro/domain/repositories/name_repository.dart' show NameRepository;
+import '../../features/intro/domain/repositories/name_repository.dart'
+    show NameRepository;
 import '../../features/settings/data/repositories/settings_repository_impl.dart';
 import '../../features/settings/domain/repositories/settings_repository.dart';
 import '../../features/settings/presentation/bloc/settings_cubit.dart'; // Settings Cubit
@@ -52,24 +53,31 @@ import '../../features/quran/domain/usecases/get_page_for_ayah.dart';
 import '../../features/quran/domain/usecases/get_surahs.dart';
 import '../../features/quran/presentation/bloc/quran_bloc.dart';
 import '../../features/quran/presentation/bloc/reading/reading_bloc.dart';
+import '../../features/quran/presentation/bloc/hafalan_progress/hafalan_progress_cubit.dart';
 import '../../features/quran/presentation/bloc/bookmark/bookmark_bloc.dart';
 import '../../features/quran/presentation/bloc/folder/folder_bloc.dart';
 import '../../features/quran/data/repositories/audio_repository.dart';
 import '../../features/quran/presentation/bloc/audio_bloc.dart';
-import '../../features/zikir/data/repositories/zikir_local_repository.dart' show ZikirLocalRepository;
-import '../../features/zikir/domain/repositories/zikir_repository.dart' show ZikirRepository;
+import '../../features/zikir/data/repositories/zikir_local_repository.dart'
+    show ZikirLocalRepository;
+import '../../features/zikir/domain/repositories/zikir_repository.dart'
+    show ZikirRepository;
 import '../../features/zikir/presentation/bloc/doa_harian_list_cubit.dart';
 import '../../features/zikir/domain/usecases/get_zikir_content.dart';
 import '../../features/quran/data/repositories/translation_repository_impl.dart';
 import '../../features/tajweed/data/repositories/tajweed_repository_impl.dart';
 import '../../features/tajweed/domain/repositories/tajweed_repository.dart';
 import '../../features/tajweed/domain/usecases/get_tajweed_content.dart';
-import '../../features/fasting/data/repositories/fasting_repository.dart' show FastingRepositoryImpl;
-import '../../features/fasting/domain/repositories/fasting_repository.dart' show FastingRepository;
+import '../../features/fasting/data/repositories/fasting_repository.dart'
+    show FastingRepositoryImpl;
+import '../../features/fasting/domain/repositories/fasting_repository.dart'
+    show FastingRepository;
 import '../../features/fasting/domain/usecases/get_fasting_content.dart';
 import '../../features/fasting/presentation/bloc/fasting_cubit.dart';
-import '../../features/wudhu/data/repositories/wudhu_repository.dart' show WudhuRepositoryImpl;
-import '../../features/wudhu/domain/repositories/wudhu_repository.dart' show WudhuRepository;
+import '../../features/wudhu/data/repositories/wudhu_repository.dart'
+    show WudhuRepositoryImpl;
+import '../../features/wudhu/domain/repositories/wudhu_repository.dart'
+    show WudhuRepository;
 import '../../features/wudhu/domain/usecases/get_wudhu_content.dart';
 import '../../features/wudhu/presentation/bloc/wudhu_cubit.dart';
 import '../../features/prayer/domain/services/fasting_service.dart'; // Added
@@ -202,7 +210,9 @@ void configureDependencies() {
 
   getIt.registerFactory<GetSurahs>(() => GetSurahs(getIt<QuranRepository>()));
   getIt.registerFactory<GetAyahs>(() => GetAyahs(getIt<QuranRepository>()));
-  getIt.registerFactory<GetPageForAyah>(() => GetPageForAyah(getIt<QuranRepository>()));
+  getIt.registerFactory<GetPageForAyah>(
+    () => GetPageForAyah(getIt<QuranRepository>()),
+  );
   getIt.registerFactory<QuranBloc>(
     () => QuranBloc(getIt<GetSurahs>(), getIt<GetAyahs>()),
   );
@@ -214,6 +224,9 @@ void configureDependencies() {
       getIt<QuranRepository>(),
       getIt<LastReadRepository>(),
     ),
+  );
+  getIt.registerFactory<HafalanProgressCubit>(
+    () => HafalanProgressCubit(getIt<DatabaseService>()),
   );
   getIt.registerFactory<BookmarkBloc>(
     () => BookmarkBloc(
@@ -259,22 +272,28 @@ void configureDependencies() {
   );
 
   // --- Zikir Feature ---
-  getIt.registerLazySingleton<ZikirRepository>(
-    () => ZikirLocalRepository(),
+  getIt.registerLazySingleton<ZikirRepository>(() => ZikirLocalRepository());
+  getIt.registerFactory<GetZikirContent>(
+    () => GetZikirContent(getIt<ZikirRepository>()),
   );
-  getIt.registerFactory<GetZikirContent>(() => GetZikirContent(getIt<ZikirRepository>()));
   getIt.registerFactory<DoaHarianListCubit>(
     () => DoaHarianListCubit(getIt<GetZikirContent>()),
   );
 
   // --- Tajweed Feature ---
   getIt.registerLazySingleton<TajweedRepository>(() => TajweedRepositoryImpl());
-  getIt.registerFactory<GetTajweedContent>(() => GetTajweedContent(getIt<TajweedRepository>()));
+  getIt.registerFactory<GetTajweedContent>(
+    () => GetTajweedContent(getIt<TajweedRepository>()),
+  );
 
   // --- Fasting Feature ---
   getIt.registerLazySingleton<FastingRepository>(() => FastingRepositoryImpl());
-  getIt.registerFactory<GetFastingContent>(() => GetFastingContent(getIt<FastingRepository>()));
-  getIt.registerFactory<FastingCubit>(() => FastingCubit(getIt<GetFastingContent>()));
+  getIt.registerFactory<GetFastingContent>(
+    () => GetFastingContent(getIt<FastingRepository>()),
+  );
+  getIt.registerFactory<FastingCubit>(
+    () => FastingCubit(getIt<GetFastingContent>()),
+  );
 
   getIt.registerLazySingleton<FastingService>(() => FastingService()); // Added
 
@@ -285,14 +304,18 @@ void configureDependencies() {
 
   // --- Wudhu Feature ---
   getIt.registerLazySingleton<WudhuRepository>(() => WudhuRepositoryImpl());
-  getIt.registerFactory<GetWudhuContent>(() => GetWudhuContent(getIt<WudhuRepository>()));
+  getIt.registerFactory<GetWudhuContent>(
+    () => GetWudhuContent(getIt<WudhuRepository>()),
+  );
   getIt.registerFactory<WudhuCubit>(() => WudhuCubit(getIt<GetWudhuContent>()));
 
   // --- Prayer Feature ---
   getIt.registerLazySingleton<PrayerGuideRepository>(
     () => PrayerGuideRepository(),
   );
-  getIt.registerFactory<GetPrayerGuideContent>(() => GetPrayerGuideContent(getIt<PrayerGuideRepository>()));
+  getIt.registerFactory<GetPrayerGuideContent>(
+    () => GetPrayerGuideContent(getIt<PrayerGuideRepository>()),
+  );
 
   // --- Article Feature ---
   getIt.registerLazySingleton<ArticleLocalDataSource>(

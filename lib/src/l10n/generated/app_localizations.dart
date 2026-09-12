@@ -560,6 +560,42 @@ abstract class AppLocalizations {
   /// **'Daily Reading Target'**
   String get settingsDailyTarget;
 
+  /// No description provided for @settingsKidsMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Kids Mode (Hafalan)'**
+  String get settingsKidsMode;
+
+  /// No description provided for @settingsKidsModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mismatched words aren\'t shown as errors, and the wait time is longer.'**
+  String get settingsKidsModeSubtitle;
+
+  /// No description provided for @settingsRecordHafalan.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Audio while Memorizing'**
+  String get settingsRecordHafalan;
+
+  /// No description provided for @settingsRecordHafalanSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your recitation to listen back to or send to a teacher/parent.'**
+  String get settingsRecordHafalanSubtitle;
+
+  /// No description provided for @settingsRecordHafalanExplainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Recordings are saved on your phone and never uploaded automatically. You can play them back or share them yourself via WhatsApp/Telegram anytime.'**
+  String get settingsRecordHafalanExplainer;
+
+  /// No description provided for @lblUnderstood.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get lblUnderstood;
+
   /// No description provided for @settingsTargetPages.
   ///
   /// In en, this message translates to:
@@ -1345,6 +1381,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You didn\'t read Quran yesterday. Let\'s start fresh today with Bismillah!'**
   String get backgroundProgressZero;
+
+  /// No description provided for @murajaahNotifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to Review'**
+  String get murajaahNotifTitle;
+
+  /// No description provided for @murajaahNotifBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} page(s) due for review today. A quick re-read keeps it fresh.'**
+  String murajaahNotifBody(Object count);
 
   /// No description provided for @settingsTestBackground.
   ///
@@ -2545,6 +2593,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{matched}/{total} Words'**
   String hafalanProgressKata(Object matched, Object total);
+
+  /// No description provided for @hafalanProgressPageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Memorization Progress'**
+  String get hafalanProgressPageTitle;
+
+  /// No description provided for @hafalanProgressSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your own progress — not compared to anyone else.'**
+  String get hafalanProgressSubtitle;
+
+  /// No description provided for @hafalanParentViewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent View'**
+  String get hafalanParentViewTitle;
+
+  /// No description provided for @hafalanAyatSudahHafalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ayahs memorized'**
+  String get hafalanAyatSudahHafalLabel;
+
+  /// No description provided for @hafalanSectionPerluDiulang.
+  ///
+  /// In en, this message translates to:
+  /// **'NEEDS REVIEW'**
+  String get hafalanSectionPerluDiulang;
+
+  /// No description provided for @hafalanSectionPerJuz.
+  ///
+  /// In en, this message translates to:
+  /// **'BY JUZ'**
+  String get hafalanSectionPerJuz;
+
+  /// No description provided for @hafalanSectionPerSurah.
+  ///
+  /// In en, this message translates to:
+  /// **'BY SURAH'**
+  String get hafalanSectionPerSurah;
+
+  /// No description provided for @hafalanJuzLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Juz {number}'**
+  String hafalanJuzLabel(Object number);
+
+  /// No description provided for @hafalanMurajaahTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{surahName} · Page {pageNumber}'**
+  String hafalanMurajaahTileTitle(Object pageNumber, Object surahName);
+
+  /// No description provided for @hafalanMurajaahTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to review, keep it fresh'**
+  String get hafalanMurajaahTileSubtitle;
+
+  /// No description provided for @hafalanStreakDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'days in a row'**
+  String get hafalanStreakDaysLabel;
+
+  /// No description provided for @hafalanNoSurahAttempted.
+  ///
+  /// In en, this message translates to:
+  /// **'No surah started yet'**
+  String get hafalanNoSurahAttempted;
+
+  /// No description provided for @hafalanSectionAttemptedSurahs.
+  ///
+  /// In en, this message translates to:
+  /// **'SURAHS IN PROGRESS/MEMORIZED'**
+  String get hafalanSectionAttemptedSurahs;
+
+  /// No description provided for @hafalanStatusSudahHafal.
+  ///
+  /// In en, this message translates to:
+  /// **'Memorized'**
+  String get hafalanStatusSudahHafal;
+
+  /// No description provided for @hafalanStatusSedangDihafal.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get hafalanStatusSedangDihafal;
+
+  /// No description provided for @hafalanStatusBelum.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Started'**
+  String get hafalanStatusBelum;
+
+  /// No description provided for @hafalanSubtitleAyatOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ayahs'**
+  String hafalanSubtitleAyatOnly(Object count);
+
+  /// No description provided for @hafalanSubtitleAyatWithDate.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} ayahs · {date}'**
+  String hafalanSubtitleAyatWithDate(Object count, Object date);
+
+  /// No description provided for @hafalanDateToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get hafalanDateToday;
+
+  /// No description provided for @hafalanDateYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get hafalanDateYesterday;
+
+  /// No description provided for @hafalanDateDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days ago'**
+  String hafalanDateDaysAgo(Object days);
+
+  /// No description provided for @hafalanInsightStreakMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}-day review streak — keep it up!'**
+  String hafalanInsightStreakMessage(Object count);
+
+  /// No description provided for @hafalanInsightAyatMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve memorized {count} ayahs!'**
+  String hafalanInsightAyatMessage(Object count);
+
+  /// No description provided for @hafalanStreakCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Memorization Streak'**
+  String get hafalanStreakCardTitle;
+
+  /// No description provided for @hafalanStreakUnitLandscape.
+  ///
+  /// In en, this message translates to:
+  /// **'/ {target} days'**
+  String hafalanStreakUnitLandscape(Object target);
+
+  /// No description provided for @hafalanStreakCompletedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Reached'**
+  String get hafalanStreakCompletedBadge;
+
+  /// No description provided for @hafalanStreakUnitPortrait.
+  ///
+  /// In en, this message translates to:
+  /// **'/ {target} days in a row'**
+  String hafalanStreakUnitPortrait(Object target);
+
+  /// No description provided for @hafalanLihatProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'View Progress'**
+  String get hafalanLihatProgress;
+
+  /// No description provided for @hafalanShareText.
+  ///
+  /// In en, this message translates to:
+  /// **'My memorization recording'**
+  String get hafalanShareText;
+
+  /// No description provided for @hafalanTooltipPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play recording'**
+  String get hafalanTooltipPlay;
+
+  /// No description provided for @hafalanTooltipShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share (send to teacher)'**
+  String get hafalanTooltipShare;
+
+  /// No description provided for @hafalanTooltipSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved — won\'t be auto-deleted'**
+  String get hafalanTooltipSaved;
+
+  /// No description provided for @hafalanTooltipSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save so it isn\'t auto-deleted'**
+  String get hafalanTooltipSave;
 
   /// No description provided for @authChoiceTitle.
   ///

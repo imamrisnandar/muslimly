@@ -251,6 +251,27 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsDailyTarget => 'Target Bacaan Harian';
 
   @override
+  String get settingsKidsMode => 'Mode Anak (Hafalan)';
+
+  @override
+  String get settingsKidsModeSubtitle =>
+      'Pelafalan belum pas tidak ditandai merah, waktu tunggu lebih longgar.';
+
+  @override
+  String get settingsRecordHafalan => 'Rekam Suara saat Hafalan';
+
+  @override
+  String get settingsRecordHafalanSubtitle =>
+      'Simpan rekaman bacaan untuk didengar ulang atau dikirim ke ustadz/orang tua.';
+
+  @override
+  String get settingsRecordHafalanExplainer =>
+      'Rekaman tersimpan di HP kamu dan tidak diupload otomatis. Kamu bisa memutar ulang atau membagikannya sendiri lewat WhatsApp/Telegram kapan saja.';
+
+  @override
+  String get lblUnderstood => 'Mengerti';
+
+  @override
   String settingsTargetPages(Object count) {
     return '$count Halaman / Hari';
   }
@@ -680,6 +701,14 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get backgroundProgressZero =>
       'Kemarin kamu belum sempat baca Quran. Mulai hari ini dengan bismillah yuk!';
+
+  @override
+  String get murajaahNotifTitle => 'Waktunya Muraja\'ah';
+
+  @override
+  String murajaahNotifBody(Object count) {
+    return 'Ada $count halaman yang perlu diulang hari ini. Yuk diulang biar makin lancar.';
+  }
 
   @override
   String get settingsTestBackground => 'Test Background Fetch';
@@ -1347,6 +1376,124 @@ class AppLocalizationsId extends AppLocalizations {
   String hafalanProgressKata(Object matched, Object total) {
     return '$matched/$total kata';
   }
+
+  @override
+  String get hafalanProgressPageTitle => 'Progress Hafalan';
+
+  @override
+  String get hafalanProgressSubtitle =>
+      'Ini progres kamu sendiri — tidak dibandingkan dengan siapa pun.';
+
+  @override
+  String get hafalanParentViewTitle => 'Tampilan Orang Tua';
+
+  @override
+  String get hafalanAyatSudahHafalLabel => 'ayat sudah hafal';
+
+  @override
+  String get hafalanSectionPerluDiulang => 'PERLU DIULANG';
+
+  @override
+  String get hafalanSectionPerJuz => 'PER JUZ';
+
+  @override
+  String get hafalanSectionPerSurah => 'PER SURAH';
+
+  @override
+  String hafalanJuzLabel(Object number) {
+    return 'Juz $number';
+  }
+
+  @override
+  String hafalanMurajaahTileTitle(Object pageNumber, Object surahName) {
+    return '$surahName · Halaman $pageNumber';
+  }
+
+  @override
+  String get hafalanMurajaahTileSubtitle => 'Yuk diulang, biar makin lancar';
+
+  @override
+  String get hafalanStreakDaysLabel => 'hari berturut-turut';
+
+  @override
+  String get hafalanNoSurahAttempted => 'Belum ada surah yang mulai dihafal';
+
+  @override
+  String get hafalanSectionAttemptedSurahs => 'SURAH YANG SEDANG/SUDAH DIHAFAL';
+
+  @override
+  String get hafalanStatusSudahHafal => 'Sudah Hafal';
+
+  @override
+  String get hafalanStatusSedangDihafal => 'Sedang Dihafal';
+
+  @override
+  String get hafalanStatusBelum => 'Belum';
+
+  @override
+  String hafalanSubtitleAyatOnly(Object count) {
+    return '$count ayat';
+  }
+
+  @override
+  String hafalanSubtitleAyatWithDate(Object count, Object date) {
+    return '$count ayat · $date';
+  }
+
+  @override
+  String get hafalanDateToday => 'hari ini';
+
+  @override
+  String get hafalanDateYesterday => 'kemarin';
+
+  @override
+  String hafalanDateDaysAgo(Object days) {
+    return '$days hari lalu';
+  }
+
+  @override
+  String hafalanInsightStreakMessage(Object count) {
+    return '$count hari berturut-turut murajaah — konsisten terus, ya!';
+  }
+
+  @override
+  String hafalanInsightAyatMessage(Object count) {
+    return '$count ayat sudah kamu hafal!';
+  }
+
+  @override
+  String get hafalanStreakCardTitle => 'Streak Hafalan';
+
+  @override
+  String hafalanStreakUnitLandscape(Object target) {
+    return '/ $target hari';
+  }
+
+  @override
+  String get hafalanStreakCompletedBadge => 'Tercapai';
+
+  @override
+  String hafalanStreakUnitPortrait(Object target) {
+    return '/ $target hari berturut-turut';
+  }
+
+  @override
+  String get hafalanLihatProgress => 'Lihat Progress';
+
+  @override
+  String get hafalanShareText => 'Rekaman hafalan saya';
+
+  @override
+  String get hafalanTooltipPlay => 'Putar rekaman';
+
+  @override
+  String get hafalanTooltipShare => 'Bagikan (setoran)';
+
+  @override
+  String get hafalanTooltipSaved => 'Tersimpan — tidak akan terhapus otomatis';
+
+  @override
+  String get hafalanTooltipSave => 'Simpan agar tidak terhapus otomatis';
 
   @override
   String get authChoiceTitle => 'Mulai Sekarang';

@@ -251,6 +251,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDailyTarget => 'Daily Reading Target';
 
   @override
+  String get settingsKidsMode => 'Kids Mode (Hafalan)';
+
+  @override
+  String get settingsKidsModeSubtitle =>
+      'Mismatched words aren\'t shown as errors, and the wait time is longer.';
+
+  @override
+  String get settingsRecordHafalan => 'Record Audio while Memorizing';
+
+  @override
+  String get settingsRecordHafalanSubtitle =>
+      'Save your recitation to listen back to or send to a teacher/parent.';
+
+  @override
+  String get settingsRecordHafalanExplainer =>
+      'Recordings are saved on your phone and never uploaded automatically. You can play them back or share them yourself via WhatsApp/Telegram anytime.';
+
+  @override
+  String get lblUnderstood => 'Got it';
+
+  @override
   String settingsTargetPages(Object count) {
     return '$count Pages / Day';
   }
@@ -677,6 +698,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get backgroundProgressZero =>
       'You didn\'t read Quran yesterday. Let\'s start fresh today with Bismillah!';
+
+  @override
+  String get murajaahNotifTitle => 'Time to Review';
+
+  @override
+  String murajaahNotifBody(Object count) {
+    return 'You have $count page(s) due for review today. A quick re-read keeps it fresh.';
+  }
 
   @override
   String get settingsTestBackground => 'Test Background Fetch';
@@ -1341,6 +1370,124 @@ class AppLocalizationsEn extends AppLocalizations {
   String hafalanProgressKata(Object matched, Object total) {
     return '$matched/$total Words';
   }
+
+  @override
+  String get hafalanProgressPageTitle => 'Memorization Progress';
+
+  @override
+  String get hafalanProgressSubtitle =>
+      'This is your own progress — not compared to anyone else.';
+
+  @override
+  String get hafalanParentViewTitle => 'Parent View';
+
+  @override
+  String get hafalanAyatSudahHafalLabel => 'ayahs memorized';
+
+  @override
+  String get hafalanSectionPerluDiulang => 'NEEDS REVIEW';
+
+  @override
+  String get hafalanSectionPerJuz => 'BY JUZ';
+
+  @override
+  String get hafalanSectionPerSurah => 'BY SURAH';
+
+  @override
+  String hafalanJuzLabel(Object number) {
+    return 'Juz $number';
+  }
+
+  @override
+  String hafalanMurajaahTileTitle(Object pageNumber, Object surahName) {
+    return '$surahName · Page $pageNumber';
+  }
+
+  @override
+  String get hafalanMurajaahTileSubtitle => 'Time to review, keep it fresh';
+
+  @override
+  String get hafalanStreakDaysLabel => 'days in a row';
+
+  @override
+  String get hafalanNoSurahAttempted => 'No surah started yet';
+
+  @override
+  String get hafalanSectionAttemptedSurahs => 'SURAHS IN PROGRESS/MEMORIZED';
+
+  @override
+  String get hafalanStatusSudahHafal => 'Memorized';
+
+  @override
+  String get hafalanStatusSedangDihafal => 'In Progress';
+
+  @override
+  String get hafalanStatusBelum => 'Not Started';
+
+  @override
+  String hafalanSubtitleAyatOnly(Object count) {
+    return '$count ayahs';
+  }
+
+  @override
+  String hafalanSubtitleAyatWithDate(Object count, Object date) {
+    return '$count ayahs · $date';
+  }
+
+  @override
+  String get hafalanDateToday => 'today';
+
+  @override
+  String get hafalanDateYesterday => 'yesterday';
+
+  @override
+  String hafalanDateDaysAgo(Object days) {
+    return '$days days ago';
+  }
+
+  @override
+  String hafalanInsightStreakMessage(Object count) {
+    return '$count-day review streak — keep it up!';
+  }
+
+  @override
+  String hafalanInsightAyatMessage(Object count) {
+    return 'You\'ve memorized $count ayahs!';
+  }
+
+  @override
+  String get hafalanStreakCardTitle => 'Memorization Streak';
+
+  @override
+  String hafalanStreakUnitLandscape(Object target) {
+    return '/ $target days';
+  }
+
+  @override
+  String get hafalanStreakCompletedBadge => 'Reached';
+
+  @override
+  String hafalanStreakUnitPortrait(Object target) {
+    return '/ $target days in a row';
+  }
+
+  @override
+  String get hafalanLihatProgress => 'View Progress';
+
+  @override
+  String get hafalanShareText => 'My memorization recording';
+
+  @override
+  String get hafalanTooltipPlay => 'Play recording';
+
+  @override
+  String get hafalanTooltipShare => 'Share (send to teacher)';
+
+  @override
+  String get hafalanTooltipSaved => 'Saved — won\'t be auto-deleted';
+
+  @override
+  String get hafalanTooltipSave => 'Save so it isn\'t auto-deleted';
 
   @override
   String get authChoiceTitle => 'Get Started';

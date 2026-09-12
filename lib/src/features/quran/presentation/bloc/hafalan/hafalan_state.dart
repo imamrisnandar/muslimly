@@ -44,6 +44,11 @@ class HafalanState extends Equatable {
   // Accumulated accuracy for scoring (matched words / total words per ayah)
   final List<double> ayahAccuracies;
 
+  /// Local .m4a path of this page attempt's opt-in recording (§F) — set
+  /// only once, the moment status flips to completed; null the rest of the
+  /// time (recording off, still in progress, or not yet completed).
+  final String? audioFilePath;
+
   const HafalanState({
     this.status = HafalanStatus.initial,
     this.currentAyahIndex = 0,
@@ -60,6 +65,7 @@ class HafalanState extends Equatable {
     this.lastMismatchWord,
     this.mismatchCount = 0,
     this.ayahAccuracies = const [],
+    this.audioFilePath,
   });
 
   /// Overall accuracy across all completed ayahs
@@ -93,6 +99,7 @@ class HafalanState extends Equatable {
     String? lastMismatchWord,
     int? mismatchCount,
     List<double>? ayahAccuracies,
+    String? audioFilePath,
     bool clearError = false,
     bool clearMismatch = false,
   }) {
@@ -116,6 +123,7 @@ class HafalanState extends Equatable {
           : (lastMismatchWord ?? this.lastMismatchWord),
       mismatchCount: mismatchCount ?? this.mismatchCount,
       ayahAccuracies: ayahAccuracies ?? this.ayahAccuracies,
+      audioFilePath: audioFilePath ?? this.audioFilePath,
     );
   }
 
@@ -136,5 +144,6 @@ class HafalanState extends Equatable {
     lastMismatchWord,
     mismatchCount,
     ayahAccuracies,
+    audioFilePath,
   ];
 }

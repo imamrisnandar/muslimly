@@ -25,8 +25,7 @@ class _StubSettingsRepository implements SettingsRepository {
   Future<void> savePrayerNotificationSetting(
     String prayerName,
     String soundType,
-  ) =>
-      throw UnimplementedError();
+  ) => throw UnimplementedError();
   @override
   Future<int> getDailyReadingTarget() => throw UnimplementedError();
   @override
@@ -34,8 +33,7 @@ class _StubSettingsRepository implements SettingsRepository {
   @override
   Future<String> getReadingTargetUnit() => throw UnimplementedError();
   @override
-  Future<void> saveReadingTargetUnit(String unit) =>
-      throw UnimplementedError();
+  Future<void> saveReadingTargetUnit(String unit) => throw UnimplementedError();
   @override
   Future<int> getDailyAyahTarget() => throw UnimplementedError();
   @override
@@ -47,15 +45,31 @@ class _StubSettingsRepository implements SettingsRepository {
   @override
   Future<bool> hasShownPlayerShowcase() => throw UnimplementedError();
   @override
-  Future<void> setPlayerShowcaseShown(bool shown) =>
+  Future<void> setPlayerShowcaseShown(bool shown) => throw UnimplementedError();
+  @override
+  Future<bool> getKidsMode() => throw UnimplementedError();
+  @override
+  Future<void> saveKidsMode(bool enabled) => throw UnimplementedError();
+  @override
+  Future<bool> getRecordHafalan() => throw UnimplementedError();
+  @override
+  Future<void> saveRecordHafalan(bool enabled) => throw UnimplementedError();
+  @override
+  Future<int> getLastShownHafalanStreakMilestone() =>
+      throw UnimplementedError();
+  @override
+  Future<void> saveLastShownHafalanStreakMilestone(int milestone) =>
+      throw UnimplementedError();
+  @override
+  Future<int> getLastShownHafalanAyatMilestone() => throw UnimplementedError();
+  @override
+  Future<void> saveLastShownHafalanAyatMilestone(int milestone) =>
       throw UnimplementedError();
   @override
   Future<List<Map<String, dynamic>>> getHijriAdjustments() =>
       throw UnimplementedError();
   @override
-  Future<void> saveHijriAdjustments(
-    List<Map<String, dynamic>> adjustments,
-  ) =>
+  Future<void> saveHijriAdjustments(List<Map<String, dynamic>> adjustments) =>
       throw UnimplementedError();
   @override
   Future<List<Map<String, dynamic>>> fetchRemoteHijriAdjustments() =>
@@ -82,37 +96,43 @@ void main() {
   const longitude = 106.8456;
   final date = DateTime(2026, 3, 15);
 
-  test('kemenag_ri applies the expected ihtiyat offsets over singapore', () async {
-    final singaporeRepo = PrayerRepositoryImpl(
-      _StubSettingsRepository('singapore'),
-    );
-    final kemenagRepo = PrayerRepositoryImpl(
-      _StubSettingsRepository('kemenag_ri'),
-    );
+  test(
+    'kemenag_ri applies the expected ihtiyat offsets over singapore',
+    () async {
+      final singaporeRepo = PrayerRepositoryImpl(
+        _StubSettingsRepository('singapore'),
+      );
+      final kemenagRepo = PrayerRepositoryImpl(
+        _StubSettingsRepository('kemenag_ri'),
+      );
 
-    final singaporeResult = await singaporeRepo.getPrayerTime(
-      latitude,
-      longitude,
-      date,
-    );
-    final kemenagResult = await kemenagRepo.getPrayerTime(
-      latitude,
-      longitude,
-      date,
-    );
+      final singaporeResult = await singaporeRepo.getPrayerTime(
+        latitude,
+        longitude,
+        date,
+      );
+      final kemenagResult = await kemenagRepo.getPrayerTime(
+        latitude,
+        longitude,
+        date,
+      );
 
-    final singapore = singaporeResult.getRight().toNullable()!;
-    final kemenag = kemenagResult.getRight().toNullable()!;
+      final singapore = singaporeResult.getRight().toNullable()!;
+      final kemenag = kemenagResult.getRight().toNullable()!;
 
-    // Fajr angle/madhab are identical between the two methods, so the only
-    // difference should be Kemenag RI's ihtiyat (safety margin) minutes.
-    expect(_diffMinutes(kemenag.subuh, singapore.subuh), 1438); // -2 min
-    expect(_diffMinutes(kemenag.terbit, singapore.terbit), 1); // +1 min
-    expect(_diffMinutes(kemenag.dzuhur, singapore.dzuhur), 1); // +2 - 1 (singapore's own +1 dhuhr adjustment)
-    expect(_diffMinutes(kemenag.ashar, singapore.ashar), 2); // +2 min
-    expect(_diffMinutes(kemenag.maghrib, singapore.maghrib), 2); // +2 min
-    expect(_diffMinutes(kemenag.isya, singapore.isya), 2); // +2 min
-  });
+      // Fajr angle/madhab are identical between the two methods, so the only
+      // difference should be Kemenag RI's ihtiyat (safety margin) minutes.
+      expect(_diffMinutes(kemenag.subuh, singapore.subuh), 1438); // -2 min
+      expect(_diffMinutes(kemenag.terbit, singapore.terbit), 1); // +1 min
+      expect(
+        _diffMinutes(kemenag.dzuhur, singapore.dzuhur),
+        1,
+      ); // +2 - 1 (singapore's own +1 dhuhr adjustment)
+      expect(_diffMinutes(kemenag.ashar, singapore.ashar), 2); // +2 min
+      expect(_diffMinutes(kemenag.maghrib, singapore.maghrib), 2); // +2 min
+      expect(_diffMinutes(kemenag.isya, singapore.isya), 2); // +2 min
+    },
+  );
 
   test('date argument is honored instead of always using today', () async {
     final repo = PrayerRepositoryImpl(_StubSettingsRepository('singapore'));

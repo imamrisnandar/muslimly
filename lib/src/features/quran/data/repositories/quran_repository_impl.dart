@@ -19,9 +19,7 @@ class QuranRepositoryImpl implements QuranRepository {
   final DatabaseService _databaseService;
   final SyncApiService _syncApiService;
 
-  final Dio _quranComDio = Dio(
-    BaseOptions(baseUrl: '${AppUrls.quranComApi}/'),
-  );
+  final Dio _quranComDio = Dio(BaseOptions(baseUrl: '${AppUrls.quranComApi}/'));
 
   QuranRepositoryImpl(
     this._localDataSource,
@@ -55,8 +53,7 @@ class QuranRepositoryImpl implements QuranRepository {
 
       // 3. Fetch Online if Cache Incomplete
       try {
-        final url =
-            '/quran/verses/uthmani_tajweed?chapter_number=$surahId';
+        final url = '/quran/verses/uthmani_tajweed?chapter_number=$surahId';
         final response = await _quranComDio.get(url);
 
         if (response.statusCode == 200) {
@@ -125,8 +122,7 @@ class QuranRepositoryImpl implements QuranRepository {
     String languageCode = 'id',
   }) async {
     try {
-      final url =
-          '/search?q=$query&size=20&page=$page&language=$languageCode';
+      final url = '/search?q=$query&size=20&page=$page&language=$languageCode';
       final response = await _quranComDio.get(url);
 
       if (response.statusCode == 200) {
@@ -256,6 +252,39 @@ class QuranRepositoryImpl implements QuranRepository {
       return Right(history);
     } catch (e) {
       return Left(MessageFailure('Failed to fetch remote history: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> syncUnsyncedHafalanSessions(
+    String? token, {
+    String? deviceId,
+  }) async {
+    try {
+      // 1. Get all unsynced hafalan sessions from local database
+      final unsynced = await _databaseService.getUnsyncedHafalanSessions();
+
+      if (unsynced.isEmpty) {
+        return const Right(null); // Nothing to sync
+      }
+
+      // 2. Map to backend DTO payload format
+      final payload = unsynced.map((session) => session.toJsonSync()).toList();
+
+      // 3. Send bulk insert request
+      await _syncApiService.bulkInsertHafalanSessions(
+        payload,
+        token,
+        deviceId: deviceId,
+      );
+
+      // 4. If successful, mark them as synced in local DB
+      final idsToMark = unsynced.map((s) => s.id!).toList();
+      await _databaseService.markHafalanSessionsSynced(idsToMark);
+
+      return const Right(null);
+    } catch (e) {
+      return Left(MessageFailure('Hafalan session bulk sync failed: $e'));
     }
   }
 }

@@ -458,6 +458,10 @@ class ReadingBloc extends Bloc<ReadingEvent, ReadingState> {
           token,
           deviceId: deviceId,
         );
+        await _quranRepository.syncUnsyncedHafalanSessions(
+          token,
+          deviceId: deviceId,
+        );
         await _retryPendingLastRead(token, deviceId);
       }
     } catch (e) {

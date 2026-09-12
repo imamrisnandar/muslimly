@@ -19,6 +19,12 @@ abstract class ShowcaseKeys {
   static const String mushaf = 'hasShownMushafShowcase';
   static const String mushafPlayer = 'hasShownMushafPlayerShowcase';
   static const String audioPlayer = 'hasShownPlayerShowcase';
+
+  /// Not a ShowcaseView tour — reuses this same one-shot-flag service for a
+  /// plain explainer AlertDialog shown the first time "Rekam suara saat
+  /// hafalan" (§F) is turned on.
+  static const String recordHafalanExplainer =
+      'hasShownRecordHafalanExplainer';
 }
 
 class ShowcasePreferencesService {

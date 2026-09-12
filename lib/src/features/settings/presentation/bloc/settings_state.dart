@@ -10,6 +10,8 @@ class SettingsState extends Equatable {
   final int hijriAdjustment; // Current month's adjustment
   final List<Map<String, dynamic>> hijriAdjustments; // All adjustments
   final String calculationMethod; // 'singapore' or 'kemenag_ri'
+  final bool kidsMode; // Hafalan Mode Anak / "Guided"
+  final bool recordHafalan; // Rekam suara saat hafalan (§F)
 
   const SettingsState({
     this.locale,
@@ -20,6 +22,8 @@ class SettingsState extends Equatable {
     this.hijriAdjustment = 0,
     this.hijriAdjustments = const [],
     this.calculationMethod = 'singapore',
+    this.kidsMode = false,
+    this.recordHafalan = false,
   });
 
   factory SettingsState.initial() => const SettingsState(locale: Locale('id'));
@@ -33,6 +37,8 @@ class SettingsState extends Equatable {
     int? hijriAdjustment,
     List<Map<String, dynamic>>? hijriAdjustments,
     String? calculationMethod,
+    bool? kidsMode,
+    bool? recordHafalan,
   }) {
     return SettingsState(
       locale: locale ?? this.locale,
@@ -43,6 +49,8 @@ class SettingsState extends Equatable {
       hijriAdjustment: hijriAdjustment ?? this.hijriAdjustment,
       hijriAdjustments: hijriAdjustments ?? this.hijriAdjustments,
       calculationMethod: calculationMethod ?? this.calculationMethod,
+      kidsMode: kidsMode ?? this.kidsMode,
+      recordHafalan: recordHafalan ?? this.recordHafalan,
     );
   }
 
@@ -56,5 +64,7 @@ class SettingsState extends Equatable {
     hijriAdjustment,
     hijriAdjustments,
     calculationMethod,
+    kidsMode,
+    recordHafalan,
   ];
 }
