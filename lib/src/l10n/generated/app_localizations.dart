@@ -3769,6 +3769,414 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start'**
   String get trackerExcuseSave;
+
+  /// No description provided for @toolsCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get toolsCancel;
+
+  /// No description provided for @toolsSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get toolsSave;
+
+  /// No description provided for @tasbihTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasbih counter'**
+  String get tasbihTitle;
+
+  /// No description provided for @tasbihSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhikr counter'**
+  String get tasbihSubtitle;
+
+  /// No description provided for @tasbihFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get tasbihFree;
+
+  /// No description provided for @tasbihCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get tasbihCustom;
+
+  /// No description provided for @tasbihCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Target count'**
+  String get tasbihCustomHint;
+
+  /// No description provided for @tasbihRounds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} rounds'**
+  String tasbihRounds(int count);
+
+  /// No description provided for @tasbihTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total {count}'**
+  String tasbihTotal(int count);
+
+  /// No description provided for @tasbihUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get tasbihUndo;
+
+  /// No description provided for @tasbihReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get tasbihReset;
+
+  /// No description provided for @tasbihSaveSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Save session'**
+  String get tasbihSaveSession;
+
+  /// No description provided for @tasbihSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Session saved'**
+  String get tasbihSaved;
+
+  /// No description provided for @tasbihHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get tasbihHistory;
+
+  /// No description provided for @tasbihNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved sessions yet'**
+  String get tasbihNoHistory;
+
+  /// No description provided for @asmaulHusnaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Asmaul Husna'**
+  String get asmaulHusnaTitle;
+
+  /// No description provided for @asmaulHusnaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The 99 names of Allah with meanings'**
+  String get asmaulHusnaSubtitle;
+
+  /// No description provided for @asmaulHusnaSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search name or meaning'**
+  String get asmaulHusnaSearch;
+
+  /// No description provided for @hadithTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Hadith'**
+  String get hadithTitle;
+
+  /// No description provided for @hadithSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One selected hadith each day'**
+  String get hadithSubtitle;
+
+  /// No description provided for @hadithOfDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s hadith'**
+  String get hadithOfDay;
+
+  /// No description provided for @hadithAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All hadiths'**
+  String get hadithAll;
+
+  /// No description provided for @hadithReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Text and translation are still under review. Refer to the original books for certainty.'**
+  String get hadithReviewNote;
+
+  /// No description provided for @khatamTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Khatam Planner'**
+  String get khatamTitle;
+
+  /// No description provided for @khatamSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily target until you finish'**
+  String get khatamSubtitle;
+
+  /// No description provided for @khatamEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit plan'**
+  String get khatamEdit;
+
+  /// No description provided for @khatamDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete plan'**
+  String get khatamDelete;
+
+  /// No description provided for @khatamSetupHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a start and target date; the app works out pages per day from your reading.'**
+  String get khatamSetupHint;
+
+  /// No description provided for @khatamPresetRamadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish in Ramadan'**
+  String get khatamPresetRamadan;
+
+  /// No description provided for @khatamRamadanAdjust.
+  ///
+  /// In en, this message translates to:
+  /// **'Shift Ramadan start: {count} days'**
+  String khatamRamadanAdjust(int count);
+
+  /// No description provided for @khatamStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get khatamStartDate;
+
+  /// No description provided for @khatamTargetDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Target date'**
+  String get khatamTargetDate;
+
+  /// No description provided for @khatamCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of khatams: {count}'**
+  String khatamCount(int count);
+
+  /// No description provided for @khatamOffDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days off reading (optional)'**
+  String get khatamOffDays;
+
+  /// No description provided for @khatamPagesRead.
+  ///
+  /// In en, this message translates to:
+  /// **'{read} of {total} pages'**
+  String khatamPagesRead(int read, int total);
+
+  /// No description provided for @khatamDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Alhamdulillah, plan complete.'**
+  String get khatamDone;
+
+  /// No description provided for @khatamNotStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts {date}'**
+  String khatamNotStarted(String date);
+
+  /// No description provided for @khatamOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'The target date has passed. Edit the plan to continue.'**
+  String get khatamOverdue;
+
+  /// No description provided for @khatamBehind.
+  ///
+  /// In en, this message translates to:
+  /// **'About {count} pages behind schedule.'**
+  String khatamBehind(int count);
+
+  /// No description provided for @khatamOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track.'**
+  String get khatamOnTrack;
+
+  /// No description provided for @khatamDailyTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s target: {count} pages'**
+  String khatamDailyTarget(int count);
+
+  /// No description provided for @khatamPerPrayer.
+  ///
+  /// In en, this message translates to:
+  /// **'About {count} pages per prayer'**
+  String khatamPerPrayer(int count);
+
+  /// No description provided for @khatamDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reading days left'**
+  String khatamDaysLeft(int count);
+
+  /// No description provided for @khatamPlanRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} - {end} · {count}× khatam'**
+  String khatamPlanRange(String start, String end, int count);
+
+  /// No description provided for @khatamUniqueNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Pages count once since the start date (for a single khatam); re-reading a page does not add progress.'**
+  String get khatamUniqueNote;
+
+  /// No description provided for @zakatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get zakatTitle;
+
+  /// No description provided for @zakatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mal and fitrah zakat calculator'**
+  String get zakatSubtitle;
+
+  /// No description provided for @zakatTabMal.
+  ///
+  /// In en, this message translates to:
+  /// **'Mal'**
+  String get zakatTabMal;
+
+  /// No description provided for @zakatTabFitrah.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitrah'**
+  String get zakatTabFitrah;
+
+  /// No description provided for @zakatTabHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get zakatTabHistory;
+
+  /// No description provided for @zakatGoldPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'24-carat gold price per gram'**
+  String get zakatGoldPrice;
+
+  /// No description provided for @zakatGoldNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the current gold price yourself. Nisab = 85 g of 24-carat gold. Automatic prices are not available yet.'**
+  String get zakatGoldNote;
+
+  /// No description provided for @zakatWealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Total wealth held for a full year'**
+  String get zakatWealth;
+
+  /// No description provided for @zakatDebts.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts due now'**
+  String get zakatDebts;
+
+  /// No description provided for @zakatHaul.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth held for 1 year (haul)'**
+  String get zakatHaul;
+
+  /// No description provided for @zakatNisab.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab: {amount}'**
+  String zakatNisab(String amount);
+
+  /// No description provided for @zakatNeedGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the gold price to compute nisab.'**
+  String get zakatNeedGold;
+
+  /// No description provided for @zakatBelowNisab.
+  ///
+  /// In en, this message translates to:
+  /// **'Wealth has not reached nisab.'**
+  String get zakatBelowNisab;
+
+  /// No description provided for @zakatNoHaul.
+  ///
+  /// In en, this message translates to:
+  /// **'Haul not yet reached.'**
+  String get zakatNoHaul;
+
+  /// No description provided for @zakatDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat: {amount}'**
+  String zakatDue(String amount);
+
+  /// No description provided for @zakatSaveResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to history'**
+  String get zakatSaveResult;
+
+  /// No description provided for @zakatSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this device'**
+  String get zakatSaved;
+
+  /// No description provided for @zakatPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of people'**
+  String get zakatPeople;
+
+  /// No description provided for @zakatFitrahRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitrah per person'**
+  String get zakatFitrahRate;
+
+  /// No description provided for @zakatFitrahNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference: {rice} kg rice per person. The cash value may differ by region. Source: {source}.'**
+  String zakatFitrahNote(String rice, String source);
+
+  /// No description provided for @zakatNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved calculations yet'**
+  String get zakatNoHistory;
+
+  /// No description provided for @zakatLocalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'History is stored on this device only.'**
+  String get zakatLocalNote;
+
+  /// No description provided for @zakatDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a helper tool, not a fatwa. Consult a scholar or an official zakat institution.'**
+  String get zakatDisclaimer;
 }
 
 class _AppLocalizationsDelegate

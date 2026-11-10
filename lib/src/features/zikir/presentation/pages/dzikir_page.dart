@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../tajweed/presentation/pages/tajweed_page.dart';
@@ -111,6 +112,20 @@ class DzikirPage extends StatelessWidget {
           );
         },
       ),
+      _IbadahItem(
+        title: l10n.tasbihTitle,
+        subtitle: l10n.tasbihSubtitle,
+        icon: Icons.touch_app_outlined,
+        color: AppColors.accent,
+        onTap: () => context.push('/tasbih'),
+      ),
+      _IbadahItem(
+        title: l10n.asmaulHusnaTitle,
+        subtitle: l10n.asmaulHusnaSubtitle,
+        icon: Icons.auto_awesome_outlined,
+        color: AppColors.goldLight,
+        onTap: () => context.push('/asmaul-husna'),
+      ),
     ];
 
     // 2. Learning Data (Tajweed, etc) - List Items
@@ -164,6 +179,27 @@ class DzikirPage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const PrayerGuidePage()),
           );
         },
+      ),
+      _IbadahItem(
+        title: l10n.khatamTitle,
+        subtitle: l10n.khatamSubtitle,
+        icon: Icons.menu_book_outlined,
+        color: AppColors.accentDark,
+        onTap: () => context.push('/khatam'),
+      ),
+      _IbadahItem(
+        title: l10n.zakatTitle,
+        subtitle: l10n.zakatSubtitle,
+        icon: Icons.volunteer_activism,
+        color: Colors.pinkAccent,
+        onTap: () => context.push('/zakat'),
+      ),
+      _IbadahItem(
+        title: l10n.hadithTitle,
+        subtitle: l10n.hadithSubtitle,
+        icon: Icons.format_quote_outlined,
+        color: Colors.lightBlueAccent,
+        onTap: () => context.push('/hadith'),
       ),
     ];
 

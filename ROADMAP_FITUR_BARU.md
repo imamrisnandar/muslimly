@@ -235,6 +235,18 @@ Fase 1 dan 2 independen dan bisa dikerjakan paralel setelah Fase 0.
 
 ---
 
+### Status implementasi Gelombang 2 (2026-11-10)
+
+Dikode, lolos 24 tes baru (`test/gelombang2_logic_test.dart`) dan dicoba di emulator (tasbih, rencana khatam; kalkulator zakat dan halaman hadis belum diuji manual). Semua halaman ada di tab Aktivitas.
+
+- **Tasbih** (`features/tasbih`): target 33/99/100/bebas/kustom, undo, getaran, sesi tersimpan lokal. Belum: layar tetap menyala, tombol cepat di widget.
+- **Asmaul Husna**: 99 nama, JSON offline (`assets/quran/json/asmaul_husna.json`). **Teks Arab (tanpa harakat penuh pada beberapa nama), transliterasi, dan arti ditulis oleh saya dan BELUM ditinjau.**
+- **Hadis harian**: 12 hadis pilihan (`hadith_daily.json`), berganti per hari. **Teks Arab dan terjemahan (terjemahan saya sendiri, bukan salinan dataset) belum ditinjau; nomor hadis hanya disebut untuk Arba'in. Wajib ditinjau sebelum rilis.**
+- **Rencana khatam** (`features/khatam`): tanggal mulai/target, preset Ramadan (1–29 Ramadan, geser ±1 hari; Ramadan 1448 terhitung 8 Feb 2027), hari tidak membaca per hari-dalam-pekan, jumlah khatam. Progres dari `reading_activity`: halaman unik untuk 1× khatam, pasangan (hari, halaman) untuk >1×. Rencana disimpan di tabel `settings` (kunci `khatam_plan`), **bukan** tabel `reading_plans`, dan **tidak** mengubah target harian yang di-sync ke server (risiko di §1 dihindari; tombol "jadikan target harian" belum ada).
+- **Zakat** (`features/zakat`): zakat mal (nisab 85 g emas 24 karat, haul, utang) dan fitrah, riwayat lokal. **Harga emas diisi manual oleh pengguna; harga otomatis dari backend (§4) belum dibuat** karena butuh kunci API Anda (keputusan terbuka #3). Tarif fitrah (2,5 kg / Rp50.000) di `FitrahConfig` masih konstanta **belum terverifikasi**, bukan dari `app_config`. Zakat penghasilan tetap ditunda. Pengingat haul belum ada.
+
+---
+
 ## Bagian II — Gelombang 2–5: Fitur lain
 
 ### 1. Perencana Ramadan & Khatam — ukuran M

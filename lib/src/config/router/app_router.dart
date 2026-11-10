@@ -1,3 +1,8 @@
+import '../../features/tasbih/presentation/pages/tasbih_page.dart';
+import '../../features/tasbih/presentation/pages/asmaul_husna_page.dart';
+import '../../features/tasbih/presentation/pages/hadith_page.dart';
+import '../../features/khatam/presentation/pages/khatam_page.dart';
+import '../../features/zakat/presentation/pages/zakat_page.dart';
 import '../../features/prayer_tracker/presentation/pages/qadha_page.dart';
 import '../../features/prayer_tracker/presentation/pages/qadha_wizard_page.dart';
 import '../../features/prayer_tracker/presentation/bloc/prayer_tracker_cubit.dart';
@@ -118,6 +123,14 @@ final appRouter = GoRouter(
         );
       },
     ),
+    GoRoute(path: '/tasbih', builder: (context, state) => const TasbihPage()),
+    GoRoute(
+      path: '/asmaul-husna',
+      builder: (context, state) => const AsmaulHusnaPage(),
+    ),
+    GoRoute(path: '/hadith', builder: (context, state) => const HadithPage()),
+    GoRoute(path: '/khatam', builder: (context, state) => const KhatamPage()),
+    GoRoute(path: '/zakat', builder: (context, state) => const ZakatPage()),
     GoRoute(path: '/qadha', builder: (context, state) => const QadhaPage()),
     GoRoute(
       path: '/qadha/wizard',

@@ -1,0 +1,101 @@
+{
+ "reviewed": false,
+ "hadiths": [
+  {
+   "id": 1,
+   "ar": "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى",
+   "source": "HR. Bukhari dan Muslim (Arba'in Nawawi no. 1)",
+   "source_en": "Narrated by Bukhari and Muslim (Nawawi's 40, no. 1)",
+   "id_text": "Sesungguhnya setiap amal itu tergantung pada niatnya, dan setiap orang akan mendapatkan sesuai dengan apa yang ia niatkan.",
+   "en_text": "Actions are but by intentions, and every person will have only what they intended."
+  },
+  {
+   "id": 2,
+   "ar": "الدِّينُ النَّصِيحَةُ",
+   "source": "HR. Muslim (Arba'in Nawawi no. 7)",
+   "source_en": "Narrated by Muslim (Nawawi's 40, no. 7)",
+   "id_text": "Agama itu adalah nasihat.",
+   "en_text": "The religion is sincere advice."
+  },
+  {
+   "id": 3,
+   "ar": "مِنْ حُسْنِ إِسْلَامِ الْمَرْءِ تَرْكُهُ مَا لَا يَعْنِيهِ",
+   "source": "HR. Tirmidzi (Arba'in Nawawi no. 12)",
+   "source_en": "Narrated by Tirmidhi (Nawawi's 40, no. 12)",
+   "id_text": "Di antara tanda baiknya keislaman seseorang adalah ia meninggalkan hal yang tidak bermanfaat baginya.",
+   "en_text": "Part of the excellence of a person's Islam is leaving what does not concern them."
+  },
+  {
+   "id": 4,
+   "ar": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ",
+   "source": "HR. Bukhari dan Muslim (Arba'in Nawawi no. 13)",
+   "source_en": "Narrated by Bukhari and Muslim (Nawawi's 40, no. 13)",
+   "id_text": "Tidaklah beriman salah seorang di antara kalian hingga ia mencintai untuk saudaranya apa yang ia cintai untuk dirinya sendiri.",
+   "en_text": "None of you truly believes until he loves for his brother what he loves for himself."
+  },
+  {
+   "id": 5,
+   "ar": "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ",
+   "source": "HR. Bukhari dan Muslim (Arba'in Nawawi no. 15)",
+   "source_en": "Narrated by Bukhari and Muslim (Nawawi's 40, no. 15)",
+   "id_text": "Barang siapa beriman kepada Allah dan hari akhir, hendaklah ia berkata baik atau diam.",
+   "en_text": "Whoever believes in Allah and the Last Day, let him speak good or remain silent."
+  },
+  {
+   "id": 6,
+   "ar": "لَا تَغْضَبْ",
+   "source": "HR. Bukhari (Arba'in Nawawi no. 16)",
+   "source_en": "Narrated by Bukhari (Nawawi's 40, no. 16)",
+   "id_text": "Janganlah engkau marah.",
+   "en_text": "Do not become angry."
+  },
+  {
+   "id": 7,
+   "ar": "الطُّهُورُ شَطْرُ الْإِيمَانِ",
+   "source": "HR. Muslim",
+   "source_en": "Narrated by Muslim",
+   "id_text": "Kesucian adalah separuh dari iman.",
+   "en_text": "Purity is half of faith."
+  },
+  {
+   "id": 8,
+   "ar": "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
+   "source": "HR. Bukhari",
+   "source_en": "Narrated by Bukhari",
+   "id_text": "Sebaik-baik kalian adalah orang yang belajar Al-Qur'an dan mengajarkannya.",
+   "en_text": "The best of you are those who learn the Qur'an and teach it."
+  },
+  {
+   "id": 9,
+   "ar": "الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ",
+   "source": "HR. Bukhari dan Muslim",
+   "source_en": "Narrated by Bukhari and Muslim",
+   "id_text": "Seorang muslim adalah orang yang kaum muslimin selamat dari lisan dan tangannya.",
+   "en_text": "A Muslim is one from whose tongue and hand other Muslims are safe."
+  },
+  {
+   "id": 10,
+   "ar": "أَحَبُّ الْأَعْمَالِ إِلَى اللَّهِ أَدْوَمُهَا وَإِنْ قَلَّ",
+   "source": "HR. Bukhari dan Muslim",
+   "source_en": "Narrated by Bukhari and Muslim",
+   "id_text": "Amal yang paling dicintai Allah adalah yang paling terus-menerus dilakukan, walaupun sedikit.",
+   "en_text": "The deeds most beloved to Allah are the most consistent, even if small."
+  },
+  {
+   "id": 11,
+   "ar": "مَنْ صَامَ رَمَضَانَ إِيمَانًا وَاحْتِسَابًا غُفِرَ لَهُ مَا تَقَدَّمَ مِنْ ذَنْبِهِ",
+   "source": "HR. Bukhari dan Muslim",
+   "source_en": "Narrated by Bukhari and Muslim",
+   "id_text": "Barang siapa berpuasa Ramadan karena iman dan mengharap pahala, diampuni dosanya yang telah lalu.",
+   "en_text": "Whoever fasts Ramadan out of faith and seeking reward, his previous sins are forgiven."
+  },
+  {
+   "id": 12,
+   "ar": "كَلِمَتَانِ خَفِيفَتَانِ عَلَى اللِّسَانِ، ثَقِيلَتَانِ فِي الْمِيزَانِ، حَبِيبَتَانِ إِلَى الرَّحْمَنِ: سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
+   "source": "HR. Bukhari dan Muslim",
+   "source_en": "Narrated by Bukhari and Muslim",
+   "id_text": "Dua kalimat yang ringan di lisan, berat di timbangan, dan dicintai Allah Yang Maha Pengasih: Subhanallahi wa bihamdihi, Subhanallahil 'Azim.",
+   "en_text": "Two phrases light on the tongue, heavy on the scale, beloved to the Most Merciful: Subhanallahi wa bihamdihi, Subhanallahil 'Azim."
+  }
+ ]
+}

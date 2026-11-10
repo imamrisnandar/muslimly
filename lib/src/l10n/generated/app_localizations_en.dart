@@ -2020,4 +2020,242 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trackerExcuseSave => 'Start';
+
+  @override
+  String get toolsCancel => 'Cancel';
+
+  @override
+  String get toolsSave => 'Save';
+
+  @override
+  String get tasbihTitle => 'Tasbih counter';
+
+  @override
+  String get tasbihSubtitle => 'Dhikr counter';
+
+  @override
+  String get tasbihFree => 'Free';
+
+  @override
+  String get tasbihCustom => 'Custom';
+
+  @override
+  String get tasbihCustomHint => 'Target count';
+
+  @override
+  String tasbihRounds(int count) {
+    return '$count rounds';
+  }
+
+  @override
+  String tasbihTotal(int count) {
+    return 'Total $count';
+  }
+
+  @override
+  String get tasbihUndo => 'Undo';
+
+  @override
+  String get tasbihReset => 'Reset';
+
+  @override
+  String get tasbihSaveSession => 'Save session';
+
+  @override
+  String get tasbihSaved => 'Session saved';
+
+  @override
+  String get tasbihHistory => 'History';
+
+  @override
+  String get tasbihNoHistory => 'No saved sessions yet';
+
+  @override
+  String get asmaulHusnaTitle => 'Asmaul Husna';
+
+  @override
+  String get asmaulHusnaSubtitle => 'The 99 names of Allah with meanings';
+
+  @override
+  String get asmaulHusnaSearch => 'Search name or meaning';
+
+  @override
+  String get hadithTitle => 'Daily Hadith';
+
+  @override
+  String get hadithSubtitle => 'One selected hadith each day';
+
+  @override
+  String get hadithOfDay => 'Today\'s hadith';
+
+  @override
+  String get hadithAll => 'All hadiths';
+
+  @override
+  String get hadithReviewNote =>
+      'Text and translation are still under review. Refer to the original books for certainty.';
+
+  @override
+  String get khatamTitle => 'Khatam Planner';
+
+  @override
+  String get khatamSubtitle => 'Daily target until you finish';
+
+  @override
+  String get khatamEdit => 'Edit plan';
+
+  @override
+  String get khatamDelete => 'Delete plan';
+
+  @override
+  String get khatamSetupHint =>
+      'Pick a start and target date; the app works out pages per day from your reading.';
+
+  @override
+  String get khatamPresetRamadan => 'Finish in Ramadan';
+
+  @override
+  String khatamRamadanAdjust(int count) {
+    return 'Shift Ramadan start: $count days';
+  }
+
+  @override
+  String get khatamStartDate => 'Start date';
+
+  @override
+  String get khatamTargetDate => 'Target date';
+
+  @override
+  String khatamCount(int count) {
+    return 'Number of khatams: $count';
+  }
+
+  @override
+  String get khatamOffDays => 'Days off reading (optional)';
+
+  @override
+  String khatamPagesRead(int read, int total) {
+    return '$read of $total pages';
+  }
+
+  @override
+  String get khatamDone => 'Alhamdulillah, plan complete.';
+
+  @override
+  String khatamNotStarted(String date) {
+    return 'Starts $date';
+  }
+
+  @override
+  String get khatamOverdue =>
+      'The target date has passed. Edit the plan to continue.';
+
+  @override
+  String khatamBehind(int count) {
+    return 'About $count pages behind schedule.';
+  }
+
+  @override
+  String get khatamOnTrack => 'On track.';
+
+  @override
+  String khatamDailyTarget(int count) {
+    return 'Today\'s target: $count pages';
+  }
+
+  @override
+  String khatamPerPrayer(int count) {
+    return 'About $count pages per prayer';
+  }
+
+  @override
+  String khatamDaysLeft(int count) {
+    return '$count reading days left';
+  }
+
+  @override
+  String khatamPlanRange(String start, String end, int count) {
+    return '$start - $end · $count× khatam';
+  }
+
+  @override
+  String get khatamUniqueNote =>
+      'Pages count once since the start date (for a single khatam); re-reading a page does not add progress.';
+
+  @override
+  String get zakatTitle => 'Zakat';
+
+  @override
+  String get zakatSubtitle => 'Mal and fitrah zakat calculator';
+
+  @override
+  String get zakatTabMal => 'Mal';
+
+  @override
+  String get zakatTabFitrah => 'Fitrah';
+
+  @override
+  String get zakatTabHistory => 'History';
+
+  @override
+  String get zakatGoldPrice => '24-carat gold price per gram';
+
+  @override
+  String get zakatGoldNote =>
+      'Enter the current gold price yourself. Nisab = 85 g of 24-carat gold. Automatic prices are not available yet.';
+
+  @override
+  String get zakatWealth => 'Total wealth held for a full year';
+
+  @override
+  String get zakatDebts => 'Debts due now';
+
+  @override
+  String get zakatHaul => 'Wealth held for 1 year (haul)';
+
+  @override
+  String zakatNisab(String amount) {
+    return 'Nisab: $amount';
+  }
+
+  @override
+  String get zakatNeedGold => 'Enter the gold price to compute nisab.';
+
+  @override
+  String get zakatBelowNisab => 'Wealth has not reached nisab.';
+
+  @override
+  String get zakatNoHaul => 'Haul not yet reached.';
+
+  @override
+  String zakatDue(String amount) {
+    return 'Zakat: $amount';
+  }
+
+  @override
+  String get zakatSaveResult => 'Save to history';
+
+  @override
+  String get zakatSaved => 'Saved on this device';
+
+  @override
+  String get zakatPeople => 'Number of people';
+
+  @override
+  String get zakatFitrahRate => 'Fitrah per person';
+
+  @override
+  String zakatFitrahNote(String rice, String source) {
+    return 'Reference: $rice kg rice per person. The cash value may differ by region. Source: $source.';
+  }
+
+  @override
+  String get zakatNoHistory => 'No saved calculations yet';
+
+  @override
+  String get zakatLocalNote => 'History is stored on this device only.';
+
+  @override
+  String get zakatDisclaimer =>
+      'This is a helper tool, not a fatwa. Consult a scholar or an official zakat institution.';
 }

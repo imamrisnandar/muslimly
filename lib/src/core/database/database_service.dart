@@ -540,6 +540,27 @@ class DatabaseService {
     return maps.map((e) => ReadingActivity.fromMap(e)).toList();
   }
 
+  /// Pages read since [fromDate] (`yyyy-MM-dd`, inclusive), for the khatam
+  /// planner. `uniquePages` counts each page once; `pageDays` counts each
+  /// (day, page) pair once, so re-reading on another day counts again (used
+  /// when the plan has more than one khatam).
+  Future<({int uniquePages, int pageDays})> countPagesSince(
+    String fromDate,
+  ) async {
+    final db = await database;
+    final r = await db.rawQuery(
+      'SELECT COUNT(DISTINCT page_number) AS u, '
+      "COUNT(DISTINCT date || ':' || page_number) AS d "
+      'FROM reading_activity WHERE date >= ? AND page_number > 0',
+      [fromDate],
+    );
+    final row = r.first;
+    return (
+      uniquePages: (row['u'] as int?) ?? 0,
+      pageDays: (row['d'] as int?) ?? 0,
+    );
+  }
+
   /// Get all unsynced activities
   Future<List<ReadingActivity>> getUnsyncedActivities() async {
     final db = await database;

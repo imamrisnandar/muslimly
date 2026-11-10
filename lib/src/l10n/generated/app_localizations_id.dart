@@ -2029,4 +2029,242 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get trackerExcuseSave => 'Mulai';
+
+  @override
+  String get toolsCancel => 'Batal';
+
+  @override
+  String get toolsSave => 'Simpan';
+
+  @override
+  String get tasbihTitle => 'Tasbih';
+
+  @override
+  String get tasbihSubtitle => 'Penghitung dzikir';
+
+  @override
+  String get tasbihFree => 'Bebas';
+
+  @override
+  String get tasbihCustom => 'Kustom';
+
+  @override
+  String get tasbihCustomHint => 'Jumlah target';
+
+  @override
+  String tasbihRounds(int count) {
+    return '$count putaran';
+  }
+
+  @override
+  String tasbihTotal(int count) {
+    return 'Total $count';
+  }
+
+  @override
+  String get tasbihUndo => 'Urungkan';
+
+  @override
+  String get tasbihReset => 'Ulang';
+
+  @override
+  String get tasbihSaveSession => 'Simpan sesi';
+
+  @override
+  String get tasbihSaved => 'Sesi tersimpan';
+
+  @override
+  String get tasbihHistory => 'Riwayat';
+
+  @override
+  String get tasbihNoHistory => 'Belum ada sesi tersimpan';
+
+  @override
+  String get asmaulHusnaTitle => 'Asmaul Husna';
+
+  @override
+  String get asmaulHusnaSubtitle => '99 nama Allah beserta artinya';
+
+  @override
+  String get asmaulHusnaSearch => 'Cari nama atau arti';
+
+  @override
+  String get hadithTitle => 'Hadis Harian';
+
+  @override
+  String get hadithSubtitle => 'Satu hadis pilihan tiap hari';
+
+  @override
+  String get hadithOfDay => 'Hadis hari ini';
+
+  @override
+  String get hadithAll => 'Semua hadis';
+
+  @override
+  String get hadithReviewNote =>
+      'Teks dan terjemahan masih dalam peninjauan. Rujuk kitab asli untuk kepastian.';
+
+  @override
+  String get khatamTitle => 'Rencana Khatam';
+
+  @override
+  String get khatamSubtitle => 'Target harian sampai khatam';
+
+  @override
+  String get khatamEdit => 'Ubah rencana';
+
+  @override
+  String get khatamDelete => 'Hapus rencana';
+
+  @override
+  String get khatamSetupHint =>
+      'Pilih tanggal mulai dan target, app menghitung halaman per hari dari bacaan Anda.';
+
+  @override
+  String get khatamPresetRamadan => 'Khatam di Ramadan';
+
+  @override
+  String khatamRamadanAdjust(int count) {
+    return 'Geser awal Ramadan: $count hari';
+  }
+
+  @override
+  String get khatamStartDate => 'Tanggal mulai';
+
+  @override
+  String get khatamTargetDate => 'Tanggal target';
+
+  @override
+  String khatamCount(int count) {
+    return 'Jumlah khatam: $count';
+  }
+
+  @override
+  String get khatamOffDays => 'Hari tidak membaca (opsional)';
+
+  @override
+  String khatamPagesRead(int read, int total) {
+    return '$read dari $total halaman';
+  }
+
+  @override
+  String get khatamDone => 'Alhamdulillah, rencana selesai.';
+
+  @override
+  String khatamNotStarted(String date) {
+    return 'Mulai $date';
+  }
+
+  @override
+  String get khatamOverdue =>
+      'Tanggal target sudah lewat. Ubah rencana bila ingin melanjutkan.';
+
+  @override
+  String khatamBehind(int count) {
+    return 'Tertinggal sekitar $count halaman dari jadwal.';
+  }
+
+  @override
+  String get khatamOnTrack => 'Sesuai jadwal.';
+
+  @override
+  String khatamDailyTarget(int count) {
+    return 'Target hari ini: $count halaman';
+  }
+
+  @override
+  String khatamPerPrayer(int count) {
+    return 'Sekitar $count halaman per waktu sholat';
+  }
+
+  @override
+  String khatamDaysLeft(int count) {
+    return '$count hari baca tersisa';
+  }
+
+  @override
+  String khatamPlanRange(String start, String end, int count) {
+    return '$start - $end · $count× khatam';
+  }
+
+  @override
+  String get khatamUniqueNote =>
+      'Halaman dihitung unik sejak tanggal mulai (jika 1× khatam); mengulang halaman yang sama tidak menambah progres.';
+
+  @override
+  String get zakatTitle => 'Zakat';
+
+  @override
+  String get zakatSubtitle => 'Kalkulator zakat mal dan fitrah';
+
+  @override
+  String get zakatTabMal => 'Mal';
+
+  @override
+  String get zakatTabFitrah => 'Fitrah';
+
+  @override
+  String get zakatTabHistory => 'Riwayat';
+
+  @override
+  String get zakatGoldPrice => 'Harga emas 24 karat per gram';
+
+  @override
+  String get zakatGoldNote =>
+      'Isi sendiri dengan harga emas terkini. Nisab = 85 gram emas 24 karat. Harga otomatis belum tersedia.';
+
+  @override
+  String get zakatWealth => 'Total harta yang sudah mencapai haul';
+
+  @override
+  String get zakatDebts => 'Utang jatuh tempo';
+
+  @override
+  String get zakatHaul => 'Harta sudah dimiliki 1 tahun (haul)';
+
+  @override
+  String zakatNisab(String amount) {
+    return 'Nisab: $amount';
+  }
+
+  @override
+  String get zakatNeedGold => 'Isi harga emas untuk menghitung nisab.';
+
+  @override
+  String get zakatBelowNisab => 'Harta belum mencapai nisab.';
+
+  @override
+  String get zakatNoHaul => 'Belum mencapai haul.';
+
+  @override
+  String zakatDue(String amount) {
+    return 'Zakat: $amount';
+  }
+
+  @override
+  String get zakatSaveResult => 'Simpan ke riwayat';
+
+  @override
+  String get zakatSaved => 'Tersimpan di perangkat';
+
+  @override
+  String get zakatPeople => 'Jumlah jiwa';
+
+  @override
+  String get zakatFitrahRate => 'Zakat fitrah per jiwa';
+
+  @override
+  String zakatFitrahNote(String rice, String source) {
+    return 'Acuan: $rice kg beras per jiwa. Nilai rupiah dapat berbeda per daerah. Sumber: $source.';
+  }
+
+  @override
+  String get zakatNoHistory => 'Belum ada perhitungan tersimpan';
+
+  @override
+  String get zakatLocalNote => 'Riwayat hanya tersimpan di perangkat ini.';
+
+  @override
+  String get zakatDisclaimer =>
+      'Perhitungan ini alat bantu, bukan fatwa. Konsultasikan dengan ustadz atau lembaga zakat resmi.';
 }
