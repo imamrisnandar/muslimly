@@ -41,22 +41,19 @@ void main() {
       },
     );
 
-    test(
-      'unlike the exact-equality reading bug, skipping straight past a '
-      'threshold (streak 8, never having been exactly 7) still fires it',
-      () {
-        final insight = generateHafalanInsight(
-          streak: 8,
-          totalAyatHafal: 0,
-          lastShownStreakMilestone: 5,
-          lastShownAyatMilestone: 0,
-        );
-        expect(insight, isNotNull);
-        // Highest crossed-and-unshown threshold is 7, not 5 (already shown)
-        // and not 8 (not a real milestone value).
-        expect(insight!['milestone'], 7);
-      },
-    );
+    test('unlike the exact-equality reading bug, skipping straight past a '
+        'threshold (streak 8, never having been exactly 7) still fires it', () {
+      final insight = generateHafalanInsight(
+        streak: 8,
+        totalAyatHafal: 0,
+        lastShownStreakMilestone: 5,
+        lastShownAyatMilestone: 0,
+      );
+      expect(insight, isNotNull);
+      // Highest crossed-and-unshown threshold is 7, not 5 (already shown)
+      // and not 8 (not a real milestone value).
+      expect(insight!['milestone'], 7);
+    });
 
     test('picks the HIGHEST unshown streak milestone, not the lowest', () {
       final insight = generateHafalanInsight(
@@ -90,37 +87,34 @@ void main() {
       expect(insight['milestone'], 10);
     });
 
-    test(
-      'insight message copy (ARB) never mentions points/score framing',
-      () {
-        // generateHafalanInsight() itself only returns type+milestone (it
-        // has no BuildContext to resolve l10n) — the actual displayed text
-        // lives in the ARB files, resolved by HafalanInsightSection.build.
-        // Checking both ARB source files directly still verifies the
-        // Riset #2 framing guarantee end-to-end.
-        for (final path in [
-          'lib/src/l10n/arb/app_id.arb',
-          'lib/src/l10n/arb/app_en.arb',
+    test('insight message copy (ARB) never mentions points/score framing', () {
+      // generateHafalanInsight() itself only returns type+milestone (it
+      // has no BuildContext to resolve l10n) — the actual displayed text
+      // lives in the ARB files, resolved by HafalanInsightSection.build.
+      // Checking both ARB source files directly still verifies the
+      // Riset #2 framing guarantee end-to-end.
+      for (final path in [
+        'lib/src/l10n/arb/app_id.arb',
+        'lib/src/l10n/arb/app_en.arb',
+      ]) {
+        final arb =
+            jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
+        for (final key in [
+          'hafalanInsightStreakMessage',
+          'hafalanInsightAyatMessage',
         ]) {
-          final arb =
-              jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
-          for (final key in [
-            'hafalanInsightStreakMessage',
-            'hafalanInsightAyatMessage',
-          ]) {
-            final message = (arb[key] as String).toLowerCase();
-            expect(
-              message.contains('poin') ||
-                  message.contains('point') ||
-                  message.contains('skor') ||
-                  message.contains('score') ||
-                  message.contains('pahala'),
-              isFalse,
-              reason: '$path[$key] = "$message"',
-            );
-          }
+          final message = (arb[key] as String).toLowerCase();
+          expect(
+            message.contains('poin') ||
+                message.contains('point') ||
+                message.contains('skor') ||
+                message.contains('score') ||
+                message.contains('pahala'),
+            isFalse,
+            reason: '$path[$key] = "$message"',
+          );
         }
-      },
-    );
+      }
+    });
   });
 }

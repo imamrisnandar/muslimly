@@ -14,10 +14,9 @@ class WudhuCubit extends Cubit<WudhuState> {
       final items = await _getWudhuContent(locale);
       emit(state.copyWith(items: items, status: WudhuStatus.loaded));
     } catch (e) {
-      emit(state.copyWith(
-        status: WudhuStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: WudhuStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 

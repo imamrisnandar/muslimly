@@ -14,16 +14,14 @@ import 'package:muslimly/src/core/presentation/widgets/app_transparent_app_bar.d
 // ScreenUtilInit somewhere above it in the tree (same as the real app does
 // in main.dart) or it throws a LateInitializationError.
 Widget _wrapWithScreenUtil(Widget app) => ScreenUtilInit(
-      designSize: const Size(392.72727272727275, 800.7272727272727),
-      builder: (context, child) => app,
-    );
+  designSize: const Size(392.72727272727275, 800.7272727272727),
+  builder: (context, child) => app,
+);
 
 void main() {
   Widget wrap(Widget child) => _wrapWithScreenUtil(
-        MaterialApp(
-          home: Scaffold(appBar: child as PreferredSizeWidget),
-        ),
-      );
+    MaterialApp(home: Scaffold(appBar: child as PreferredSizeWidget)),
+  );
 
   testWidgets('renders the title', (tester) async {
     await tester.pumpWidget(
@@ -35,17 +33,13 @@ void main() {
   testWidgets('AppBar background is transparent with no elevation', (
     tester,
   ) async {
-    await tester.pumpWidget(
-      wrap(const AppTransparentAppBar(title: 'Test')),
-    );
+    await tester.pumpWidget(wrap(const AppTransparentAppBar(title: 'Test')));
     final appBar = tester.widget<AppBar>(find.byType(AppBar));
     expect(appBar.backgroundColor, Colors.transparent);
     expect(appBar.elevation, 0);
   });
 
-  testWidgets('shows a default back button (Icons.arrow_back)', (
-    tester,
-  ) async {
+  testWidgets('shows a default back button (Icons.arrow_back)', (tester) async {
     await tester.pumpWidget(wrap(const AppTransparentAppBar(title: 'Test')));
     expect(find.byIcon(Icons.arrow_back), findsOneWidget);
   });
@@ -61,10 +55,7 @@ void main() {
     var backPressed = false;
     await tester.pumpWidget(
       wrap(
-        AppTransparentAppBar(
-          title: 'Test',
-          onBack: () => backPressed = true,
-        ),
+        AppTransparentAppBar(title: 'Test', onBack: () => backPressed = true),
       ),
     );
 
@@ -116,7 +107,8 @@ void main() {
     expect(
       appBar.preferredSize.height,
       kToolbarHeight + 48,
-      reason: 'preferredSize must grow to fit the bottom widget, or the '
+      reason:
+          'preferredSize must grow to fit the bottom widget, or the '
           'body renders under it',
     );
 

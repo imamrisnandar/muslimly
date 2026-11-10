@@ -514,9 +514,7 @@ class HafalanBloc extends Bloc<HafalanEvent, HafalanState> {
         } else {
           _speech.stop();
           final audioPath = await _finalizeRecording();
-          emit(
-            state.copyWith(isListening: false, audioFilePath: audioPath),
-          );
+          emit(state.copyWith(isListening: false, audioFilePath: audioPath));
         }
         return;
       }

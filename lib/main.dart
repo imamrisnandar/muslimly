@@ -1,3 +1,4 @@
+import 'src/features/prayer_widget/data/widget_launch_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -22,7 +23,6 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'src/core/theme/app_colors.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -39,7 +39,8 @@ void main() async {
   // failures as non-fatal so they don't skew crash-free rate.
   FlutterError.onError = (FlutterErrorDetails details) {
     final errorText = details.exception.toString();
-    final isFontLoadError = details.exception is Exception &&
+    final isFontLoadError =
+        details.exception is Exception &&
         (errorText.contains('Failed to load font') ||
             errorText.contains('GoogleFonts.config.allowRuntimeFetching'));
     FirebaseCrashlytics.instance.recordFlutterError(
@@ -56,7 +57,8 @@ void main() async {
     // ("Failed to load font with url") and missing bundled asset
     // ("GoogleFonts.config.allowRuntimeFetching is false but font ...").
     final errorText = error.toString();
-    final isFontLoadError = error is Exception &&
+    final isFontLoadError =
+        error is Exception &&
         (errorText.contains('Failed to load font') ||
             errorText.contains('GoogleFonts.config.allowRuntimeFetching'));
     FirebaseCrashlytics.instance.recordError(
@@ -68,7 +70,9 @@ void main() async {
   };
 
   // Disable Crashlytics collection in debug to avoid polluting reports
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+    !kDebugMode,
+  );
 
   configureDependencies();
 
@@ -83,6 +87,7 @@ void main() async {
   getIt<BackgroundService>().initialize();
 
   runApp(const MyApp());
+  WidgetLaunchHandler.init();
 }
 
 class MyApp extends StatelessWidget {
@@ -108,26 +113,26 @@ class MyApp extends StatelessWidget {
               }
             },
             child: BlocBuilder<SettingsCubit, SettingsState>(
-            builder: (context, state) {
-              return MaterialApp.router(
-                title: 'Muslimly',
-                debugShowCheckedModeBanner: false,
-                locale: state.locale,
-                localizationsDelegates:
-                    AppLocalizations.localizationsDelegates,
-                supportedLocales: AppLocalizations.supportedLocales,
-                theme: ThemeData(
-                  useMaterial3: true,
-                  colorScheme: ColorScheme.fromSeed(
-                    seedColor: AppColors.accent,
-                    primary: AppColors.accent,
+              builder: (context, state) {
+                return MaterialApp.router(
+                  title: 'Muslimly',
+                  debugShowCheckedModeBanner: false,
+                  locale: state.locale,
+                  localizationsDelegates:
+                      AppLocalizations.localizationsDelegates,
+                  supportedLocales: AppLocalizations.supportedLocales,
+                  theme: ThemeData(
+                    useMaterial3: true,
+                    colorScheme: ColorScheme.fromSeed(
+                      seedColor: AppColors.accent,
+                      primary: AppColors.accent,
+                    ),
                   ),
-                ),
-                routerConfig: appRouter,
-              );
-            },
+                  routerConfig: appRouter,
+                );
+              },
+            ),
           ),
-        ),
         );
       },
     );

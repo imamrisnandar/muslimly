@@ -304,7 +304,8 @@ class _SearchResultCard extends StatelessWidget {
         TextSpan(
           text: m.group(1),
           style: TextStyle(
-            color: AppColors.quranGreenDark, // Darker Green for text on light bg
+            color:
+                AppColors.quranGreenDark, // Darker Green for text on light bg
             backgroundColor: const Color(
               0xFFA5D6A7,
             ).withValues(alpha: 0.3), // Light Green highlight

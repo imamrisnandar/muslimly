@@ -37,18 +37,29 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
+            colors: [
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
+            ],
           ),
         ),
         child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
             if (state is ForgotPasswordOTPVerified) {
-              context.push('/new-password', extra: {
-                'bloc': context.read<ForgotPasswordBloc>(),
-                'reset_token': state.resetToken,
-              });
+              context.push(
+                '/new-password',
+                extra: {
+                  'bloc': context.read<ForgotPasswordBloc>(),
+                  'reset_token': state.resetToken,
+                },
+              );
             } else if (state is ForgotPasswordError) {
-              showCustomSnackBar(context, message: state.message, type: SnackBarType.error);
+              showCustomSnackBar(
+                context,
+                message: state.message,
+                type: SnackBarType.error,
+              );
             }
           },
           builder: (context, state) {
@@ -62,7 +73,9 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                   decoration: BoxDecoration(
                     color: AppColors.cardDark.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.5),
@@ -75,7 +88,11 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.mark_email_read_outlined, color: AppColors.accent, size: 48.sp),
+                      Icon(
+                        Icons.mark_email_read_outlined,
+                        color: AppColors.accent,
+                        size: 48.sp,
+                      ),
                       SizedBox(height: 16.h),
                       Text(
                         l10n.otpVerifyTitle,
@@ -90,7 +107,10 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                       Text(
                         l10n.otpVerifySubtitle(widget.email),
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14.sp, color: Colors.white70),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.white70,
+                        ),
                       ),
                       SizedBox(height: 32.h),
                       TextField(
@@ -108,7 +128,11 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                           filled: true,
                           fillColor: Colors.white,
                           hintText: l10n.otpVerifyHint,
-                          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14.sp, letterSpacing: 1),
+                          hintStyle: TextStyle(
+                            color: Colors.grey[400],
+                            fontSize: 14.sp,
+                            letterSpacing: 1,
+                          ),
                           counterText: '',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -142,7 +166,10 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                             ),
                             child: Text(
                               l10n.otpVerifyButton,
-                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),

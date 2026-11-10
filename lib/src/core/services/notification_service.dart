@@ -34,6 +34,16 @@ const String kPushChannelName = 'General Notifications';
 ///   - 5000:  muraja'ah (spaced-repetition review) daily summary, below
 const int kMurajaahNotificationId = 5000;
 
+/// Prayer-tracker nudges use ids 5100-5109 (today + tomorrow x 5 prayers).
+const int kPrayerNudgeIdBase = 5100;
+const int kPrayerNudgeIdCount = 10;
+
+/// End-of-excused-period reminder (single id). Its text must stay neutral: it
+/// can show on a lock screen and must not reveal why tracking is paused.
+const int kExcuseEndNotificationId = 5110;
+const String kNudgeChannelId = 'prayer_nudge_v1';
+const String kNudgeChannelName = 'Prayer Tracker Reminders';
+
 /// Resolve a notification payload to an in-app route. An explicit absolute
 /// `route` in the data wins; otherwise fall back to a per-`type` destination,
 /// and anything unrecognised opens the dashboard. Pure — unit-tested.
@@ -290,6 +300,16 @@ class NotificationService with WidgetsBindingObserver {
         kPushChannelName,
         description: 'Reminders and announcements from Muslimly',
         importance: Importance.high,
+      ),
+    );
+
+    // Quiet channel for prayer-tracker nudges (no adhan, no alarm audio).
+    await androidImplementation.createNotificationChannel(
+      const AndroidNotificationChannel(
+        kNudgeChannelId,
+        kNudgeChannelName,
+        description: 'Gentle reminders before a prayer time ends',
+        importance: Importance.defaultImportance,
       ),
     );
 
@@ -626,6 +646,60 @@ class NotificationService with WidgetsBindingObserver {
           s2,
         );
       }
+    }
+  }
+
+  /// Schedules a one-off, quiet prayer-tracker nudge at [scheduledTime].
+  /// Silently skipped if that moment has passed.
+  Future<void> scheduleNudgeNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime scheduledTime,
+    String? payload,
+  }) async {
+    final when = tz.TZDateTime.from(scheduledTime, tz.local);
+    if (when.isBefore(tz.TZDateTime.now(tz.local))) return;
+
+    const details = NotificationDetails(
+      android: AndroidNotificationDetails(
+        kNudgeChannelId,
+        kNudgeChannelName,
+        channelDescription: 'Gentle reminders before a prayer time ends',
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
+      ),
+      iOS: DarwinNotificationDetails(),
+    );
+
+    Future<void> schedule(AndroidScheduleMode mode) {
+      return _flutterLocalNotificationsPlugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: when,
+        notificationDetails: details,
+        androidScheduleMode: mode,
+        payload: payload,
+      );
+    }
+
+    try {
+      await schedule(AndroidScheduleMode.exactAllowWhileIdle);
+    } catch (_) {
+      // Exact alarms are denied by default on Android 14+; a nudge does not
+      // need to be exact, so fall back to inexact.
+      try {
+        await schedule(AndroidScheduleMode.inexactAllowWhileIdle);
+      } catch (e, s) {
+        AppLogger.error('Failed to schedule nudge id=$id', e, s);
+      }
+    }
+  }
+
+  Future<void> cancelNotifications(Iterable<int> ids) async {
+    for (final id in ids) {
+      await _flutterLocalNotificationsPlugin.cancel(id: id);
     }
   }
 

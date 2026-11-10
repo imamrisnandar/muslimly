@@ -6,8 +6,7 @@ import 'doa_harian_list_state.dart';
 class DoaHarianListCubit extends Cubit<DoaHarianListState> {
   final GetZikirContent _getZikirContent;
 
-  DoaHarianListCubit(this._getZikirContent)
-    : super(const DoaHarianListState());
+  DoaHarianListCubit(this._getZikirContent) : super(const DoaHarianListState());
 
   Future<void> loadContent(Locale locale) async {
     final items = await _getZikirContent(ZikirCategory.daily, locale);

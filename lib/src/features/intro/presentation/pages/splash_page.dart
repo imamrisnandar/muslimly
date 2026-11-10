@@ -62,8 +62,11 @@ class _SplashPageState extends State<SplashPage>
     if (token != null && token.isNotEmpty) {
       final payload = _decodeJwtPayload(token);
       final exp = payload?['exp'] as int?;
-      final isValid = exp != null &&
-          DateTime.fromMillisecondsSinceEpoch(exp * 1000).isAfter(DateTime.now());
+      final isValid =
+          exp != null &&
+          DateTime.fromMillisecondsSinceEpoch(
+            exp * 1000,
+          ).isAfter(DateTime.now());
 
       if (isValid) {
         final username = payload!['username'] as String?;
@@ -113,7 +116,11 @@ class _SplashPageState extends State<SplashPage>
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
+            colors: [
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
+            ],
           ),
         ),
         child: Center(

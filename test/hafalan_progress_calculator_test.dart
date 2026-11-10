@@ -117,36 +117,31 @@ void main() {
       expect(fatihah.latestAudioIsSaved, isFalse);
     });
 
-    test(
-      'latestAudioFilePath picks the most recent session WITH audio, not '
-      'simply the most recent session overall',
-      () {
-        final sessions = [
-          _session(
-            id: 1,
-            surahNumber: 1,
-            pageNumber: 1,
-            accuracy: 1.0,
-            timestamp: 100,
-            audioFilePath: '/tmp/first.m4a',
-          ),
-          // Most recent attempt, but recording was off — must NOT win.
-          _session(
-            id: 2,
-            surahNumber: 1,
-            pageNumber: 1,
-            accuracy: 0.9,
-            timestamp: 200,
-          ),
-        ];
-        final result = HafalanProgressCalculator.calculateSurahProgress(
-          sessions,
-        );
-        final fatihah = result.firstWhere((p) => p.surahNumber == 1);
-        expect(fatihah.latestAudioSessionId, 1);
-        expect(fatihah.latestAudioFilePath, '/tmp/first.m4a');
-      },
-    );
+    test('latestAudioFilePath picks the most recent session WITH audio, not '
+        'simply the most recent session overall', () {
+      final sessions = [
+        _session(
+          id: 1,
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 1.0,
+          timestamp: 100,
+          audioFilePath: '/tmp/first.m4a',
+        ),
+        // Most recent attempt, but recording was off — must NOT win.
+        _session(
+          id: 2,
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 0.9,
+          timestamp: 200,
+        ),
+      ];
+      final result = HafalanProgressCalculator.calculateSurahProgress(sessions);
+      final fatihah = result.firstWhere((p) => p.surahNumber == 1);
+      expect(fatihah.latestAudioSessionId, 1);
+      expect(fatihah.latestAudioFilePath, '/tmp/first.m4a');
+    });
 
     test('latestAudioIsSaved reflects that specific session\'s flag', () {
       final sessions = [
@@ -160,9 +155,7 @@ void main() {
           isAudioSaved: true,
         ),
       ];
-      final result = HafalanProgressCalculator.calculateSurahProgress(
-        sessions,
-      );
+      final result = HafalanProgressCalculator.calculateSurahProgress(sessions);
       final fatihah = result.firstWhere((p) => p.surahNumber == 1);
       expect(fatihah.latestAudioIsSaved, isTrue);
     });
@@ -214,30 +207,60 @@ void main() {
 
     test('a session neither today nor yesterday is a broken streak', () {
       final sessions = [
-        _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(3)),
+        _session(
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 1.0,
+          date: _daysAgo(3),
+        ),
       ];
       expect(HafalanProgressCalculator.calculateHafalanStreak(sessions), 0);
     });
 
     test('a single session today is a streak of 1', () {
       final sessions = [
-        _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(0)),
+        _session(
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 1.0,
+          date: _daysAgo(0),
+        ),
       ];
       expect(HafalanProgressCalculator.calculateHafalanStreak(sessions), 1);
     });
 
     test('still alive with the most recent session yesterday', () {
       final sessions = [
-        _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(1)),
+        _session(
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 1.0,
+          date: _daysAgo(1),
+        ),
       ];
       expect(HafalanProgressCalculator.calculateHafalanStreak(sessions), 1);
     });
 
     test('3 consecutive days ending today is a streak of 3', () {
       final sessions = [
-        _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(0)),
-        _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(1)),
-        _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(2)),
+        _session(
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 1.0,
+          date: _daysAgo(0),
+        ),
+        _session(
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 1.0,
+          date: _daysAgo(1),
+        ),
+        _session(
+          surahNumber: 1,
+          pageNumber: 1,
+          accuracy: 1.0,
+          date: _daysAgo(2),
+        ),
       ];
       expect(HafalanProgressCalculator.calculateHafalanStreak(sessions), 3);
     });
@@ -250,7 +273,12 @@ void main() {
         // count, but doesn't reset the streak either.
         final sessions = [
           for (final d in [0, 1, 3, 4, 5, 6])
-            _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(d)),
+            _session(
+              surahNumber: 1,
+              pageNumber: 1,
+              accuracy: 1.0,
+              date: _daysAgo(d),
+            ),
         ];
         // Days walked: 0(hit,1) 1(hit,2) 2(gap,shielded) 3(hit,3) 4(hit,4)
         // 5(hit,5) 6(hit,6) = streak 6, shield consumed once.
@@ -261,7 +289,12 @@ void main() {
     test('two gap days in the same week breaks the streak at the second', () {
       final sessions = [
         for (final d in [0, 1, 3, 5, 6])
-          _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(d)),
+          _session(
+            surahNumber: 1,
+            pageNumber: 1,
+            accuracy: 1.0,
+            date: _daysAgo(d),
+          ),
       ];
       // Days walked: 0(hit,1) 1(hit,2) 2(gap,shielded) 3(hit,3) 4(gap,no
       // shield left this week) -> break. Streak = 3.
@@ -273,7 +306,12 @@ void main() {
       final days = [0, 1, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13];
       final sessions = [
         for (final d in days)
-          _session(surahNumber: 1, pageNumber: 1, accuracy: 1.0, date: _daysAgo(d)),
+          _session(
+            surahNumber: 1,
+            pageNumber: 1,
+            accuracy: 1.0,
+            date: _daysAgo(d),
+          ),
       ];
       // Week 1 (days 0-6): gap at day 2, shielded. Week 2 (days 7-13): gap
       // at day 9, shield refilled at day 7 (daysWalked % 7 == 0) so it's

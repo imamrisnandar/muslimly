@@ -1,4 +1,3 @@
-
 import '../models/ayah_model.dart';
 import '../models/surah_model.dart';
 import 'local/quran_library/quran.dart' as quran;

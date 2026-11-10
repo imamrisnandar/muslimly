@@ -3307,6 +3307,468 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get settingsDeleteConfirmNo;
+
+  /// No description provided for @trackerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer Tracker'**
+  String get trackerTitle;
+
+  /// No description provided for @trackerToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get trackerToday;
+
+  /// No description provided for @trackerEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Not recorded yet'**
+  String get trackerEarlier;
+
+  /// No description provided for @trackerEarlierHint.
+  ///
+  /// In en, this message translates to:
+  /// **'These times have passed. Tell us what happened; nothing is counted automatically.'**
+  String get trackerEarlierHint;
+
+  /// No description provided for @trackerEarlierCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} not recorded'**
+  String trackerEarlierCount(int count);
+
+  /// No description provided for @trackerYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get trackerYesterday;
+
+  /// No description provided for @trackerTapToRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a prayer to record it'**
+  String get trackerTapToRecord;
+
+  /// No description provided for @trackerMarkAllPrayed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as prayed'**
+  String get trackerMarkAllPrayed;
+
+  /// No description provided for @trackerMarkAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark {count} prayers as prayed?'**
+  String trackerMarkAllTitle(int count);
+
+  /// No description provided for @trackerMarkAllBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All prayers on {date} will be recorded as prayed. Only continue if it is true.'**
+  String trackerMarkAllBody(String date);
+
+  /// No description provided for @trackerMarkAllConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I prayed'**
+  String get trackerMarkAllConfirm;
+
+  /// No description provided for @trackerStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day streak'**
+  String trackerStreak(int count);
+
+  /// No description provided for @trackerStreakNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No streak yet'**
+  String get trackerStreakNone;
+
+  /// No description provided for @trackerStatusUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get trackerStatusUpcoming;
+
+  /// No description provided for @trackerStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Time is open'**
+  String get trackerStatusOpen;
+
+  /// No description provided for @trackerStatusPerformed.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayed'**
+  String get trackerStatusPerformed;
+
+  /// No description provided for @trackerStatusPerformedJamaah.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayed in congregation'**
+  String get trackerStatusPerformedJamaah;
+
+  /// No description provided for @trackerStatusMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get trackerStatusMissed;
+
+  /// No description provided for @trackerStatusUnrecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Not recorded'**
+  String get trackerStatusUnrecorded;
+
+  /// No description provided for @trackerActionPrayed.
+  ///
+  /// In en, this message translates to:
+  /// **'I prayed'**
+  String get trackerActionPrayed;
+
+  /// No description provided for @trackerActionJamaah.
+  ///
+  /// In en, this message translates to:
+  /// **'In congregation'**
+  String get trackerActionJamaah;
+
+  /// No description provided for @trackerActionMissed.
+  ///
+  /// In en, this message translates to:
+  /// **'I missed it'**
+  String get trackerActionMissed;
+
+  /// No description provided for @trackerQadhaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Qadha to make up'**
+  String get trackerQadhaTitle;
+
+  /// No description provided for @trackerQadhaNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to make up'**
+  String get trackerQadhaNone;
+
+  /// No description provided for @trackerQadhaTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} prayers'**
+  String trackerQadhaTotal(int count);
+
+  /// No description provided for @trackerNudgeSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle reminder before time ends'**
+  String get trackerNudgeSetting;
+
+  /// No description provided for @trackerNudgeSettingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet notification shortly before each prayer time ends, only if you have not recorded it.'**
+  String get trackerNudgeSettingHint;
+
+  /// No description provided for @trackerNudgeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{prayer} time ends around {time}. Have you prayed?'**
+  String trackerNudgeBody(String prayer, String time);
+
+  /// No description provided for @trackerLocalNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This record is only kept on this device.'**
+  String get trackerLocalNote;
+
+  /// No description provided for @trackerFiqhNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A recording and estimating aid, not a fatwa. Please consult your ustadz.'**
+  String get trackerFiqhNote;
+
+  /// No description provided for @trackerApproxLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Times are approximate: the sun does not rise or set at your latitude today.'**
+  String get trackerApproxLocation;
+
+  /// No description provided for @trackerLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load prayer times.'**
+  String get trackerLoadError;
+
+  /// No description provided for @widgetNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get widgetNext;
+
+  /// No description provided for @widgetOpenApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Muslimly to load prayer times'**
+  String get widgetOpenApp;
+
+  /// No description provided for @qadhaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Qadha'**
+  String get qadhaTitle;
+
+  /// No description provided for @qadhaMakeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Made up 1'**
+  String get qadhaMakeUp;
+
+  /// No description provided for @qadhaUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get qadhaUndo;
+
+  /// No description provided for @qadhaPaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily pace'**
+  String get qadhaPaceTitle;
+
+  /// No description provided for @qadhaPaceNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No pace set'**
+  String get qadhaPaceNone;
+
+  /// No description provided for @qadhaPacePerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} per day'**
+  String qadhaPacePerDay(int count);
+
+  /// No description provided for @qadhaFinishEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'At this pace, about {date}'**
+  String qadhaFinishEstimate(String date);
+
+  /// No description provided for @qadhaWizardButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate old qadha'**
+  String get qadhaWizardButton;
+
+  /// No description provided for @qadhaWizardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate qadha'**
+  String get qadhaWizardTitle;
+
+  /// No description provided for @qadhaStepRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Period'**
+  String get qadhaStepRange;
+
+  /// No description provided for @qadhaStepPattern.
+  ///
+  /// In en, this message translates to:
+  /// **'Pattern'**
+  String get qadhaStepPattern;
+
+  /// No description provided for @qadhaStepExcuse.
+  ///
+  /// In en, this message translates to:
+  /// **'Corrections'**
+  String get qadhaStepExcuse;
+
+  /// No description provided for @qadhaStepReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get qadhaStepReview;
+
+  /// No description provided for @qadhaFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Obligation began'**
+  String get qadhaFrom;
+
+  /// No description provided for @qadhaTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Started praying regularly'**
+  String get qadhaTo;
+
+  /// No description provided for @qadhaPickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick date'**
+  String get qadhaPickDate;
+
+  /// No description provided for @qadhaPatternNever.
+  ///
+  /// In en, this message translates to:
+  /// **'I did not pray in this period'**
+  String get qadhaPatternNever;
+
+  /// No description provided for @qadhaPatternSometimes.
+  ///
+  /// In en, this message translates to:
+  /// **'I prayed on some days'**
+  String get qadhaPatternSometimes;
+
+  /// No description provided for @qadhaPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'{prayer}: {count} days a week'**
+  String qadhaPerWeek(String prayer, int count);
+
+  /// No description provided for @qadhaExcuseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Days with a valid excuse (such as menstruation or postnatal bleeding) are not owed. Estimated days per month:'**
+  String get qadhaExcuseHint;
+
+  /// No description provided for @qadhaReviewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can edit every number. Saving adds an adjustment; earlier history is kept.'**
+  String get qadhaReviewHint;
+
+  /// No description provided for @qadhaSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get qadhaSave;
+
+  /// No description provided for @qadhaSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get qadhaSaved;
+
+  /// No description provided for @qadhaNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get qadhaNext;
+
+  /// No description provided for @qadhaBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get qadhaBack;
+
+  /// No description provided for @qadhaFiqhNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This is an estimating aid, not a fatwa. Rules differ between madhhabs, so please consult your ustadz.'**
+  String get qadhaFiqhNote;
+
+  /// No description provided for @qadhaReminderNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders for qadha are not available yet.'**
+  String get qadhaReminderNote;
+
+  /// No description provided for @trackerExcuseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause (excused)'**
+  String get trackerExcuseTitle;
+
+  /// No description provided for @trackerExcuseStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a pause'**
+  String get trackerExcuseStart;
+
+  /// No description provided for @trackerExcuseActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused since {date}'**
+  String trackerExcuseActive(String date);
+
+  /// No description provided for @trackerExcuseEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get trackerExcuseEnd;
+
+  /// No description provided for @trackerExcuseKindHaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Menstruation'**
+  String get trackerExcuseKindHaid;
+
+  /// No description provided for @trackerExcuseKindNifas.
+  ///
+  /// In en, this message translates to:
+  /// **'Postnatal bleeding'**
+  String get trackerExcuseKindNifas;
+
+  /// No description provided for @trackerExcuseKindSakit.
+  ///
+  /// In en, this message translates to:
+  /// **'Illness'**
+  String get trackerExcuseKindSakit;
+
+  /// No description provided for @trackerExcuseStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Excused'**
+  String get trackerExcuseStatus;
+
+  /// No description provided for @trackerExcuseExpectedEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected end (optional)'**
+  String get trackerExcuseExpectedEnd;
+
+  /// No description provided for @trackerExcuseNoExpected.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get trackerExcuseNoExpected;
+
+  /// No description provided for @trackerExcuseHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier pauses'**
+  String get trackerExcuseHistory;
+
+  /// No description provided for @trackerExcuseDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get trackerExcuseDelete;
+
+  /// No description provided for @trackerExcuseLocalOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept only on this device. It is never uploaded, so another device will show these times as not recorded.'**
+  String get trackerExcuseLocalOnly;
+
+  /// No description provided for @trackerExcuseEndNotifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer tracking'**
+  String get trackerExcuseEndNotifTitle;
+
+  /// No description provided for @trackerExcuseEndNotifBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking is paused. Ready to continue?'**
+  String get trackerExcuseEndNotifBody;
+
+  /// No description provided for @trackerExcuseSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get trackerExcuseSave;
 }
 
 class _AppLocalizationsDelegate

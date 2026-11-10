@@ -12,8 +12,8 @@ class GetZikirContent {
     return switch (category) {
       ZikirCategory.morning => _repository.getMorningZikir(locale),
       ZikirCategory.evening => _repository.getEveningZikir(locale),
-      ZikirCategory.prayer  => _repository.getPrayerZikir(locale),
-      ZikirCategory.daily   => _repository.getDailyDzikir(locale),
+      ZikirCategory.prayer => _repository.getPrayerZikir(locale),
+      ZikirCategory.daily => _repository.getDailyDzikir(locale),
     };
   }
 }

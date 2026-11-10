@@ -243,10 +243,7 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(
-                      color: AppColors.accent,
-                      width: 2,
-                    ),
+                    border: Border.all(color: AppColors.accent, width: 2),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -327,8 +324,8 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: statusColor.withValues(alpha: 
-                              _isStableAligned ? 0.5 : 0.1,
+                            color: statusColor.withValues(
+                              alpha: _isStableAligned ? 0.5 : 0.1,
                             ),
                             blurRadius: _isStableAligned ? 60 : 20,
                             spreadRadius: 1,
@@ -417,9 +414,7 @@ class _QiblaCompassPageState extends State<QiblaCompassPage> {
           Text(
             _isStableAligned ? '${l10n.qiblaAligned} ✓' : l10n.qiblaAlignArrow,
             style: TextStyle(
-              color: _isStableAligned
-                  ? AppColors.accent
-                  : Colors.white54,
+              color: _isStableAligned ? AppColors.accent : Colors.white54,
               fontSize: _isStableAligned ? 16.sp : 14.sp,
               fontWeight: _isStableAligned
                   ? FontWeight.bold

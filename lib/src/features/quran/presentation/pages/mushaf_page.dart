@@ -726,10 +726,11 @@ class _MushafPageState extends State<MushafPage> {
                                   int? folderId;
                                   // Removing is instant; adding asks the folder.
                                   if (!isBookmarked) {
-                                    final choice = await showBookmarkFolderPicker(
-                                      context,
-                                      mode: 'mushaf',
-                                    );
+                                    final choice =
+                                        await showBookmarkFolderPicker(
+                                          context,
+                                          mode: 'mushaf',
+                                        );
                                     if (choice == null) return;
                                     folderId = choice.folderId;
                                   }

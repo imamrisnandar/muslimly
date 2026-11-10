@@ -206,7 +206,10 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
           borderRadius: BorderRadius.circular(16.r),
           border: isToday
               ? Border.all(color: AppColors.accent, width: 1.5)
-              : Border.all(color: Colors.white.withValues(alpha: 0.05), width: 0.5),
+              : Border.all(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  width: 0.5,
+                ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -268,7 +271,8 @@ class _IbadahCalendarWidgetState extends State<IbadahCalendarWidget> {
     Color? color;
     if (type == FastingType.wajib) color = AppColors.gold;
     if (type == FastingType.sunnah) color = AppColors.accent;
-    if (type == FastingType.haram) color = Colors.redAccent.withValues(alpha: 0.7);
+    if (type == FastingType.haram)
+      color = Colors.redAccent.withValues(alpha: 0.7);
 
     if (color == null) return const SizedBox.shrink();
 

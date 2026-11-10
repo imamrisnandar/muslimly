@@ -182,11 +182,11 @@ class _ArticleCard extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        categoryColor.withValues(alpha: 
-                          0.25,
+                        categoryColor.withValues(
+                          alpha: 0.25,
                         ), // Stronger Teal highlight on top-left edge
-                        Colors.white.withValues(alpha: 
-                          0.12,
+                        Colors.white.withValues(
+                          alpha: 0.12,
                         ), // Stronger white reflection
                         Colors.black.withValues(alpha: 0.1),
                       ],
@@ -210,8 +210,8 @@ class _ArticleCard extends StatelessWidget {
                   child: Icon(
                     iconData,
                     size: 150.sp,
-                    color: categoryColor.withValues(alpha: 
-                      0.05,
+                    color: categoryColor.withValues(
+                      alpha: 0.05,
                     ), // Very subtle embedded graphic
                   ),
                 ),
@@ -311,7 +311,9 @@ class _ArticleCard extends StatelessWidget {
                                     letterSpacing: 0.5,
                                     shadows: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.8),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.8,
+                                        ),
                                         blurRadius: 10,
                                         offset: const Offset(0, 3),
                                       ),
@@ -329,7 +331,9 @@ class _ArticleCard extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.inter(
                                         fontSize: 12.sp,
-                                        color: Colors.white.withValues(alpha: 0.75),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.75,
+                                        ),
                                         height: 1.4,
                                         letterSpacing: 0.2,
                                       ),
@@ -350,8 +354,8 @@ class _ArticleCard extends StatelessWidget {
                               vertical: 6.h,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 
-                                0.1,
+                              color: Colors.white.withValues(
+                                alpha: 0.1,
                               ), // Glass Pill
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(

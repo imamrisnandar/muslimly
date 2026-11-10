@@ -43,7 +43,8 @@ class AppTransparentAppBar extends StatelessWidget
           fontSize: titleFontSize ?? 18.sp,
         ),
       ),
-      leading: leading ??
+      leading:
+          leading ??
           IconButton(
             icon: Icon(Icons.arrow_back, color: iconColor),
             onPressed: onBack ?? () => context.pop(),
@@ -54,7 +55,6 @@ class AppTransparentAppBar extends StatelessWidget
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(
-        kToolbarHeight + (bottom?.preferredSize.height ?? 0),
-      );
+  Size get preferredSize =>
+      Size.fromHeight(kToolbarHeight + (bottom?.preferredSize.height ?? 0));
 }

@@ -95,9 +95,7 @@ class _TajweedPageState extends State<TajweedPage> {
 
     return Scaffold(
       backgroundColor: AppColors.cardDark, // Dark Theme Background
-      appBar: AppTransparentAppBar(
-        title: l10n.ibadahTajweedTitle,
-      ),
+      appBar: AppTransparentAppBar(title: l10n.ibadahTajweedTitle),
       body: FutureBuilder<List<TajweedCategory>>(
         future: _dataFuture,
         builder: (context, snapshot) {
@@ -330,51 +328,54 @@ class _TajweedPageState extends State<TajweedPage> {
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          key: key,
-          initiallyExpanded: forceExpand,
-          collapsedBackgroundColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
-          tilePadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          iconColor: AppColors.accent,
-          collapsedIconColor: Colors.white54,
-          title: Text(
-            category.title,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: AppColors.accent, // Green Accent
-              fontFamily: GoogleFonts.outfit().fontFamily,
-            ),
-          ),
-          subtitle: Text(
-            category.description,
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: Colors.white70,
-              fontFamily: GoogleFonts.outfit().fontFamily,
-            ),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-              child: Column(
-                children: category.lessons.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final lesson = entry.value;
-                  return _buildLessonCard(
-                    context,
-                    lesson,
-                    index + 1,
-                    isLandscape,
-                    allLessons,
-                  );
-                }).toList(),
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              key: key,
+              initiallyExpanded: forceExpand,
+              collapsedBackgroundColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              tilePadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 8.h,
               ),
+              iconColor: AppColors.accent,
+              collapsedIconColor: Colors.white54,
+              title: Text(
+                category.title,
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accent, // Green Accent
+                  fontFamily: GoogleFonts.outfit().fontFamily,
+                ),
+              ),
+              subtitle: Text(
+                category.description,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.white70,
+                  fontFamily: GoogleFonts.outfit().fontFamily,
+                ),
+              ),
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                  child: Column(
+                    children: category.lessons.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final lesson = entry.value;
+                      return _buildLessonCard(
+                        context,
+                        lesson,
+                        index + 1,
+                        isLandscape,
+                        allLessons,
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
           ),
         ),
       ),
@@ -395,12 +396,17 @@ class _TajweedPageState extends State<TajweedPage> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: 0.08), // Slightly lighter for contrast
+            Colors.white.withValues(
+              alpha: 0.08,
+            ), // Slightly lighter for contrast
             Colors.white.withValues(alpha: 0.04),
           ],
         ),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.05),
+          width: 1,
+        ),
       ),
       child: Material(
         color: Colors.transparent,

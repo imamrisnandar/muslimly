@@ -1768,4 +1768,265 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsDeleteConfirmNo => 'Batal';
+
+  @override
+  String get trackerTitle => 'Pelacak Sholat';
+
+  @override
+  String get trackerToday => 'Hari Ini';
+
+  @override
+  String get trackerEarlier => 'Belum dicatat';
+
+  @override
+  String get trackerEarlierHint =>
+      'Waktu ini sudah lewat. Ceritakan yang terjadi; tidak ada yang dihitung otomatis.';
+
+  @override
+  String trackerEarlierCount(int count) {
+    return '$count belum dicatat';
+  }
+
+  @override
+  String get trackerYesterday => 'Kemarin';
+
+  @override
+  String get trackerTapToRecord => 'Ketuk sholat untuk mencatatnya';
+
+  @override
+  String get trackerMarkAllPrayed => 'Tandai semua sudah sholat';
+
+  @override
+  String trackerMarkAllTitle(int count) {
+    return 'Tandai $count sholat sudah dikerjakan?';
+  }
+
+  @override
+  String trackerMarkAllBody(String date) {
+    return 'Semua waktu sholat pada $date akan dicatat sudah dikerjakan. Lanjutkan hanya jika memang benar.';
+  }
+
+  @override
+  String get trackerMarkAllConfirm => 'Ya, sudah';
+
+  @override
+  String trackerStreak(int count) {
+    return 'Beruntun $count hari';
+  }
+
+  @override
+  String get trackerStreakNone => 'Belum ada rentetan';
+
+  @override
+  String get trackerStatusUpcoming => 'Akan datang';
+
+  @override
+  String get trackerStatusOpen => 'Waktunya sudah masuk';
+
+  @override
+  String get trackerStatusPerformed => 'Sudah sholat';
+
+  @override
+  String get trackerStatusPerformedJamaah => 'Sholat berjamaah';
+
+  @override
+  String get trackerStatusMissed => 'Terlewat';
+
+  @override
+  String get trackerStatusUnrecorded => 'Belum dicatat';
+
+  @override
+  String get trackerActionPrayed => 'Sudah sholat';
+
+  @override
+  String get trackerActionJamaah => 'Berjamaah';
+
+  @override
+  String get trackerActionMissed => 'Terlewat';
+
+  @override
+  String get trackerQadhaTitle => 'Qadha yang perlu diganti';
+
+  @override
+  String get trackerQadhaNone => 'Tidak ada qadha';
+
+  @override
+  String trackerQadhaTotal(int count) {
+    return '$count sholat';
+  }
+
+  @override
+  String get trackerNudgeSetting => 'Pengingat lembut sebelum waktu habis';
+
+  @override
+  String get trackerNudgeSettingHint =>
+      'Notifikasi tenang sesaat sebelum waktu sholat berakhir, hanya bila belum Anda catat.';
+
+  @override
+  String trackerNudgeBody(String prayer, String time) {
+    return 'Waktu $prayer berakhir sekitar pukul $time. Sudah sholat?';
+  }
+
+  @override
+  String get trackerLocalNote =>
+      'Catatan ini hanya tersimpan di perangkat ini.';
+
+  @override
+  String get trackerFiqhNote =>
+      'Alat bantu pencatatan dan perkiraan, bukan fatwa. Silakan merujuk ustadz.';
+
+  @override
+  String get trackerApproxLocation =>
+      'Waktu perkiraan: matahari tidak terbit atau terbenam di lintang Anda hari ini.';
+
+  @override
+  String get trackerLoadError => 'Gagal memuat waktu sholat.';
+
+  @override
+  String get widgetNext => 'Berikutnya';
+
+  @override
+  String get widgetOpenApp => 'Buka Muslimly untuk memuat jadwal sholat';
+
+  @override
+  String get qadhaTitle => 'Qadha';
+
+  @override
+  String get qadhaMakeUp => 'Sudah ganti 1';
+
+  @override
+  String get qadhaUndo => 'Batalkan';
+
+  @override
+  String get qadhaPaceTitle => 'Target harian';
+
+  @override
+  String get qadhaPaceNone => 'Belum ada target';
+
+  @override
+  String qadhaPacePerDay(int count) {
+    return '$count per hari';
+  }
+
+  @override
+  String qadhaFinishEstimate(String date) {
+    return 'Dengan target ini, kira-kira lunas $date';
+  }
+
+  @override
+  String get qadhaWizardButton => 'Perkirakan qadha lama';
+
+  @override
+  String get qadhaWizardTitle => 'Perkirakan qadha';
+
+  @override
+  String get qadhaStepRange => 'Rentang';
+
+  @override
+  String get qadhaStepPattern => 'Pola';
+
+  @override
+  String get qadhaStepExcuse => 'Koreksi';
+
+  @override
+  String get qadhaStepReview => 'Tinjau';
+
+  @override
+  String get qadhaFrom => 'Mulai wajib sholat';
+
+  @override
+  String get qadhaTo => 'Mulai rutin sholat';
+
+  @override
+  String get qadhaPickDate => 'Pilih tanggal';
+
+  @override
+  String get qadhaPatternNever => 'Saya tidak sholat pada periode ini';
+
+  @override
+  String get qadhaPatternSometimes => 'Saya sholat pada sebagian hari';
+
+  @override
+  String qadhaPerWeek(String prayer, int count) {
+    return '$prayer: $count hari seminggu';
+  }
+
+  @override
+  String get qadhaExcuseHint =>
+      'Opsional. Hari berhalangan syar\'i (misalnya haid atau nifas) tidak menjadi utang. Perkiraan hari per bulan:';
+
+  @override
+  String get qadhaReviewHint =>
+      'Setiap angka bisa Anda ubah. Menyimpan menambah penyesuaian; riwayat sebelumnya tetap ada.';
+
+  @override
+  String get qadhaSave => 'Simpan';
+
+  @override
+  String get qadhaSaved => 'Tersimpan';
+
+  @override
+  String get qadhaNext => 'Lanjut';
+
+  @override
+  String get qadhaBack => 'Kembali';
+
+  @override
+  String get qadhaFiqhNote =>
+      'Ini alat bantu perkiraan, bukan fatwa. Aturannya berbeda antar mazhab, silakan merujuk ustadz.';
+
+  @override
+  String get qadhaReminderNote => 'Pengingat qadha belum tersedia.';
+
+  @override
+  String get trackerExcuseTitle => 'Jeda (uzur)';
+
+  @override
+  String get trackerExcuseStart => 'Mulai jeda';
+
+  @override
+  String trackerExcuseActive(String date) {
+    return 'Dijeda sejak $date';
+  }
+
+  @override
+  String get trackerExcuseEnd => 'Lanjutkan';
+
+  @override
+  String get trackerExcuseKindHaid => 'Haid';
+
+  @override
+  String get trackerExcuseKindNifas => 'Nifas';
+
+  @override
+  String get trackerExcuseKindSakit => 'Sakit';
+
+  @override
+  String get trackerExcuseStatus => 'Uzur';
+
+  @override
+  String get trackerExcuseExpectedEnd => 'Perkiraan selesai (opsional)';
+
+  @override
+  String get trackerExcuseNoExpected => 'Belum diatur';
+
+  @override
+  String get trackerExcuseHistory => 'Jeda sebelumnya';
+
+  @override
+  String get trackerExcuseDelete => 'Hapus';
+
+  @override
+  String get trackerExcuseLocalOnly =>
+      'Hanya tersimpan di perangkat ini dan tidak pernah diunggah, sehingga perangkat lain menampilkan waktu-waktu ini sebagai belum dicatat.';
+
+  @override
+  String get trackerExcuseEndNotifTitle => 'Pencatatan sholat';
+
+  @override
+  String get trackerExcuseEndNotifBody =>
+      'Pencatatan sedang dijeda. Sudah siap dilanjutkan?';
+
+  @override
+  String get trackerExcuseSave => 'Mulai';
 }

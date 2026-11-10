@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Prayer times</string>
+    <string name="widget_description">Next prayer and countdown</string>
+    <string name="widget_open_app">Open Muslimly to load prayer times</string>
+    <string name="widget_label_strip">Prayer times · Strip</string>
+    <string name="widget_description_strip">All five times in one row</string>
+    <string name="widget_label_list">Prayer times · List</string>
+    <string name="widget_description_list">Each prayer with check-in ticks</string>
+</resources>

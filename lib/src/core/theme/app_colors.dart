@@ -48,7 +48,6 @@ class AppColors {
     colors: bgGradientColors,
   );
 
-  static BoxDecoration get bgGradientDecoration => const BoxDecoration(
-        gradient: bgGradient,
-      );
+  static BoxDecoration get bgGradientDecoration =>
+      const BoxDecoration(gradient: bgGradient);
 }

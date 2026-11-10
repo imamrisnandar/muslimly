@@ -15,18 +15,18 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
   final SyncApiService _syncApiService;
   final AuthRepository _authRepository;
 
-  FolderBloc(
-    this._databaseService,
-    this._syncApiService,
-    this._authRepository,
-  ) : super(FolderInitial()) {
+  FolderBloc(this._databaseService, this._syncApiService, this._authRepository)
+    : super(FolderInitial()) {
     on<LoadFolders>(_onLoadFolders, transformer: sequential());
     on<CreateFolder>(_onCreateFolder, transformer: sequential());
     on<RenameFolder>(_onRenameFolder, transformer: sequential());
     on<DeleteFolder>(_onDeleteFolder, transformer: sequential());
   }
 
-  Future<void> _onLoadFolders(LoadFolders event, Emitter<FolderState> emit) async {
+  Future<void> _onLoadFolders(
+    LoadFolders event,
+    Emitter<FolderState> emit,
+  ) async {
     if (state is! FolderLoaded) emit(FolderLoading());
     try {
       // Local-only: network pull+merge of folders is owned by
@@ -41,7 +41,8 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
         );
       }
       final foldersByMode = <String, List<QuranFolder>>{
-        for (final mode in _kFolderModes) mode: await _databaseService.getFolders(mode: mode),
+        for (final mode in _kFolderModes)
+          mode: await _databaseService.getFolders(mode: mode),
       };
       emit(FolderLoaded(foldersByMode));
     } catch (e) {
@@ -49,7 +50,10 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
     }
   }
 
-  Future<void> _onCreateFolder(CreateFolder event, Emitter<FolderState> emit) async {
+  Future<void> _onCreateFolder(
+    CreateFolder event,
+    Emitter<FolderState> emit,
+  ) async {
     try {
       final localId = await _databaseService.insertFolder(
         QuranFolder(
@@ -65,7 +69,11 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
     }
   }
 
-  Future<void> _pushFolderToServer(int localId, String mode, String name) async {
+  Future<void> _pushFolderToServer(
+    int localId,
+    String mode,
+    String name,
+  ) async {
     try {
       final token = await _getToken();
       final deviceId = await NotificationService.getDeviceId();
@@ -76,14 +84,20 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
       };
       final result = await _syncApiService.addFolder(token, payload);
       if (result != null && result['id'] != null) {
-        await _databaseService.updateServerIdForFolder(localId, result['id'] as String);
+        await _databaseService.updateServerIdForFolder(
+          localId,
+          result['id'] as String,
+        );
       }
     } catch (_) {
       // Push failure is non-fatal — will sync later on next load
     }
   }
 
-  Future<void> _onRenameFolder(RenameFolder event, Emitter<FolderState> emit) async {
+  Future<void> _onRenameFolder(
+    RenameFolder event,
+    Emitter<FolderState> emit,
+  ) async {
     try {
       final folder = await _databaseService.getFolderById(event.id);
       await _databaseService.renameFolder(event.id, event.name);
@@ -111,10 +125,15 @@ class FolderBloc extends Bloc<FolderEvent, FolderState> {
     }
   }
 
-  Future<void> _onDeleteFolder(DeleteFolder event, Emitter<FolderState> emit) async {
+  Future<void> _onDeleteFolder(
+    DeleteFolder event,
+    Emitter<FolderState> emit,
+  ) async {
     try {
       final folder = await _databaseService.getFolderById(event.id);
-      await _databaseService.deleteFolder(event.id); // nulls bookmarks.folder_id locally too
+      await _databaseService.deleteFolder(
+        event.id,
+      ); // nulls bookmarks.folder_id locally too
       if (folder?.serverId != null) {
         _deleteFolderFromServer(folder!.serverId!);
       }

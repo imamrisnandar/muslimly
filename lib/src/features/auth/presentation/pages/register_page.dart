@@ -39,11 +39,19 @@ class _RegisterPageState extends State<RegisterPage> {
     final password = _passwordController.text;
 
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
-      showCustomSnackBar(context, message: l10n.registerErrorAllFields, type: SnackBarType.error);
+      showCustomSnackBar(
+        context,
+        message: l10n.registerErrorAllFields,
+        type: SnackBarType.error,
+      );
       return;
     }
     if (!isPasswordStrong(password)) {
-      showCustomSnackBar(context, message: l10n.passwordTooWeak, type: SnackBarType.error);
+      showCustomSnackBar(
+        context,
+        message: l10n.passwordTooWeak,
+        type: SnackBarType.error,
+      );
       return;
     }
 
@@ -56,13 +64,21 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       if (!mounted) return;
       if (response.statusCode == 201) {
-        showCustomSnackBar(context, message: l10n.registerSuccess, type: SnackBarType.success);
+        showCustomSnackBar(
+          context,
+          message: l10n.registerSuccess,
+          type: SnackBarType.success,
+        );
         context.go('/login');
       }
     } on DioException catch (e) {
       if (!mounted) return;
       final msg = e.response?.data?['message'] ?? l10n.registerErrorFallback;
-      showCustomSnackBar(context, message: msg.toString(), type: SnackBarType.error);
+      showCustomSnackBar(
+        context,
+        message: msg.toString(),
+        type: SnackBarType.error,
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -79,7 +95,11 @@ class _RegisterPageState extends State<RegisterPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
+            colors: [
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
+            ],
           ),
         ),
         child: Center(
@@ -153,13 +173,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       fillColor: Colors.white,
                       hintText: l10n.registerHintPassword,
                       hintStyle: TextStyle(color: Colors.grey[400]),
-                      prefixIcon: Icon(Icons.lock_outline, color: Colors.green[200]),
+                      prefixIcon: Icon(
+                        Icons.lock_outline,
+                        color: Colors.green[200],
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                           color: Colors.green[200],
                         ),
-                        onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                        onPressed: () => setState(
+                          () => _isPasswordVisible = !_isPasswordVisible,
+                        ),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12.r),

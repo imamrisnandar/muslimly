@@ -25,11 +25,7 @@ class AppLogger {
     }
   }
 
-  static void error(
-    String message, [
-    Object? error,
-    StackTrace? stackTrace,
-  ]) {
+  static void error(String message, [Object? error, StackTrace? stackTrace]) {
     debugPrint('[ERROR] $message${error != null ? ' | $error' : ''}');
     if (kDebugMode && stackTrace != null) {
       debugPrint(stackTrace.toString());

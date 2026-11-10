@@ -170,12 +170,14 @@ class ArabicTextMatcher {
   /// Check if a word looks like a spelled-out muqatta'ah component (e.g. "الف")
   static bool isMuqattaahComponent(String word) {
     final wordCollapsed = word.replaceAll(RegExp(r'(.)\1+'), r'$1');
-    if (_allMuqattaahComponents.contains(wordCollapsed) || _allMuqattaahComponents.contains(word)) {
+    if (_allMuqattaahComponents.contains(wordCollapsed) ||
+        _allMuqattaahComponents.contains(word)) {
       return true;
     }
     // Allow small typos
     for (final comp in _allMuqattaahComponents) {
-      if (_levenshteinDistance(word, comp) <= 1 || _levenshteinDistance(wordCollapsed, comp) <= 1) {
+      if (_levenshteinDistance(word, comp) <= 1 ||
+          _levenshteinDistance(wordCollapsed, comp) <= 1) {
         return true;
       }
     }
@@ -187,46 +189,46 @@ class ArabicTextMatcher {
   /// Note: The superscript Alif (ٰ) normalizes to regular Alif (ا).
   static final Set<String> _muqattaahWords = {
     // Al-Baqarah, Al-Imran, Al-Ankabut, Ar-Rum, Luqman, As-Sajdah
-    'الم', 
-    
+    'الم',
+
     // Al-A'raf
-    'المص', 
-    
+    'المص',
+
     // Yunus, Hud, Yusuf, Ibrahim, Hijr
-    'الر', 'الرا', 
-    
+    'الر', 'الرا',
+
     // Ar-Ra'd
-    'المر', 'المرا', 
-    
+    'المر', 'المرا',
+
     // Maryam
-    'كهىعص', 'كهاىاعص', 
-    
+    'كهىعص', 'كهاىاعص',
+
     // Ta-Ha
-    'طه', 'طاها', 
-    
+    'طه', 'طاها',
+
     // Ash-Shu'ara, Al-Qasas
-    'طسم', 'طاسم', 
-    
+    'طسم', 'طاسم',
+
     // An-Naml
-    'طس', 'طاس', 
-    
+    'طس', 'طاس',
+
     // Ya-Sin
-    'ىس', 'ىاس', 
-    
+    'ىس', 'ىاس',
+
     // Sad
-    'ص', 
-    
+    'ص',
+
     // Ghafir, Fussilat, Ash-Shura, Az-Zukhruf, Ad-Dukhan, Al-Jathiyah, Al-Ahqaf
-    'حم', 'حام', 
-    
+    'حم', 'حام',
+
     // Ash-Shura (part 2)
-    'عسق', 
-    
+    'عسق',
+
     // Qaf
-    'ق', 
-    
+    'ق',
+
     // Al-Qalam
-    'ن', 
+    'ن',
   };
 
   /// Check if a normalized word is a huruf muqatta'ah pattern
@@ -249,20 +251,28 @@ class ArabicTextMatcher {
     }
 
     // ═══ Multi-letter Huruf Muqatta'ah (الم, الر, etc.) ═══
-    // STT spells these out (e.g. "الف لام ميم" or even "الف", "لام", "ر"). 
+    // STT spells these out (e.g. "الف لام ميم" or even "الف", "لام", "ر").
     // If the expected word is a known muqatta'ah word AND the spoken word
     // looks like a letter component, we accept it.
     if (isMuqattaahWord(a)) {
       final bCollapsed = b.replaceAll(RegExp(r'(.)\1+'), r'$1');
-      if (_allMuqattaahComponents.contains(bCollapsed) || _allMuqattaahComponents.contains(b)) return true;
+      if (_allMuqattaahComponents.contains(bCollapsed) ||
+          _allMuqattaahComponents.contains(b))
+        return true;
       for (final comp in _allMuqattaahComponents) {
-        if (_levenshteinDistance(b, comp) <= 1 || _levenshteinDistance(bCollapsed, comp) <= 1) return true;
+        if (_levenshteinDistance(b, comp) <= 1 ||
+            _levenshteinDistance(bCollapsed, comp) <= 1)
+          return true;
       }
     } else if (isMuqattaahWord(b)) {
       final aCollapsed = a.replaceAll(RegExp(r'(.)\1+'), r'$1');
-      if (_allMuqattaahComponents.contains(aCollapsed) || _allMuqattaahComponents.contains(a)) return true;
+      if (_allMuqattaahComponents.contains(aCollapsed) ||
+          _allMuqattaahComponents.contains(a))
+        return true;
       for (final comp in _allMuqattaahComponents) {
-        if (_levenshteinDistance(a, comp) <= 1 || _levenshteinDistance(aCollapsed, comp) <= 1) return true;
+        if (_levenshteinDistance(a, comp) <= 1 ||
+            _levenshteinDistance(aCollapsed, comp) <= 1)
+          return true;
       }
     }
 
@@ -275,7 +285,7 @@ class ArabicTextMatcher {
     if (a.length == 1 && _muqattaahSpokenForms.containsKey(a)) {
       final bCollapsed = b.replaceAll(RegExp(r'(.)\1+'), r'$1');
       if (bCollapsed == a) return true; // Direct letter match
-      
+
       for (final form in _muqattaahSpokenForms[a]!) {
         // Exact match or fuzzy match (1 edit distance tolerance) against spoken forms
         if (_levenshteinDistance(b, form) <= 1 ||
@@ -287,7 +297,7 @@ class ArabicTextMatcher {
     if (b.length == 1 && _muqattaahSpokenForms.containsKey(b)) {
       final aCollapsed = a.replaceAll(RegExp(r'(.)\1+'), r'$1');
       if (aCollapsed == b) return true; // Direct letter match
-      
+
       for (final form in _muqattaahSpokenForms[b]!) {
         // Exact match or fuzzy match (1 edit distance tolerance) against spoken forms
         if (_levenshteinDistance(a, form) <= 1 ||
@@ -304,10 +314,10 @@ class ArabicTextMatcher {
     // Quran often uses/omits specific weak letters (like Alif, Waw, Ya) differently
     // than modern standard Arabic STT outputs.
     const weakLetters = {'ا', 'و', 'ي', 'ى', 'ه'};
-    
+
     if (distance == 1) {
       final lenDiff = (a.length - b.length).abs();
-      
+
       // Case 1: Insertion/deletion of a weak letter (different lengths)
       // Matches: (الرحمان vs الرحمن), (مالك vs ملك)
       if (lenDiff == 1) {
@@ -341,7 +351,7 @@ class ArabicTextMatcher {
 
         if (allowedDiff) return true;
       }
-      
+
       // Case 2: Substitution between two weak letters (same length)
       // Matches: (وحلت vs احلت) where STT hears Waw instead of Alif
       // Rejects: consonant substitutions like (الرحيم vs الرجيم)

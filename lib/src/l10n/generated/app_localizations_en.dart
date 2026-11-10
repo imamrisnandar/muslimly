@@ -1760,4 +1760,264 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDeleteConfirmNo => 'Cancel';
+
+  @override
+  String get trackerTitle => 'Prayer Tracker';
+
+  @override
+  String get trackerToday => 'Today';
+
+  @override
+  String get trackerEarlier => 'Not recorded yet';
+
+  @override
+  String get trackerEarlierHint =>
+      'These times have passed. Tell us what happened; nothing is counted automatically.';
+
+  @override
+  String trackerEarlierCount(int count) {
+    return '$count not recorded';
+  }
+
+  @override
+  String get trackerYesterday => 'Yesterday';
+
+  @override
+  String get trackerTapToRecord => 'Tap a prayer to record it';
+
+  @override
+  String get trackerMarkAllPrayed => 'Mark all as prayed';
+
+  @override
+  String trackerMarkAllTitle(int count) {
+    return 'Mark $count prayers as prayed?';
+  }
+
+  @override
+  String trackerMarkAllBody(String date) {
+    return 'All prayers on $date will be recorded as prayed. Only continue if it is true.';
+  }
+
+  @override
+  String get trackerMarkAllConfirm => 'Yes, I prayed';
+
+  @override
+  String trackerStreak(int count) {
+    return '$count day streak';
+  }
+
+  @override
+  String get trackerStreakNone => 'No streak yet';
+
+  @override
+  String get trackerStatusUpcoming => 'Upcoming';
+
+  @override
+  String get trackerStatusOpen => 'Time is open';
+
+  @override
+  String get trackerStatusPerformed => 'Prayed';
+
+  @override
+  String get trackerStatusPerformedJamaah => 'Prayed in congregation';
+
+  @override
+  String get trackerStatusMissed => 'Missed';
+
+  @override
+  String get trackerStatusUnrecorded => 'Not recorded';
+
+  @override
+  String get trackerActionPrayed => 'I prayed';
+
+  @override
+  String get trackerActionJamaah => 'In congregation';
+
+  @override
+  String get trackerActionMissed => 'I missed it';
+
+  @override
+  String get trackerQadhaTitle => 'Qadha to make up';
+
+  @override
+  String get trackerQadhaNone => 'Nothing to make up';
+
+  @override
+  String trackerQadhaTotal(int count) {
+    return '$count prayers';
+  }
+
+  @override
+  String get trackerNudgeSetting => 'Gentle reminder before time ends';
+
+  @override
+  String get trackerNudgeSettingHint =>
+      'A quiet notification shortly before each prayer time ends, only if you have not recorded it.';
+
+  @override
+  String trackerNudgeBody(String prayer, String time) {
+    return '$prayer time ends around $time. Have you prayed?';
+  }
+
+  @override
+  String get trackerLocalNote => 'This record is only kept on this device.';
+
+  @override
+  String get trackerFiqhNote =>
+      'A recording and estimating aid, not a fatwa. Please consult your ustadz.';
+
+  @override
+  String get trackerApproxLocation =>
+      'Times are approximate: the sun does not rise or set at your latitude today.';
+
+  @override
+  String get trackerLoadError => 'Could not load prayer times.';
+
+  @override
+  String get widgetNext => 'Next';
+
+  @override
+  String get widgetOpenApp => 'Open Muslimly to load prayer times';
+
+  @override
+  String get qadhaTitle => 'Qadha';
+
+  @override
+  String get qadhaMakeUp => 'Made up 1';
+
+  @override
+  String get qadhaUndo => 'Undo';
+
+  @override
+  String get qadhaPaceTitle => 'Daily pace';
+
+  @override
+  String get qadhaPaceNone => 'No pace set';
+
+  @override
+  String qadhaPacePerDay(int count) {
+    return '$count per day';
+  }
+
+  @override
+  String qadhaFinishEstimate(String date) {
+    return 'At this pace, about $date';
+  }
+
+  @override
+  String get qadhaWizardButton => 'Estimate old qadha';
+
+  @override
+  String get qadhaWizardTitle => 'Estimate qadha';
+
+  @override
+  String get qadhaStepRange => 'Period';
+
+  @override
+  String get qadhaStepPattern => 'Pattern';
+
+  @override
+  String get qadhaStepExcuse => 'Corrections';
+
+  @override
+  String get qadhaStepReview => 'Review';
+
+  @override
+  String get qadhaFrom => 'Obligation began';
+
+  @override
+  String get qadhaTo => 'Started praying regularly';
+
+  @override
+  String get qadhaPickDate => 'Pick date';
+
+  @override
+  String get qadhaPatternNever => 'I did not pray in this period';
+
+  @override
+  String get qadhaPatternSometimes => 'I prayed on some days';
+
+  @override
+  String qadhaPerWeek(String prayer, int count) {
+    return '$prayer: $count days a week';
+  }
+
+  @override
+  String get qadhaExcuseHint =>
+      'Optional. Days with a valid excuse (such as menstruation or postnatal bleeding) are not owed. Estimated days per month:';
+
+  @override
+  String get qadhaReviewHint =>
+      'You can edit every number. Saving adds an adjustment; earlier history is kept.';
+
+  @override
+  String get qadhaSave => 'Save';
+
+  @override
+  String get qadhaSaved => 'Saved';
+
+  @override
+  String get qadhaNext => 'Next';
+
+  @override
+  String get qadhaBack => 'Back';
+
+  @override
+  String get qadhaFiqhNote =>
+      'This is an estimating aid, not a fatwa. Rules differ between madhhabs, so please consult your ustadz.';
+
+  @override
+  String get qadhaReminderNote => 'Reminders for qadha are not available yet.';
+
+  @override
+  String get trackerExcuseTitle => 'Pause (excused)';
+
+  @override
+  String get trackerExcuseStart => 'Start a pause';
+
+  @override
+  String trackerExcuseActive(String date) {
+    return 'Paused since $date';
+  }
+
+  @override
+  String get trackerExcuseEnd => 'Resume';
+
+  @override
+  String get trackerExcuseKindHaid => 'Menstruation';
+
+  @override
+  String get trackerExcuseKindNifas => 'Postnatal bleeding';
+
+  @override
+  String get trackerExcuseKindSakit => 'Illness';
+
+  @override
+  String get trackerExcuseStatus => 'Excused';
+
+  @override
+  String get trackerExcuseExpectedEnd => 'Expected end (optional)';
+
+  @override
+  String get trackerExcuseNoExpected => 'Not set';
+
+  @override
+  String get trackerExcuseHistory => 'Earlier pauses';
+
+  @override
+  String get trackerExcuseDelete => 'Delete';
+
+  @override
+  String get trackerExcuseLocalOnly =>
+      'Kept only on this device. It is never uploaded, so another device will show these times as not recorded.';
+
+  @override
+  String get trackerExcuseEndNotifTitle => 'Prayer tracking';
+
+  @override
+  String get trackerExcuseEndNotifBody =>
+      'Tracking is paused. Ready to continue?';
+
+  @override
+  String get trackerExcuseSave => 'Start';
 }

@@ -4,13 +4,15 @@ abstract class AppUrls {
 
   // --- Quran.com API ---
   static const String quranComApi = 'https://api.quran.com/api/v4';
-  static const String quranComImages = 'https://static.quran.com/images/quran/surah';
+  static const String quranComImages =
+      'https://static.quran.com/images/quran/surah';
 
   // --- AlQuran Cloud API ---
   static const String alQuranCloudApi = 'https://api.alquran.cloud/v1';
 
   // --- Islamic Network CDN (audio) ---
-  static const String islamicNetworkAudio = 'https://cdn.islamic.network/quran/audio';
+  static const String islamicNetworkAudio =
+      'https://cdn.islamic.network/quran/audio';
 
   // --- Font CDN ---
   // QPC v2 per-page mushaf fonts (QCF2001.ttf .. QCF2604.ttf), self-hosted on

@@ -48,7 +48,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final payload = _decodeJwtPayload(token);
     final exp = payload?['exp'] as int?;
-    final isValid = exp != null &&
+    final isValid =
+        exp != null &&
         DateTime.fromMillisecondsSinceEpoch(exp * 1000).isAfter(DateTime.now());
 
     if (!isValid) {
@@ -87,30 +88,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     final result = await _loginUseCase(event.email, event.password);
-    await result.fold(
-      (failure) async => emit(AuthFailure(failure.message)),
-      (user) async {
-        if (user.token != null) {
-          // Link device to user account (blocking — prerequisite for migration)
-          await _notificationService.syncFCMToken(user.token);
+    await result.fold((failure) async => emit(AuthFailure(failure.message)), (
+      user,
+    ) async {
+      if (user.token != null) {
+        // Link device to user account (blocking — prerequisite for migration)
+        await _notificationService.syncFCMToken(user.token);
 
-          final deviceId = await NotificationService.getDeviceId();
-          if (deviceId != null && deviceId.isNotEmpty) {
-            // M4: Migrate guest → user (fire & forget)
-            unawaited(_syncApiService.migrateGuestData(user.token!, deviceId));
-            // M20: Bulk push local folders, then bookmarks, to server —
-            // folders must land first so the bookmark payload can resolve
-            // folder_id -> the folder's server_id.
-            unawaited(
-              _bulkPushLocalFolders(user.token!).then((_) => _bulkPushLocalBookmarks(user.token!)),
-            );
-          }
-          // M5: Pull server data → merge to local (fire & forget)
-          unawaited(_pullServerData(user.token!));
+        final deviceId = await NotificationService.getDeviceId();
+        if (deviceId != null && deviceId.isNotEmpty) {
+          // M4: Migrate guest → user (fire & forget)
+          unawaited(_syncApiService.migrateGuestData(user.token!, deviceId));
+          // M20: Bulk push local folders, then bookmarks, to server —
+          // folders must land first so the bookmark payload can resolve
+          // folder_id -> the folder's server_id.
+          unawaited(
+            _bulkPushLocalFolders(
+              user.token!,
+            ).then((_) => _bulkPushLocalBookmarks(user.token!)),
+          );
         }
-        emit(AuthAuthenticated(user));
-      },
-    );
+        // M5: Pull server data → merge to local (fire & forget)
+        unawaited(_pullServerData(user.token!));
+      }
+      emit(AuthAuthenticated(user));
+    });
   }
 
   Future<void> _onLogoutRequested(
@@ -149,14 +151,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         // Pick entry with latest last_read_at
         forMode.sort((a, b) {
-          final ta = DateTime.tryParse(a['last_read_at'] as String? ?? '') ?? DateTime(0);
-          final tb = DateTime.tryParse(b['last_read_at'] as String? ?? '') ?? DateTime(0);
+          final ta =
+              DateTime.tryParse(a['last_read_at'] as String? ?? '') ??
+              DateTime(0);
+          final tb =
+              DateTime.tryParse(b['last_read_at'] as String? ?? '') ??
+              DateTime(0);
           return tb.compareTo(ta);
         });
 
         final latest = forMode.first;
         final surahNumber = latest['surah_id'] as int? ?? 1;
-        final surahName = (surahNumber >= 1 && surahNumber <= SurahNames.indonesianNames.length)
+        final surahName =
+            (surahNumber >= 1 &&
+                surahNumber <= SurahNames.indonesianNames.length)
             ? SurahNames.indonesianNames[surahNumber - 1]
             : '';
         final lastRead = LastRead(
@@ -182,7 +190,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       // Folders first (+ their own pending-delete flush) — bookmarks below
       // need local folder rows to resolve a remote bookmark's folder_id.
-      final pendingFolders = await _databaseService.getPendingBookmarkFolderDeletes();
+      final pendingFolders = await _databaseService
+          .getPendingBookmarkFolderDeletes();
       for (final serverId in pendingFolders) {
         try {
           await _syncApiService.deleteFolder(token, serverId);
@@ -233,7 +242,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           });
           final serverId = result?['id'] as String?;
           if (serverId != null && folder.id != null) {
-            await _databaseService.updateServerIdForFolder(folder.id!, serverId);
+            await _databaseService.updateServerIdForFolder(
+              folder.id!,
+              serverId,
+            );
           }
         }
       }
@@ -269,9 +281,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final results = await _syncApiService.bulkUpsertBookmarks(token, payload);
       // Update server_id for each synced bookmark
       for (var i = 0; i < results.length && i < unsynced.length; i++) {
-        final serverId = (results[i] as Map<String, dynamic>?)?['id'] as String?;
+        final serverId =
+            (results[i] as Map<String, dynamic>?)?['id'] as String?;
         if (serverId != null && unsynced[i].id != null) {
-          await _databaseService.updateServerIdForBookmark(unsynced[i].id!, serverId);
+          await _databaseService.updateServerIdForBookmark(
+            unsynced[i].id!,
+            serverId,
+          );
         }
       }
     } catch (_) {

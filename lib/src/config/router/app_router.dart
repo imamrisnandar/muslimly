@@ -1,3 +1,7 @@
+import '../../features/prayer_tracker/presentation/pages/qadha_page.dart';
+import '../../features/prayer_tracker/presentation/pages/qadha_wizard_page.dart';
+import '../../features/prayer_tracker/presentation/bloc/prayer_tracker_cubit.dart';
+import '../../features/prayer_tracker/presentation/pages/prayer_tracker_page.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/intro/presentation/pages/onboarding_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -108,10 +112,20 @@ final appRouter = GoRouter(
             ),
             BlocProvider(create: (_) => getIt<ArticleBloc>()),
             BlocProvider(create: (_) => getIt<HafalanProgressCubit>()..load()),
+            BlocProvider(create: (_) => getIt<PrayerTrackerCubit>()),
           ],
           child: DashboardPage(initialIndex: index),
         );
       },
+    ),
+    GoRoute(path: '/qadha', builder: (context, state) => const QadhaPage()),
+    GoRoute(
+      path: '/qadha/wizard',
+      builder: (context, state) => const QadhaWizardPage(),
+    ),
+    GoRoute(
+      path: '/prayer-tracker',
+      builder: (context, state) => const PrayerTrackerPage(),
     ),
     GoRoute(
       path: '/settings',

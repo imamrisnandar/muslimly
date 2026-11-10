@@ -30,7 +30,11 @@ import '../../../../core/theme/app_colors.dart';
 typedef FolderFilter = ({bool isAll, bool isUncategorized, int? folderId});
 
 const kAllFolderFilter = (isAll: true, isUncategorized: false, folderId: null);
-const kUncategorizedFolderFilter = (isAll: false, isUncategorized: true, folderId: null);
+const kUncategorizedFolderFilter = (
+  isAll: false,
+  isUncategorized: true,
+  folderId: null,
+);
 
 FolderFilter specificFolderFilter(int id) =>
     (isAll: false, isUncategorized: false, folderId: id);
@@ -62,7 +66,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
       if (folderBloc.state is FolderInitial) {
         final l10n = AppLocalizations.of(context)!;
         folderBloc.add(
-          LoadFolders(hapalanLabel: l10n.lblFolderHapalan, bacaanLabel: l10n.lblFolderBacaan),
+          LoadFolders(
+            hapalanLabel: l10n.lblFolderHapalan,
+            bacaanLabel: l10n.lblFolderBacaan,
+          ),
         );
       }
     });
@@ -293,18 +300,27 @@ class _BookmarksPageState extends State<BookmarksPage> {
   }) {
     final l10n = AppLocalizations.of(context)!;
     final filter = _filterByMode[mode]!;
-    final filteredBookmarks = bookmarks.where((b) => _matchesFilter(b, filter)).toList();
+    final filteredBookmarks = bookmarks
+        .where((b) => _matchesFilter(b, filter))
+        .toList();
 
     return BlocBuilder<FolderBloc, FolderState>(
       builder: (context, folderState) {
-        final folders = folderState is FolderLoaded ? folderState.forMode(mode) : <QuranFolder>[];
+        final folders = folderState is FolderLoaded
+            ? folderState.forMode(mode)
+            : <QuranFolder>[];
 
         return CustomScrollView(
           slivers: [
             SliverPadding(
               padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 0),
               sliver: SliverToBoxAdapter(
-                child: _buildFolderChipRow(context, mode: mode, folders: folders, filter: filter),
+                child: _buildFolderChipRow(
+                  context,
+                  mode: mode,
+                  folders: folders,
+                  filter: filter,
+                ),
               ),
             ),
             if (bookmarks.isEmpty && lastRead == null)
@@ -328,7 +344,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
                         padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
                         child: Row(
                           children: [
-                            Icon(Icons.history, color: AppColors.accent, size: 18.sp),
+                            Icon(
+                              Icons.history,
+                              color: AppColors.accent,
+                              size: 18.sp,
+                            ),
                             SizedBox(width: 8.w),
                             Text(
                               l10n.cardContinueReading,
@@ -343,7 +363,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
                           ],
                         ),
                       ),
-                      _buildLastReadCard(context, lastRead, isListMode: isListMode),
+                      _buildLastReadCard(
+                        context,
+                        lastRead,
+                        isListMode: isListMode,
+                      ),
                       SizedBox(height: 32.h),
                     ],
                     // --- BOOKMARKS HEADER ---
@@ -352,7 +376,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
                         padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
                         child: Row(
                           children: [
-                            Icon(Icons.bookmark_outline, color: Colors.white70, size: 18.sp),
+                            Icon(
+                              Icons.bookmark_outline,
+                              color: Colors.white70,
+                              size: 18.sp,
+                            ),
                             SizedBox(width: 8.w),
                             Text(
                               l10n.lblSavedBookmarks,
@@ -373,7 +401,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
                         child: Center(
                           child: Text(
                             l10n.msgNoBookmarksInFolder,
-                            style: TextStyle(color: Colors.white38, fontSize: 13.sp),
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 13.sp,
+                            ),
                           ),
                         ),
                       ),
@@ -421,7 +452,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                isListMode ? Icons.format_list_bulleted_rounded : Icons.menu_book_rounded,
+                isListMode
+                    ? Icons.format_list_bulleted_rounded
+                    : Icons.menu_book_rounded,
                 size: 28.sp, // Even smaller icon
                 color: Colors.white24,
               ),
@@ -439,7 +472,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
             SizedBox(height: 4.h),
             Text(
               subtitle,
-              style: TextStyle(color: Colors.white54, fontSize: 12.sp), // Even smaller font
+              style: TextStyle(
+                color: Colors.white54,
+                fontSize: 12.sp,
+              ), // Even smaller font
             ),
             SizedBox(height: 16.h),
             ElevatedButton(
@@ -451,7 +487,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
                 backgroundColor: AppColors.accent,
                 foregroundColor: Colors.black,
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.r)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
               ),
               child: Text(
                 AppLocalizations.of(context)!.btnGoToQuran,
@@ -491,7 +529,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 9.h),
               decoration: BoxDecoration(
-                color: selected ? AppColors.accent : Colors.white.withValues(alpha: 0.06),
+                color: selected
+                    ? AppColors.accent
+                    : Colors.white.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(20.r),
                 border: selected
                     ? null
@@ -513,14 +553,18 @@ class _BookmarksPageState extends State<BookmarksPage> {
                     Icon(
                       icon,
                       size: 13.sp,
-                      color: selected ? const Color(0xFF052025) : Colors.white.withValues(alpha: 0.6),
+                      color: selected
+                          ? const Color(0xFF052025)
+                          : Colors.white.withValues(alpha: 0.6),
                     ),
                     SizedBox(width: 6.w),
                   ],
                   Text(
                     label,
                     style: TextStyle(
-                      color: selected ? const Color(0xFF052025) : Colors.white.withValues(alpha: 0.75),
+                      color: selected
+                          ? const Color(0xFF052025)
+                          : Colors.white.withValues(alpha: 0.75),
                       fontSize: 13.sp,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                       fontFamily: 'Outfit',
@@ -547,15 +591,23 @@ class _BookmarksPageState extends State<BookmarksPage> {
           chip(
             label: l10n.lblFolderUncategorized,
             selected: filter.isUncategorized,
-            onTap: () => setState(() => _filterByMode[mode] = kUncategorizedFolderFilter),
+            onTap: () => setState(
+              () => _filterByMode[mode] = kUncategorizedFolderFilter,
+            ),
           ),
           for (final folder in folders)
             chip(
               label: folder.name,
               icon: Icons.folder_outlined,
-              selected: !filter.isAll && !filter.isUncategorized && filter.folderId == folder.id,
-              onTap: () => setState(() => _filterByMode[mode] = specificFolderFilter(folder.id!)),
-              onLongPress: () => _showFolderActionsSheet(context, folder: folder, mode: mode),
+              selected:
+                  !filter.isAll &&
+                  !filter.isUncategorized &&
+                  filter.folderId == folder.id,
+              onTap: () => setState(
+                () => _filterByMode[mode] = specificFolderFilter(folder.id!),
+              ),
+              onLongPress: () =>
+                  _showFolderActionsSheet(context, folder: folder, mode: mode),
             ),
           Padding(
             padding: EdgeInsets.only(right: 8.w),
@@ -565,10 +617,15 @@ class _BookmarksPageState extends State<BookmarksPage> {
                 borderRadius: BorderRadius.circular(20.r),
                 onTap: () => _showAddFolderDialog(context, mode),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 9.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 9.h,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.5)),
+                    border: Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.5),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -619,7 +676,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.03), // Lighter/Darker than hero
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)), // Subtle border
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.05),
+        ), // Subtle border
       ),
       child: Material(
         color: Colors.transparent,
@@ -700,10 +759,14 @@ class _BookmarksPageState extends State<BookmarksPage> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
-                            (bookmark.ayahNumber != null && bookmark.ayahNumber! > 0)
+                            (bookmark.ayahNumber != null &&
+                                    bookmark.ayahNumber! > 0)
                                 ? "${l10n.lblAyah} ${bookmark.ayahNumber}"
                                 : "${l10n.lblPage} ${bookmark.pageNumber}",
-                            style: TextStyle(fontSize: 13.sp, color: Colors.white54),
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: Colors.white54,
+                            ),
                           ),
                           Container(
                             margin: EdgeInsets.symmetric(horizontal: 6.w),
@@ -725,7 +788,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
                           if (currentFolder != null) ...[
                             SizedBox(width: 6.w),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8.w,
+                                vertical: 2.h,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.accent.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(10.r),
@@ -748,7 +814,11 @@ class _BookmarksPageState extends State<BookmarksPage> {
 
                 // Move-to-folder action
                 IconButton(
-                  icon: Icon(Icons.folder_outlined, color: Colors.white.withValues(alpha: 0.5), size: 19.sp),
+                  icon: Icon(
+                    Icons.folder_outlined,
+                    color: Colors.white.withValues(alpha: 0.5),
+                    size: 19.sp,
+                  ),
                   onPressed: () => _showMoveToFolderSheet(
                     context,
                     bookmark: bookmark,
@@ -761,7 +831,9 @@ class _BookmarksPageState extends State<BookmarksPage> {
                 IconButton(
                   icon: Icon(Icons.close, color: Colors.white24, size: 20.sp),
                   onPressed: () {
-                    context.read<BookmarkBloc>().add(DeleteBookmark(bookmark.id!));
+                    context.read<BookmarkBloc>().add(
+                      DeleteBookmark(bookmark.id!),
+                    );
                   },
                 ),
               ],
@@ -806,10 +878,16 @@ class _BookmarksPageState extends State<BookmarksPage> {
         return _DarkBottomSheet(
           children: [
             ListTile(
-              leading: const Icon(Icons.drive_file_rename_outline, color: Colors.white70),
+              leading: const Icon(
+                Icons.drive_file_rename_outline,
+                color: Colors.white70,
+              ),
               title: Text(
                 l10n.btnRenameFolder,
-                style: const TextStyle(color: Colors.white, fontFamily: 'Outfit'),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Outfit',
+                ),
               ),
               onTap: () {
                 Navigator.of(sheetContext).pop();
@@ -818,10 +896,16 @@ class _BookmarksPageState extends State<BookmarksPage> {
             ),
             if (!folder.isSystem)
               ListTile(
-                leading: const Icon(Icons.delete_outline, color: Color(0xFFFF5252)),
+                leading: const Icon(
+                  Icons.delete_outline,
+                  color: Color(0xFFFF5252),
+                ),
                 title: Text(
                   l10n.btnDeleteFolder,
-                  style: const TextStyle(color: Color(0xFFFF5252), fontFamily: 'Outfit'),
+                  style: const TextStyle(
+                    color: Color(0xFFFF5252),
+                    fontFamily: 'Outfit',
+                  ),
                 ),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
@@ -863,8 +947,13 @@ class _BookmarksPageState extends State<BookmarksPage> {
       builder: (dialogContext) {
         return AlertDialog(
           backgroundColor: const Color(0xFF152730),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-          title: Text(l10n.dlgDeleteFolderTitle, style: const TextStyle(color: Colors.white)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          title: Text(
+            l10n.dlgDeleteFolderTitle,
+            style: const TextStyle(color: Colors.white),
+          ),
           content: Text(
             l10n.dlgDeleteFolderMessage,
             style: const TextStyle(color: Colors.white70),
@@ -884,7 +973,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
               },
               child: Text(
                 l10n.btnDeleteFolder,
-                style: const TextStyle(color: Color(0xFFFF5252), fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  color: Color(0xFFFF5252),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -912,11 +1004,16 @@ class _BookmarksPageState extends State<BookmarksPage> {
             ListTile(
               leading: Icon(
                 Icons.close,
-                color: bookmark.folderId == null ? AppColors.accent : Colors.white54,
+                color: bookmark.folderId == null
+                    ? AppColors.accent
+                    : Colors.white54,
               ),
               title: Text(
                 l10n.lblNoFolder,
-                style: const TextStyle(color: Colors.white, fontFamily: 'Outfit'),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Outfit',
+                ),
               ),
               trailing: bookmark.folderId == null
                   ? const Icon(Icons.check_circle, color: AppColors.accent)
@@ -930,17 +1027,24 @@ class _BookmarksPageState extends State<BookmarksPage> {
               ListTile(
                 leading: Icon(
                   Icons.folder_outlined,
-                  color: bookmark.folderId == folder.id ? AppColors.accent : Colors.white54,
+                  color: bookmark.folderId == folder.id
+                      ? AppColors.accent
+                      : Colors.white54,
                 ),
                 title: Text(
                   folder.name,
-                  style: const TextStyle(color: Colors.white, fontFamily: 'Outfit'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Outfit',
+                  ),
                 ),
                 trailing: bookmark.folderId == folder.id
                     ? const Icon(Icons.check_circle, color: AppColors.accent)
                     : null,
                 onTap: () {
-                  bookmarkBloc.add(AssignBookmarkFolder(bookmark.id!, folder.id));
+                  bookmarkBloc.add(
+                    AssignBookmarkFolder(bookmark.id!, folder.id),
+                  );
                   Navigator.of(sheetContext).pop();
                 },
               ),
@@ -1125,7 +1229,10 @@ class _DarkBottomSheet extends StatelessWidget {
         ),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
-      padding: EdgeInsets.only(top: 12.h, bottom: 24.h + MediaQuery.of(context).padding.bottom),
+      padding: EdgeInsets.only(
+        top: 12.h,
+        bottom: 24.h + MediaQuery.of(context).padding.bottom,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1210,7 +1317,10 @@ class _FolderNameDialogState extends State<_FolderNameDialog> {
     return AlertDialog(
       backgroundColor: const Color(0xFF152730),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
-      title: Text(widget.title, style: const TextStyle(color: Colors.white, fontFamily: 'Outfit')),
+      title: Text(
+        widget.title,
+        style: const TextStyle(color: Colors.white, fontFamily: 'Outfit'),
+      ),
       content: TextField(
         controller: widget.controller,
         autofocus: true,
@@ -1244,7 +1354,10 @@ class _FolderNameDialogState extends State<_FolderNameDialog> {
           onPressed: _submit,
           child: Text(
             widget.confirmLabel,
-            style: const TextStyle(color: AppColors.accent, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              color: AppColors.accent,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],

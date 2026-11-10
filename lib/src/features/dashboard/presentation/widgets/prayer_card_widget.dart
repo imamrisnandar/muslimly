@@ -74,11 +74,7 @@ class PrayerCardWidget extends StatelessWidget {
                     color: AppColors.accent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: Icon(
-                    icon,
-                    color: AppColors.accent,
-                    size: 20.sp,
-                  ),
+                  child: Icon(icon, color: AppColors.accent, size: 20.sp),
                 ),
                 SizedBox(width: 8.w),
                 // Prayer Name (single line, no Arabic)

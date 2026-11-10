@@ -436,9 +436,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
         child: Text(
           title,
           style: GoogleFonts.outfit(
-            color: isSelected
-                ? AppColors.quranTeal
-                : AppColors.textDisabled,
+            color: isSelected ? AppColors.quranTeal : AppColors.textDisabled,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 12.sp,
           ),
@@ -622,9 +620,7 @@ class _TafsirBottomSheetState extends State<TafsirBottomSheet>
         child: Text(
           title,
           style: GoogleFonts.outfit(
-            color: isSelected
-                ? AppColors.quranTeal
-                : AppColors.textDisabled,
+            color: isSelected ? AppColors.quranTeal : AppColors.textDisabled,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 12.sp,
           ),

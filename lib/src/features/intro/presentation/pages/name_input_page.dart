@@ -46,7 +46,9 @@ class _NameInputPageState extends State<NameInputPage> {
         decoration: BoxDecoration(
           color: isActive ? AppColors.accent : Colors.transparent,
           borderRadius: BorderRadius.circular(20.r),
-          border: isActive ? null : Border.all(color: Colors.white.withValues(alpha: 0.3)),
+          border: isActive
+              ? null
+              : Border.all(color: Colors.white.withValues(alpha: 0.3)),
         ),
         child: Text(
           label,
@@ -70,7 +72,11 @@ class _NameInputPageState extends State<NameInputPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
+            colors: [
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
+            ],
           ),
         ),
         child: SafeArea(
@@ -111,7 +117,10 @@ class _NameInputPageState extends State<NameInputPage> {
                         SizedBox(height: 12.h),
                         Text(
                           l10n.nameInputTitle,
-                          style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16.sp,
+                          ),
                         ),
                         SizedBox(height: 32.h),
                         TextFormField(
@@ -121,7 +130,9 @@ class _NameInputPageState extends State<NameInputPage> {
                           onFieldSubmitted: (_) => _submitName(),
                           decoration: InputDecoration(
                             hintText: l10n.nameInputHint,
-                            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+                            hintStyle: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.5),
+                            ),
                             filled: true,
                             fillColor: Colors.white.withValues(alpha: 0.1),
                             border: OutlineInputBorder(
@@ -130,9 +141,14 @@ class _NameInputPageState extends State<NameInputPage> {
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.r),
-                              borderSide: const BorderSide(color: AppColors.accent),
+                              borderSide: const BorderSide(
+                                color: AppColors.accent,
+                              ),
                             ),
-                            prefixIcon: const Icon(Icons.person, color: Colors.white54),
+                            prefixIcon: const Icon(
+                              Icons.person,
+                              color: Colors.white54,
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {

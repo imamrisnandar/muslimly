@@ -29,7 +29,9 @@ class AuthRepositoryImpl implements AuthRepository {
     } on DioException catch (e) {
       return Left(_dioError(e));
     } catch (e) {
-      return const Left(MessageFailure('Terjadi kesalahan. Silakan coba lagi.'));
+      return const Left(
+        MessageFailure('Terjadi kesalahan. Silakan coba lagi.'),
+      );
     }
   }
 
@@ -61,31 +63,46 @@ class AuthRepositoryImpl implements AuthRepository {
     } on DioException catch (e) {
       return Left(_dioError(e));
     } catch (_) {
-      return const Left(MessageFailure('Terjadi kesalahan. Silakan coba lagi.'));
+      return const Left(
+        MessageFailure('Terjadi kesalahan. Silakan coba lagi.'),
+      );
     }
   }
 
   @override
   Future<Either<Failure, String>> verifyOTP(String email, String otp) async {
     try {
-      final response = await _dataSource.verifyOTP({'email': email, 'otp': otp});
+      final response = await _dataSource.verifyOTP({
+        'email': email,
+        'otp': otp,
+      });
       return Right(response.resetToken);
     } on DioException catch (e) {
       return Left(_dioError(e));
     } catch (_) {
-      return const Left(MessageFailure('Terjadi kesalahan. Silakan coba lagi.'));
+      return const Left(
+        MessageFailure('Terjadi kesalahan. Silakan coba lagi.'),
+      );
     }
   }
 
   @override
-  Future<Either<Failure, void>> resetPassword(String resetToken, String newPassword) async {
+  Future<Either<Failure, void>> resetPassword(
+    String resetToken,
+    String newPassword,
+  ) async {
     try {
-      await _dataSource.resetPassword({'reset_token': resetToken, 'new_password': newPassword});
+      await _dataSource.resetPassword({
+        'reset_token': resetToken,
+        'new_password': newPassword,
+      });
       return const Right(null);
     } on DioException catch (e) {
       return Left(_dioError(e));
     } catch (_) {
-      return const Left(MessageFailure('Terjadi kesalahan. Silakan coba lagi.'));
+      return const Left(
+        MessageFailure('Terjadi kesalahan. Silakan coba lagi.'),
+      );
     }
   }
 
@@ -97,7 +114,9 @@ class AuthRepositoryImpl implements AuthRepository {
     if (e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.connectionError) {
-      return const MessageFailure('Tidak ada koneksi internet. Periksa jaringan Anda.');
+      return const MessageFailure(
+        'Tidak ada koneksi internet. Periksa jaringan Anda.',
+      );
     }
     return const MessageFailure('Terjadi kesalahan. Silakan coba lagi.');
   }

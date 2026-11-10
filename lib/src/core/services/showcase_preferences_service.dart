@@ -23,8 +23,7 @@ abstract class ShowcaseKeys {
   /// Not a ShowcaseView tour — reuses this same one-shot-flag service for a
   /// plain explainer AlertDialog shown the first time "Rekam suara saat
   /// hafalan" (§F) is turned on.
-  static const String recordHafalanExplainer =
-      'hasShownRecordHafalanExplainer';
+  static const String recordHafalanExplainer = 'hasShownRecordHafalanExplainer';
 }
 
 class ShowcasePreferencesService {
@@ -40,7 +39,10 @@ class ShowcasePreferencesService {
 
   Future<void> clearAll() async {
     final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys().where((k) => k.startsWith('hasShown')).toList();
+    final keys = prefs
+        .getKeys()
+        .where((k) => k.startsWith('hasShown'))
+        .toList();
     for (final key in keys) {
       await prefs.remove(key);
     }

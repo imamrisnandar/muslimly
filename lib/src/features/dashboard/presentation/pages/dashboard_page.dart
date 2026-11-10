@@ -25,6 +25,9 @@ import '../../../quran/presentation/bloc/bookmark/bookmark_bloc.dart';
 import '../../../quran/presentation/bloc/bookmark/bookmark_event.dart';
 import '../../../quran/presentation/bloc/bookmark/bookmark_state.dart';
 
+import '../../../prayer_tracker/presentation/bloc/prayer_tracker_cubit.dart';
+import '../../../prayer_tracker/presentation/widgets/dashboard_prayer_tracker_card_widget.dart';
+import '../../../prayer_widget/data/widget_data_service.dart';
 import '../widgets/prayer_countdown_widget.dart';
 import '../widgets/fasting_reminder_section.dart';
 import '../widgets/dzikir_reminder_section.dart';
@@ -107,94 +110,89 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-                extendBody: true,
-                bottomNavigationBar: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, -5),
-                      ),
-                    ],
-                  ),
-                  child: BottomNavigationBar(
-                    currentIndex: _currentIndex,
-                    onTap: _onTabSelected,
-                    backgroundColor: AppColors.cardDark,
-                    selectedItemColor: AppColors.accent,
-                    unselectedItemColor: Colors.white54,
-                    type: BottomNavigationBarType.fixed,
-                    showUnselectedLabels: true,
-                    selectedLabelStyle: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Outfit',
-                    ),
-                    unselectedLabelStyle: TextStyle(
-                      fontSize: 10.sp,
-                      fontFamily: 'Outfit',
-                    ),
-                    items: [
-                      BottomNavigationBarItem(
-                        icon: const Icon(Icons.home_filled),
-                        label: AppLocalizations.of(context)!.bottomNavHome,
-                      ),
-                      BottomNavigationBarItem(
-                        icon: const Icon(Icons.mosque),
-                        label: AppLocalizations.of(context)!.bottomNavPrayer,
-                      ),
-                      BottomNavigationBarItem(
-                        icon: const Icon(
-                          Icons.menu_book_rounded,
-                          color: AppColors.gold,
-                        ),
-                        label: AppLocalizations.of(context)!.bottomNavQuran,
-                      ),
-                      BottomNavigationBarItem(
-                        icon: const Icon(Icons.spa),
-                        label: AppLocalizations.of(context)!.bottomNavDzikir,
-                      ),
-                      BottomNavigationBarItem(
-                        icon: const Icon(Icons.settings),
-                        label: AppLocalizations.of(context)!.bottomNavSettings,
-                      ),
-                    ],
-                  ),
-                ),
-                body: Container(
-                  decoration: const BoxDecoration(color: AppColors.bgGradientStart),
-                  child: SafeArea(
-                    child: Stack(
-                      children: [
-                        IndexedStack(
-                          index: _currentIndex,
-                          children: [
-                            _builtIndices.contains(0)
-                                ? _buildHomeContent(context)
-                                : const SizedBox.shrink(),
-                            _builtIndices.contains(1)
-                                ? const PrayerPage()
-                                : const SizedBox.shrink(),
-                            _builtIndices.contains(2)
-                                ? const QuranPage()
-                                : const SizedBox.shrink(),
-                            _builtIndices.contains(3)
-                                ? const DzikirPage()
-                                : const SizedBox.shrink(),
-                            _builtIndices.contains(4)
-                                ? const SettingsPage()
-                                : const SizedBox.shrink(),
-                          ],
-                        ),
-                        DraggableAudioPlayer(
-                          enableShowcase: _currentIndex == 2,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+      extendBody: true,
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabSelected,
+          backgroundColor: AppColors.cardDark,
+          selectedItemColor: AppColors.accent,
+          unselectedItemColor: Colors.white54,
+          type: BottomNavigationBarType.fixed,
+          showUnselectedLabels: true,
+          selectedLabelStyle: TextStyle(
+            fontSize: 10.sp,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Outfit',
+          ),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 10.sp,
+            fontFamily: 'Outfit',
+          ),
+          items: [
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.home_filled),
+              label: AppLocalizations.of(context)!.bottomNavHome,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.mosque),
+              label: AppLocalizations.of(context)!.bottomNavPrayer,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.menu_book_rounded, color: AppColors.gold),
+              label: AppLocalizations.of(context)!.bottomNavQuran,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.spa),
+              label: AppLocalizations.of(context)!.bottomNavDzikir,
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.settings),
+              label: AppLocalizations.of(context)!.bottomNavSettings,
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(color: AppColors.bgGradientStart),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              IndexedStack(
+                index: _currentIndex,
+                children: [
+                  _builtIndices.contains(0)
+                      ? _buildHomeContent(context)
+                      : const SizedBox.shrink(),
+                  _builtIndices.contains(1)
+                      ? const PrayerPage()
+                      : const SizedBox.shrink(),
+                  _builtIndices.contains(2)
+                      ? const QuranPage()
+                      : const SizedBox.shrink(),
+                  _builtIndices.contains(3)
+                      ? const DzikirPage()
+                      : const SizedBox.shrink(),
+                  _builtIndices.contains(4)
+                      ? const SettingsPage()
+                      : const SizedBox.shrink(),
+                ],
+              ),
+              DraggableAudioPlayer(enableShowcase: _currentIndex == 2),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildHomeContent(BuildContext context) {
@@ -301,7 +299,9 @@ class _DashboardPageState extends State<DashboardPage> {
               context.read<SettingsCubit>().loadSettings();
 
               // Refresh Article Carousel
-              context.read<ArticleBloc>().add(LoadArticles(lang: lang, limit: 5));
+              context.read<ArticleBloc>().add(
+                LoadArticles(lang: lang, limit: 5),
+              );
 
               // Small delay for visual feedback
               await Future.delayed(const Duration(seconds: 1));
@@ -317,7 +317,9 @@ class _DashboardPageState extends State<DashboardPage> {
                   // GREETING
                   BlocBuilder<SettingsCubit, SettingsState>(
                     builder: (context, state) {
-                      final name = (state.userName.isEmpty) ? 'Friend' : state.userName;
+                      final name = (state.userName.isEmpty)
+                          ? 'Friend'
+                          : state.userName;
                       return Text(
                         AppLocalizations.of(context)!.dashboardGreeting(name),
                         style: TextStyle(
@@ -377,10 +379,10 @@ class _DashboardPageState extends State<DashboardPage> {
                           : l10n.lblPages; // Todo: Add localized "Ayahs"
 
                       return DashboardDailyGoalCardWidget(
-                            progress: progress,
-                            target: target,
-                            unitLabel: label,
-                            l10n: l10n,
+                        progress: progress,
+                        target: target,
+                        unitLabel: label,
+                        l10n: l10n,
                       );
                     },
                   ),
@@ -403,6 +405,27 @@ class _DashboardPageState extends State<DashboardPage> {
                         ],
                       );
                     },
+                  ),
+
+                  // PRAYER TRACKER CARD — (re)loads whenever the prayer
+                  // location/times are (re)computed.
+                  BlocListener<PrayerBloc, PrayerState>(
+                    listenWhen: (a, b) =>
+                        b.status == PrayerStatus.success &&
+                        (a.status != PrayerStatus.success ||
+                            a.currentCity != b.currentCity),
+                    listener: (context, s) {
+                      context.read<PrayerTrackerCubit>().load(
+                        s.currentCity.latitude,
+                        s.currentCity.longitude,
+                      );
+                      getIt<WidgetDataService>().update(
+                        latitude: s.currentCity.latitude,
+                        longitude: s.currentCity.longitude,
+                        cityName: s.currentCity.name,
+                      );
+                    },
+                    child: const DashboardPrayerTrackerCard(),
                   ),
                   SizedBox(height: 12.h),
 
@@ -440,69 +463,221 @@ class _DashboardPageState extends State<DashboardPage> {
                               Orientation.landscape;
 
                           return GestureDetector(
-                              onTap: () => _onTabSelected(1),
-                              child: Container(
-                                height: isLandscape
-                                    ? null
-                                    : null, // Auto height for reminders
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24.r),
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      const Color(
-                                        0xFF1DE9B6,
-                                      ).withValues(alpha: 0.2), // Teal Accent as Base
-                                      AppColors.accentDark.withValues(alpha: 0.05),
-                                    ],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  boxShadow: [
-                                    // Soft Teal Glow
-                                    BoxShadow(
-                                      color: const Color(
-                                        0xFF1DE9B6,
-                                      ).withValues(alpha: 0.1),
-                                      blurRadius: 20,
-                                      spreadRadius: -5,
-                                      offset: const Offset(0, 8),
+                            onTap: () => _onTabSelected(1),
+                            child: Container(
+                              height: isLandscape
+                                  ? null
+                                  : null, // Auto height for reminders
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(24.r),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    const Color(0xFF1DE9B6).withValues(
+                                      alpha: 0.2,
+                                    ), // Teal Accent as Base
+                                    AppColors.accentDark.withValues(
+                                      alpha: 0.05,
                                     ),
                                   ],
-                                  border: Border.all(
-                                    color: const Color(
-                                      0xFFFFC107,
-                                    ).withValues(alpha: 0.3), // Clearer Gold Border
-                                    width: 1,
-                                  ),
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
-                                child: Stack(
-                                  children: [
-                                    // Background Pattern
-                                    Positioned(
-                                      right: -20,
-                                      bottom: -20,
-                                      child: Icon(
-                                        Icons.mosque,
-                                        size: isLandscape ? 80.sp : 120.sp,
-                                        color: const Color(
-                                          0xFFFFC107,
-                                        ).withValues(alpha: 0.1), // Gold Icon Tint
-                                      ),
+                                boxShadow: [
+                                  // Soft Teal Glow
+                                  BoxShadow(
+                                    color: const Color(
+                                      0xFF1DE9B6,
+                                    ).withValues(alpha: 0.1),
+                                    blurRadius: 20,
+                                    spreadRadius: -5,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: const Color(0xFFFFC107).withValues(
+                                    alpha: 0.3,
+                                  ), // Clearer Gold Border
+                                  width: 1,
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  // Background Pattern
+                                  Positioned(
+                                    right: -20,
+                                    bottom: -20,
+                                    child: Icon(
+                                      Icons.mosque,
+                                      size: isLandscape ? 80.sp : 120.sp,
+                                      color: const Color(0xFFFFC107).withValues(
+                                        alpha: 0.1,
+                                      ), // Gold Icon Tint
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.all(
-                                        isLandscape ? 8.w : 20.w,
-                                      ),
-                                      child: isLandscape
-                                          ? Row(
-                                              children: [
-                                                // Left: Label Only
-                                                Expanded(
-                                                  flex: 2,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(
+                                      isLandscape ? 8.w : 20.w,
+                                    ),
+                                    child: isLandscape
+                                        ? Row(
+                                            children: [
+                                              // Left: Label Only
+                                              Expanded(
+                                                flex: 2,
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.w,
+                                                    vertical: 4.h,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black12,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          20.r,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.cardNextPrayer,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10.sp,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              // Middle: Prayer Name & Time
+                                              Expanded(
+                                                flex: 4,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .baseline,
+                                                  textBaseline:
+                                                      TextBaseline.alphabetic,
+                                                  children: [
+                                                    Flexible(
+                                                      child: Text(
+                                                        nextPrayer['name'],
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 20.sp,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 8.w),
+                                                    Text(
+                                                      nextPrayer['time'],
+                                                      style: TextStyle(
+                                                        color: Colors.white70,
+                                                        fontSize: 16.sp,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              // Right: Countdown
+                                              Expanded(
+                                                flex: 3,
+                                                child: Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
                                                   child: Container(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                           horizontal: 8.w,
+                                                          vertical: 4.h,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.black26,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12.r,
+                                                          ),
+                                                      border: Border.all(
+                                                        color:
+                                                            const Color(
+                                                              0xFFFFC107,
+                                                            ).withValues(
+                                                              alpha: 0.3,
+                                                            ),
+                                                        width: 1,
+                                                      ),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color:
+                                                              const Color(
+                                                                0xFFFFC107,
+                                                              ).withValues(
+                                                                alpha: 0.15,
+                                                              ),
+                                                          blurRadius: 10,
+                                                          spreadRadius: -2,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: PrayerCountdownWidget(
+                                                      targetTime:
+                                                          nextPrayer['nextPrayerTime']
+                                                              as DateTime,
+                                                      baseColor: const Color(
+                                                        0xFFFFC107, // Gold Countdown Progress
+                                                      ),
+                                                      onFinished: () {
+                                                        context
+                                                            .read<PrayerBloc>()
+                                                            .add(
+                                                              FetchPrayerTime(
+                                                                latitude: state
+                                                                    .currentCity
+                                                                    .latitude,
+                                                                longitude: state
+                                                                    .currentCity
+                                                                    .longitude,
+                                                                date:
+                                                                    DateTime.now(),
+                                                              ),
+                                                            );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // ROW 1: Label + Prayer Name
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal: 10.w,
                                                           vertical: 4.h,
                                                         ),
                                                     decoration: BoxDecoration(
@@ -516,313 +691,226 @@ class _DashboardPageState extends State<DashboardPage> {
                                                       AppLocalizations.of(
                                                         context,
                                                       )!.cardNextPrayer,
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textAlign:
-                                                          TextAlign.center,
                                                       style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 10.sp,
+                                                        fontSize: 12.sp,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                // Middle: Prayer Name & Time
-                                                Expanded(
-                                                  flex: 4,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .baseline,
-                                                    textBaseline:
-                                                        TextBaseline.alphabetic,
-                                                    children: [
-                                                      Flexible(
-                                                        child: Text(
-                                                          nextPrayer['name'],
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 20.sp,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(width: 8.w),
-                                                      Text(
-                                                        nextPrayer['time'],
-                                                        style: TextStyle(
-                                                          color: Colors.white70,
-                                                          fontSize: 16.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                // Right: Countdown
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 8.w,
-                                                            vertical: 4.h,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.black26,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              12.r,
-                                                            ),
-                                                        border: Border.all(
-                                                          color: const Color(
-                                                            0xFFFFC107,
-                                                          ).withValues(alpha: 0.3),
-                                                          width: 1,
-                                                        ),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: const Color(
-                                                              0xFFFFC107,
-                                                            ).withValues(alpha: 0.15),
-                                                            blurRadius: 10,
-                                                            spreadRadius: -2,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: PrayerCountdownWidget(
-                                                        targetTime:
-                                                            nextPrayer['nextPrayerTime']
-                                                                as DateTime,
-                                                        baseColor: const Color(
-                                                          0xFFFFC107, // Gold Countdown Progress
-                                                        ),
-                                                        onFinished: () {
-                                                          context.read<PrayerBloc>().add(
-                                                            FetchPrayerTime(
-                                                              latitude: state
-                                                                  .currentCity
-                                                                  .latitude,
-                                                              longitude: state
-                                                                  .currentCity
-                                                                  .longitude,
-                                                              date:
-                                                                  DateTime.now(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
+                                                  Text(
+                                                    nextPrayer['name'],
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 28.sp,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      height: 1.0,
                                                     ),
                                                   ),
-                                                ),
-                                              ],
-                                            )
-                                          : Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                // ROW 1: Label + Prayer Name
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 10.w,
-                                                            vertical: 4.h,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.black12,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              20.r,
-                                                            ),
-                                                      ),
-                                                      child: Text(
-                                                        AppLocalizations.of(
-                                                          context,
-                                                        )!.cardNextPrayer,
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 12.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                      ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 12.h),
+                                              // ROW 2: Time + Countdown
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    nextPrayer['time'],
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 24.sp,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
-                                                    Text(
-                                                      nextPrayer['name'],
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 28.sp,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        height: 1.0,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 12.h),
-                                                // ROW 2: Time + Countdown
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      nextPrayer['time'],
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 24.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal: 12.w,
-                                                            vertical: 6.h,
-                                                          ),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.black26,
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              12.r,
-                                                            ),
-                                                        border: Border.all(
-                                                          color: const Color(
-                                                            0xFFFFC107,
-                                                          ).withValues(alpha: 0.3),
-                                                          width: 1,
-                                                        ),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: const Color(
-                                                              0xFFFFC107,
-                                                            ).withValues(alpha: 0.15),
-                                                            blurRadius: 10,
-                                                            spreadRadius: -2,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: PrayerCountdownWidget(
-                                                        targetTime:
-                                                            nextPrayer['nextPrayerTime']
-                                                                as DateTime,
-                                                        baseColor: const Color(
-                                                          0xFFFFC107, // Gold Countdown Progress
-                                                        ),
-                                                        onFinished: () {
-                                                          context.read<PrayerBloc>().add(
-                                                            FetchPrayerTime(
-                                                              latitude: state
-                                                                  .currentCity
-                                                                  .latitude,
-                                                              longitude: state
-                                                                  .currentCity
-                                                                  .longitude,
-                                                              date:
-                                                                  DateTime.now(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                // REMINDERS SECTION
-                                                if (reminderData.todayFasting !=
-                                                        null ||
-                                                    reminderData.nextFasting !=
-                                                        null ||
-                                                    reminderData
-                                                        .hasAnyActiveDzikir) ...[
-                                                  SizedBox(height: 12.h),
+                                                  ),
                                                   Container(
-                                                    padding: EdgeInsets.all(
-                                                      10.w,
-                                                    ),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal: 12.w,
+                                                          vertical: 6.h,
+                                                        ),
                                                     decoration: BoxDecoration(
-                                                      color: Colors.black
-                                                          .withValues(alpha: 0.2),
+                                                      color: Colors.black26,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             12.r,
                                                           ),
-                                                    ),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        FastingReminderSection(
-                                                          todayFasting: reminderData.todayFasting,
-                                                          nextFasting: reminderData.nextFasting,
-                                                          locale: l10n.localeName,
-                                                        ),
-                                                        if (reminderData.hasAnyActiveDzikir) ...[
-                                                          if (reminderData.todayFasting != null || reminderData.nextFasting != null)
-                                                            Padding(
-                                                              padding: EdgeInsets.symmetric(vertical: 6.h),
-                                                              child: Divider(
-                                                                color: Colors.white.withValues(alpha: 0.1),
-                                                                height: 1,
-                                                              ),
+                                                      border: Border.all(
+                                                        color:
+                                                            const Color(
+                                                              0xFFFFC107,
+                                                            ).withValues(
+                                                              alpha: 0.3,
                                                             ),
-                                                          DzikirReminderSection(
-                                                            morningDzikir: reminderData.morningDzikir,
-                                                            eveningDzikir: reminderData.eveningDzikir,
-                                                            onDzikirTap: (dzikir) async {
-                                                              final locale = Localizations.localeOf(context);
-                                                              final items = dzikir.type == DzikirType.morning
-                                                                  ? await getIt<GetZikirContent>()(ZikirCategory.morning, locale)
-                                                                  : await getIt<GetZikirContent>()(ZikirCategory.evening, locale);
-                                                              final title = dzikir.type == DzikirType.morning
-                                                                  ? l10n.dzikirMorningTitle
-                                                                  : l10n.dzikirEveningTitle;
-                                                              if (context.mounted) {
-                                                                Navigator.push(context, MaterialPageRoute(
-                                                                  builder: (_) => DzikirReadingPage(title: title, items: items),
-                                                                ));
-                                                              }
-                                                            },
-                                                          ),
-                                                        ],
+                                                        width: 1,
+                                                      ),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color:
+                                                              const Color(
+                                                                0xFFFFC107,
+                                                              ).withValues(
+                                                                alpha: 0.15,
+                                                              ),
+                                                          blurRadius: 10,
+                                                          spreadRadius: -2,
+                                                        ),
                                                       ],
+                                                    ),
+                                                    child: PrayerCountdownWidget(
+                                                      targetTime:
+                                                          nextPrayer['nextPrayerTime']
+                                                              as DateTime,
+                                                      baseColor: const Color(
+                                                        0xFFFFC107, // Gold Countdown Progress
+                                                      ),
+                                                      onFinished: () {
+                                                        context
+                                                            .read<PrayerBloc>()
+                                                            .add(
+                                                              FetchPrayerTime(
+                                                                latitude: state
+                                                                    .currentCity
+                                                                    .latitude,
+                                                                longitude: state
+                                                                    .currentCity
+                                                                    .longitude,
+                                                                date:
+                                                                    DateTime.now(),
+                                                              ),
+                                                            );
+                                                      },
                                                     ),
                                                   ),
                                                 ],
+                                              ),
+
+                                              // REMINDERS SECTION
+                                              if (reminderData.todayFasting !=
+                                                      null ||
+                                                  reminderData.nextFasting !=
+                                                      null ||
+                                                  reminderData
+                                                      .hasAnyActiveDzikir) ...[
+                                                SizedBox(height: 12.h),
+                                                Container(
+                                                  padding: EdgeInsets.all(10.w),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.black
+                                                        .withValues(alpha: 0.2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12.r,
+                                                        ),
+                                                  ),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      FastingReminderSection(
+                                                        todayFasting:
+                                                            reminderData
+                                                                .todayFasting,
+                                                        nextFasting:
+                                                            reminderData
+                                                                .nextFasting,
+                                                        locale: l10n.localeName,
+                                                      ),
+                                                      if (reminderData
+                                                          .hasAnyActiveDzikir) ...[
+                                                        if (reminderData
+                                                                    .todayFasting !=
+                                                                null ||
+                                                            reminderData
+                                                                    .nextFasting !=
+                                                                null)
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.symmetric(
+                                                                  vertical: 6.h,
+                                                                ),
+                                                            child: Divider(
+                                                              color: Colors
+                                                                  .white
+                                                                  .withValues(
+                                                                    alpha: 0.1,
+                                                                  ),
+                                                              height: 1,
+                                                            ),
+                                                          ),
+                                                        DzikirReminderSection(
+                                                          morningDzikir:
+                                                              reminderData
+                                                                  .morningDzikir,
+                                                          eveningDzikir:
+                                                              reminderData
+                                                                  .eveningDzikir,
+                                                          onDzikirTap: (dzikir) async {
+                                                            final locale =
+                                                                Localizations.localeOf(
+                                                                  context,
+                                                                );
+                                                            final items =
+                                                                dzikir.type ==
+                                                                    DzikirType
+                                                                        .morning
+                                                                ? await getIt<
+                                                                    GetZikirContent
+                                                                  >()(
+                                                                    ZikirCategory
+                                                                        .morning,
+                                                                    locale,
+                                                                  )
+                                                                : await getIt<
+                                                                    GetZikirContent
+                                                                  >()(
+                                                                    ZikirCategory
+                                                                        .evening,
+                                                                    locale,
+                                                                  );
+                                                            final title =
+                                                                dzikir.type ==
+                                                                    DzikirType
+                                                                        .morning
+                                                                ? l10n.dzikirMorningTitle
+                                                                : l10n.dzikirEveningTitle;
+                                                            if (context
+                                                                .mounted) {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder: (_) =>
+                                                                      DzikirReadingPage(
+                                                                        title:
+                                                                            title,
+                                                                        items:
+                                                                            items,
+                                                                      ),
+                                                                ),
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ],
+                                                  ),
+                                                ),
                                               ],
-                                            ),
-                                    ),
-                                  ],
-                                ),
+                                            ],
+                                          ),
+                                  ),
+                                ],
                               ),
+                            ),
                           );
                         },
                       );
@@ -836,95 +924,94 @@ class _DashboardPageState extends State<DashboardPage> {
 
                   // QUICK ACCESS GRID (2x2)
                   Column(
-                      children: [
-                        // Row 1
-                        IntrinsicHeight(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                child: BlocBuilder<BookmarkBloc, BookmarkState>(
-                                  builder: (context, bookmarkState) {
-                                    return _buildQuickAccessGridItem(
+                    children: [
+                      // Row 1
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: BlocBuilder<BookmarkBloc, BookmarkState>(
+                                builder: (context, bookmarkState) {
+                                  return _buildQuickAccessGridItem(
+                                    context,
+                                    title: AppLocalizations.of(
                                       context,
-                                      title: AppLocalizations.of(
-                                        context,
-                                      )!.cardContinueReading,
-                                      icon: Icons.menu_book,
-                                      color: const Color(
-                                        0xFF00E676,
-                                      ), // Menu Focus Green
-                                      onTap: () {
-                                        context.push('/quran/bookmarks');
-                                      },
-                                    );
-                                  },
-                                ),
+                                    )!.cardContinueReading,
+                                    icon: Icons.menu_book,
+                                    color: const Color(
+                                      0xFF00E676,
+                                    ), // Menu Focus Green
+                                    onTap: () {
+                                      context.push('/quran/bookmarks');
+                                    },
+                                  );
+                                },
                               ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: _buildQuickAccessGridItem(
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: _buildQuickAccessGridItem(
+                                context,
+                                title: AppLocalizations.of(
                                   context,
-                                  title: AppLocalizations.of(
-                                    context,
-                                  )!.cardReadingHistory,
-                                  icon: Icons.history,
-                                  color: const Color(
-                                    0xFF00E676,
-                                  ), // Menu Focus Green
-                                  onTap: () => context.push('/quran/history'),
-                                ),
+                                )!.cardReadingHistory,
+                                icon: Icons.history,
+                                color: const Color(
+                                  0xFF00E676,
+                                ), // Menu Focus Green
+                                onTap: () => context.push('/quran/history'),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 12.h),
-                        // Row 2
-                        IntrinsicHeight(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Expanded(
-                                child: _buildQuickAccessGridItem(
+                      ),
+                      SizedBox(height: 12.h),
+                      // Row 2
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: _buildQuickAccessGridItem(
+                                context,
+                                title: AppLocalizations.of(
                                   context,
-                                  title: AppLocalizations.of(
+                                )!.qiblaCompass,
+                                icon: Icons.explore_outlined,
+                                color: const Color(
+                                  0xFF00E676,
+                                ), // Menu Focus Green
+                                onTap: () {
+                                  Navigator.push(
                                     context,
-                                  )!.qiblaCompass,
-                                  icon: Icons.explore_outlined,
-                                  color: const Color(
-                                    0xFF00E676,
-                                  ), // Menu Focus Green
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const QiblaCompassPage(),
-                                      ),
-                                    );
-                                  },
-                                ),
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const QiblaCompassPage(),
+                                    ),
+                                  );
+                                },
                               ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: _buildQuickAccessGridItem(
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: _buildQuickAccessGridItem(
+                                context,
+                                title: AppLocalizations.of(
                                   context,
-                                  title: AppLocalizations.of(
-                                    context,
-                                  )!.lblInspiration, // Localized
-                                  icon: Icons.lightbulb_outline,
-                                  color: const Color(
-                                    0xFF00E676,
-                                  ), // Menu Focus Green
-                                  onTap: () =>
-                                      context.push('/daily-inspiration'),
-                                ),
+                                )!.lblInspiration, // Localized
+                                icon: Icons.lightbulb_outline,
+                                color: const Color(
+                                  0xFF00E676,
+                                ), // Menu Focus Green
+                                onTap: () => context.push('/daily-inspiration'),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
                   SizedBox(height: 80.h), // Bottom padding for Nav Bar
                 ],
               ),
@@ -1035,10 +1122,16 @@ class _DashboardPageState extends State<DashboardPage> {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [color.withValues(alpha: 0.15), color.withValues(alpha: 0.05)],
+                    colors: [
+                      color.withValues(alpha: 0.15),
+                      color.withValues(alpha: 0.05),
+                    ],
                   ),
                   // Thin, Subtle Border
-                  border: Border.all(color: color.withValues(alpha: 0.3), width: 1.5),
+                  border: Border.all(
+                    color: color.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
                   // Soft, Diffused Shadows
                   boxShadow: [
                     BoxShadow(
@@ -1057,7 +1150,9 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: Center(
                   child: Icon(
                     icon,
-                    color: color.withValues(alpha: 0.9), // Slightly softer icon color
+                    color: color.withValues(
+                      alpha: 0.9,
+                    ), // Slightly softer icon color
                     size: 28.sp,
                   ),
                 ),

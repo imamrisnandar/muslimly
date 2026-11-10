@@ -539,7 +539,10 @@ class SettingsPage extends StatelessWidget {
   /// Turning the toggle on shows a one-shot explainer (never again after
   /// the first time — HAFALAN_TRACKER_PLAN.md §F) before actually enabling
   /// it; turning it off needs no explanation.
-  Future<void> _onRecordHafalanChanged(BuildContext context, bool enabled) async {
+  Future<void> _onRecordHafalanChanged(
+    BuildContext context,
+    bool enabled,
+  ) async {
     if (enabled) {
       final showcaseService = getIt<ShowcasePreferencesService>();
       final hasShown = await showcaseService.hasShown(

@@ -42,16 +42,28 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
+            colors: [
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
+            ],
           ),
         ),
         child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
             if (state is ForgotPasswordSuccess) {
-              showCustomSnackBar(context, message: l10n.newPasswordSuccess, type: SnackBarType.success);
+              showCustomSnackBar(
+                context,
+                message: l10n.newPasswordSuccess,
+                type: SnackBarType.success,
+              );
               context.go('/login');
             } else if (state is ForgotPasswordError) {
-              showCustomSnackBar(context, message: state.message, type: SnackBarType.error);
+              showCustomSnackBar(
+                context,
+                message: state.message,
+                type: SnackBarType.error,
+              );
             }
           },
           builder: (context, state) {
@@ -65,7 +77,9 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                   decoration: BoxDecoration(
                     color: AppColors.cardDark.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.5),
@@ -78,7 +92,11 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.lock_outline, color: AppColors.accent, size: 48.sp),
+                      Icon(
+                        Icons.lock_outline,
+                        color: AppColors.accent,
+                        size: 48.sp,
+                      ),
                       SizedBox(height: 16.h),
                       Text(
                         l10n.newPasswordTitle,
@@ -93,7 +111,10 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                       Text(
                         l10n.newPasswordSubtitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14.sp, color: Colors.white70),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.white70,
+                        ),
                       ),
                       SizedBox(height: 32.h),
                       Text(
@@ -115,13 +136,20 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                           fillColor: Colors.white,
                           hintText: l10n.newPasswordHint,
                           hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon: Icon(Icons.lock_outline, color: Colors.green[200]),
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                            color: Colors.green[200],
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                               color: Colors.green[200],
                             ),
-                            onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                            onPressed: () => setState(
+                              () => _isPasswordVisible = !_isPasswordVisible,
+                            ),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -150,13 +178,20 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                           fillColor: Colors.white,
                           hintText: l10n.newPasswordConfirmHint,
                           hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon: Icon(Icons.lock_outline, color: Colors.green[200]),
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                            color: Colors.green[200],
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _isConfirmVisible ? Icons.visibility : Icons.visibility_off,
+                              _isConfirmVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                               color: Colors.green[200],
                             ),
-                            onPressed: () => setState(() => _isConfirmVisible = !_isConfirmVisible),
+                            onPressed: () => setState(
+                              () => _isConfirmVisible = !_isConfirmVisible,
+                            ),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -176,7 +211,11 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                               final password = _passwordController.text;
                               final confirm = _confirmController.text;
                               if (!isPasswordStrong(password)) {
-                                showCustomSnackBar(context, message: l10n.passwordTooWeak, type: SnackBarType.error);
+                                showCustomSnackBar(
+                                  context,
+                                  message: l10n.passwordTooWeak,
+                                  type: SnackBarType.error,
+                                );
                                 return;
                               }
                               if (password != confirm) {
@@ -204,7 +243,10 @@ class _NewPasswordPageState extends State<NewPasswordPage> {
                             ),
                             child: Text(
                               l10n.newPasswordButton,
-                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),

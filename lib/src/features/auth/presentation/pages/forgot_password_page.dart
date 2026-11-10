@@ -36,18 +36,29 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
+            colors: [
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
+            ],
           ),
         ),
         child: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
             if (state is ForgotPasswordEmailSent) {
-              context.push('/otp-verify', extra: {
-                'bloc': context.read<ForgotPasswordBloc>(),
-                'email': state.email,
-              });
+              context.push(
+                '/otp-verify',
+                extra: {
+                  'bloc': context.read<ForgotPasswordBloc>(),
+                  'email': state.email,
+                },
+              );
             } else if (state is ForgotPasswordError) {
-              showCustomSnackBar(context, message: state.message, type: SnackBarType.error);
+              showCustomSnackBar(
+                context,
+                message: state.message,
+                type: SnackBarType.error,
+              );
             }
           },
           builder: (context, state) {
@@ -61,7 +72,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   decoration: BoxDecoration(
                     color: AppColors.cardDark.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.5),
@@ -74,7 +87,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.lock_reset, color: AppColors.accent, size: 48.sp),
+                      Icon(
+                        Icons.lock_reset,
+                        color: AppColors.accent,
+                        size: 48.sp,
+                      ),
                       SizedBox(height: 16.h),
                       Text(
                         l10n.forgotPasswordTitle,
@@ -89,7 +106,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       Text(
                         l10n.forgotPasswordSubtitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14.sp, color: Colors.white70),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.white70,
+                        ),
                       ),
                       SizedBox(height: 32.h),
                       Text(
@@ -111,7 +131,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           fillColor: Colors.white,
                           hintText: l10n.registerHintEmail,
                           hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon: Icon(Icons.email_outlined, color: Colors.green[200]),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: Colors.green[200],
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
                             borderSide: BorderSide.none,
@@ -128,7 +151,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               context.read<ForgotPasswordBloc>().add(
-                                ForgotPasswordEmailSubmitted(_emailController.text.trim()),
+                                ForgotPasswordEmailSubmitted(
+                                  _emailController.text.trim(),
+                                ),
                               );
                             },
                             style: ElevatedButton.styleFrom(
@@ -141,7 +166,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             ),
                             child: Text(
                               l10n.forgotPasswordSendCode,
-                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),

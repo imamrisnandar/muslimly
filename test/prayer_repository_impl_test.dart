@@ -15,6 +15,10 @@ class _StubSettingsRepository implements SettingsRepository {
       throw UnimplementedError();
 
   @override
+  Future<String> getHighLatitudeRule() async => 'auto';
+  @override
+  Future<void> saveHighLatitudeRule(String rule) => throw UnimplementedError();
+  @override
   Future<String?> getLanguage() => throw UnimplementedError();
   @override
   Future<void> saveLanguage(String languageCode) => throw UnimplementedError();
@@ -145,5 +149,44 @@ void main() {
 
     final prayerTime = result.getRight().toNullable()!;
     expect(prayerTime.date, '2026-01-01');
+  });
+
+  test('getPrayerTime strings are derived from getPrayerInstants', () async {
+    final repo = PrayerRepositoryImpl(_StubSettingsRepository('kemenag_ri'));
+
+    final instants = (await repo.getPrayerInstants(
+      latitude,
+      longitude,
+      date,
+    )).getRight().toNullable()!;
+    final text = (await repo.getPrayerTime(
+      latitude,
+      longitude,
+      date,
+    )).getRight().toNullable()!;
+
+    String hhmm(DateTime t) {
+      final l = t.toLocal();
+      return '${l.hour.toString().padLeft(2, '0')}:'
+          '${l.minute.toString().padLeft(2, '0')}';
+    }
+
+    expect(text.subuh, hhmm(instants.fajr));
+    expect(text.terbit, hhmm(instants.sunrise));
+    expect(text.dzuhur, hhmm(instants.dhuhr));
+    expect(text.ashar, hhmm(instants.asr));
+    expect(text.maghrib, hhmm(instants.maghrib));
+    expect(text.isya, hhmm(instants.isha));
+  });
+
+  test('polar day yields instants via fallback instead of a Failure', () async {
+    final repo = PrayerRepositoryImpl(_StubSettingsRepository('singapore'));
+    final result = await repo.getPrayerInstants(
+      69.6492,
+      18.9553,
+      DateTime(2026, 6, 21),
+    );
+    expect(result.isRight(), isTrue);
+    expect(result.getRight().toNullable()!.fallbackLatitude, isNotNull);
   });
 }

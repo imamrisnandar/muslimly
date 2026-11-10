@@ -30,11 +30,7 @@ class FastingReminderSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.nightlight_round,
-              color: AppColors.accent,
-              size: 14.sp,
-            ),
+            Icon(Icons.nightlight_round, color: AppColors.accent, size: 14.sp),
             SizedBox(width: 6.w),
             Text(
               AppLocalizations.of(context)!.lblFastingHeader,
@@ -86,7 +82,10 @@ class FastingReminderSection extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: fasting.color.withValues(alpha: 0.3), width: 1),
+        border: Border.all(
+          color: fasting.color.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [

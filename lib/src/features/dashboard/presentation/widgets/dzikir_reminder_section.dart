@@ -33,11 +33,7 @@ class DzikirReminderSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.menu_book_rounded,
-              color: AppColors.gold,
-              size: 14.sp,
-            ),
+            Icon(Icons.menu_book_rounded, color: AppColors.gold, size: 14.sp),
             SizedBox(width: 6.w),
             Text(
               'DZIKIR',
@@ -96,11 +92,7 @@ class DzikirReminderSection extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(6.r),
               ),
-              child: Icon(
-                dzikir.icon,
-                color: AppColors.gold,
-                size: 14.sp,
-              ),
+              child: Icon(dzikir.icon, color: AppColors.gold, size: 14.sp),
             ),
             SizedBox(width: 8.w),
             // Content

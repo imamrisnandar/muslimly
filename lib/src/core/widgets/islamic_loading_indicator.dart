@@ -56,9 +56,7 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
   @override
   Widget build(BuildContext context) {
     // Determine color based on theme
-    final baseColor = widget.isDark
-        ? AppColors.accent
-        : AppColors.quranTeal;
+    final baseColor = widget.isDark ? AppColors.accent : AppColors.quranTeal;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -74,7 +72,9 @@ class _IslamicLoadingIndicatorState extends State<IslamicLoadingIndicator>
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: baseColor.withValues(alpha: 0.3 * _opacityAnimation.value),
+                    color: baseColor.withValues(
+                      alpha: 0.3 * _opacityAnimation.value,
+                    ),
                     blurRadius: 20,
                     spreadRadius: 5,
                   ),

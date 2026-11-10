@@ -191,6 +191,10 @@ class _FakeSettingsRepository implements SettingsRepository {
   @override
   Future<void> saveDailyReadingTarget(int pages) => throw UnimplementedError();
   @override
+  Future<String> getHighLatitudeRule() async => 'auto';
+  @override
+  Future<void> saveHighLatitudeRule(String rule) => throw UnimplementedError();
+  @override
   Future<String> getPrayerCalculationMethod() async => 'singapore';
   @override
   Future<void> savePrayerCalculationMethod(String method) =>

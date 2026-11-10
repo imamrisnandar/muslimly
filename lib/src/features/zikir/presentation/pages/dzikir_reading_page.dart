@@ -147,10 +147,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
               padding: EdgeInsets.only(right: 16.w),
               child: Text(
                 "${_currentIndex + 1}/${widget.items.length}",
-                style: TextStyle(
-                  color: AppColors.quranBrown,
-                  fontSize: 14.sp,
-                ),
+                style: TextStyle(color: AppColors.quranBrown, fontSize: 14.sp),
               ),
             ),
           ),
@@ -197,10 +194,7 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                                 gradient: LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
-                                  colors: [
-                                    Colors.white,
-                                    AppColors.creamBg,
-                                  ],
+                                  colors: [Colors.white, AppColors.creamBg],
                                 ),
                                 borderRadius: BorderRadius.circular(24.r),
                                 boxShadow: [
@@ -351,8 +345,8 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                         width: 56.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.quranGreen.withValues(alpha: 
-                            isLandscape ? 0.2 : 1.0,
+                          color: AppColors.quranGreen.withValues(
+                            alpha: isLandscape ? 0.2 : 1.0,
                           ), // Semi-transparent in landscape
                           border: isLandscape
                               ? Border.all(
@@ -434,7 +428,9 @@ class _DzikirReadingPageState extends State<DzikirReadingPage> {
                             borderRadius: BorderRadius.circular(24.r),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.quranGreen.withValues(alpha: 0.1),
+                                color: AppColors.quranGreen.withValues(
+                                  alpha: 0.1,
+                                ),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),

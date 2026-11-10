@@ -1,3 +1,5 @@
+import '../../../prayer_widget/data/widget_data_service.dart';
+import '../../../../core/di/di_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -130,6 +132,8 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<void> updateCalculationMethod(String method) async {
     await _settingsRepository.savePrayerCalculationMethod(method);
     emit(state.copyWith(calculationMethod: method));
+    // The home-screen widget caches a week of times for the old method.
+    getIt<WidgetDataService>().updateFromStoredLocation();
   }
 
   Future<void> updateKidsMode(bool enabled) async {

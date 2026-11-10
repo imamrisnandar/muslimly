@@ -87,9 +87,7 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
       backgroundColor: const Color(
         0xFF1C2A30,
       ), // Dark Theme matching Wudhu Guide
-      appBar: AppTransparentAppBar(
-        title: l10n.ibadahPrayerTitle,
-      ),
+      appBar: AppTransparentAppBar(title: l10n.ibadahPrayerTitle),
       body: FutureBuilder<List<PrayerGuideCategory>>(
         future: _prayerContentFuture,
         builder: (context, snapshot) {
@@ -213,46 +211,49 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
-          key: key,
-          initiallyExpanded: forceExpand,
-          collapsedBackgroundColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
-          tilePadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          iconColor: accentColor,
-          collapsedIconColor: Colors.white54,
-          title: Text(
-            category.title.toUpperCase(),
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-              color: accentColor,
-              fontFamily: GoogleFonts.outfit().fontFamily,
-            ),
-          ),
-          subtitle: Text(
-            category.description,
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: Colors.white70,
-              fontFamily: GoogleFonts.outfit().fontFamily,
-            ),
-          ),
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-              child: Column(
-                children: category.items.asMap().entries.map((entry) {
-                  // Local index for numbering (Resets per category)
-                  final index = entry.key + 1;
-                  final item = entry.value;
-                  return _buildItemCard(context, item, index);
-                }).toList(),
+              key: key,
+              initiallyExpanded: forceExpand,
+              collapsedBackgroundColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              tilePadding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 8.h,
               ),
+              iconColor: accentColor,
+              collapsedIconColor: Colors.white54,
+              title: Text(
+                category.title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: accentColor,
+                  fontFamily: GoogleFonts.outfit().fontFamily,
+                ),
+              ),
+              subtitle: Text(
+                category.description,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.white70,
+                  fontFamily: GoogleFonts.outfit().fontFamily,
+                ),
+              ),
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                  child: Column(
+                    children: category.items.asMap().entries.map((entry) {
+                      // Local index for numbering (Resets per category)
+                      final index = entry.key + 1;
+                      final item = entry.value;
+                      return _buildItemCard(context, item, index);
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
         ),
       ),
     );
@@ -299,7 +300,9 @@ class _PrayerGuidePageState extends State<PrayerGuidePage> {
                   decoration: BoxDecoration(
                     color: accentColor.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: accentColor.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Center(
                     child: Text(

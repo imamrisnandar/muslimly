@@ -87,7 +87,9 @@ class _QuranNavigationBottomSheetState extends State<QuranNavigationBottomSheet>
             height: 48.h,
             margin: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05), // White transparent bg
+              color: Colors.white.withValues(
+                alpha: 0.05,
+              ), // White transparent bg
               borderRadius: BorderRadius.circular(24.r),
             ),
             child: TabBar(
@@ -184,10 +186,7 @@ class _PageTabState extends State<_PageTab> {
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     decoration: BoxDecoration(
                       border: Border(
-                        bottom: BorderSide(
-                          color: AppColors.accent,
-                          width: 2.h,
-                        ),
+                        bottom: BorderSide(color: AppColors.accent, width: 2.h),
                       ),
                     ),
                     child: TextField(
@@ -357,122 +356,148 @@ class _JuzTab extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              tilePadding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 4.h,
-              ),
-              iconColor: AppColors.accent,
-              collapsedIconColor: Colors.white30,
-              title: Row(
-                children: [
-                  Container(
-                    width: 36.w,
-                    height: 36.w,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColors.accent.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      "$juzNumber",
-                      style: TextStyle(
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
-                      ),
-                    ),
+                data: Theme.of(
+                  context,
+                ).copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  tilePadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 4.h,
                   ),
-                  SizedBox(width: 16.w),
-                  Text(
-                    "${l10n.navJuz} $juzNumber",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.sp,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              subtitle: Padding(
-                padding: EdgeInsets.only(left: 52.w),
-                child: Text(
-                  "${l10n.navPage} $startPage",
-                  style: TextStyle(color: Colors.white30, fontSize: 13.sp),
-                ),
-              ),
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                  child: Column(
+                  iconColor: AppColors.accent,
+                  collapsedIconColor: Colors.white30,
+                  title: Row(
                     children: [
-                      // Start of Juz
-                      _buildJuzItem(
-                        context,
-                        l10n.startOfJuz(juzNumber),
-                        startPage,
-                        isHighlight: true,
+                      Container(
+                        width: 36.w,
+                        height: 36.w,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          "$juzNumber",
+                          style: TextStyle(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        ),
                       ),
-                      Divider(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        height: 16.h,
+                      SizedBox(width: 16.w),
+                      Text(
+                        "${l10n.navJuz} $juzNumber",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.sp,
+                          color: Colors.white,
+                        ),
                       ),
-
-                      // Rub' 1 (Approx start + 2.5 pages) -> Page + 3
-                      _buildJuzItem(context, "${l10n.rub} 1", startPage + 3),
-                      Divider(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        height: 16.h,
-                      ),
-
-                      // Rub' 2 (Approx start + 5 pages) -> Page + 5
-                      _buildJuzItem(context, "${l10n.rub} 2", startPage + 5),
-                      Divider(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        height: 16.h,
-                      ),
-
-                      // Rub' 3 (Approx start + 7.5 pages) -> Page + 8
-                      _buildJuzItem(context, "${l10n.rub} 3", startPage + 8),
-                      Divider(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        height: 16.h,
-                      ),
-
-                      // Hizb 2 (Rub 4) -> start + 10
-                      _buildJuzItem(
-                        context,
-                        "${l10n.hizb} $hizb2Number (Rub 4)",
-                        hizb2Page,
-                        isHighlight: true,
-                      ),
-                      Divider(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        height: 16.h,
-                      ),
-
-                      // Rub' 5 (Hizb 2 + 2.5) -> start + 13
-                      _buildJuzItem(context, "${l10n.rub} 5", startPage + 13),
-                      Divider(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        height: 16.h,
-                      ),
-
-                      // Rub' 6 (Hizb 2 + 5) -> start + 15
-                      _buildJuzItem(context, "${l10n.rub} 6", startPage + 15),
-                      Divider(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        height: 16.h,
-                      ),
-
-                      // Rub' 7 (Hizb 2 + 7.5) -> start + 18
-                      _buildJuzItem(context, "${l10n.rub} 7", startPage + 18),
                     ],
                   ),
+                  subtitle: Padding(
+                    padding: EdgeInsets.only(left: 52.w),
+                    child: Text(
+                      "${l10n.navPage} $startPage",
+                      style: TextStyle(color: Colors.white30, fontSize: 13.sp),
+                    ),
+                  ),
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+                      child: Column(
+                        children: [
+                          // Start of Juz
+                          _buildJuzItem(
+                            context,
+                            l10n.startOfJuz(juzNumber),
+                            startPage,
+                            isHighlight: true,
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            height: 16.h,
+                          ),
+
+                          // Rub' 1 (Approx start + 2.5 pages) -> Page + 3
+                          _buildJuzItem(
+                            context,
+                            "${l10n.rub} 1",
+                            startPage + 3,
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            height: 16.h,
+                          ),
+
+                          // Rub' 2 (Approx start + 5 pages) -> Page + 5
+                          _buildJuzItem(
+                            context,
+                            "${l10n.rub} 2",
+                            startPage + 5,
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            height: 16.h,
+                          ),
+
+                          // Rub' 3 (Approx start + 7.5 pages) -> Page + 8
+                          _buildJuzItem(
+                            context,
+                            "${l10n.rub} 3",
+                            startPage + 8,
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            height: 16.h,
+                          ),
+
+                          // Hizb 2 (Rub 4) -> start + 10
+                          _buildJuzItem(
+                            context,
+                            "${l10n.hizb} $hizb2Number (Rub 4)",
+                            hizb2Page,
+                            isHighlight: true,
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            height: 16.h,
+                          ),
+
+                          // Rub' 5 (Hizb 2 + 2.5) -> start + 13
+                          _buildJuzItem(
+                            context,
+                            "${l10n.rub} 5",
+                            startPage + 13,
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            height: 16.h,
+                          ),
+
+                          // Rub' 6 (Hizb 2 + 5) -> start + 15
+                          _buildJuzItem(
+                            context,
+                            "${l10n.rub} 6",
+                            startPage + 15,
+                          ),
+                          Divider(
+                            color: Colors.white.withValues(alpha: 0.05),
+                            height: 16.h,
+                          ),
+
+                          // Rub' 7 (Hizb 2 + 7.5) -> start + 18
+                          _buildJuzItem(
+                            context,
+                            "${l10n.rub} 7",
+                            startPage + 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
               ),
             ),
           ),

@@ -32,8 +32,7 @@ Map<String, dynamic>? generateReadingInsight({
 
   final todayKey = DateFormat('yyyy-MM-dd').format(now);
   final todayProgress = weeklyProgress[todayKey] ?? 0;
-  final percentage =
-      weeklyTarget > 0 ? (weeklyTotal / weeklyTarget * 100) : 0;
+  final percentage = weeklyTarget > 0 ? (weeklyTotal / weeklyTarget * 100) : 0;
 
   if (currentStreak >= 3 && todayProgress == 0) {
     return {
@@ -105,9 +104,7 @@ Map<String, dynamic>? generateReadingInsight({
     };
   }
 
-  if (lifetimeTotal == 100 ||
-      lifetimeTotal == 500 ||
-      lifetimeTotal == 1000) {
+  if (lifetimeTotal == 100 || lifetimeTotal == 500 || lifetimeTotal == 1000) {
     return {
       'type': 'milestone',
       'icon': '🌟',
@@ -154,9 +151,7 @@ class ReadingHistoryStatsWidget extends StatelessWidget {
           children: [
             Expanded(
               child: _StatCard(
-                icon: isListMode
-                    ? Icons.format_list_bulleted
-                    : Icons.menu_book,
+                icon: isListMode ? Icons.format_list_bulleted : Icons.menu_book,
                 iconColor: AppColors.accent,
                 label: l10n.lblLifetimeTotal,
                 value: total.toString(),
@@ -226,17 +221,13 @@ class ReadingHistoryStatsWidget extends StatelessWidget {
         );
         break;
       case 'insightStreakMilestone':
-        message =
-            l10n.insightStreakMilestone(insight['params']['streak']);
+        message = l10n.insightStreakMilestone(insight['params']['streak']);
         break;
       case 'insightPerfectWeek':
         message = l10n.insightPerfectWeek;
         break;
       case 'insightDailyRecord':
-        message = l10n.insightDailyRecord(
-          insight['params']['max'],
-          unitLabel,
-        );
+        message = l10n.insightDailyRecord(insight['params']['max'], unitLabel);
         break;
       case 'insightLifetimeMilestone':
         message = l10n.insightLifetimeMilestone(
@@ -266,10 +257,7 @@ class ReadingHistoryStatsWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text(
-            insight['icon'] as String,
-            style: TextStyle(fontSize: 24.sp),
-          ),
+          Text(insight['icon'] as String, style: TextStyle(fontSize: 24.sp)),
           SizedBox(width: 12.w),
           Expanded(
             child: Column(

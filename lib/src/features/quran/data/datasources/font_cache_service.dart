@@ -121,7 +121,9 @@ class FontCacheService {
         options: Options(receiveTimeout: const Duration(seconds: 30)),
       );
       if (await tmp.length() < _minFontBytes) {
-        throw Exception('downloaded $fileName is too small (${await tmp.length()} B)');
+        throw Exception(
+          'downloaded $fileName is too small (${await tmp.length()} B)',
+        );
       }
       if (await dest.exists()) await dest.delete();
       await tmp.rename(dest.path);

@@ -263,9 +263,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
             album: "Quran Recitation",
             title: event.surahName,
             artist: reciter.name,
-            artUri: Uri.parse(
-              "/${event.surahId}.png",
-            ),
+            artUri: Uri.parse("/${event.surahId}.png"),
           ),
         );
         await _player.setAudioSource(source);
@@ -284,9 +282,7 @@ class AudioBloc extends Bloc<AudioEvent, AudioState> {
                 album: "Quran Murottal",
                 title: "${event.surahName} : Ayah $ayahNumber",
                 artist: reciter.name,
-                artUri: Uri.parse(
-                  "/${event.surahId}.png",
-                ),
+                artUri: Uri.parse("/${event.surahId}.png"),
               ),
             );
           }).toList(),

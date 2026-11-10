@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_label">Jadwal sholat</string>
+    <string name="widget_description">Sholat berikutnya dan hitung mundur</string>
+    <string name="widget_open_app">Buka Muslimly untuk memuat jadwal sholat</string>
+    <string name="widget_label_strip">Jadwal sholat · Strip</string>
+    <string name="widget_description_strip">Kelima waktu dalam satu baris</string>
+    <string name="widget_label_list">Jadwal sholat · Daftar</string>
+    <string name="widget_description_list">Tiap sholat dengan tanda centang</string>
+</resources>

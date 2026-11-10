@@ -5,7 +5,8 @@ import '../../domain/entities/last_read.dart';
 class LastReadRepository {
   static const String _keyMushaf = 'last_read_quran_mushaf';
   static const String _keyList = 'last_read_quran_list';
-  static const String _keyMushafPendingSync = 'last_read_quran_mushaf_pending_sync';
+  static const String _keyMushafPendingSync =
+      'last_read_quran_mushaf_pending_sync';
   static const String _keyListPendingSync = 'last_read_quran_list_pending_sync';
 
   // Legacy key check could be done but simplistic approach is better for new architecture

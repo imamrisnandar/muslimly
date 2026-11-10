@@ -6,7 +6,8 @@ import '../../domain/repositories/auth_repository.dart';
 part 'forgot_password_event.dart';
 part 'forgot_password_state.dart';
 
-class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
+class ForgotPasswordBloc
+    extends Bloc<ForgotPasswordEvent, ForgotPasswordState> {
   final AuthRepository _authRepository;
 
   ForgotPasswordBloc(this._authRepository) : super(ForgotPasswordInitial()) {
@@ -44,7 +45,10 @@ class ForgotPasswordBloc extends Bloc<ForgotPasswordEvent, ForgotPasswordState> 
     Emitter<ForgotPasswordState> emit,
   ) async {
     emit(ForgotPasswordLoading());
-    final result = await _authRepository.resetPassword(event.resetToken, event.newPassword);
+    final result = await _authRepository.resetPassword(
+      event.resetToken,
+      event.newPassword,
+    );
     result.fold(
       (failure) => emit(ForgotPasswordError(failure.message)),
       (_) => emit(ForgotPasswordSuccess()),

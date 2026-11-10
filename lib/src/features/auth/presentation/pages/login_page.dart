@@ -73,7 +73,9 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: BoxDecoration(
                     color: AppColors.cardDark.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(24.r),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.5),
@@ -99,7 +101,10 @@ class _LoginPageState extends State<LoginPage> {
                       Text(
                         l10n.loginSubtitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 14.sp, color: Colors.white70),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.white70,
+                        ),
                       ),
                       SizedBox(height: 32.h),
 
@@ -122,7 +127,10 @@ class _LoginPageState extends State<LoginPage> {
                           fillColor: Colors.white,
                           hintText: l10n.registerHintEmail,
                           hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon: Icon(Icons.email_outlined, color: Colors.green[200]),
+                          prefixIcon: Icon(
+                            Icons.email_outlined,
+                            color: Colors.green[200],
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
                             borderSide: BorderSide.none,
@@ -153,13 +161,20 @@ class _LoginPageState extends State<LoginPage> {
                           fillColor: Colors.white,
                           hintText: l10n.loginHintPassword,
                           hintStyle: TextStyle(color: Colors.grey[400]),
-                          prefixIcon: Icon(Icons.lock_outline, color: Colors.green[200]),
+                          prefixIcon: Icon(
+                            Icons.lock_outline,
+                            color: Colors.green[200],
+                          ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                               color: Colors.green[200],
                             ),
-                            onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                            onPressed: () => setState(
+                              () => _isPasswordVisible = !_isPasswordVisible,
+                            ),
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.r),
@@ -212,7 +227,10 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             child: Text(
                               l10n.registerLogIn,
-                              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -226,7 +244,10 @@ class _LoginPageState extends State<LoginPage> {
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             child: Text(
                               l10n.loginOr,
-                              style: TextStyle(color: Colors.white54, fontSize: 12.sp),
+                              style: TextStyle(
+                                color: Colors.white54,
+                                fontSize: 12.sp,
+                              ),
                             ),
                           ),
                           const Expanded(child: Divider(color: Colors.white24)),
@@ -245,7 +266,9 @@ class _LoginPageState extends State<LoginPage> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.r),
                             ),
-                            backgroundColor: Colors.white.withValues(alpha: 0.05),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.05,
+                            ),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -258,7 +281,11 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                               SizedBox(width: 8.w),
-                              const Icon(Icons.arrow_forward, color: Colors.white70, size: 20),
+                              const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white70,
+                                size: 20,
+                              ),
                             ],
                           ),
                         ),

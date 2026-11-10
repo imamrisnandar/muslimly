@@ -226,7 +226,9 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontStyle: FontStyle.italic,
-                                color: AppColors.quranBrown.withValues(alpha: 0.8),
+                                color: AppColors.quranBrown.withValues(
+                                  alpha: 0.8,
+                                ),
                               ),
                             ),
                           ),
@@ -343,7 +345,8 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
                               padding: EdgeInsets.all(10.r),
                               decoration: BoxDecoration(
                                 color: isPlaying
-                                    ? AppColors.quranGreen // Active Green
+                                    ? AppColors
+                                          .quranGreen // Active Green
                                     : AppColors.creamBg, // Cream bg
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -530,7 +533,9 @@ class _TajweedLessonPageState extends State<TajweedLessonPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.quranGreen.withValues(alpha: 0.1)),
+          border: Border.all(
+            color: AppColors.quranGreen.withValues(alpha: 0.1),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.brown.withValues(alpha: 0.05),

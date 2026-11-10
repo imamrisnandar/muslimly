@@ -15,10 +15,9 @@ class FastingCubit extends Cubit<FastingState> {
       items.sort((a, b) => a.order.compareTo(b.order));
       emit(state.copyWith(items: items, status: FastingStatus.loaded));
     } catch (e) {
-      emit(state.copyWith(
-        status: FastingStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: FastingStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 

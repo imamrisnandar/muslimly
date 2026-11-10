@@ -17,8 +17,9 @@ class FastingGuidePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<FastingCubit>()
-        ..loadContent(AppLocalizations.of(context)!.localeName),
+      create: (_) =>
+          getIt<FastingCubit>()
+            ..loadContent(AppLocalizations.of(context)!.localeName),
       child: const _FastingGuideView(),
     );
   }
@@ -93,11 +94,17 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                   style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   decoration: InputDecoration(
                     hintText: l10n.searchFastingGuide,
-                    hintStyle: TextStyle(color: Colors.white38, fontSize: 14.sp),
+                    hintStyle: TextStyle(
+                      color: Colors.white38,
+                      fontSize: 14.sp,
+                    ),
                     prefixIcon: const Icon(Icons.search, color: Colors.white54),
                     suffixIcon: state.query.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: Colors.white54),
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.white54,
+                            ),
                             onPressed: () {
                               _searchController.clear();
                               context.read<FastingCubit>().onSearchChanged('');
@@ -106,7 +113,10 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                         : null,
                     filled: true,
                     fillColor: Colors.white.withValues(alpha: 0.05),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12.r),
                       borderSide: BorderSide.none,
@@ -120,7 +130,11 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.search_off, size: 48.sp, color: Colors.white24),
+                            Icon(
+                              Icons.search_off,
+                              size: 48.sp,
+                              color: Colors.white24,
+                            ),
                             SizedBox(height: 16.h),
                             Text(
                               l10n.msgNoResults,
@@ -138,7 +152,11 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                         itemCount: filteredData.length,
                         separatorBuilder: (_, __) => SizedBox(height: 12.h),
                         itemBuilder: (context, index) {
-                          return _buildChapterCard(context, filteredData[index], state.items);
+                          return _buildChapterCard(
+                            context,
+                            filteredData[index],
+                            state.items,
+                          );
                         },
                       ),
               ),
@@ -149,7 +167,11 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
     );
   }
 
-  Widget _buildChapterCard(BuildContext context, FastingModel item, List<FastingModel> allItems) {
+  Widget _buildChapterCard(
+    BuildContext context,
+    FastingModel item,
+    List<FastingModel> allItems,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
@@ -176,7 +198,9 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: AppColors.accent.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Center(
                     child: Text(
@@ -219,7 +243,11 @@ class _FastingGuideViewState extends State<_FastingGuideView> {
                   ),
                 ),
                 SizedBox(width: 8.w),
-                Icon(Icons.arrow_forward_ios_rounded, color: Colors.white38, size: 16.sp),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white38,
+                  size: 16.sp,
+                ),
               ],
             ),
           ),

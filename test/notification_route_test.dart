@@ -12,7 +12,10 @@ void main() {
 
     test('ignores a non-absolute route and falls back to type', () {
       expect(
-        resolveNotificationRoute({'route': 'quran/bookmarks', 'type': 'daily_reminder'}),
+        resolveNotificationRoute({
+          'route': 'quran/bookmarks',
+          'type': 'daily_reminder',
+        }),
         '/dashboard?index=2',
       );
     });
@@ -31,7 +34,10 @@ void main() {
 
     test('route wins over type', () {
       expect(
-        resolveNotificationRoute({'route': '/settings', 'type': 'daily_reminder'}),
+        resolveNotificationRoute({
+          'route': '/settings',
+          'type': 'daily_reminder',
+        }),
         '/settings',
       );
     });

@@ -94,7 +94,10 @@ class _AppBar extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.family_restroom_rounded, color: Colors.white),
+            icon: const Icon(
+              Icons.family_restroom_rounded,
+              color: Colors.white,
+            ),
             tooltip: AppLocalizations.of(context)!.hafalanParentViewTitle,
             onPressed: () => context.push('/quran/hafalan/parent-view'),
           ),
@@ -264,9 +267,7 @@ class _JuzChip extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            AppLocalizations.of(
-              context,
-            )!.hafalanJuzLabel(juz.juzNumber),
+            AppLocalizations.of(context)!.hafalanJuzLabel(juz.juzNumber),
             style: TextStyle(
               fontSize: 11.sp,
               color: Colors.white.withValues(alpha: 0.7),
@@ -328,10 +329,9 @@ class _MurajaahDueTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.hafalanMurajaahTileTitle(
-                      surahName,
-                      unit.pageNumber,
-                    ),
+                    AppLocalizations.of(
+                      context,
+                    )!.hafalanMurajaahTileTitle(surahName, unit.pageNumber),
                     style: TextStyle(
                       fontSize: 13.5.sp,
                       fontWeight: FontWeight.w600,

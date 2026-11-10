@@ -427,7 +427,9 @@ class PrayerHeaderWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20.r),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.15),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -466,7 +468,9 @@ class PrayerHeaderWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.15),
+                  ),
                 ),
                 child: IconButton(
                   onPressed: onQiblaTap,
@@ -606,7 +610,10 @@ class PrayerHeaderWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.15),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -734,11 +741,7 @@ class PrayerHeaderWidget extends StatelessWidget {
                   color: AppColors.accent.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4.r),
                 ),
-                child: Icon(
-                  dzikir.icon,
-                  color: AppColors.accent,
-                  size: 10.sp,
-                ),
+                child: Icon(dzikir.icon, color: AppColors.accent, size: 10.sp),
               ),
               SizedBox(width: 4.w),
               // Info

@@ -13,6 +13,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyPrayerPrefix = 'prayer_notify_';
   static const String _keyDailyTarget = 'quran_daily_target';
   static const String _keyPrayerCalculationMethod = 'prayer_calculation_method';
+  static const String _keyHighLatitudeRule = 'prayer_high_latitude_rule';
   static const String _keyDailyAyahTarget = 'quran_daily_ayah_target';
   static const String _keyTargetUnit = 'quran_target_unit';
   static const String _keyUserName = 'user_name';
@@ -22,8 +23,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   static const String _keyRecordHafalan = 'hafalan_record_audio';
   static const String _keyHafalanStreakMilestone =
       'hafalan_streak_milestone_shown';
-  static const String _keyHafalanAyatMilestone =
-      'hafalan_ayat_milestone_shown';
+  static const String _keyHafalanAyatMilestone = 'hafalan_ayat_milestone_shown';
 
   final DatabaseService _databaseService;
   final Dio _dio;
@@ -128,6 +128,18 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Future<void> savePrayerCalculationMethod(String method) async {
     await _databaseService.saveSetting(_keyPrayerCalculationMethod, method);
     _syncSettingChanges(_keyPrayerCalculationMethod, method);
+  }
+
+  @override
+  Future<String> getHighLatitudeRule() async {
+    final val = await _databaseService.getSetting(_keyHighLatitudeRule);
+    return val ?? 'auto';
+  }
+
+  @override
+  Future<void> saveHighLatitudeRule(String rule) async {
+    // Local only: not synced to the backend settings.
+    await _databaseService.saveSetting(_keyHighLatitudeRule, rule);
   }
 
   @override

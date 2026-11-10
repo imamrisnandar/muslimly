@@ -219,10 +219,7 @@ class ReadingHistoryChartWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4.r),
                           gradient: isAchieved
                               ? const LinearGradient(
-                                  colors: [
-                                    AppColors.accent,
-                                    Color(0xFF69F0AE),
-                                  ],
+                                  colors: [AppColors.accent, Color(0xFF69F0AE)],
                                   begin: Alignment.bottomCenter,
                                   end: Alignment.topCenter,
                                 )
@@ -237,8 +234,7 @@ class ReadingHistoryChartWidget extends StatelessWidget {
                     style: TextStyle(
                       color: isToday ? AppColors.accent : Colors.white54,
                       fontSize: fontSize,
-                      fontWeight:
-                          isToday ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -249,15 +245,9 @@ class ReadingHistoryChartWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendItem(
-                color: AppColors.accent,
-                label: "Reached",
-              ),
+              _buildLegendItem(color: AppColors.accent, label: "Reached"),
               SizedBox(width: 16.w),
-              _buildLegendItem(
-                color: AppColors.goldPale,
-                label: "In Progress",
-              ),
+              _buildLegendItem(color: AppColors.goldPale, label: "In Progress"),
               SizedBox(width: 16.w),
               _buildLegendItem(
                 color: Colors.white.withValues(alpha: 0.2),

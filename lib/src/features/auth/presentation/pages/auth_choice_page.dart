@@ -17,7 +17,11 @@ class AuthChoicePage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColors.bgGradientStart, AppColors.bgGradientMid, AppColors.bgGradientEnd],
+            colors: [
+              AppColors.bgGradientStart,
+              AppColors.bgGradientMid,
+              AppColors.bgGradientEnd,
+            ],
           ),
         ),
         child: SafeArea(
@@ -84,7 +88,10 @@ class AuthChoicePage extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Text(
                         l10n.loginOr,
-                        style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                        style: TextStyle(
+                          color: Colors.white38,
+                          fontSize: 12.sp,
+                        ),
                       ),
                     ),
                     const Expanded(child: Divider(color: Colors.white12)),
@@ -148,7 +155,9 @@ class _AuthOptionCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 18.h),
         decoration: BoxDecoration(
-          color: isPrimary ? green.withValues(alpha: 0.12) : Colors.white.withValues(alpha: 0.05),
+          color: isPrimary
+              ? green.withValues(alpha: 0.12)
+              : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: isPrimary ? green : Colors.white24,
@@ -160,7 +169,9 @@ class _AuthOptionCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: isPrimary ? green.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.08),
+                color: isPrimary
+                    ? green.withValues(alpha: 0.15)
+                    : Colors.white.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -185,10 +196,7 @@ class _AuthOptionCard extends StatelessWidget {
                   SizedBox(height: 2.h),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 12.sp,
-                    ),
+                    style: TextStyle(color: Colors.white38, fontSize: 12.sp),
                   ),
                 ],
               ),

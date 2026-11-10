@@ -8,6 +8,7 @@ import '../../core/database/database_service.dart';
 import '../../features/quran/domain/utils/muraja_ah_scheduler.dart';
 import '../../l10n/generated/app_localizations.dart'; // Localization
 import 'notification_service.dart';
+import '../../features/prayer_widget/data/widget_data_service.dart';
 // Actually we need to re-initialize DI in background.
 
 class BackgroundService {
@@ -131,6 +132,12 @@ void callbackDispatcher() {
         soundType: 'beep', // Requested by User
       );
 
+      // 2b. Refresh the Android home-screen widget's week of prayer times.
+      // Best effort: a failure here must not stop the rest of the job.
+      try {
+        await getIt<WidgetDataService>().updateFromStoredLocation();
+      } catch (_) {}
+
       // 3. Muraja'ah (spaced-repetition review) due-check — piggybacks on
       // this same daily task rather than registering a second periodic
       // Workmanager task (see HAFALAN_TRACKER_PLAN.md §C). Purely a local DB
@@ -141,7 +148,11 @@ void callbackDispatcher() {
       try {
         final hafalanSessions = await dbService.getHafalanSessions();
         final dueUnits = MurajaahScheduler.calculateDueUnits(hafalanSessions);
-        if (dueUnits.isNotEmpty) {
+        // Paused while an excused period (local-only) is active.
+        final excusedToday = await dbService.isExcusedOn(
+          now.toIso8601String().substring(0, 10),
+        );
+        if (dueUnits.isNotEmpty && !excusedToday) {
           await notificationService.showImmediateNotification(
             id: kMurajaahNotificationId,
             title: l10n.murajaahNotifTitle,

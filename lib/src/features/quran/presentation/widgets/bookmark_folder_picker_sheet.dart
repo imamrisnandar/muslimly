@@ -239,9 +239,9 @@ class _BookmarkFolderPickerSheetState
                                 ),
                               ),
                               onTap: () => Navigator.of(context)
-                                  .pop<BookmarkFolderChoice>(
-                                    (folderId: folder.id),
-                                  ),
+                                  .pop<BookmarkFolderChoice>((
+                                    folderId: folder.id,
+                                  )),
                             ),
                           if (state is FolderLoading)
                             Padding(

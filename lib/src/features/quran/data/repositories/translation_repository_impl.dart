@@ -9,9 +9,7 @@ import '../../domain/repositories/translation_repository.dart';
 class TranslationRepositoryImpl implements TranslationRepository {
   final DatabaseService _databaseService;
 
-  final Dio _quranComDio = Dio(
-    BaseOptions(baseUrl: '${AppUrls.quranComApi}/'),
-  );
+  final Dio _quranComDio = Dio(BaseOptions(baseUrl: '${AppUrls.quranComApi}/'));
   final Dio _alQuranCloudDio = Dio(
     BaseOptions(baseUrl: '${AppUrls.alQuranCloudApi}/'),
   );
@@ -41,8 +39,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
 
       // 2. Fetch API (Quran.com)
       final resourceId = languageCode == 'id' ? 33 : 20;
-      final url =
-          '/verses/by_key/$surahId:$ayahId?translations=$resourceId';
+      final url = '/verses/by_key/$surahId:$ayahId?translations=$resourceId';
 
       final response = await _quranComDio.get(url);
 
@@ -93,17 +90,17 @@ class TranslationRepositoryImpl implements TranslationRepository {
       if (tafsirId == 'en.ibnkathir') {
         // Use Verified Quran.com Endpoint for Ibn Kathir
         // Pattern: /api/v4/tafsirs/{resource_id}/by_ayah/{verse_key}
-        url =
-            '/tafsirs/169/by_ayah/$surahId:$ayahId';
+        url = '/tafsirs/169/by_ayah/$surahId:$ayahId';
         isQuranCom = true;
         // print('DEBUG: Fetching Ibn Kathir from $url');
       } else {
         // Use Al Quran Cloud (id.jalalayn)
-        url =
-            '/ayah/$surahId:$ayahId/editions/$tafsirId';
+        url = '/ayah/$surahId:$ayahId/editions/$tafsirId';
       }
 
-      final response = await (isQuranCom ? _quranComDio : _alQuranCloudDio).get(url);
+      final response = await (isQuranCom ? _quranComDio : _alQuranCloudDio).get(
+        url,
+      );
       // print('DEBUG: Response code ${response.statusCode}');
 
       if (response.statusCode == 200) {
@@ -199,8 +196,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
 
       // 2. Fetch API (Bulk)
       final resourceId = languageCode == 'id' ? 33 : 20;
-      final url =
-          '/quran/translations/$resourceId?chapter_number=$surahId';
+      final url = '/quran/translations/$resourceId?chapter_number=$surahId';
 
       final response = await _quranComDio.get(url);
 

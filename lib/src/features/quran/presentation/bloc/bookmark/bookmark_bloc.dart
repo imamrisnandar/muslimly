@@ -30,7 +30,10 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     on<AddBookmark>(_onAddBookmark, transformer: sequential());
     on<ToggleBookmark>(_onToggleBookmark, transformer: sequential());
     on<DeleteBookmark>(_onDeleteBookmark, transformer: sequential());
-    on<AssignBookmarkFolder>(_onAssignBookmarkFolder, transformer: sequential());
+    on<AssignBookmarkFolder>(
+      _onAssignBookmarkFolder,
+      transformer: sequential(),
+    );
     on<SaveLastRead>(_onSaveLastRead, transformer: sequential());
     on<LoadLastRead>(_onLoadLastRead, transformer: sequential());
   }
@@ -46,9 +49,17 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
       _pullAndMergeFromServer();
 
       final bookmarks = await _databaseService.getBookmarks();
-      final lastReadMushaf = await _lastReadRepository.getLastRead(mode: 'mushaf');
+      final lastReadMushaf = await _lastReadRepository.getLastRead(
+        mode: 'mushaf',
+      );
       final lastReadList = await _lastReadRepository.getLastRead(mode: 'list');
-      emit(BookmarkLoaded(bookmarks, lastReadMushaf: lastReadMushaf, lastReadList: lastReadList));
+      emit(
+        BookmarkLoaded(
+          bookmarks,
+          lastReadMushaf: lastReadMushaf,
+          lastReadList: lastReadList,
+        ),
+      );
     } catch (e) {
       emit(BookmarkError('Failed to load data: $e'));
     }
@@ -127,7 +138,10 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     }
   }
 
-  Future<void> _pushBookmarkToServer(int localId, QuranBookmark bookmark) async {
+  Future<void> _pushBookmarkToServer(
+    int localId,
+    QuranBookmark bookmark,
+  ) async {
     try {
       final token = await _getToken();
       final deviceId = await NotificationService.getDeviceId();
@@ -147,7 +161,10 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
       };
       final result = await _syncApiService.addBookmark(token, payload);
       if (result != null && result['id'] != null) {
-        await _databaseService.updateServerIdForBookmark(localId, result['id'] as String);
+        await _databaseService.updateServerIdForBookmark(
+          localId,
+          result['id'] as String,
+        );
       }
     } catch (_) {
       // Push failure is non-fatal — will sync later via bulk
@@ -170,7 +187,9 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
       if (exists) {
         // M18: delete by server_id if available
         final bookmarks = await _databaseService.getBookmarks();
-        final match = bookmarks.where((b) => _isSameBookmark(b, event.bookmark)).firstOrNull;
+        final match = bookmarks
+            .where((b) => _isSameBookmark(b, event.bookmark))
+            .firstOrNull;
         await _databaseService.deleteBookmarkByDetails(
           surahNumber: event.bookmark.surahNumber,
           ayahNumber: event.bookmark.ayahNumber,
@@ -250,8 +269,14 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
     Emitter<BookmarkState> emit,
   ) async {
     try {
-      await _databaseService.assignBookmarkToFolder(event.bookmarkId, event.folderId);
-      _pushBookmarkFolderToServer(event.bookmarkId, event.folderId); // fire & forget
+      await _databaseService.assignBookmarkToFolder(
+        event.bookmarkId,
+        event.folderId,
+      );
+      _pushBookmarkFolderToServer(
+        event.bookmarkId,
+        event.folderId,
+      ); // fire & forget
       add(LoadBookmarks());
     } catch (e) {
       emit(BookmarkError('Failed to move bookmark: $e'));
@@ -261,7 +286,10 @@ class BookmarkBloc extends Bloc<BookmarkEvent, BookmarkState> {
   // Resolves both sides to their server ids before pushing — skips silently
   // (self-heals on the next pull) if the bookmark or the target folder
   // hasn't synced yet.
-  Future<void> _pushBookmarkFolderToServer(int bookmarkId, int? folderId) async {
+  Future<void> _pushBookmarkFolderToServer(
+    int bookmarkId,
+    int? folderId,
+  ) async {
     try {
       final bookmarks = await _databaseService.getBookmarks();
       final bookmark = bookmarks.where((b) => b.id == bookmarkId).firstOrNull;

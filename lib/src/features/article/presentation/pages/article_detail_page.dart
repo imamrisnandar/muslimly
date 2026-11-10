@@ -85,7 +85,9 @@ class ArticleDetailPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: categoryColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: categoryColor.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: categoryColor.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
                       article.category.toUpperCase(),
@@ -162,7 +164,9 @@ class ArticleDetailPage extends StatelessWidget {
                     ),
                     customWidgetBuilder: (element) {
                       final text = element.text;
-                      final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+                      final hasArabic = RegExp(
+                        r'[\u0600-\u06FF]',
+                      ).hasMatch(text);
 
                       // Only handle leaf-like text nodes. Avoid blockquote so
                       // HtmlWidget can preserve the quote container and line breaks.
@@ -175,7 +179,7 @@ class ArticleDetailPage extends StatelessWidget {
                         'h5',
                         'h6',
                         'li',
-                        'span'
+                        'span',
                       ].contains(element.localName);
 
                       if (hasArabic && isLeaf) {
@@ -189,7 +193,8 @@ class ArticleDetailPage extends StatelessWidget {
                           final isArabicChar =
                               charCode >= 0x0600 && charCode <= 0x06FF;
 
-                          final isNeutral = char == ' ' ||
+                          final isNeutral =
+                              char == ' ' ||
                               char == '.' ||
                               char == ',' ||
                               char == '!' ||
@@ -221,11 +226,14 @@ class ArticleDetailPage extends StatelessWidget {
                                       ? GoogleFonts.amiriQuran(
                                           fontSize: 22.sp,
                                           height: 1.8,
-                                          color: AppColors.gold, // Gold for Arabic
+                                          color:
+                                              AppColors.gold, // Gold for Arabic
                                         )
                                       : GoogleFonts.inter(
                                           fontSize: 14.sp,
-                                          color: Colors.white.withValues(alpha: 0.7),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.7,
+                                          ),
                                         ),
                                 ),
                               );
@@ -238,7 +246,8 @@ class ArticleDetailPage extends StatelessWidget {
                           }
                         }
 
-                        if (currentSegment.isNotEmpty && currentIsArabic != null) {
+                        if (currentSegment.isNotEmpty &&
+                            currentIsArabic != null) {
                           spans.add(
                             TextSpan(
                               text: currentSegment.toString(),
@@ -250,7 +259,9 @@ class ArticleDetailPage extends StatelessWidget {
                                     )
                                   : GoogleFonts.inter(
                                       fontSize: 14.sp,
-                                      color: Colors.white.withValues(alpha: 0.7),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.7,
+                                      ),
                                     ),
                             ),
                           );
@@ -261,8 +272,9 @@ class ArticleDetailPage extends StatelessWidget {
                           margin: EdgeInsets.symmetric(vertical: 4.h),
                           child: Text.rich(
                             TextSpan(children: spans),
-                            textAlign:
-                                hasArabic ? TextAlign.right : TextAlign.left,
+                            textAlign: hasArabic
+                                ? TextAlign.right
+                                : TextAlign.left,
                             textDirection: hasArabic
                                 ? ui.TextDirection.rtl
                                 : ui.TextDirection.ltr,
@@ -272,8 +284,9 @@ class ArticleDetailPage extends StatelessWidget {
                       return null;
                     },
                     customStylesBuilder: (element) {
-                      final hasArabic =
-                          RegExp(r'[\u0600-\u06FF]').hasMatch(element.text);
+                      final hasArabic = RegExp(
+                        r'[\u0600-\u06FF]',
+                      ).hasMatch(element.text);
 
                       if (element.localName == 'h3') {
                         return {
@@ -294,10 +307,7 @@ class ArticleDetailPage extends StatelessWidget {
                         };
                       }
                       if (hasArabic) {
-                        return {
-                          'direction': 'rtl',
-                          'text-align': 'right',
-                        };
+                        return {'direction': 'rtl', 'text-align': 'right'};
                       }
                       return null;
                     },

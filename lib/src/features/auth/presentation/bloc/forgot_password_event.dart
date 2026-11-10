@@ -27,7 +27,10 @@ class ForgotPasswordOTPSubmitted extends ForgotPasswordEvent {
 class ForgotPasswordResetSubmitted extends ForgotPasswordEvent {
   final String resetToken;
   final String newPassword;
-  const ForgotPasswordResetSubmitted({required this.resetToken, required this.newPassword});
+  const ForgotPasswordResetSubmitted({
+    required this.resetToken,
+    required this.newPassword,
+  });
 
   @override
   List<Object?> get props => [resetToken, newPassword];

@@ -32,6 +32,17 @@ import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/bloc/forgot_password_bloc.dart';
 
+import '../../features/prayer_widget/data/widget_data_service.dart';
+// Prayer Tracker
+import '../../features/prayer_tracker/data/prayer_log_api_service.dart';
+import '../../features/prayer_tracker/data/prayer_log_sync_service.dart';
+import '../../features/prayer_tracker/data/prayer_nudge_service.dart';
+import '../../features/prayer_tracker/data/repositories/excused_period_repository_impl.dart';
+import '../../features/prayer_tracker/data/repositories/prayer_tracker_repository_impl.dart';
+import '../../features/prayer_tracker/domain/repositories/excused_period_repository.dart';
+import '../../features/prayer_tracker/domain/repositories/prayer_tracker_repository.dart';
+import '../../features/prayer_tracker/presentation/bloc/prayer_tracker_cubit.dart';
+import '../../features/prayer_tracker/presentation/bloc/qadha_cubit.dart';
 // Prayer
 import '../../features/prayer/data/repositories/prayer_repository_impl.dart';
 
@@ -225,6 +236,57 @@ void configureDependencies() {
       getIt<LastReadRepository>(),
     ),
   );
+  // --- Prayer Widget (Android home screen) ---
+  getIt.registerLazySingleton<WidgetDataService>(
+    () => WidgetDataService(
+      getIt<PrayerRepository>(),
+      getIt<SettingsRepository>(),
+      getIt<DatabaseService>(),
+      getIt<PrayerTrackerRepository>(),
+    ),
+  );
+
+  // --- Prayer Tracker ---
+  getIt.registerLazySingleton<PrayerTrackerRepository>(
+    () => PrayerTrackerRepositoryImpl(getIt<DatabaseService>()),
+  );
+  getIt.registerLazySingleton<ExcusedPeriodRepository>(
+    () => ExcusedPeriodRepositoryImpl(getIt<DatabaseService>()),
+  );
+  getIt.registerLazySingleton<PrayerNudgeService>(
+    () => PrayerNudgeService(getIt<NotificationService>()),
+  );
+  getIt.registerLazySingleton<PrayerLogSyncService>(
+    () => PrayerLogSyncService(
+      getIt<PrayerTrackerRepository>(),
+      PrayerLogApiService(getIt<Dio>()),
+      () async => (await getIt<AuthRepository>().getToken()).fold(
+        (_) => null,
+        (t) => t,
+      ),
+      NotificationService.getDeviceId,
+    ),
+  );
+  getIt.registerFactory<QadhaCubit>(
+    () => QadhaCubit(
+      getIt<PrayerTrackerRepository>(),
+      getIt<DatabaseService>(),
+      sync: getIt<PrayerLogSyncService>(),
+    ),
+  );
+  getIt.registerFactory<PrayerTrackerCubit>(
+    () => PrayerTrackerCubit(
+      getIt<PrayerTrackerRepository>(),
+      getIt<ExcusedPeriodRepository>(),
+      getIt<PrayerRepository>(),
+      getIt<PrayerNudgeService>(),
+      getIt<DatabaseService>(),
+      getIt<SettingsRepository>(),
+      sync: getIt<PrayerLogSyncService>(),
+      onLogsChanged: getIt<WidgetDataService>().updateFromStoredLocation,
+    ),
+  );
+
   getIt.registerFactory<HafalanProgressCubit>(
     () => HafalanProgressCubit(getIt<DatabaseService>()),
   );

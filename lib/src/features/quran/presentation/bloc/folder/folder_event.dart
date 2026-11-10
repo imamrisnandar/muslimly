@@ -15,7 +15,10 @@ class LoadFolders extends FolderEvent {
   final String hapalanLabel;
   final String bacaanLabel;
 
-  const LoadFolders({this.hapalanLabel = 'Hapalan', this.bacaanLabel = 'Bacaan'});
+  const LoadFolders({
+    this.hapalanLabel = 'Hapalan',
+    this.bacaanLabel = 'Bacaan',
+  });
 
   @override
   List<Object?> get props => [hapalanLabel, bacaanLabel];

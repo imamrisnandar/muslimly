@@ -18,9 +18,7 @@ class AudioRepositoryImpl implements AudioRepository {
   static const String _keyLastAudioReciter = 'last_audio_reciter';
   static const String _keyLastAudioPos = 'last_audio_pos';
 
-  final Dio _quranComDio = Dio(
-    BaseOptions(baseUrl: '${AppUrls.quranComApi}/'),
-  );
+  final Dio _quranComDio = Dio(BaseOptions(baseUrl: '${AppUrls.quranComApi}/'));
   final Dio _alQuranCloudDio = Dio(
     BaseOptions(baseUrl: '${AppUrls.alQuranCloudApi}/'),
   );
@@ -43,9 +41,7 @@ class AudioRepositoryImpl implements AudioRepository {
 
   Future<List<Reciter>> _fetchQuranComReciters() async {
     try {
-      final response = await _quranComDio.get(
-        '/resources/recitations',
-      );
+      final response = await _quranComDio.get('/resources/recitations');
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is Map<String, dynamic> && data.containsKey('recitations')) {
@@ -61,9 +57,7 @@ class AudioRepositoryImpl implements AudioRepository {
 
   Future<List<Reciter>> _fetchAlQuranCloudReciters() async {
     try {
-      final response = await _alQuranCloudDio.get(
-        '/edition/format/audio',
-      );
+      final response = await _alQuranCloudDio.get('/edition/format/audio');
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is Map<String, dynamic> && data.containsKey('data')) {

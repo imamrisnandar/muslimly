@@ -34,7 +34,7 @@ class DatabaseService {
     return await openDatabase(
       path,
       version:
-          16, // v16: hafalan_sessions.audio_file_path/is_audio_saved (Hafalan Tracker §F)
+          18, // v18: prayer_excused_periods (local only). v17: prayer_logs. v16: hafalan_sessions audio columns
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -93,6 +93,35 @@ class DatabaseService {
     await db.execute(
       'CREATE INDEX idx_hafalan_sessions_surah_page ON hafalan_sessions (surah_number, page_number)',
     );
+
+    // Prayer Logs (append-only; Prayer Tracker)
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS prayer_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        kind TEXT NOT NULL,
+        prayer TEXT NOT NULL,
+        slot_date TEXT,
+        count INTEGER NOT NULL DEFAULT 1,
+        in_jamaah INTEGER NOT NULL DEFAULT 0,
+        timestamp INTEGER NOT NULL,
+        is_synced INTEGER DEFAULT 0
+      )
+    ''');
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_prayer_logs_slot ON prayer_logs (slot_date, prayer)',
+    );
+
+    // Excused periods (haid/nifas/sakit). LOCAL ONLY: never synced, never
+    // sent to analytics/Crashlytics — keep it out of every log message.
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS prayer_excused_periods (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        kind TEXT NOT NULL,
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        expected_end_date TEXT
+      )
+    ''');
 
     // Bookmark Folders Table (per-mode; 'list' and 'mushaf' have independent folders)
     await db.execute('''
@@ -317,6 +346,36 @@ class DatabaseService {
         'ALTER TABLE hafalan_sessions ADD COLUMN is_audio_saved INTEGER DEFAULT 0',
       );
     }
+    if (oldVersion < 17) {
+      await db.execute('''
+      CREATE TABLE IF NOT EXISTS prayer_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        kind TEXT NOT NULL,
+        prayer TEXT NOT NULL,
+        slot_date TEXT,
+        count INTEGER NOT NULL DEFAULT 1,
+        in_jamaah INTEGER NOT NULL DEFAULT 0,
+        timestamp INTEGER NOT NULL,
+        is_synced INTEGER DEFAULT 0
+      )
+    ''');
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_prayer_logs_slot ON prayer_logs (slot_date, prayer)',
+      );
+    }
+    if (oldVersion < 18) {
+    // Excused periods (haid/nifas/sakit). LOCAL ONLY: never synced, never
+    // sent to analytics/Crashlytics — keep it out of every log message.
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS prayer_excused_periods (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        kind TEXT NOT NULL,
+        start_date TEXT NOT NULL,
+        end_date TEXT,
+        expected_end_date TEXT
+      )
+    ''');
+    }
   }
 
   Future<void> _createBookmarksTable(Database db) async {
@@ -535,6 +594,117 @@ class DatabaseService {
         'is_synced': 1,
       });
     }
+  }
+
+  // --- Prayer Logs (append-only) ---
+
+  Future<int> insertPrayerLog(Map<String, Object?> row) async {
+    final db = await database;
+    return await db.insert('prayer_logs', row);
+  }
+
+  /// Rows for slots on/after [sinceDate] (`yyyy-MM-dd`), plus every row with no
+  /// slot date (qadha entries), oldest first.
+  Future<List<Map<String, Object?>>> getPrayerLogs({String? sinceDate}) async {
+    final db = await database;
+    return await db.query(
+      'prayer_logs',
+      where: sinceDate == null ? null : 'slot_date IS NULL OR slot_date >= ?',
+      whereArgs: sinceDate == null ? null : [sinceDate],
+      orderBy: 'timestamp ASC, id ASC',
+    );
+  }
+
+  /// Oldest-first rows not yet acknowledged by the server.
+  Future<List<Map<String, Object?>>> getUnsyncedPrayerLogs({
+    int limit = 500,
+  }) async {
+    final db = await database;
+    return await db.query(
+      'prayer_logs',
+      where: 'is_synced = 0',
+      orderBy: 'timestamp ASC, id ASC',
+      limit: limit,
+    );
+  }
+
+  Future<void> markPrayerLogsSynced(List<int> ids) async {
+    if (ids.isEmpty) return;
+    final db = await database;
+    final placeholders = List.filled(ids.length, '?').join(',');
+    await db.update(
+      'prayer_logs',
+      {'is_synced': 1},
+      where: 'id IN ($placeholders)',
+      whereArgs: ids,
+    );
+  }
+
+  /// Inserts server rows we do not have yet. A row's identity is
+  /// (timestamp, kind, prayer) — the same key the server dedups on. Returns
+  /// how many rows were added.
+  Future<int> mergeRemotePrayerLogs(List<Map<String, Object?>> remote) async {
+    final db = await database;
+    var added = 0;
+    await db.transaction((txn) async {
+      for (final r in remote) {
+        final ts = r['timestamp'] as int?;
+        final kind = r['kind'] as String?;
+        final prayer = r['prayer'] as String?;
+        if (ts == null || kind == null || prayer == null) continue;
+        final existing = await txn.query(
+          'prayer_logs',
+          columns: ['id'],
+          where: 'timestamp = ? AND kind = ? AND prayer = ?',
+          whereArgs: [ts, kind, prayer],
+          limit: 1,
+        );
+        if (existing.isNotEmpty) continue;
+        await txn.insert('prayer_logs', {...r, 'is_synced': 1});
+        added++;
+      }
+    });
+    return added;
+  }
+
+  // --- Excused periods (local only) ---
+
+  Future<int> insertExcusedPeriod(Map<String, Object?> row) async {
+    final db = await database;
+    return await db.insert('prayer_excused_periods', row);
+  }
+
+  Future<void> updateExcusedPeriod(int id, Map<String, Object?> values) async {
+    final db = await database;
+    await db.update(
+      'prayer_excused_periods',
+      values,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> deleteExcusedPeriod(int id) async {
+    final db = await database;
+    await db.delete('prayer_excused_periods', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<List<Map<String, Object?>>> getExcusedPeriods() async {
+    final db = await database;
+    return await db.query('prayer_excused_periods', orderBy: 'start_date ASC, id ASC');
+  }
+
+  /// True when [date] (`yyyy-MM-dd`) falls inside any excused period.
+  Future<bool> isExcusedOn(String date) async {
+    final db = await database;
+    final rows = await db.query(
+      'prayer_excused_periods',
+      columns: ['id'],
+      where: 'start_date <= ? AND (end_date IS NULL OR end_date >= ?)',
+      whereArgs: [date, date],
+      limit: 1,
+    );
+    return rows.isNotEmpty;
   }
 
   // --- CRUD Operations for Hafalan Sessions ---

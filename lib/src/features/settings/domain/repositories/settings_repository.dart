@@ -13,6 +13,9 @@ abstract class SettingsRepository {
 
   Future<String> getPrayerCalculationMethod(); // 'singapore' or 'kemenag_ri'
   Future<void> savePrayerCalculationMethod(String method);
+  // 'auto' | 'middle_of_the_night' | 'seventh_of_the_night' | 'twilight_angle'
+  Future<String> getHighLatitudeRule();
+  Future<void> saveHighLatitudeRule(String rule);
 
   Future<String> getReadingTargetUnit(); // 'page' or 'ayah'
   Future<void> saveReadingTargetUnit(String unit);

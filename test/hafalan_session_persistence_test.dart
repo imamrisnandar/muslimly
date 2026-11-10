@@ -40,7 +40,7 @@ void main() {
     () async {
       final database = await db.database;
       final versionRows = await database.rawQuery('PRAGMA user_version');
-      expect(versionRows.first.values.first, 16);
+      expect(versionRows.first.values.first, 18);
 
       final tableRows = await database.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='hafalan_sessions'",
@@ -165,79 +165,79 @@ void main() {
       expect(inserted.isAudioSaved, 0);
     });
 
-    test(
-      'getHafalanSessionsWithAudioForUnit only returns sessions with a '
-      'non-null audio path for that exact (surah, halaman)',
-      () async {
-        await db.insertHafalanSession(
-          HafalanSession(
-            surahNumber: 5,
-            pageNumber: 50,
-            startAyah: 1,
-            endAyah: 2,
-            ayahCount: 2,
-            accuracy: 1.0,
-            date: '2026-09-12',
-            timestamp: 1757650400000,
-            audioFilePath: '/tmp/has_audio.m4a',
-          ),
-        );
-        await db.insertHafalanSession(
-          HafalanSession(
-            surahNumber: 5,
-            pageNumber: 50,
-            startAyah: 1,
-            endAyah: 2,
-            ayahCount: 2,
-            accuracy: 1.0,
-            date: '2026-09-12',
-            timestamp: 1757650500000,
-            // no audioFilePath — recording was off for this session
-          ),
-        );
-        await db.insertHafalanSession(
-          HafalanSession(
-            surahNumber: 6, // different unit — must not show up
-            pageNumber: 60,
-            startAyah: 1,
-            endAyah: 2,
-            ayahCount: 2,
-            accuracy: 1.0,
-            date: '2026-09-12',
-            timestamp: 1757650600000,
-            audioFilePath: '/tmp/other_unit.m4a',
-          ),
-        );
-
-        final withAudio = await db.getHafalanSessionsWithAudioForUnit(5, 50);
-        expect(withAudio, hasLength(1));
-        expect(withAudio.single.audioFilePath, '/tmp/has_audio.m4a');
-      },
-    );
-
-    test('clearHafalanAudioFilePath nulls the path but keeps the row', () async {
-      final id = await db.insertHafalanSession(
+    test('getHafalanSessionsWithAudioForUnit only returns sessions with a '
+        'non-null audio path for that exact (surah, halaman)', () async {
+      await db.insertHafalanSession(
         HafalanSession(
-          surahNumber: 7,
-          pageNumber: 70,
+          surahNumber: 5,
+          pageNumber: 50,
           startAyah: 1,
-          endAyah: 1,
-          ayahCount: 1,
+          endAyah: 2,
+          ayahCount: 2,
           accuracy: 1.0,
           date: '2026-09-12',
-          timestamp: 1757650700000,
-          audioFilePath: '/tmp/to_clear.m4a',
+          timestamp: 1757650400000,
+          audioFilePath: '/tmp/has_audio.m4a',
+        ),
+      );
+      await db.insertHafalanSession(
+        HafalanSession(
+          surahNumber: 5,
+          pageNumber: 50,
+          startAyah: 1,
+          endAyah: 2,
+          ayahCount: 2,
+          accuracy: 1.0,
+          date: '2026-09-12',
+          timestamp: 1757650500000,
+          // no audioFilePath — recording was off for this session
+        ),
+      );
+      await db.insertHafalanSession(
+        HafalanSession(
+          surahNumber: 6, // different unit — must not show up
+          pageNumber: 60,
+          startAyah: 1,
+          endAyah: 2,
+          ayahCount: 2,
+          accuracy: 1.0,
+          date: '2026-09-12',
+          timestamp: 1757650600000,
+          audioFilePath: '/tmp/other_unit.m4a',
         ),
       );
 
-      await db.clearHafalanAudioFilePath(id);
-
-      final sessions = await db.getHafalanSessions(surahNumber: 7);
-      final row = sessions.firstWhere((s) => s.id == id);
-      expect(row.audioFilePath, isNull);
-      // The session row itself (accuracy/date history) is untouched.
-      expect(row.accuracy, 1.0);
+      final withAudio = await db.getHafalanSessionsWithAudioForUnit(5, 50);
+      expect(withAudio, hasLength(1));
+      expect(withAudio.single.audioFilePath, '/tmp/has_audio.m4a');
     });
+
+    test(
+      'clearHafalanAudioFilePath nulls the path but keeps the row',
+      () async {
+        final id = await db.insertHafalanSession(
+          HafalanSession(
+            surahNumber: 7,
+            pageNumber: 70,
+            startAyah: 1,
+            endAyah: 1,
+            ayahCount: 1,
+            accuracy: 1.0,
+            date: '2026-09-12',
+            timestamp: 1757650700000,
+            audioFilePath: '/tmp/to_clear.m4a',
+          ),
+        );
+
+        await db.clearHafalanAudioFilePath(id);
+
+        final sessions = await db.getHafalanSessions(surahNumber: 7);
+        final row = sessions.firstWhere((s) => s.id == id);
+        expect(row.audioFilePath, isNull);
+        // The session row itself (accuracy/date history) is untouched.
+        expect(row.accuracy, 1.0);
+      },
+    );
 
     test('setHafalanAudioSaved toggles the protection flag', () async {
       final id = await db.insertHafalanSession(

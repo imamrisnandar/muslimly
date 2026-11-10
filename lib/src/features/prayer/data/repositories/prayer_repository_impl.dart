@@ -1,4 +1,3 @@
-import 'package:adhan/adhan.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:intl/intl.dart';
@@ -6,41 +5,38 @@ import 'package:intl/intl.dart';
 import '../../../../core/error/failures.dart';
 import '../../../settings/domain/repositories/settings_repository.dart';
 import '../../domain/entities/city.dart';
+import '../../domain/entities/high_latitude_setting.dart';
 import '../../domain/entities/prayer_calculation_method.dart';
+import '../../domain/entities/prayer_instants.dart';
 import '../../domain/entities/prayer_time.dart';
 import '../../domain/repositories/prayer_repository.dart';
+import '../../domain/utils/prayer_calculator.dart';
 
 class PrayerRepositoryImpl implements PrayerRepository {
   final SettingsRepository _settingsRepository;
 
   PrayerRepositoryImpl(this._settingsRepository);
 
-  // Kemenag RI publishes the same Fajr/Isha angles as the "Singapore" method
-  // (20°/18°); what it adds on top is an ihtiyat (safety margin), which
-  // these values follow (the same margins used by common Indonesian
-  // falakiyah software, e.g. Winhisab).
-  static CalculationParameters _kemenagRIParameters() {
-    final params = CalculationParameters(fajrAngle: 20.0, ishaAngle: 18.0);
-    params.madhab = Madhab.shafi;
-    params.adjustments = PrayerAdjustments(
-      fajr: -2,
-      sunrise: 1,
-      dhuhr: 2,
-      asr: 2,
-      maghrib: 2,
-      isha: 2,
-    );
-    return params;
-  }
-
-  static CalculationParameters _parametersFor(PrayerCalculationMethod method) {
-    switch (method) {
-      case PrayerCalculationMethod.kemenagRI:
-        return _kemenagRIParameters();
-      case PrayerCalculationMethod.singapore:
-        final params = CalculationMethod.singapore.getParameters();
-        params.madhab = Madhab.shafi;
-        return params;
+  @override
+  Future<Either<Failure, PrayerInstants>> getPrayerInstants(
+    double latitude,
+    double longitude,
+    DateTime date,
+  ) async {
+    try {
+      final methodKey = await _settingsRepository.getPrayerCalculationMethod();
+      final highLatKey = await _settingsRepository.getHighLatitudeRule();
+      return Right(
+        PrayerCalculator.instants(
+          latitude: latitude,
+          longitude: longitude,
+          date: date,
+          method: PrayerCalculationMethod.fromKey(methodKey),
+          highLatitude: HighLatitudeSetting.fromKey(highLatKey),
+        ),
+      );
+    } catch (e) {
+      return Left(MessageFailure(e.toString()));
     }
   }
 
@@ -50,40 +46,23 @@ class PrayerRepositoryImpl implements PrayerRepository {
     double longitude,
     DateTime date,
   ) async {
-    try {
-      final coordinates = Coordinates(latitude, longitude);
-      final methodKey = await _settingsRepository.getPrayerCalculationMethod();
-      final params = _parametersFor(PrayerCalculationMethod.fromKey(methodKey));
-
-      final prayerTimes = PrayerTimes(
-        coordinates,
-        DateComponents.from(date),
-        params,
-      );
-
-      // Format times
+    final result = await getPrayerInstants(latitude, longitude, date);
+    return result.map((i) {
+      // Format in the device zone, as before.
       final formatter = DateFormat('HH:mm');
-
-      return Right(
-        PrayerTime(
-          imsak: formatter.format(
-            prayerTimes.fajr.subtract(const Duration(minutes: 10)),
-          ), // Approximation
-          subuh: formatter.format(prayerTimes.fajr),
-          terbit: formatter.format(prayerTimes.sunrise),
-          dhuha: formatter.format(
-            prayerTimes.sunrise.add(const Duration(minutes: 20)),
-          ), // Approximation
-          dzuhur: formatter.format(prayerTimes.dhuhr),
-          ashar: formatter.format(prayerTimes.asr),
-          maghrib: formatter.format(prayerTimes.maghrib),
-          isya: formatter.format(prayerTimes.isha),
-          date: DateFormat('yyyy-MM-dd').format(date),
-        ),
+      String f(DateTime t) => formatter.format(t.toLocal());
+      return PrayerTime(
+        imsak: f(i.fajr.subtract(const Duration(minutes: 10))), // Approximation
+        subuh: f(i.fajr),
+        terbit: f(i.sunrise),
+        dhuha: f(i.sunrise.add(const Duration(minutes: 20))), // Approximation
+        dzuhur: f(i.dhuhr),
+        ashar: f(i.asr),
+        maghrib: f(i.maghrib),
+        isya: f(i.isha),
+        date: i.date,
       );
-    } catch (e) {
-      return Left(MessageFailure(e.toString()));
-    }
+    });
   }
 
   @override
