@@ -1,19 +1,21 @@
-List reciters = [{
-"identifier": "ar.abdulbasitmurattal",
-"language": "ar",
-"name": "عبد الباسط عبد الصمد المرتل",
-"englishName": "Abdul Basit (muratal)",
-"format": "audio",
-"type": "translation",
-"direction": null
-},{
+List reciters = [
+  {
+    "identifier": "ar.abdulbasitmurattal",
+    "language": "ar",
+    "name": "عبد الباسط عبد الصمد المرتل",
+    "englishName": "Abdul Basit (muratal)",
+    "format": "audio",
+    "type": "translation",
+    "direction": null,
+  },
+  {
     "identifier": "ar.abdulsamad",
     "language": "ar",
     "name": "عبدالباسط عبدالصمد",
     "englishName": "Abdul Basit (Mujawwad)",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.abdullahbasfar",
@@ -22,25 +24,26 @@ List reciters = [{
     "englishName": "Abdullah Basfar",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
-  },{
-"identifier": "ar.minshawi",
-"language": "ar",
-"name": "محمد صديق المنشاوي",
-"englishName": "Minshawi",
-"format": "audio",
-"type": "translation",
-"direction": null
-},
-{
-"identifier": "ar.minshawimujawwad",
-"language": "ar",
-"name": "محمد صديق المنشاوي (المجود)",
-"englishName": "Minshawy (Mujawwad)",
-"format": "audio",
-"type": "translation",
-"direction": null
-},
+    "direction": null,
+  },
+  {
+    "identifier": "ar.minshawi",
+    "language": "ar",
+    "name": "محمد صديق المنشاوي",
+    "englishName": "Minshawi",
+    "format": "audio",
+    "type": "translation",
+    "direction": null,
+  },
+  {
+    "identifier": "ar.minshawimujawwad",
+    "language": "ar",
+    "name": "محمد صديق المنشاوي (المجود)",
+    "englishName": "Minshawy (Mujawwad)",
+    "format": "audio",
+    "type": "translation",
+    "direction": null,
+  },
   {
     "identifier": "ar.abdurrahmaansudais",
     "language": "ar",
@@ -48,9 +51,9 @@ List reciters = [{
     "englishName": "Abdurrahmaan As-Sudais",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
-  
+
   {
     "identifier": "ar.shaatree",
     "language": "ar",
@@ -58,7 +61,7 @@ List reciters = [{
     "englishName": "Abu Bakr Ash-Shaatree",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.ahmedajamy",
@@ -67,7 +70,7 @@ List reciters = [{
     "englishName": "Ahmed ibn Ali al-Ajamy",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.alafasy",
@@ -76,7 +79,7 @@ List reciters = [{
     "englishName": "Alafasy",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.hanirifai",
@@ -85,7 +88,7 @@ List reciters = [{
     "englishName": "Hani Rifai",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.husary",
@@ -94,7 +97,7 @@ List reciters = [{
     "englishName": "Husary",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.husarymujawwad",
@@ -103,7 +106,7 @@ List reciters = [{
     "englishName": "Husary (Mujawwad)",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.hudhaify",
@@ -112,7 +115,7 @@ List reciters = [{
     "englishName": "Hudhaify",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.ibrahimakhbar",
@@ -121,7 +124,7 @@ List reciters = [{
     "englishName": "Ibrahim Akhdar",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.mahermuaiqly",
@@ -130,7 +133,7 @@ List reciters = [{
     "englishName": "Maher Al Muaiqly",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.muhammadayyoub",
@@ -139,7 +142,7 @@ List reciters = [{
     "englishName": "Muhammad Ayyoub",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.muhammadjibreel",
@@ -148,7 +151,7 @@ List reciters = [{
     "englishName": "Muhammad Jibreel",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.saoodshuraym",
@@ -157,7 +160,7 @@ List reciters = [{
     "englishName": "Saood bin Ibraaheem Ash-Shuraym",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.parhizgar",
@@ -166,7 +169,7 @@ List reciters = [{
     "englishName": "Parhizgar",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
+    "direction": null,
   },
   {
     "identifier": "ar.aymanswoaid",
@@ -175,6 +178,6 @@ List reciters = [{
     "englishName": "Ayman Sowaid",
     "format": "audio",
     "type": "versebyverse",
-    "direction": null
-  }
+    "direction": null,
+  },
 ];
