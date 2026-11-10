@@ -7,4 +7,5 @@
     <string name="widget_description_strip">All five times in one row</string>
     <string name="widget_label_list">Prayer times · List</string>
     <string name="widget_description_list">Each prayer with check-in ticks</string>
+    <string name="widget_settings">Widget settings</string>
 </resources>

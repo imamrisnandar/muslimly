@@ -2205,7 +2205,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter the current gold price yourself. Nisab = 85 g of 24-carat gold. Automatic prices are not available yet.';
 
   @override
-  String get zakatWealth => 'Total wealth held for a full year';
+  String get zakatWealth => 'Total wealth you own';
 
   @override
   String get zakatDebts => 'Debts due now';
@@ -2258,4 +2258,78 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get zakatDisclaimer =>
       'This is a helper tool, not a fatwa. Consult a scholar or an official zakat institution.';
+
+  @override
+  String get widgetEndsAt => 'Ends';
+
+  @override
+  String get widgetDoneShort => 'done';
+
+  @override
+  String get widgetSettingsTitle => 'Widget Settings';
+
+  @override
+  String get widgetSettingsSubtitle => 'Theme, opacity, text size and info';
+
+  @override
+  String get widgetSettingsTheme => 'Colour theme';
+
+  @override
+  String get widgetSettingsOpacity => 'Background opacity';
+
+  @override
+  String get widgetSettingsTextSize => 'Text size';
+
+  @override
+  String get widgetSettingsSizeSmall => 'Small';
+
+  @override
+  String get widgetSettingsSizeNormal => 'Normal';
+
+  @override
+  String get widgetSettingsSizeLarge => 'Large';
+
+  @override
+  String get widgetSettingsInfo => 'Information shown';
+
+  @override
+  String get widgetSettingsHijri => 'Hijri date';
+
+  @override
+  String get widgetSettingsGregorian => 'Gregorian date';
+
+  @override
+  String get widgetSettingsLocation => 'Location';
+
+  @override
+  String get widgetSettingsProgress => 'Prayer progress and time limit';
+
+  @override
+  String get widgetSettingsNote =>
+      'Date and location appear on the Strip and List widgets. The Small widget only uses theme, opacity and text size.';
+
+  @override
+  String get widgetPreviewGregorian => 'Tuesday, 10 November 2026';
+
+  @override
+  String get widgetPreviewHijri => '30 Jumada Al-Awwal 1448 H';
+
+  @override
+  String get widgetPreviewCity => 'Jakarta';
+
+  @override
+  String get widgetPreviewProgress => '2/5 done · Ends 15:12';
+
+  @override
+  String get hadithCopy => 'Copy';
+
+  @override
+  String get hadithCopied => 'Hadith copied';
+
+  @override
+  String get zakatWealthHelp =>
+      'The total of all zakatable wealth: cash, savings, value of gold/silver, collectible receivables and trade goods, in rupiah.';
+
+  @override
+  String get zakatDebtsHelp => 'Debts you must pay now (optional).';
 }

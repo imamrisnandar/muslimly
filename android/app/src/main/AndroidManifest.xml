@@ -46,6 +46,14 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+        <!-- The app has no deep links. Without this, Flutter hands a widget
+             tap's intent URI (muslimly://...) to the router as a route, which
+             resets navigation to the splash page and wipes the page the
+             widget just asked for. home_widget reads the intent itself. -->
+        <meta-data
+            android:name="flutter_deeplinking_enabled"
+            android:value="false" />
+
         <!-- Channel FCM uses for system-tray notifications when the app is
              backgrounded and the message has no explicit channel. Must match
              kPushChannelId in notification_service.dart. -->

@@ -1,3 +1,4 @@
+import '../../features/prayer_widget/presentation/pages/widget_settings_page.dart';
 import '../../features/tasbih/presentation/pages/tasbih_page.dart';
 import '../../features/tasbih/presentation/pages/asmaul_husna_page.dart';
 import '../../features/tasbih/presentation/pages/hadith_page.dart';
@@ -122,6 +123,10 @@ final appRouter = GoRouter(
           child: DashboardPage(initialIndex: index),
         );
       },
+    ),
+    GoRoute(
+      path: '/widget-settings',
+      builder: (context, state) => const WidgetSettingsPage(),
     ),
     GoRoute(path: '/tasbih', builder: (context, state) => const TasbihPage()),
     GoRoute(

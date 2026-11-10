@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/generated/app_localizations.dart';
@@ -187,6 +188,15 @@ class SettingsPage extends StatelessWidget {
                     : l10n.prayerCalculationMethodSingapore,
                 onTap: () => showCalculationMethodBottomSheet(context, state),
               ),
+              if (Platform.isAndroid) ...[
+                SizedBox(height: 12.h),
+                _buildListTile(
+                  icon: Icons.widgets_outlined,
+                  title: l10n.widgetSettingsTitle,
+                  subtitle: l10n.widgetSettingsSubtitle,
+                  onTap: () => context.push('/widget-settings'),
+                ),
+              ],
               SizedBox(height: 24.h),
               _buildSectionHeader(context, l10n.settingsQuran),
               _buildListTile(

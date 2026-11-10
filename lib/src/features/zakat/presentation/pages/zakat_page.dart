@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/database/database_service.dart';
 import '../../../../core/di/di_container.dart';
 import '../../../../core/presentation/widgets/gradient_page.dart';
+import '../../../../core/utils/thousands_input_formatter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../domain/zakat_calculator.dart';
@@ -28,7 +29,9 @@ class _ZakatPageState extends State<ZakatPage> {
   final _debts = TextEditingController();
   final _people = TextEditingController(text: '1');
   final _rate = TextEditingController(
-    text: FitrahConfig.defaultCashPerPerson.toStringAsFixed(0),
+    text: ThousandsInputFormatter.format(
+      FitrahConfig.defaultCashPerPerson.toStringAsFixed(0),
+    ),
   );
   bool _haul = true;
   List<ZakatRecord> _history = [];
@@ -52,12 +55,15 @@ class _ZakatPageState extends State<ZakatPage> {
     final h = await _db.getSetting(_kHistoryKey);
     if (!mounted) return;
     setState(() {
-      if (g != null && g.isNotEmpty) _gold.text = g;
+      if (g != null && g.isNotEmpty) {
+        _gold.text = ThousandsInputFormatter.format(g);
+      }
       _history = ZakatRecord.decodeList(h);
     });
   }
 
-  double _num(TextEditingController c) => double.tryParse(c.text.trim()) ?? 0;
+  double _num(TextEditingController c) =>
+      double.tryParse(ThousandsInputFormatter.digits(c.text)) ?? 0;
 
   Future<void> _record(String type, double amount, double basis) async {
     final l10n = AppLocalizations.of(context)!;
@@ -106,17 +112,23 @@ class _ZakatPageState extends State<ZakatPage> {
     TextEditingController c,
     String label, {
     VoidCallback? onChanged,
+    String? helper,
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 12.h),
       child: TextField(
         controller: c,
         keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: const [ThousandsInputFormatter()],
         style: const TextStyle(color: Colors.white),
         onChanged: (_) => setState(() => onChanged?.call()),
         decoration: InputDecoration(
           labelText: label,
+          helperText: helper,
+          helperMaxLines: 4,
+          helperStyle: const TextStyle(color: Colors.white54),
+          hintText: '0',
+          hintStyle: const TextStyle(color: Colors.white24),
           prefixText: 'Rp ',
           labelStyle: const TextStyle(color: Colors.white60),
           prefixStyle: const TextStyle(color: Colors.white70),
@@ -146,15 +158,18 @@ class _ZakatPageState extends State<ZakatPage> {
         _money(
           _gold,
           l10n.zakatGoldPrice,
-          onChanged: () => _db.saveSetting(_kGoldKey, _gold.text.trim()),
+          onChanged: () => _db.saveSetting(
+            _kGoldKey,
+            ThousandsInputFormatter.digits(_gold.text),
+          ),
         ),
         Text(
           l10n.zakatGoldNote,
           style: TextStyle(color: Colors.white38, fontSize: 11.sp),
         ),
         SizedBox(height: 12.h),
-        _money(_wealth, l10n.zakatWealth),
-        _money(_debts, l10n.zakatDebts),
+        _money(_wealth, l10n.zakatWealth, helper: l10n.zakatWealthHelp),
+        _money(_debts, l10n.zakatDebts, helper: l10n.zakatDebtsHelp),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(

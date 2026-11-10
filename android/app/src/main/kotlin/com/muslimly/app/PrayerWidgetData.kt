@@ -12,7 +12,13 @@ data class WidgetPrayer(
     val done: Boolean = false,
 )
 
-data class WidgetDay(val date: String, val prayers: List<WidgetPrayer>)
+data class WidgetDay(
+    val date: String,
+    val prayers: List<WidgetPrayer>,
+    val hijri: String = "",
+    val gregorian: String = "",
+    val gregorianShort: String = "",
+)
 
 /**
  * Parsed form of the JSON written by Dart (see widget_payload_builder.dart).
@@ -33,12 +39,19 @@ class PrayerWidgetData(
     /** First prayer starting strictly after [nowMs], or null when data ran out. */
     fun next(nowMs: Long): WidgetPrayer? = all().firstOrNull { it.startMs > nowMs }
 
-    /** The five prayers whose day matches the local date of [nowMs]. */
-    fun today(nowMs: Long): List<WidgetPrayer>? {
+    /** The day whose date matches the local date of [nowMs]. */
+    fun day(nowMs: Long): WidgetDay? {
         val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
         val date = fmt.format(Date(nowMs))
-        return days.firstOrNull { it.date == date }?.prayers
+        return days.firstOrNull { it.date == date }
     }
+
+    /** The five prayers whose day matches the local date of [nowMs]. */
+    fun today(nowMs: Long): List<WidgetPrayer>? = day(nowMs)?.prayers
+
+    /** The prayer whose window contains [nowMs] (null between data gaps). */
+    fun current(nowMs: Long): WidgetPrayer? =
+        all().firstOrNull { it.startMs <= nowMs && nowMs < it.endMs }
 
     companion object {
         fun parse(json: String?): PrayerWidgetData? {
@@ -54,7 +67,7 @@ class PrayerWidgetData(
                     val ps = d.getJSONArray("prayers")
                     WidgetDay(
                         d.getString("date"),
-                        (0 until ps.length()).map { j ->
+                        prayers = (0 until ps.length()).map { j ->
                             val p = ps.getJSONObject(j)
                             WidgetPrayer(
                                 p.getString("key"),
@@ -63,6 +76,9 @@ class PrayerWidgetData(
                                 p.optBoolean("done", false),
                             )
                         },
+                        hijri = d.optString("hijri"),
+                        gregorian = d.optString("gregorian"),
+                        gregorianShort = d.optString("gregorianShort"),
                     )
                 }
                 PrayerWidgetData(o.optString("cityName"), labels, days)

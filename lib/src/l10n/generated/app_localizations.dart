@@ -4085,7 +4085,7 @@ abstract class AppLocalizations {
   /// No description provided for @zakatWealth.
   ///
   /// In en, this message translates to:
-  /// **'Total wealth held for a full year'**
+  /// **'Total wealth you own'**
   String get zakatWealth;
 
   /// No description provided for @zakatDebts.
@@ -4177,6 +4177,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This is a helper tool, not a fatwa. Consult a scholar or an official zakat institution.'**
   String get zakatDisclaimer;
+
+  /// No description provided for @widgetEndsAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
+  String get widgetEndsAt;
+
+  /// No description provided for @widgetDoneShort.
+  ///
+  /// In en, this message translates to:
+  /// **'done'**
+  String get widgetDoneShort;
+
+  /// No description provided for @widgetSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Widget Settings'**
+  String get widgetSettingsTitle;
+
+  /// No description provided for @widgetSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme, opacity, text size and info'**
+  String get widgetSettingsSubtitle;
+
+  /// No description provided for @widgetSettingsTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour theme'**
+  String get widgetSettingsTheme;
+
+  /// No description provided for @widgetSettingsOpacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Background opacity'**
+  String get widgetSettingsOpacity;
+
+  /// No description provided for @widgetSettingsTextSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Text size'**
+  String get widgetSettingsTextSize;
+
+  /// No description provided for @widgetSettingsSizeSmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get widgetSettingsSizeSmall;
+
+  /// No description provided for @widgetSettingsSizeNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get widgetSettingsSizeNormal;
+
+  /// No description provided for @widgetSettingsSizeLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get widgetSettingsSizeLarge;
+
+  /// No description provided for @widgetSettingsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Information shown'**
+  String get widgetSettingsInfo;
+
+  /// No description provided for @widgetSettingsHijri.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri date'**
+  String get widgetSettingsHijri;
+
+  /// No description provided for @widgetSettingsGregorian.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian date'**
+  String get widgetSettingsGregorian;
+
+  /// No description provided for @widgetSettingsLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get widgetSettingsLocation;
+
+  /// No description provided for @widgetSettingsProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer progress and time limit'**
+  String get widgetSettingsProgress;
+
+  /// No description provided for @widgetSettingsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Date and location appear on the Strip and List widgets. The Small widget only uses theme, opacity and text size.'**
+  String get widgetSettingsNote;
+
+  /// No description provided for @widgetPreviewGregorian.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday, 10 November 2026'**
+  String get widgetPreviewGregorian;
+
+  /// No description provided for @widgetPreviewHijri.
+  ///
+  /// In en, this message translates to:
+  /// **'30 Jumada Al-Awwal 1448 H'**
+  String get widgetPreviewHijri;
+
+  /// No description provided for @widgetPreviewCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Jakarta'**
+  String get widgetPreviewCity;
+
+  /// No description provided for @widgetPreviewProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'2/5 done · Ends 15:12'**
+  String get widgetPreviewProgress;
+
+  /// No description provided for @hadithCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get hadithCopy;
+
+  /// No description provided for @hadithCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Hadith copied'**
+  String get hadithCopied;
+
+  /// No description provided for @zakatWealthHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The total of all zakatable wealth: cash, savings, value of gold/silver, collectible receivables and trade goods, in rupiah.'**
+  String get zakatWealthHelp;
+
+  /// No description provided for @zakatDebtsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts you must pay now (optional).'**
+  String get zakatDebtsHelp;
 }
 
 class _AppLocalizationsDelegate

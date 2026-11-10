@@ -243,6 +243,7 @@ void configureDependencies() {
       getIt<SettingsRepository>(),
       getIt<DatabaseService>(),
       getIt<PrayerTrackerRepository>(),
+      getIt<FastingService>(),
     ),
   );
 

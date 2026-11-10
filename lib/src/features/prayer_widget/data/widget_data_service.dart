@@ -3,12 +3,16 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:home_widget/home_widget.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/database/database_service.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../prayer/domain/entities/prayer_instants.dart';
 import '../../prayer/domain/repositories/prayer_repository.dart';
+import '../../prayer/domain/services/fasting_service.dart';
+import '../domain/widget_settings.dart';
 import '../../prayer_tracker/domain/entities/prayer_log.dart';
 import '../../prayer_tracker/domain/repositories/prayer_tracker_repository.dart';
 import '../../prayer_tracker/domain/utils/prayer_tracker_calculator.dart';
@@ -35,13 +39,35 @@ class WidgetDataService {
   final SettingsRepository _settings;
   final DatabaseService _db;
   final PrayerTrackerRepository? _tracker;
+  final FastingService? _fasting;
 
   WidgetDataService(
     this._prayerRepo,
     this._settings,
     this._db, [
     this._tracker,
+    this._fasting,
   ]);
+
+  /// Reads the saved widget options (defaults when never set).
+  static Future<WidgetSettings> loadSettings() async => WidgetSettings.decode(
+    await HomeWidget.getWidgetData<String>(WidgetSettings.prefsKey),
+  );
+
+  /// Saves options and redraws every widget right away.
+  static Future<void> saveSettings(WidgetSettings s) async {
+    await HomeWidget.saveWidgetData<String>(
+      WidgetSettings.prefsKey,
+      s.encode(),
+    );
+    await refreshAll();
+  }
+
+  static Future<void> refreshAll() async {
+    for (final name in androidProviders) {
+      await HomeWidget.updateWidget(qualifiedAndroidName: name);
+    }
+  }
 
   static String _dateKey(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-'
@@ -89,15 +115,31 @@ class WidgetDataService {
         days.add(v);
       }
 
-      final l = lookupAppLocalizations(
-        Locale(await _settings.getLanguage() ?? 'id'),
-      );
+      final lang = await _settings.getLanguage() ?? 'id';
+      final l = lookupAppLocalizations(Locale(lang));
+      await initializeDateFormatting(lang); // may run in a background isolate
+      final fasting = _fasting;
+      final dateLabels = <String, WidgetDateLabels>{};
+      for (var i = 0; i < days.length - 1; i++) {
+        final d = DateTime(today.year, today.month, today.day + i);
+        var hijri = '';
+        if (fasting != null) {
+          final h = fasting.getAdjustedHijriDate(d);
+          hijri = '${h.hDay} ${h.longMonthName} ${h.hYear} H';
+        }
+        dateLabels[_dateKey(d)] = WidgetDateLabels(
+          hijri: hijri,
+          gregorian: DateFormat.yMMMMEEEEd(lang).format(d),
+          gregorianShort: DateFormat.MMMd(lang).format(d),
+        );
+      }
       final payload = WidgetPayloadBuilder.build(
         days: days,
         cityName: city,
         methodKey: await _settings.getPrayerCalculationMethod(),
         generatedAt: DateTime.now(),
         performedSlotIds: await _performedSlotIds(today),
+        dateLabels: dateLabels,
         labels: {
           'fajr': l.prayerFajr,
           'dhuhr': l.prayerDhuhr,
@@ -106,12 +148,12 @@ class WidgetDataService {
           'isha': l.prayerIsha,
           'next': l.widgetNext,
           'openApp': l.widgetOpenApp,
+          'endsAt': l.widgetEndsAt,
+          'done': l.widgetDoneShort,
         },
       );
       await HomeWidget.saveWidgetData<String>(prefsKey, jsonEncode(payload));
-      for (final name in androidProviders) {
-        await HomeWidget.updateWidget(qualifiedAndroidName: name);
-      }
+      await refreshAll();
     } catch (e, s) {
       AppLogger.error('Widget data update failed', e, s);
     }

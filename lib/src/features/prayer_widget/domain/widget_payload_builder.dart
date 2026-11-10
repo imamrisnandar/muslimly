@@ -6,6 +6,18 @@ import '../../prayer_tracker/domain/utils/prayer_slot_resolver.dart';
 /// SharedPreferences. The widget never runs Dart, so everything it needs —
 /// absolute start/end epochs for several days, plus localized labels — is
 /// precomputed here. "Next prayer" is decided natively at render time.
+/// Already-localized date strings for one day, shown in the widget header.
+class WidgetDateLabels {
+  final String hijri; // e.g. "30 Jumada Al-Awwal 1448 H"
+  final String gregorian; // e.g. "Selasa, 10 November 2026"
+  final String gregorianShort; // e.g. "10 Nov"
+  const WidgetDateLabels({
+    required this.hijri,
+    required this.gregorian,
+    required this.gregorianShort,
+  });
+}
+
 class WidgetPayloadBuilder {
   WidgetPayloadBuilder._();
 
@@ -26,6 +38,7 @@ class WidgetPayloadBuilder {
     required DateTime generatedAt,
     required Map<String, String> labels,
     Set<String> performedSlotIds = const {},
+    Map<String, WidgetDateLabels> dateLabels = const {},
   }) {
     assert(days.length >= 2);
     return {
@@ -37,6 +50,11 @@ class WidgetPayloadBuilder {
         for (var i = 0; i < days.length - 1; i++)
           {
             'date': days[i].date,
+            if (dateLabels[days[i].date] != null) ...{
+              'hijri': dateLabels[days[i].date]!.hijri,
+              'gregorian': dateLabels[days[i].date]!.gregorian,
+              'gregorianShort': dateLabels[days[i].date]!.gregorianShort,
+            },
             'prayers': [
               for (final s in PrayerSlotResolver.slotsFor(days[i], days[i + 1]))
                 {

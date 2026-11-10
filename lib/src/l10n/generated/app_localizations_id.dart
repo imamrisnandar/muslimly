@@ -2214,7 +2214,7 @@ class AppLocalizationsId extends AppLocalizations {
       'Isi sendiri dengan harga emas terkini. Nisab = 85 gram emas 24 karat. Harga otomatis belum tersedia.';
 
   @override
-  String get zakatWealth => 'Total harta yang sudah mencapai haul';
+  String get zakatWealth => 'Total harta yang dimiliki';
 
   @override
   String get zakatDebts => 'Utang jatuh tempo';
@@ -2267,4 +2267,79 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get zakatDisclaimer =>
       'Perhitungan ini alat bantu, bukan fatwa. Konsultasikan dengan ustadz atau lembaga zakat resmi.';
+
+  @override
+  String get widgetEndsAt => 'Berakhir';
+
+  @override
+  String get widgetDoneShort => 'selesai';
+
+  @override
+  String get widgetSettingsTitle => 'Setelan Widget';
+
+  @override
+  String get widgetSettingsSubtitle =>
+      'Tema, transparansi, ukuran teks, dan info';
+
+  @override
+  String get widgetSettingsTheme => 'Tema warna';
+
+  @override
+  String get widgetSettingsOpacity => 'Transparansi latar';
+
+  @override
+  String get widgetSettingsTextSize => 'Ukuran teks';
+
+  @override
+  String get widgetSettingsSizeSmall => 'Kecil';
+
+  @override
+  String get widgetSettingsSizeNormal => 'Normal';
+
+  @override
+  String get widgetSettingsSizeLarge => 'Besar';
+
+  @override
+  String get widgetSettingsInfo => 'Info yang ditampilkan';
+
+  @override
+  String get widgetSettingsHijri => 'Tanggal Hijriah';
+
+  @override
+  String get widgetSettingsGregorian => 'Tanggal Masehi';
+
+  @override
+  String get widgetSettingsLocation => 'Lokasi';
+
+  @override
+  String get widgetSettingsProgress => 'Progres sholat dan batas waktu';
+
+  @override
+  String get widgetSettingsNote =>
+      'Info tanggal dan lokasi tampil di widget ukuran Strip dan Daftar. Ukuran Kecil hanya memakai tema, transparansi, dan ukuran teks.';
+
+  @override
+  String get widgetPreviewGregorian => 'Selasa, 10 November 2026';
+
+  @override
+  String get widgetPreviewHijri => '30 Jumada Al-Awwal 1448 H';
+
+  @override
+  String get widgetPreviewCity => 'Jakarta';
+
+  @override
+  String get widgetPreviewProgress => '2/5 selesai · Berakhir 15:12';
+
+  @override
+  String get hadithCopy => 'Salin';
+
+  @override
+  String get hadithCopied => 'Hadis disalin';
+
+  @override
+  String get zakatWealthHelp =>
+      'Jumlah semua harta yang bisa dizakati: uang tunai, tabungan, nilai emas/perak, piutang yang bisa ditagih, dan barang dagangan. Isi dengan total nilainya dalam rupiah.';
+
+  @override
+  String get zakatDebtsHelp => 'Utang yang harus dibayar sekarang (opsional).';
 }

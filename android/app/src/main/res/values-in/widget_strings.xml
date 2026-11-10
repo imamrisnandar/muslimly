@@ -7,4 +7,5 @@
     <string name="widget_description_strip">Kelima waktu dalam satu baris</string>
     <string name="widget_label_list">Jadwal sholat · Daftar</string>
     <string name="widget_description_list">Tiap sholat dengan tanda centang</string>
+    <string name="widget_settings">Setelan widget</string>
 </resources>
